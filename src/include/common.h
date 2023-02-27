@@ -1,5 +1,14 @@
 #pragma once
 
+#include<windows.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include "vmath.h"
+
+// OpenGL Header Files
+#include<GL/glew.h>		// THIS MUST BE BEFORE gl.h
+#include<GL/gl.h>
+
 enum {
 
 	DOMAIN_ATTRIBUTE_POSITION = 0,
@@ -8,4 +17,6 @@ enum {
 	DOMAIN_ATTRIBUTE_TEXTURE0
 
 };
+
+BOOL LoadGLTexture(GLuint*, TCHAR[]);
 

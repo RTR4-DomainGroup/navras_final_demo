@@ -1,15 +1,10 @@
 // Header Files
-#include<windows.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include"include/OGL.h"			// For Icon
-#include"include/Sphere.h"
-#include"include/common.h"
+#include "include/common.h"
+#include "include/OGL.h"			// For Icon
+#include "include/Sphere.h"
+#include "include/shaders.h"
+#include "include/geometry.h"
 
-// OpenGL Header Files
-#include<GL/glew.h>		// THIS MUST BE BEFORE gl.h
-#include<GL/gl.h>
-#include"include/vmath.h"
 using namespace vmath;
 
 // OpenGL Libraries
@@ -30,6 +25,8 @@ BOOL gbActiveWindow = FALSE;
 FILE* gpFile = NULL;
 HDC ghdc = NULL;
 HGLRC ghrc = NULL;
+
+mat4 perspectiveProjectionMatrix;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -207,6 +204,130 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 }
 
+int initialize(void) {
+
+	// Function Declarations
+	void resize(int, int);
+	BOOL LoadGLTexture(GLuint*, TCHAR[]);
+	void printGLInfo(void);
+	void uninitialize(void);
+
+	// Variable Declarations
+	PIXELFORMATDESCRIPTOR pfd;
+	int iPixelFormatIndex = 0;
+
+	// Code
+	// Initialization of PIXELFORMATDESCRIPTOR
+	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));		//MemSet((void *)&pfd, NULL, sizeof(PIXELFORMATDESCRIPTOR));
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	pfd.cRedBits = 8;
+	pfd.cGreenBits = 8;
+	pfd.cBlueBits = 8;
+	pfd.cAlphaBits = 8;
+	pfd.cDepthBits = 32;
+
+	// GetDC
+	ghdc = GetDC(ghwnd);
+
+	// Choose Pixel Format
+	iPixelFormatIndex = ChoosePixelFormat(ghdc, &pfd);
+	if (iPixelFormatIndex == 0) {
+	
+		return(-1);
+
+	}
+
+	// Set The Choosen Pixel Format
+	if (SetPixelFormat(ghdc, iPixelFormatIndex, &pfd) == FALSE)
+		return(-2);
+
+	// Create OpenGL Rendering Context
+	ghrc = wglCreateContext(ghdc);
+	if (ghrc == NULL)
+		return(-3);
+
+	// Make The Rendering Context As The Running Context
+	if (wglMakeCurrent(ghdc, ghrc) == FALSE)
+		return(-4);
+
+	// glew initialisation
+	if (glewInit() != GLEW_OK)
+		return(-5);
+
+	// Print OpenGLInfo
+	printGLInfo();
+
+    // Calling Shaders
+    if(initAllShaders())
+    {
+
+        fprintf(gpFile, "All Shaders were successfull !!!\n");
+
+    }
+    else
+    {
+
+        fprintf(gpFile, "All Shaders FAILED !!!\n");
+        return (-6);
+
+    }
+
+    if(initializeGeometry() != 0)
+    {
+
+        fprintf(gpFile, "initializeGeometry() FAILED !!!\n");
+        return (-7);
+
+    }
+
+	// Here Starts OpenGL Code
+	// Clear The Screen Using Blue Color
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	//Depth Related Changes
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	
+	// Enabling The Texture
+	glEnable(GL_TEXTURE_2D);
+
+	perspectiveProjectionMatrix = mat4::identity();
+
+	resize(WIN_WIDTH, WIN_HEIGHT);
+
+	return(0);
+
+}
+
+void printGLInfo(void) {
+
+	// Local Variable Declarations
+	GLint numExtentions = 0;
+
+	// Code
+	fprintf(gpFile, "OpenGL Vendor: %s\n", glGetString(GL_VENDOR));							// Graphic Card's Company
+	fprintf(gpFile, "OpenGL Renderer: %s\n", glGetString(GL_RENDERER));						// Graphic Card
+	fprintf(gpFile, "OpenGL Version: %s\n", glGetString(GL_VERSION));						// Graphic Card/Driver Version
+	fprintf(gpFile, "OpenGLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));	// Shading Language Version
+
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtentions);
+
+	fprintf(gpFile, "No. OF Supported Extensions: %d\n", numExtentions);
+
+	for (int i = 0; i < numExtentions; i++) {
+	
+		fprintf(gpFile, "%s\n", glGetStringi(GL_EXTENSIONS, i));
+
+	}
+
+}
+
 void ToggleFullScreen(void) {
 
 	// Variable Declarations
@@ -254,5 +375,61 @@ void resize(int width, int height) {
 	// Code
 	if (height == 0)			// To Avoid Divided by 0(in Future)
 		height = 1;
+
+        // 
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 100.0f);
+
+
+}
+
+void uninitialize(void) {
+
+	// Function Declarations
+	void ToggleFullScreen(void);
+
+	// Code
+	if (gbFullScreen) {
+
+		ToggleFullScreen();
+
+	}
+
+	// 
+	if (wglGetCurrentContext() == ghrc) {
+
+		wglMakeCurrent(NULL, NULL);
+
+	}
+
+	if (ghrc) {
+
+		wglDeleteContext(ghrc);
+		ghrc = NULL;
+
+	}
+
+	if (ghdc) {
+
+		ReleaseDC(ghwnd, ghdc);
+		ghdc = NULL;
+
+	}
+
+	if (ghwnd) {
+
+		DestroyWindow(ghwnd);
+		ghwnd = NULL;
+
+	}
+
+	if (gpFile) {
+
+		fprintf(gpFile, "Log File Close!!!\n");
+		fclose(gpFile);
+		gpFile = NULL;
+
+	}
 
 }
