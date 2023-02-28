@@ -1,11 +1,9 @@
 // Header Files
 #include "include/common.h"
-#include "include/OGL.h"			// For Icon
 #include "include/Sphere.h"
 #include "include/shaders.h"
 #include "include/geometry.h"
-
-using namespace vmath;
+#include "include/scenes/scenes.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -31,6 +29,11 @@ mat4 perspectiveProjectionMatrix;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
 	// Function Declarations
+	int initialize(void);
+	void display(void);
+	void update(void);
+	void uninitialize(void);
+
 
 	// Variable Declarations
 	WNDCLASSEX wndclass;
@@ -82,7 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	// Create The Window
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW, 
 		szAppName,
-		TEXT("OPEN GL OM MANOHAR WARKE!!!"),
+		TEXT("DOMAIN's NAVRAS!!!"),
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
 		iWCoorx,
 		iWCoory,
@@ -94,10 +97,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		NULL);
 
 	ghwnd = hwnd;
-	
 
 	// Show Window
 	ShowWindow(hwnd, iCmdShow);
+
+	//
+	iRetVal = initialize();
+	if(iRetVal < 0)
+	{
+
+		fprintf(gpFile, "Initialize() FAILED!!!\n");
+		uninitialize();
+		return(-1);
+
+	}
 
 	// Foregrounding And Focusing the Window
 	SetForegroundWindow(hwnd);
@@ -122,6 +135,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 			if (gbActiveWindow == TRUE) {
 
+				display();
+
+				update();
 
 			}
 
@@ -207,6 +223,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 int initialize(void) {
 
 	// Function Declarations
+	void ToggleFullScreen(void);
 	void resize(int, int);
 	BOOL LoadGLTexture(GLuint*, TCHAR[]);
 	void printGLInfo(void);
@@ -284,6 +301,16 @@ int initialize(void) {
 
     }
 
+	// Initialize Scenes
+
+	if(initializeInterleaved() != 0)
+	{
+
+		fprintf(gpFile, "initializeInterleaved() FAILED !!!\n");
+        return (-8);
+
+	}
+
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -299,7 +326,7 @@ int initialize(void) {
 
 	perspectiveProjectionMatrix = mat4::identity();
 
-	resize(WIN_WIDTH, WIN_HEIGHT);
+	ToggleFullScreen();
 
 	return(0);
 
@@ -370,6 +397,27 @@ void ToggleFullScreen(void) {
 
 }
 
+void display(void)
+{
+
+	// Code
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Call Scenes Display Here
+	displayInterleaved();
+
+	SwapBuffers(ghdc);
+
+}
+
+void update(void)
+{
+
+	// Code
+	// Call Scenes Update Here
+	updateInterleaved();
+}
+
 void resize(int width, int height) {
 
 	// Code
@@ -390,6 +438,11 @@ void uninitialize(void) {
 	void ToggleFullScreen(void);
 
 	// Code
+
+	uninitializeInterleaved();
+
+	uninitializeADSShader();
+
 	if (gbFullScreen) {
 
 		ToggleFullScreen();

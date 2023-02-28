@@ -4,7 +4,7 @@ del *.obj
 
 del Navras.exe
 
-cl.exe /c /EHsc /I C:\glew\include *.cpp helper/*.cpp shaders/*.cpp
+cl.exe /c /EHsc /I C:\glew\include *.cpp helper/*.cpp shaders/*.cpp scenes/*.cpp
 
 rc.exe ../res/OGL.rc
 

@@ -121,7 +121,7 @@ int initializeADSShader(void)
 				"phong_ads_light = vec3(1.0, 1.0, 1.0); \n" \
 			"} \n" \
 			"FragColor = vec4(texColor * phong_ads_light * vec3(a_color_out), 1.0); \n" \
-			/*"FragColor = texture(u_texturesampler, a_texcoord_out); \n" \*/
+			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
 		"} \n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);
