@@ -1,6 +1,7 @@
 #include "../include/common.h"
 #include "../include/shaders.h"
 #include "../include/shaders/ADSLightShader.h"
+#include "../include/shaders/GodraysShader.h"
 
 BOOL initAllShaders(void)
 {
@@ -8,7 +9,8 @@ BOOL initAllShaders(void)
     // Variable Declarations
 
     // Code
-    if(initializeADSShader() != 0)
+    if(initializeADSShader() != 0 &&
+        initializeGodraysShader() != 0)
     {
         return FALSE;
     }
