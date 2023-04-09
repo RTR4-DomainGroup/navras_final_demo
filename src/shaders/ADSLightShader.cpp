@@ -1,5 +1,5 @@
 
-#include "../include/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ADSLightShader.h"
 
 // Variable Declarations
 GLuint adsShaderProgramObject;
