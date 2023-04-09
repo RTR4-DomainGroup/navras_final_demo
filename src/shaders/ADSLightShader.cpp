@@ -91,36 +91,36 @@ int initializeADSShader(void)
 		"in vec3 transformedNormals; \n" \
 		"in vec3 lightDirection; \n" \
 		"in vec3 viewerVector;\n" \
-		"uniform vec3 u_la; \n" \
-		"uniform vec3 u_ld; \n" \
-		"uniform vec3 u_ls; \n" \
-		"uniform vec3 u_ka; \n" \
-		"uniform vec3 u_kd; \n" \
-		"uniform vec3 u_ks; \n" \
+		"uniform vec4 u_la; \n" \
+		"uniform vec4 u_ld; \n" \
+		"uniform vec4 u_ls; \n" \
+		"uniform vec4 u_ka; \n" \
+		"uniform vec4 u_kd; \n" \
+		"uniform vec4 u_ks; \n" \
 		"uniform float u_materialShininess; \n" \
 		"uniform int u_lightingEnable; \n" \
 		"uniform sampler2D u_texturesampler;\n" \
 		"out vec4 FragColor; \n" \
 		"void main(void) \n" \
 		"{ \n" \
-			"vec3 phong_ads_light; \n" \
-			"vec3 texColor = vec3(texture(u_texturesampler, a_texcoord_out)); \n"		\
+			"vec4 phong_ads_light; \n" \
+			"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
 			"if(u_lightingEnable == 1) \n" \
 			"{ \n" \
-				"vec3 ambient = u_la * u_ka; \n" \
+				"vec4 ambient = u_la * u_ka; \n" \
 				"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
 				"vec3 normalized_light_direction = normalize(lightDirection); \n" \
-				"vec3 diffuse = u_ld * u_kd * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
+				"vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
 				"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
 				"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-				"vec3 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+				"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
 				"phong_ads_light = phong_ads_light + ambient + diffuse + specular; \n" \
 			"} \n" \
 			"else \n" \
 			"{ \n" \
-				"phong_ads_light = vec3(1.0, 1.0, 1.0); \n" \
+				"phong_ads_light = vec4(1.0, 1.0, 1.0, 1.0); \n" \
 			"} \n" \
-			"FragColor = vec4(texColor * phong_ads_light * vec3(a_color_out), 1.0); \n" \
+			"FragColor = phong_ads_light * a_color_out; \n" \
 			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
 		"} \n";
 

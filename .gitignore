@@ -3,7 +3,6 @@ res/fonts
 res/models
 res/textures
 res/videos
-
 src/*.exe
 src/*.obj
 src/Log.txt
