@@ -4,22 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "resources.h"
-#include "vmath.h"
-#include "constants.h"
-
-using namespace vmath;
-
-enum {
-
-	DOMAIN_ATTRIBUTE_POSITION = 0,
-	DOMAIN_ATTRIBUTE_COLOR,
-	DOMAIN_ATTRIBUTE_NORMAL,
-	DOMAIN_ATTRIBUTE_TEXTURE0
-
-};
-
-
 #ifdef __linux__ 
 
 //linux code goes here
@@ -28,16 +12,19 @@ enum {
 #include <X11/Xutil.h> // XVisualInfo
 
 // Open GL headers
+#include <GL/glew.h>  // for GLEW functionality
 #include <GL/gl.h>
+#include <GL/glu.h>
+#include "common.h"
+
 // dummy macro
 #define MAKEINTRESOURCE(a) (int *)a
 #define TCHAR int
 #define MB_OK
 #define TEXT(a) a
 
-#define TEXTURE_DIR   "res/textures/"
-
-#define AUDIO_DIR     "res/audios/"
+#define TEXTURE_DIR "res/textures/"
+#define AUDIO_DIR   "res/audios/"
 
 #define VK_NUMPAD0 XK_KP_0
 #define VK_NUMPAD1 XK_KP_1
@@ -57,7 +44,14 @@ enum {
 #define VK_UP    XK_Up       
 #define VK_DOWN  XK_Down     
 #define VK_PRIOR XK_Prior //XK_Page_Up
-#define VK_NEXT  XK_Next // XK_Page_Down
+#define VK_NEXT  XK_Next // XK_Page_Down    
+
+GLboolean LoadGLTexture(GLuint* a, TCHAR b[]);
+// MessageBox(void* , TEXT("2: Cannot Open The Desired File\n"), TEXT("Error"), MB_OK);
+
+Bool Load3DFonts(const char* fontName);
+
+void Draw_Text(const char* text, size_t length);
 
 
 #elif _WIN32
@@ -70,27 +64,37 @@ enum {
 // Open GL headers
 #include <GL/glew.h>
 #include <GL/gl.h>
+#include "common.h"
 
 #define TEXTURE_DIR "res\\textures\\"
+#define AUDIO_DIR   "res\\audios\\"
 
-#define AUDIO_DIR "res\\audios\\"
+BOOL LoadGLTexture_UsingBitMap(GLuint* texture, TCHAR imageRecId[]);
+
+BOOL LoadGLTexture(GLuint* texture, TCHAR imageResourceID[]);
+
+BOOL Load3DFonts(const char* fontName);
+
+void Draw_Text(const char* text, size_t length);
 
 #else
 
 #endif
 
 // macros
-// #define file_printf fprintf
-// #define file_close fclose
 
 // internal headers
-// #include "types.h"
-// #include "debug_transformation.h"
+#include "types.h"
 
-// logging helpers
-int log_open(char const* FileName, char const* Mode);
-int log_printf(char const* const _Format, ...);
-int log_close();
+// typedefs
+// typedef VERTEX TRANFORM;
 
+// external variables
 
+// drawing helpers
+
+GLboolean LoadGLTexture_Cubemap(GLuint* textureid, const char* path);
+
+GLboolean LoadGLTexture_UsingSOIL(GLuint* texture, const char* path);
+GLboolean LoadGLTextureData_UsingSOIL(TEXTURE* texture, const char* path);
 
