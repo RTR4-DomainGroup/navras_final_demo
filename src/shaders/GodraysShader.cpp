@@ -1,4 +1,4 @@
-#include "../include/shaders/GodraysShader.h"
+#include "../../inc/shaders/GodraysShader.h"
 
 GLuint shaderProgramObj_godrays;
 extern FILE* gpFile;

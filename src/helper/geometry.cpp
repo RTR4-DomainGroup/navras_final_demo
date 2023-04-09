@@ -1,5 +1,5 @@
-#include "../include/common.h"
-#include "../include/geometry.h"
+#include "../../inc/common.h"
+#include "../../inc/geometry.h"
 
 GLuint vao_Cube;
 GLuint vbo_Cube;

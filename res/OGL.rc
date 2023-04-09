@@ -1,8 +1,0 @@
-#include "../src/include/OGL.h"
-
-MYICON ICON Icon.ico
-
-IDBITMAP_MARBLE BITMAP textures/marble.bmp
-
-
-

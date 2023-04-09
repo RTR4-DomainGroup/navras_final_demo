@@ -1,4 +1,4 @@
-#include "../include/common.h"
+#include "../../inc/common.h"
 
 BOOL LoadGLTexture(GLuint* Texture, TCHAR ImageResourceID[]) 
 {

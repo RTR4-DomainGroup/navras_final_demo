@@ -1,6 +1,6 @@
 // This File Will Be Replaced by Scene*.cpp
 
-#include "../include/scenes/scenePlaceHolder.h"
+#include "../../inc/scenes/scenePlaceHolder.h"
 
 GLuint texture_Marble;
 

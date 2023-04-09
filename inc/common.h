@@ -3,7 +3,7 @@
 #include<windows.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include "OGL.h"
+#include "resources.h"
 #include "vmath.h"
 
 // OpenGL Header Files
