@@ -7,9 +7,9 @@ GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
 
-GLfloat LightAmbient[] = { 0.0f, 0.1f, 0.1f, 1.0f };
+GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat LightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
 
 GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -95,16 +95,16 @@ void displayInterleaved(void)
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
 
-	glUniform3fv(sceneADSUniform.laUniform, 1, LightAmbient);
-	glUniform3fv(sceneADSUniform.ldUniform, 1, LightDiffuse);
-	glUniform3fv(sceneADSUniform.lsUniform, 1, LightSpecular);
+	glUniform4fv(sceneADSUniform.laUniform, 1, LightAmbient);
+	glUniform4fv(sceneADSUniform.ldUniform, 1, LightDiffuse);
+	glUniform4fv(sceneADSUniform.lsUniform, 1, LightSpecular);
 
 	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, LightPosition);
 
 
-	glUniform3fv(sceneADSUniform.kaUniform, 1, MaterialAmbient);
-	glUniform3fv(sceneADSUniform.kdUniform, 1, MaterialDiffuse);
-	glUniform3fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
+	glUniform4fv(sceneADSUniform.kaUniform, 1, MaterialAmbient);
+	glUniform4fv(sceneADSUniform.kdUniform, 1, MaterialDiffuse);
+	glUniform4fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
 
 	glUniform1f(sceneADSUniform.materialShininessUniform, MaterialShininess);
 
