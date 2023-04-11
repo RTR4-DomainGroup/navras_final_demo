@@ -133,10 +133,6 @@ public:
                                false,0,0);
         glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-        // vbo for color
-        glVertexAttrib3f(DOMAIN_ATTRIBUTE_COLOR, 1.0f, 1.0f, 1.0f);
         
         // vbo for normals
         glGenBuffers(1, &vbo_normal);

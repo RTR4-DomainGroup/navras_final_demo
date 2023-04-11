@@ -39,6 +39,13 @@ int initializeScene_PlaceHolder(void)
 		fprintf(gpFile, "LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 
+
+    // initializeCube();
+    // initializePyramid();
+    // initializeQuad();
+    // initializeTriangle();
+    initializeSphere();
+
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
 
@@ -110,8 +117,12 @@ void displayScene_PlaceHolder(void)
 
 
 	// Call Geometry over here 
-	// displayGeometry();
+	// displayCube();
+	// displayTriangle();
+    // displayQuad();
+    // displayPyramid();
 	displaySphere();
+
 
 	// glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -136,11 +147,18 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
+    uninitializeSphere();
+    // uninitializeTriangle();
+    // uninitializeQuad();
+    // uninitializePyramid();
+    // uninitializeCube();
+
 	if(texture_Marble)
 	{
 		glDeleteTextures(1, &texture_Marble);
 		texture_Marble = NULL;
 	}
 
+	
 }
 

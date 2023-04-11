@@ -1,7 +1,6 @@
 // Header Files
 #include "../inc/common.h"
 #include "../inc/shaders.h"
-#include "../inc/geometry.h"
 #include "../inc/scenes/scenes.h"
 
 // OpenGL Libraries
@@ -291,13 +290,6 @@ int initialize(void) {
 
     }
 
-    if(initializeGeometry() != 0)
-    {
-
-        fprintf(gpFile, "initializeGeometry() FAILED !!!\n");
-        return (-7);
-
-    }
 
 	// Initialize Scenes
 

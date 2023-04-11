@@ -113,7 +113,7 @@ int initializeADSShader(void)
 			"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
 			"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
 			"phong_ads_light = ambient + diffuse + specular; \n" \
-			"FragColor = phong_ads_light * a_color_out; \n" \
+			"FragColor = phong_ads_light; \n" \
 			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
 		"} \n";
 
