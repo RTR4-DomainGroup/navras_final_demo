@@ -15,7 +15,7 @@ GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
 GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialShininess = 128.0f;
+GLfloat MaterialShininess = 50.0f;
 
 GLfloat angleCube;
 
