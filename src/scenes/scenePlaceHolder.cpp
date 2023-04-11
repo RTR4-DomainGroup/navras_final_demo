@@ -23,7 +23,7 @@ extern mat4 perspectiveProjectionMatrix;
 
 extern FILE* gpFile;
 
-int initializeInterleaved(void)
+int initializeScene_PlaceHolder(void)
 {
 
     // Code.
@@ -46,7 +46,7 @@ int initializeInterleaved(void)
 
 }
 
-void displayInterleaved(void)
+void displayScene_PlaceHolder(void)
 {
 
 	// Code
@@ -119,7 +119,7 @@ void displayInterleaved(void)
 
 }
 
-void updateInterleaved(void) 
+void updateScene_PlaceHolder(void)
 {
 
 	// Code
@@ -131,7 +131,7 @@ void updateInterleaved(void)
 
 }
 
-void uninitializeInterleaved(void)
+void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
