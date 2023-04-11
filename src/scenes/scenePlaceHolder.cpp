@@ -71,7 +71,7 @@ void displayScene_PlaceHolder(void)
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 
-	//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
 
@@ -90,7 +90,7 @@ void displayScene_PlaceHolder(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_Marble);
 	
-    //glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
+    glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
 
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
@@ -110,9 +110,10 @@ void displayScene_PlaceHolder(void)
 
 
 	// Call Geometry over here 
-	displayCube();
+	// displayCube();
+	displayGeometry();
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	// glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);	

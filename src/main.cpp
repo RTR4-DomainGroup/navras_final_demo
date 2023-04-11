@@ -1,6 +1,5 @@
 // Header Files
 #include "../inc/common.h"
-#include "../inc/Sphere.h"
 #include "../inc/shaders.h"
 #include "../inc/geometry.h"
 #include "../inc/scenes/scenes.h"
@@ -8,7 +7,6 @@
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "lib/Sphere.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
