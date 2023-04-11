@@ -303,12 +303,18 @@ int initialize(void) {
 
 	// Initialize Scenes
 
-	if(initializeInterleaved() != 0)
+	//if(initializeInterleaved() != 0)
+	//{
+
+	//	fprintf(gpFile, "initializeInterleaved() FAILED !!!\n");
+ //       return (-8);
+
+	//}
+
+	if (initializeCloudNoise() != 0)
 	{
-
-		fprintf(gpFile, "initializeInterleaved() FAILED !!!\n");
-        return (-8);
-
+		fprintf(gpFile, "initializeCloudNoise() FAILED !!!\n");
+		return (-9);
 	}
 
 	// Here Starts OpenGL Code
@@ -404,7 +410,9 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	displayInterleaved();
+	//displayInterleaved();
+
+	displayCloudNoise();
 
 	SwapBuffers(ghdc);
 
@@ -415,7 +423,9 @@ void update(void)
 
 	// Code
 	// Call Scenes Update Here
-	updateInterleaved();
+	//updateInterleaved();
+
+	updateCloudNoise();
 }
 
 void resize(int width, int height) {
@@ -439,9 +449,13 @@ void uninitialize(void) {
 
 	// Code
 
-	uninitializeInterleaved();
+	//uninitializeInterleaved();
 
-	uninitializeADSShader();
+	//uninitializeADSShader();
+
+	uninitializeCloudNoise();
+
+	uninitializeCloudNoiseShader();
 
 	if (gbFullScreen) {
 
