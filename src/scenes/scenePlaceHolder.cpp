@@ -110,8 +110,8 @@ void displayScene_PlaceHolder(void)
 
 
 	// Call Geometry over here 
-	// displayCube();
-	displayGeometry();
+	// displayGeometry();
+	displaySphere();
 
 	// glBindTexture(GL_TEXTURE_2D, 0);
 

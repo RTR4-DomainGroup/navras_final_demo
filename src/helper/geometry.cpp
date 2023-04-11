@@ -272,16 +272,10 @@ void initializeSphere(void)
 
 void displayGeometry()
 {
-    // function declarations
-    void displayCube(void);
-    void displaySphere(void);
-    void displayTriangle(void );
-    void displayQuad(void );
-    void displayPyramid(void );
 
     // Code
 
-    displayTriangle();
+    // displayTriangle();
     // displayQuad();
     // displayPyramid();
     // displayCube();
