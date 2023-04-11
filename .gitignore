@@ -1,4 +1,10 @@
-src/*.exe
+res/audio
+res/videos
+res/textures
+res/models
+res/fonts
+
+*.exe
 src/*.obj
-src/Log.txt
+Log.txt
 
