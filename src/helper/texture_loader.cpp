@@ -148,7 +148,7 @@ GLboolean LoadGLTextureData_UsingSOIL(TEXTURE* texture, const char* path)
     );
     if(imageData == NULL)
     {
-		log_printf("SOIL_load_image() failed for file: %s\n", path);
+		LOG("SOIL_load_image() failed for file: %s\n", path);
         return (GL_FALSE);
     }
 

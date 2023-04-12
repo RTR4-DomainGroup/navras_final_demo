@@ -180,28 +180,6 @@ int log_open(char const* FileName , char const* Mode)
     return retval;
 }
 
-int log_printf(char const* const _Format, ...)
-{
-    int _Result = 0;
-    if(0 == strlen(_filename)) {
-        strcpy(_filename, "log.txt");
-    }
-    
-	if (fopen_s(&_pFile, _filename, "a") != 0)
-	{
-		_Result = -1;
-	}
-    else
-    {
-        va_list _ArgList;
-        __crt_va_start(_ArgList, _Format);
-        _Result = _vfprintf_l(_pFile, _Format, NULL, _ArgList);
-        __crt_va_end(_ArgList);
-    }
-    fclose(_pFile);
-    return _Result;	
-}
-
 const char* removepath(const char* filewithpath)
 {
     int len = strlen(filewithpath);
@@ -214,7 +192,7 @@ const char* removepath(const char* filewithpath)
     return (filewithpath);
 }
 
-int log_printf_novarconv(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
+int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
     int _Result = 0;
     char firstCall = 0;
@@ -241,25 +219,6 @@ int log_printf_novarconv(char const* const filewithpath, char const* const funcn
     return _Result;	
 }
 
-
-int log_printf_novararg(char const* const filewithpath, char const* const funcname, int linenum, char* logstr)
-{
-    int _Result = 0;
-    if(0 == strlen(_filename)) {
-        strcpy(_filename, "log.txt");
-    }
-    
-	if (fopen_s(&_pFile, _filename, "a") != 0)
-	{
-		_Result = -1;
-	}
-    else
-    {
-        _Result = fprintf(_pFile, "%s \t %s:%s (%d) %s\n", currentDateTime(), removepath(filewithpath), funcname, linenum, logstr);
-    }
-    fclose(_pFile);
-    return _Result;	
-}
 
 #else
 // architecture not supported

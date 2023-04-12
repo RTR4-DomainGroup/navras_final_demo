@@ -92,9 +92,7 @@ enum {
 
 // logging helpers
 int log_open(char const* FileName, char const* Mode);
-int log_printf(char const* const _Format, ...);
-int log_printf_novararg(char const* const filename, char const* const funcname, int linenum, char* logstr);
-int log_printf_novarconv(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...);
+int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...);
 int log_close();
 
 char* currentDateTime(char* log_buffer);
@@ -104,9 +102,5 @@ char* vararg2string(const char* format, ...);
 // 	log_printf_novararg( __FILE__, __FUNCTION__, __LINE__,  vararg2string(print_buff))
 
 #define LOG(format, ...) \
-	log_printf_novarconv(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
-
-// #define CHECK1(x, ...) if (!(x)) { printf(__VA_ARGS__); }
-// #define CHECK2(x, ...) if ((x)) { printf(__VA_ARGS__); }
-// #define CHECK3(...) { printf(__VA_ARGS__); }
-// #define MACRO(s, ...) printf(s, __VA_ARGS__)
+	log_printf(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
+	
