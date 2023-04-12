@@ -72,7 +72,7 @@
 
 
 static char _filename[256] ; 
-FILE* _pFile ; 
+static FILE* _pFile ; 
 
 
 ////////////
