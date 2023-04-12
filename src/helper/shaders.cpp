@@ -2,21 +2,21 @@
 #include "../../inc/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/GodraysShader.h"
+#include "../../inc/shaders/FSQuadShader.h"
 
-BOOL initAllShaders(void)
+bool initAllShaders(void)
 {
-
     // Variable Declarations
 
     // Code
     if(initializeADSShader() != 0 &&
-        initializeGodraysShader() != 0)
+        initializeGodraysShader() != 0 && 
+        initializeFSQuadShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
-    return TRUE;
-
+    return true;
 }
 
 void uninitAllShaders(void)

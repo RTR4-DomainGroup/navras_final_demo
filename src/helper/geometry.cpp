@@ -35,7 +35,7 @@ static sphere::Mesh objSphere;
 
 void initializeCube(void)
 {
-    const GLfloat cubePCNT[] = 
+    const GLfloat cubePNT[] = 
     {
                                                 //PCNT
         // positions                       //normals                   //texture
@@ -79,19 +79,27 @@ void initializeCube(void)
     
     };
 
-        // VAO AND VBO RELATED CODE
+    const GLfloat quadPNT[] =
+    {
+        // Front face                       // Front face             // Front face
+        1.0f, 1.0f, 0.0f,               0.0f, 0.0f, 1.0f,             1.0f,1.0f,
+        -1.0f, 1.0f, 0.0f,              0.0f, 0.0f, 1.0f,             0.0f,1.0f,
+        -1.0f, -1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, 0.0f,              0.0f, 0.0f, 1.0f,             1.0f,0.0f,
+    };
+
+    // VAO AND VBO RELATED CODE
 	// vao_Cube
 	glGenVertexArrays(1, &vao_Cube);
 	glBindVertexArray(vao_Cube);
 
 	glGenBuffers(1, &vbo_Cube);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_Cube);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePCNT), cubePCNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePNT), cubePNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
 	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
-
 
 	// Normal
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
@@ -101,15 +109,14 @@ void initializeCube(void)
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
 
-	glBindVertexArray(0);
-    
+	glBindVertexArray(0);    
 }
 
 void initializeTriangle(void)
 {
-    const GLfloat trianglePCNT[] = 
+    const GLfloat trianglePNT[] = 
     {
-                                                //PCNT
+        //PNT
         // positions                  //normals                    //texture
 
         0.0f, 1.0f, 0.0f,         0.0f, 0.447214f, 0.894427f,        0.5, 1.0, // front-top 
@@ -124,7 +131,7 @@ void initializeTriangle(void)
 
 	glGenBuffers(1, &vbo_triangle);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(trianglePCNT), trianglePCNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(trianglePNT), trianglePNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
@@ -142,19 +149,18 @@ void initializeTriangle(void)
     
 }
 
-
 void initializeQuad(void)
 {
-    const GLfloat quadPCNT[] = 
+    const GLfloat quadPNT[] = 
     {
-                                                //PCNT
+        //PCNT
         // positions                     //normals                   //texture
 
         // Front face                     // Front face             // Front face
-        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             1.0f,1.0f,
-        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             0.0f,1.0f,
-        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f,0.0f,
-        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f,0.0f,
+        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             1.0f, 1.0f,
+        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f, 0.0f,
+        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f, 0.0f,
     };
 
         // VAO AND VBO RELATED CODE
@@ -164,7 +170,7 @@ void initializeQuad(void)
 
 	glGenBuffers(1, &vbo_quad);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPCNT), quadPCNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
@@ -182,12 +188,11 @@ void initializeQuad(void)
     
 }
 
-
 void initializePyramid(void)
 {
-    const GLfloat pyramidPCNT[] = 
+    const GLfloat pyramidPNT[] = 
     {
-                                                //PCNT
+        //PCNT
         // positions                  //normals                   //texture
 
         // front            
@@ -220,7 +225,7 @@ void initializePyramid(void)
 
 	glGenBuffers(1, &vbo_pyramid);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_pyramid);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPCNT), pyramidPCNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPNT), pyramidPNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
@@ -237,7 +242,6 @@ void initializePyramid(void)
 	glBindVertexArray(0);
     
 }
-
 
 void initializeSphere(void)
 {
@@ -280,7 +284,6 @@ void displayQuad(void)
 	glBindVertexArray(0);
 }
 
-
 void displayPyramid(void)
 {
     // Code
@@ -294,8 +297,6 @@ void displayPyramid(void)
 
 	glBindVertexArray(0);
 }
-
-
 
 void displaySphere(void)
 {

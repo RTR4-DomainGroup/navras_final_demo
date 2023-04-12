@@ -1,15 +1,9 @@
 #include "../../inc/video_reader.h"
 
-#pragma comment(lib, "lib\\ffmpeg\\avformat.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avcodec.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avformat.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avutil.lib")
-#pragma comment(lib, "lib\\ffmpeg\\swscale.lib")
-
 extern FILE *gpFile;
 
 bool video_reader_open(VideoReaderState* state, const char* fileName)
-{
+{    
     state->avFormatContext = avformat_alloc_context();
     
     if (!state->avFormatContext)
@@ -71,7 +65,6 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
         return false;
     }
     
-    
     state->avFrame = av_frame_alloc();
     if (!state->avFrame)
     {
@@ -88,9 +81,11 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
     
     return true;
 }
+
 bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
 {
     int response;
+    
     while (av_read_frame(state->avFormatContext, state->avPacket) >= 0)
     {
         if (state->avPacket->stream_index != state->video_stream_index)

@@ -1,4 +1,4 @@
 #pragma once
 
-BOOL initAllShaders(void);
+bool initAllShaders(void);
 void uninitAllShaders(void);

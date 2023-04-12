@@ -6,6 +6,11 @@
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
+#pragma comment(lib, "lib\\ffmpeg\\avformat.lib")
+#pragma comment(lib, "lib\\ffmpeg\\avcodec.lib")
+#pragma comment(lib, "lib\\ffmpeg\\avformat.lib")
+#pragma comment(lib, "lib\\ffmpeg\\avutil.lib")
+#pragma comment(lib, "lib\\ffmpeg\\swscale.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600

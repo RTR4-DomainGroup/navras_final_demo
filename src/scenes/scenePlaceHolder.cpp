@@ -1,11 +1,14 @@
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/texture_loader.h"
+#include "../../inc/effects/videoEffect.h"
 
 GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
+struct FSQuadUniform fsqUniform;
 
 GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -42,10 +45,10 @@ int initializeScene_PlaceHolder(void)
 
     // initializeCube();
     // initializePyramid();
-    // initializeQuad();
-    // initializeTriangle();
+    initializeQuad();
+    //initializeTriangle();
     initializeSphere();
-
+	initializeVideoEffect("res\\videos\\Smiley.mp4");
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
 
@@ -121,13 +124,16 @@ void displayScene_PlaceHolder(void)
 	// displayTriangle();
     // displayQuad();
     // displayPyramid();
+	
 	displaySphere();
 
 
-	// glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Un-use ShaderProgramObject
-	glUseProgram(0);	
+	glUseProgram(0);
+	// fsqUniform = useFSQuadShader();
+	// displayVideoEffect(&fsqUniform);	
 
 }
 
@@ -148,10 +154,10 @@ void uninitializeScene_PlaceHolder(void)
 
 	// Code
     uninitializeSphere();
-    // uninitializeTriangle();
-    // uninitializeQuad();
-    // uninitializePyramid();
-    // uninitializeCube();
+    uninitializeTriangle();
+    uninitializeQuad();
+    uninitializePyramid();
+    uninitializeCube();
 
 	if(texture_Marble)
 	{
