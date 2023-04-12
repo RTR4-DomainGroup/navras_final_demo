@@ -1,7 +1,7 @@
 #include "../../inc/common.h"
 #include "../../inc/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
-#include "../../inc/effects/GodraysShader.h"
+#include "../../inc/shaders/GodraysShader.h"
 
 BOOL initAllShaders(void)
 {
