@@ -28,7 +28,6 @@ extern FILE* gpFile;
 
 int initializeScene_PlaceHolder(void)
 {
-
     // Code.
     // Texture
 	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
@@ -41,7 +40,6 @@ int initializeScene_PlaceHolder(void)
 	{
 		fprintf(gpFile, "LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
-
 
     // initializeCube();
     // initializePyramid();
@@ -58,7 +56,6 @@ int initializeScene_PlaceHolder(void)
 
 void displayScene_PlaceHolder(void)
 {
-
 	// Code
 	sceneADSUniform = useADSShader();
 
@@ -125,15 +122,16 @@ void displayScene_PlaceHolder(void)
     // displayQuad();
     // displayPyramid();
 	
-	displaySphere();
+	// displaySphere();
 
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+	// glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
-	// fsqUniform = useFSQuadShader();
-	// displayVideoEffect(&fsqUniform);	
+	fsqUniform = useFSQuadShader();
+	displayVideoEffect(&fsqUniform);
+	glUseProgram(0);
 
 }
 

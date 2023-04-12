@@ -72,11 +72,11 @@ int initializeFSQuadShader(void)
         "uniform sampler2D u_textureSampler0;" \
         "\n" \
         "uniform sampler2D u_textureSampler1;" \
+        "\n" \
         "out vec4 FragColor;" \
         "\n" \
         "void main(void)" \
         "{" \
-            //"FragColor = mix(texture(u_textureSampler0, a_texcoord_out0), texture(u_textureSampler1, a_texcoord_out1), 0.5);"
             "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
             "\n" \
         "}";

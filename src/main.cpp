@@ -6,11 +6,11 @@
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avformat.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avcodec.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avformat.lib")
-#pragma comment(lib, "lib\\ffmpeg\\avutil.lib")
-#pragma comment(lib, "lib\\ffmpeg\\swscale.lib")
+#pragma comment(lib, "avformat.lib")
+#pragma comment(lib, "avcodec.lib")
+#pragma comment(lib, "avformat.lib")
+#pragma comment(lib, "avutil.lib")
+#pragma comment(lib, "swscale.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -424,7 +424,6 @@ void resize(int width, int height) {
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 100.0f);
-
 
 }
 

@@ -7,7 +7,6 @@ extern "C"
     #include <inttypes.h>
 }
 
-
 struct VideoReaderState
 {
     int width, height;
