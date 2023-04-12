@@ -1,7 +1,7 @@
 #include "../../inc/texture_loader.h"
 
 // Texture lib header
-#include "../../inc/SOIL/SOIL.h"
+#include "../../inc/SOIL.h"
 
 
 #ifdef __linux__ 
