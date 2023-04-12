@@ -4,7 +4,7 @@ res/textures
 res/models
 res/fonts
 
-src/*.exe
+*.exe
 src/*.obj
 Log.txt
 

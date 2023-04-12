@@ -1,14 +1,11 @@
 // Header Files
 #include "../inc/common.h"
-#include "../inc/Sphere.h"
 #include "../inc/shaders.h"
-#include "../inc/geometry.h"
 #include "../inc/scenes/scenes.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "lib/Sphere.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -293,20 +290,13 @@ int initialize(void) {
 
     }
 
-    if(initializeGeometry() != 0)
-    {
-
-        fprintf(gpFile, "initializeGeometry() FAILED !!!\n");
-        return (-7);
-
-    }
 
 	// Initialize Scenes
 
-	if(initializeInterleaved() != 0)
+	if(initializeScene_PlaceHolder() != 0)
 	{
 
-		fprintf(gpFile, "initializeInterleaved() FAILED !!!\n");
+		fprintf(gpFile, "initializeScene_PlaceHolder() FAILED !!!\n");
         return (-8);
 
 	}
@@ -404,7 +394,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	displayInterleaved();
+	displayScene_PlaceHolder();
 
 	SwapBuffers(ghdc);
 
@@ -414,8 +404,9 @@ void update(void)
 {
 
 	// Code
+	
 	// Call Scenes Update Here
-	updateInterleaved();
+	updateScene_PlaceHolder();
 }
 
 void resize(int width, int height) {
@@ -439,8 +430,10 @@ void uninitialize(void) {
 
 	// Code
 
-	uninitializeInterleaved();
+	//uninitialize all scenes
+	uninitializeScene_PlaceHolder();
 
+	//uninitialize all shaders
 	uninitializeADSShader();
 
 	if (gbFullScreen) {
