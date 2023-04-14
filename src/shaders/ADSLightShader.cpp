@@ -71,7 +71,7 @@ int initializeADSShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(vertexShadderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS Vertex Shader Compilation Log: %s\n", log);
+				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
 
@@ -134,7 +134,7 @@ int initializeADSShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(fragmentShadderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS Fragment Shader Compilation Log: %s\n", log);
+				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
 
@@ -166,7 +166,7 @@ int initializeADSShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(adsShaderProgramObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS ShaderProgram Linking Log: %s\n", log);
+				LOG("ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
 

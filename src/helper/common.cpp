@@ -74,6 +74,31 @@
 static char _filename[256] ; 
 static FILE* _pFile ; 
 
+
+////////////
+
+static char log_buffer[MAX_LOG_LENGTH];
+
+char* vararg2string(const char* format, ...)
+{
+    va_list _ArgList;
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    __crt_va_start(_ArgList, format);
+    _vsnprintf_l(log_buffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
+    __crt_va_end(_ArgList);
+    return (log_buffer);
+}
+
+char* currentDateTime()
+{
+    time_t now = time(0);
+    struct tm curr_time = *localtime(&now);
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", &curr_time);
+    return (log_buffer);
+};
+
+
 #ifdef __linux__ 
     //linux code goes here
     // dummy macro
@@ -136,7 +161,6 @@ int log_printf(char const* const _Format, ...)
 
 
 // file operations
-
 int log_open(char const* FileName , char const* Mode)
 {
     printf("File %s(%d): %s\n", __FILE__, __LINE__, __FUNCTION__);
@@ -156,23 +180,45 @@ int log_open(char const* FileName , char const* Mode)
     return retval;
 }
 
-int log_printf(char const* const _Format, ...)
+const char* removepath(const char* filewithpath)
+{
+    int len = strlen(filewithpath);
+    while(len > 0) {
+        char c = filewithpath[len -1];
+        if(c == PATH_SEPARATOR)
+            return (filewithpath + len);
+        len--;
+    }
+    return (filewithpath);
+}
+
+int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
     int _Result = 0;
-	if (fopen_s(&_pFile, _filename, "a") != 0)
+    char firstCall = 0;
+    if(0 == strlen(_filename)) {
+        strcpy(_filename, "log.txt");
+        firstCall = 1;
+    }
+    
+	if (fopen_s(&_pFile, _filename, firstCall?"w":"a") != 0)
 	{
 		_Result = -1;
 	}
     else
     {
+        char myBuffer[MAX_LOG_LENGTH] = {};
         va_list _ArgList;
-        __crt_va_start(_ArgList, _Format);
-        _Result = _vfprintf_l(_pFile, _Format, NULL, _ArgList);
+        __crt_va_start(_ArgList, format);
+        _vsnprintf_l(myBuffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
         __crt_va_end(_ArgList);
+
+        _Result = fprintf(_pFile, "%s %s:%s (%d) %s", currentDateTime(), removepath(filewithpath), funcname, linenum, myBuffer);
     }
     fclose(_pFile);
     return _Result;	
 }
+
 
 #else
 // architecture not supported

@@ -32,13 +32,13 @@ int initializeScene_PlaceHolder(void)
     // Texture
 	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
 		//uninitialize();
-		fprintf(gpFile, "LoadGLTexture FAILED!!!\n");
+		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
 
 	}
 	else
 	{
-		fprintf(gpFile, "LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 
 

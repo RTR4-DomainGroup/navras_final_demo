@@ -63,7 +63,7 @@ int initializeGodraysShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(vertexShaderObj, infoLogLength, &written, log);
-                fprintf(gpFile, "God Rays Shader Vertex Shader Compilation Log: %s\n", log);
+                LOG("God Rays Shader Vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
@@ -167,7 +167,7 @@ int initializeGodraysShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(fragementShaderObj, infoLogLength, &written, log);
-                fprintf(gpFile, "Fragment Shader Compilation Log: %s\n", log);
+                LOG("Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
@@ -208,7 +208,7 @@ int initializeGodraysShader(void)
                 GLsizei written;
 
                 glGetProgramInfoLog(shaderProgramObj_godrays, infoLogLength, &written, log);
-                fprintf(gpFile, "Shader Program Link Log: %s\n", log);
+                LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeGodraysShader();
             }
