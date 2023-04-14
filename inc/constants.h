@@ -51,7 +51,7 @@
 
 // sample audios
 #define NUM_AUDIO   3
-static const char *szAudios[NUM_AUDIO] = {
+static const char *szAudios[] = {
     "audio1.wav", 
     "audio2.wav", 
     "audio3.wav", 

@@ -160,6 +160,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	void ToggleFullScreen(void);
 	void resize(int, int);
 	int playSong(int );
+	void togglePlayback();
 
 
 	// variables
@@ -194,7 +195,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		default:
 			break;
-
 		}
 		break;
 
@@ -236,16 +236,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			cameraCenterY = cameraCenterY + 1.0f;
 			break;
 		case 'n':
-			songId++;
-			if(songId > NUM_AUDIO)
-				songId = 0;
 			playSong(songId);
+			songId++;
+			if(songId > NUM_AUDIO-1)
+				songId = 0;
 			break;	
 		case 'b':
+			playSong(songId);
 			songId--;
 			if(songId < 0)
-				songId = 2;
-			playSong(songId);
+				songId = NUM_AUDIO-1;
 			break;	
 		default:
 			break;
@@ -276,9 +276,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 int playSong(int songId)
 {
-	// function declaration
-	void togglePlayback();
-
 	// variable
 	static int lastSongId = -1;
  
