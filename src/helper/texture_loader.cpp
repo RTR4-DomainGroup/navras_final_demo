@@ -1,7 +1,7 @@
 #include "../../inc/texture_loader.h"
 
 // Texture lib header
-#include "../../inc/SOIL.h"
+#include "SOIL/include/SOIL.h"
 
 
 #ifdef __linux__ 
@@ -18,7 +18,7 @@ GLboolean LoadGLTexture(GLuint* a, TCHAR b[])
 #elif _WIN32
 
 
-#pragma comment(lib, "lib\\SOIL\\SOIL.lib")
+#pragma comment(lib, "SOIL\\lib\\SOIL.lib")
 
 // windows code goes here
 
