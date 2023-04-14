@@ -2,6 +2,7 @@
 #include "../inc/common.h"
 #include "../inc/shaders.h"
 #include "../inc/scenes/scenes.h"
+#include "../inc/camera.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -189,7 +190,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case 'f':
 			ToggleFullScreen();
 			break;
-
+		case 'W':
+		case 'w':
+			cameraEyeZ = cameraEyeZ - 1.0f;
+			cameraCenterZ = cameraCenterZ - 1.0f;
+			break;
+		case 'S':
+		case 's':
+			cameraEyeZ = cameraEyeZ + 1.0f;
+			cameraCenterZ = cameraCenterZ + 1.0f;
+			break;
+		case 'A':
+		case 'a':
+			cameraEyeX = cameraEyeX - 1.0f;
+			cameraCenterX = cameraCenterX - 1.0f;
+			break;
+		case 'D':
+		case 'd':
+			cameraEyeX = cameraEyeX + 1.0f;
+			cameraCenterX = cameraCenterX + 1.0f;
+			break;
+		case 'Q':
+		case 'q':
+			cameraEyeY = cameraEyeY - 1.0f;
+			cameraCenterY = cameraCenterY - 1.0f;
+			break;
+		case 'E':
+		case 'e':
+			cameraEyeY = cameraEyeY + 1.0f;
+			cameraCenterY = cameraCenterY + 1.0f;
+			break;
 		default:
 			break;
 
@@ -301,6 +331,19 @@ int initialize(void) {
 
 	}
 
+	// initialize camera
+	cameraEyeX = 0.0f;
+	cameraEyeY = 0.0f;
+	cameraEyeZ = 20.0f;
+
+	cameraCenterX = 0.0f;
+	cameraCenterY = 0.0f;
+	cameraCenterZ = 0.0f;
+
+	cameraUpX = 0.0f;
+	cameraUpY = 1.0f;
+	cameraUpZ = 0.0f;
+
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -389,9 +432,11 @@ void ToggleFullScreen(void) {
 
 void display(void)
 {
-
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// set camera
+	setCamera();
 
 	// Call Scenes Display Here
 	displayScene_PlaceHolder();

@@ -8,3 +8,4 @@ res/fonts
 src/*.obj
 Log.txt
 
+.vs/
