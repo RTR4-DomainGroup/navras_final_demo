@@ -47,3 +47,12 @@
 
 // logging
 #define MAX_LOG_LENGTH 255
+
+
+// sample audios
+#define NUM_AUDIO   3
+static const char *szAudios[NUM_AUDIO] = {
+    "audio1.wav", 
+    "audio2.wav", 
+    "audio3.wav", 
+};
