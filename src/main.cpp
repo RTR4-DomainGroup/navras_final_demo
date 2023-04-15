@@ -3,6 +3,7 @@
 #include "../inc/shaders.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/camera.h"
+#include "../inc/audioplayer.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -18,6 +19,10 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HWND ghwnd = NULL;
 BOOL gbFullScreen = FALSE;
 BOOL gbActiveWindow = FALSE;
+
+// audio
+BOOL gbPlayback = FALSE;
+
 // FILE* gpFile = NULL;
 HDC ghdc = NULL;
 HGLRC ghrc = NULL;
@@ -154,6 +159,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	// Function Declarations
 	void ToggleFullScreen(void);
 	void resize(int, int);
+	int playSong(int );
+	void togglePlayback();
+
+
+	// variables
+	static int songId; 
 
 	// Code
 	switch (iMsg) {
@@ -173,13 +184,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		switch (wParam) {
 
-		case 27:
+		case VK_ESCAPE:
 			DestroyWindow(hwnd);
+			break;
+
+		case VK_SPACE:
+			// playSong(songId);
+			togglePlayback();
 			break;
 
 		default:
 			break;
-
 		}
 		break;
 
@@ -220,6 +235,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			cameraEyeY = cameraEyeY + 1.0f;
 			cameraCenterY = cameraCenterY + 1.0f;
 			break;
+		case 'n':
+			playSong(songId);
+			songId++;
+			if(songId > NUM_AUDIO-1)
+				songId = 0;
+			break;	
+		case 'b':
+			playSong(songId);
+			songId--;
+			if(songId < 0)
+				songId = NUM_AUDIO-1;
+			break;	
 		default:
 			break;
 
@@ -245,6 +272,52 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
 
+}
+
+int playSong(int songId)
+{
+	// variable
+	static int lastSongId = -1;
+ 
+	// code
+	// if(gbPlayback && lastSongId == songId) 
+	// {
+	// 	pauseAudio();
+	// 	gbPlayback = FALSE;
+	// }
+	// else if (!gbPlayback && lastSongId == songId)
+	// {
+	// 	resumeAudio();
+	// 	gbPlayback = TRUE;
+	// }
+	// else
+	{
+		char audiopath[64] = {0};
+		snprintf(audiopath, sizeof(audiopath), "%s%s", AUDIO_DIR, szAudios[songId]);
+		if(initializeAudio(audiopath))
+		{
+			LOG("initializeAudio() failed for file: %s\n", audiopath);
+			return (-1);
+		}
+		playAudio();
+	}
+	lastSongId = songId;
+	return (0);
+}
+
+void togglePlayback()
+{
+	// code
+	if(gbPlayback) 
+	{
+		pauseAudio();
+		gbPlayback = FALSE;
+	}
+	else
+	{
+		resumeAudio();
+		gbPlayback = TRUE;
+	} 
 }
 
 int initialize(void) {
@@ -473,6 +546,9 @@ void uninitialize(void) {
 	void ToggleFullScreen(void);
 
 	// Code
+
+	// audio
+	uninitializeAudio();
 
 	//uninitialize all scenes
 	uninitializeScene_PlaceHolder();
