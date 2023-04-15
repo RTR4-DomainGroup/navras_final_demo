@@ -10,7 +10,7 @@
 //void updateInterleaved(void);
 //void uninitializeInterleaved(void);
 
-int initializeCloudNoise(void);
-void displayCloudNoise(void);
-void updateCloudNoise(void);
-void uninitializeCloudNoise(void);
+int initializeScene_PlaceHolder(void);
+void displayScene_PlaceHolder(void);
+void updateScene_PlaceHolder(void);
+void uninitializeScene_PlaceHolder(void);

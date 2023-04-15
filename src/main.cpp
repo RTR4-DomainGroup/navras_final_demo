@@ -1,14 +1,12 @@
 // Header Files
 #include "../inc/common.h"
-#include "../inc/Sphere.h"
 #include "../inc/shaders.h"
-#include "../inc/geometry.h"
 #include "../inc/scenes/scenes.h"
+#include "../inc/camera.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "lib/Sphere.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -192,7 +190,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case 'f':
 			ToggleFullScreen();
 			break;
-
+		case 'W':
+		case 'w':
+			cameraEyeZ = cameraEyeZ - 1.0f;
+			cameraCenterZ = cameraCenterZ - 1.0f;
+			break;
+		case 'S':
+		case 's':
+			cameraEyeZ = cameraEyeZ + 1.0f;
+			cameraCenterZ = cameraCenterZ + 1.0f;
+			break;
+		case 'A':
+		case 'a':
+			cameraEyeX = cameraEyeX - 1.0f;
+			cameraCenterX = cameraCenterX - 1.0f;
+			break;
+		case 'D':
+		case 'd':
+			cameraEyeX = cameraEyeX + 1.0f;
+			cameraCenterX = cameraCenterX + 1.0f;
+			break;
+		case 'Q':
+		case 'q':
+			cameraEyeY = cameraEyeY - 1.0f;
+			cameraCenterY = cameraCenterY - 1.0f;
+			break;
+		case 'E':
+		case 'e':
+			cameraEyeY = cameraEyeY + 1.0f;
+			cameraCenterY = cameraCenterY + 1.0f;
+			break;
 		default:
 			break;
 
@@ -293,29 +320,29 @@ int initialize(void) {
 
     }
 
-    if(initializeGeometry() != 0)
-    {
-
-        fprintf(gpFile, "initializeGeometry() FAILED !!!\n");
-        return (-7);
-
-    }
 
 	// Initialize Scenes
 
-	//if(initializeInterleaved() != 0)
-	//{
-
-	//	fprintf(gpFile, "initializeInterleaved() FAILED !!!\n");
- //       return (-8);
-
-	//}
-
-	if (initializeCloudNoise() != 0)
+	if(initializeScene_PlaceHolder() != 0)
 	{
-		fprintf(gpFile, "initializeCloudNoise() FAILED !!!\n");
-		return (-9);
+
+		fprintf(gpFile, "initializeScene_PlaceHolder() FAILED !!!\n");
+        return (-8);
+
 	}
+
+	// initialize camera
+	cameraEyeX = 0.0f;
+	cameraEyeY = 0.0f;
+	cameraEyeZ = 20.0f;
+
+	cameraCenterX = 0.0f;
+	cameraCenterY = 0.0f;
+	cameraCenterZ = 0.0f;
+
+	cameraUpX = 0.0f;
+	cameraUpY = 1.0f;
+	cameraUpZ = 0.0f;
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
@@ -405,14 +432,14 @@ void ToggleFullScreen(void) {
 
 void display(void)
 {
-
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Call Scenes Display Here
-	//displayInterleaved();
+	// set camera
+	setCamera();
 
-	displayCloudNoise();
+	// Call Scenes Display Here
+	displayScene_PlaceHolder();
 
 	SwapBuffers(ghdc);
 
@@ -422,10 +449,9 @@ void update(void)
 {
 
 	// Code
+	
 	// Call Scenes Update Here
-	//updateInterleaved();
-
-	updateCloudNoise();
+	updateScene_PlaceHolder();
 }
 
 void resize(int width, int height) {
@@ -449,13 +475,11 @@ void uninitialize(void) {
 
 	// Code
 
-	//uninitializeInterleaved();
+	//uninitialize all scenes
+	uninitializeScene_PlaceHolder();
 
-	//uninitializeADSShader();
-
-	uninitializeCloudNoise();
-
-	uninitializeCloudNoiseShader();
+	//uninitialize all shaders
+	uninitializeADSShader();
 
 	if (gbFullScreen) {
 
