@@ -72,7 +72,6 @@ enum {
 #include <GL/gl.h>
 
 #define TEXTURE_DIR "res\\textures\\"
-
 #define AUDIO_DIR "res\\audios\\"
 
 // #define PATH_SEPARATOR '\\'
