@@ -308,7 +308,6 @@ int initialize(void) {
     // Calling Shaders
     if(initAllShaders())
     {
-
         LOG("All Shaders were successfull !!!\n");
 
     }
@@ -479,7 +478,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolder();
 
 	//uninitialize all shaders
-	uninitializeADSShader();
+	uninitializeAllShaders();
 
 	if (gbFullScreen) {
 
