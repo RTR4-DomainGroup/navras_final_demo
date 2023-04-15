@@ -18,6 +18,9 @@ GLuint vbo_quad;
 GLuint vao_triangle; 
 GLuint vbo_triangle;
 
+// qaud for cloud
+GLuint vao_quad_cloud;
+GLuint vbo_quad_cloud;
 
 // sphere
 static sphere::Mesh objSphere;
@@ -182,6 +185,40 @@ void initializeQuad(void)
     
 }
 
+void initializeQuadForCloud(void)
+{
+    const GLfloat quadPN[] =
+    {
+        //PCNT
+        // positions                     //normals     
+        
+        // Front face                     // Front face
+        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,
+        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,
+    };
+
+    // VAO AND VBO RELATED CODE
+    // vao_Cube
+    glGenVertexArrays(1, &vao_quad_cloud);
+    glBindVertexArray(vao_quad_cloud);
+
+    glGenBuffers(1, &vbo_quad);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_quad_cloud);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadPN), quadPN, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+
+    // Position
+    glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
+    glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
+    // Normal
+    glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+
+    glBindVertexArray(0);
+}
+
 
 void initializePyramid(void)
 {
@@ -280,6 +317,16 @@ void displayQuad(void)
 	glBindVertexArray(0);
 }
 
+void displayQuadForCloud(void)
+{
+    // Code
+    glBindVertexArray(vao_quad_cloud);
+
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    glBindVertexArray(0);
+}
+
 
 void displayPyramid(void)
 {
@@ -360,6 +407,22 @@ void uninitializeQuad(void)
 		glDeleteVertexArrays(1, &vao_quad);
 		vao_quad = 0;
 	}
+}
+
+void uninitializeQuadForCloud(void)
+{
+    // Code
+    if (vbo_quad_cloud) {
+
+        glDeleteBuffers(1, &vbo_quad_cloud);
+        vbo_quad_cloud = 0;
+    }
+
+    if (vao_quad_cloud) {
+
+        glDeleteVertexArrays(1, &vao_quad_cloud);
+        vao_quad_cloud = 0;
+    }
 }
 
 void uninitializePyramid(void)

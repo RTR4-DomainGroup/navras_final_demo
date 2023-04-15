@@ -2,7 +2,7 @@ cls
 
 del Navras.exe
 
-cl.exe /c /EHsc /I C:\glew\include src/*.cpp src/effects/*.cpp src/helper/*.cpp src/shaders/*.cpp src/scenes/*.cpp
+cl.exe /c /EHsc /I C:\glew\include src/*.cpp src/helper/*.cpp src/shaders/*.cpp src/scenes/*.cpp
 
 rc.exe res/resources.rc
 

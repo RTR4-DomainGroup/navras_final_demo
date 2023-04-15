@@ -45,16 +45,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	int iWCoorx, iWCoory;
 
 	// Code
-	if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
+	//if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
 
-		MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
-		exit(0);
+	//	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
+	//	exit(0);
 
-	}
-	else {
+	//}
+	//else {
 
-		fprintf(gpFile, "Log File SuccessFully Created!!!\n");
-	}
+	//	LOG("Log File SuccessFully Created!!!\n");
+	//}
 
 	// Initialisation Of WNDCLASSEX Structure
 	wndclass.cbSize = sizeof(WNDCLASSEX);
@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	if(iRetVal < 0)
 	{
 
-		fprintf(gpFile, "Initialize() FAILED!!!\n");
+		LOG("Initialize() FAILED!!!\n");
 		uninitialize();
 		return(-1);
 
@@ -309,13 +309,13 @@ int initialize(void) {
     if(initAllShaders())
     {
 
-        fprintf(gpFile, "All Shaders were successfull !!!\n");
+        LOG("All Shaders were successfull !!!\n");
 
     }
     else
     {
 
-        fprintf(gpFile, "All Shaders FAILED !!!\n");
+        LOG("All Shaders FAILED !!!\n");
         return (-6);
 
     }
@@ -326,7 +326,7 @@ int initialize(void) {
 	if(initializeScene_PlaceHolder() != 0)
 	{
 
-		fprintf(gpFile, "initializeScene_PlaceHolder() FAILED !!!\n");
+		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
         return (-8);
 
 	}
@@ -371,18 +371,18 @@ void printGLInfo(void) {
 	GLint numExtentions = 0;
 
 	// Code
-	fprintf(gpFile, "OpenGL Vendor: %s\n", glGetString(GL_VENDOR));							// Graphic Card's Company
-	fprintf(gpFile, "OpenGL Renderer: %s\n", glGetString(GL_RENDERER));						// Graphic Card
-	fprintf(gpFile, "OpenGL Version: %s\n", glGetString(GL_VERSION));						// Graphic Card/Driver Version
-	fprintf(gpFile, "OpenGLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));	// Shading Language Version
+	LOG("OpenGL Vendor: %s\n", glGetString(GL_VENDOR));							// Graphic Card's Company
+	LOG("OpenGL Renderer: %s\n", glGetString(GL_RENDERER));						// Graphic Card
+	LOG("OpenGL Version: %s\n", glGetString(GL_VERSION));						// Graphic Card/Driver Version
+	LOG("OpenGLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));	// Shading Language Version
 
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtentions);
 
-	fprintf(gpFile, "No. OF Supported Extensions: %d\n", numExtentions);
+	LOG("No. OF Supported Extensions: %d\n", numExtentions);
 
 	for (int i = 0; i < numExtentions; i++) {
 	
-		fprintf(gpFile, "%s\n", glGetStringi(GL_EXTENSIONS, i));
+		LOG("%s\n", glGetStringi(GL_EXTENSIONS, i));
 
 	}
 
@@ -515,12 +515,12 @@ void uninitialize(void) {
 
 	}
 
-	if (gpFile) {
+	//if (gpFile) {
 
-		fprintf(gpFile, "Log File Close!!!\n");
-		fclose(gpFile);
-		gpFile = NULL;
+	//	fprintf(gpFile, "Log File Close!!!\n");
+	//	fclose(gpFile);
+	//	gpFile = NULL;
 
-	}
+	//}
 
 }

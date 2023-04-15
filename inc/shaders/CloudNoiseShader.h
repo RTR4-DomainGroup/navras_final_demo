@@ -10,12 +10,12 @@ struct CloudNoiseUniform
 	GLuint laUniform;
 	GLuint ldUniform;
 	GLuint lsUniform;
-	GLuint lighPositionUniform;
+	GLuint lightPositionUniform;
 
 	GLuint kaUniform;
 	GLuint kdUniform;
 	GLuint ksUniform;
-	GLuint matrailShininessUniform;
+	GLuint materialShininessUniform;
 
 	// extra to be use later for configuration
 	GLuint scaleUniform;
