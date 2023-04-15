@@ -3,8 +3,6 @@
 // variable declarations
 GLuint cloudNoiseShaderProgramObject;
 
-extern FILE* gpFile;
-
 CloudNoiseUniform cloudNoiseUniform;
 
 int intializeCloudNoiseShader(void)
@@ -69,7 +67,7 @@ int intializeCloudNoiseShader(void)
 			{
 				GLsizei written;
 				glGetShaderInfoLog(vertexShaderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "Cloud Noise Vertex Shader Compilation Log: %s\n", log);
+				LOG("Cloud Noise Vertex Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeCloudNoiseShader();
 			}
@@ -135,7 +133,7 @@ int intializeCloudNoiseShader(void)
 			{
 				GLsizei written;
 				glGetShaderInfoLog(fragmentShaderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "Cloud Noise Fragment Shader Compilation Log: %s\n", log);
+				LOG("Cloud Noise Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeCloudNoiseShader();
 			}
@@ -162,7 +160,7 @@ int intializeCloudNoiseShader(void)
 			{
 				GLsizei written;
 				glGetShaderInfoLog(cloudNoiseShaderProgramObject, infoLogLength, &written, log);
-				fprintf(gpFile, "Cloud Noise ShaderProgram Linking Log: %s\n", log);
+				LOG("Cloud Noise ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeCloudNoiseShader();
 			}
@@ -177,12 +175,12 @@ int intializeCloudNoiseShader(void)
 	cloudNoiseUniform.laUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_la");
 	cloudNoiseUniform.ldUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_ld");
 	cloudNoiseUniform.lsUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_ls");
-	cloudNoiseUniform.lighPositionUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_lightPosition");
+	cloudNoiseUniform.lightPositionUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_lightPosition");
 
 	cloudNoiseUniform.kaUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_ka");
 	cloudNoiseUniform.kdUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_kd");
 	cloudNoiseUniform.ksUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_ks");
-	cloudNoiseUniform.matrailShininessUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_materialShininess");
+	cloudNoiseUniform.materialShininessUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_materialShininess");
 
 	cloudNoiseUniform.noiseSamplerUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_noiseSampler");
 	cloudNoiseUniform.skyColorUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_skyColor");

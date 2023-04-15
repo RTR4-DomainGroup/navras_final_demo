@@ -11,9 +11,6 @@
 // #define WIN_WIDTH 1280
 // #define WIN_HEIGHT 720
 
-
-#define DOMAIN_PI 3.14159265358979323846
-
 // regular
 #define WIN_WIDTH 800
 #define WIN_HEIGHT 600
@@ -48,3 +45,5 @@
 #define Y_SEPARTION_OFFSET 0.0f
 #define Z_SEPARTION_OFFSET 0.0f
 
+// logging
+#define MAX_LOG_LENGTH 255
