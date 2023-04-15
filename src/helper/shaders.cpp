@@ -23,6 +23,7 @@ void uninitAllShaders(void)
 {
 
     // Code
+    uninitializeGodraysShader();
     uninitializeADSShader();
 
 }

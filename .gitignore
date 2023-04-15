@@ -1,5 +1,11 @@
-res/**/*.*
-src/*.exe
-src/*.obj
-src/Log.txt
+res/audio
+res/videos
+res/textures
+res/models
+res/fonts
 
+*.exe
+src/*.obj
+Log.txt
+
+.vs/
