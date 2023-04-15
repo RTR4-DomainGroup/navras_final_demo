@@ -9,8 +9,9 @@ struct BillboardingUniform
     GLuint projectionMatrixUniform;
 
     GLuint textureSamplerUniform;
+    
     // billboarding enable uniform
-    GLuint billboardingUniform;
+    GLuint billboardingEnableUniform;
 };
 
 int initializeBillboardingShader(void);

@@ -67,12 +67,9 @@ int initializeBillboardingShader(void)
 				glGetShaderInfoLog(vertexShadderObject, infoLogLength, &written, log);
 				fprintf(gpFile, "ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
-				uninitializeADSShader();
-
+				uninitializeBillboardingShader();
 			}
-
 		}
-
 	}
 
 
@@ -109,8 +106,7 @@ int initializeBillboardingShader(void)
 				glGetShaderInfoLog(fragmentShadderObject, infoLogLength, &written, log);
 				fprintf(gpFile, "ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
-				uninitializeADSShader();
-
+				uninitializeBillboardingShader();
 			}
 		}
 	}
@@ -124,7 +120,6 @@ int initializeBillboardingShader(void)
 	glBindAttribLocation(billboardingShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 
 	glLinkProgram(billboardingShaderProgramObject);
-	
 	glGetProgramiv(billboardingShaderProgramObject, GL_LINK_STATUS, &status);
 	if (status == GL_FALSE) {
 	
@@ -138,12 +133,9 @@ int initializeBillboardingShader(void)
 				glGetShaderInfoLog(billboardingShaderProgramObject, infoLogLength, &written, log);
 				fprintf(gpFile, "ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
-				uninitializeADSShader();
-
+				uninitializeBillboardingShader();
 			}
-
 		}
-
 	}
 
 	//
@@ -151,7 +143,7 @@ int initializeBillboardingShader(void)
 	billboardingUniform.viewMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_viewMatrix");
 	billboardingUniform.projectionMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_projectionMatrix");
 	billboardingUniform.textureSamplerUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_texturesampler");
-	billboardingUniform.billboardingUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_billboarding");
+	billboardingUniform.billboardingEnableUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_billboarding");
 
     
 	glUseProgram(billboardingShaderProgramObject);
@@ -164,7 +156,6 @@ int initializeBillboardingShader(void)
 
 struct BillboardingUniform useBillboardingShader(void)
 {
-
     // Code
     glUseProgram(billboardingShaderProgramObject);
     return billboardingUniform;
@@ -189,7 +180,6 @@ void uninitializeBillboardingShader(void)
 			glDetachShader(billboardingShaderProgramObject, shaderObjects[i]);
 			glDeleteShader(shaderObjects[i]);
 			shaderObjects[i] = 0;
-
 		}
 
 		free(shaderObjects);
@@ -198,10 +188,6 @@ void uninitializeBillboardingShader(void)
 		glUseProgram(0);
 		glDeleteProgram(billboardingShaderProgramObject);
 		billboardingShaderProgramObject = 0;
-
 	}
-
 }
-
-
 

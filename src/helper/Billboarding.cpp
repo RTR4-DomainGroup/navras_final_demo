@@ -1,5 +1,6 @@
 #include "../../inc/common.h"
 #include "../../inc/geometry.h"
+#include "../../inc/texture_loader.h"
 
 // vertex array object
 GLuint vao_instancing;
@@ -10,8 +11,14 @@ GLuint vbo_position;
 GLuint vbo_position_basequad; 
 GLuint vbo_texcoords; 
 
+TEXTURE texture_grass;
+TEXTURE texture_flower;
+
+
 int initializeBillboarding(void)
 {
+	// local variable
+	int retVal = 0;
 
     // Code
     // declaration of vertex data arrays
@@ -23,6 +30,7 @@ int initializeBillboarding(void)
         -1.0f, -1.0f, 0.0f,
         1.0f, -1.0f, 0.0f
     };
+
     const GLfloat instance_texcoords[] = 
     {
         1.0f, 0.0f,
@@ -39,7 +47,7 @@ int initializeBillboarding(void)
 		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
 		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
 		instance_positions[(i*4)+3] = 1.0f;
-		log_printf("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+		LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
     }
 
     // This array (vertex buffer) we need to push to pipeline (GPU memory)
@@ -127,7 +135,7 @@ int initializeBillboarding(void)
 	sprintf(imagefile, "%sgrass.png", TEXTURE_DIR);
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
 	{
-        log_printf("Texture loading failed for image %s\n", imagefile);
+        LOG("Texture loading failed for image %s\n", imagefile);
         return (-6);
     }
 

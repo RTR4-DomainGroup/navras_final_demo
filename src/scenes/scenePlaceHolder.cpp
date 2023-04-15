@@ -34,7 +34,6 @@ int initializeScene_PlaceHolder(void)
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -79,17 +78,11 @@ void displayScene_PlaceHolder(void)
 	mat4 rotationMatrix_z = mat4::identity();
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-
 	rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
-
 	rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
-
 	rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
-
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -99,22 +92,18 @@ void displayScene_PlaceHolder(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_Marble);
 	
+	// Sending texture Related Uniforms
     glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
 
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
-
 	glUniform4fv(sceneADSUniform.laUniform, 1, LightAmbient);
 	glUniform4fv(sceneADSUniform.ldUniform, 1, LightDiffuse);
 	glUniform4fv(sceneADSUniform.lsUniform, 1, LightSpecular);
-
 	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, LightPosition);
-
-
 	glUniform4fv(sceneADSUniform.kaUniform, 1, MaterialAmbient);
 	glUniform4fv(sceneADSUniform.kdUniform, 1, MaterialDiffuse);
 	glUniform4fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
-
 	glUniform1f(sceneADSUniform.materialShininessUniform, MaterialShininess);
 
 

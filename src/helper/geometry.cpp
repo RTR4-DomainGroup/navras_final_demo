@@ -2,6 +2,8 @@
 #include "../../inc/geometry.h"
 #include "../../inc/Sphere.h"
 
+// coordinates - x, y, z 
+#define NUM_CORDS 3 
 // cube
 GLuint vao_Cube;
 GLuint vbo_Cube;
@@ -13,6 +15,11 @@ GLuint vbo_pyramid;
 // quad
 GLuint vao_quad; 
 GLuint vbo_quad;
+
+// instanced quads
+GLuint vao_quadInstanced; 
+GLuint vbo_quadInstanced; 
+GLuint vbo_quadInstancePosition;
 
 // triangle
 GLuint vao_triangle; 
@@ -142,7 +149,6 @@ void initializeTriangle(void)
     
 }
 
-
 void initializeQuad(void)
 {
     const GLfloat quadPCNT[] = 
@@ -182,6 +188,59 @@ void initializeQuad(void)
     
 }
 
+void initializeInstancedQuad(int numInstances, GLfloat* instancePositions)
+{
+    const GLfloat quadPCNT[] = 
+    {
+                                                //PCNT
+        // positions                     //normals                   //texture
+
+        // Front face                     // Front face             // Front face
+        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             1.0f,1.0f,
+        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             0.0f,1.0f,
+        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f,0.0f,
+    };
+
+    GLuint offset = 0;
+
+
+    // VAO AND VBO RELATED CODE
+	// vao_Cube
+	glGenVertexArrays(1, &vao_quadInstanced);
+	glBindVertexArray(vao_quadInstanced);
+
+	glGenBuffers(1, &vbo_quadInstanced);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_quadInstanced);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPCNT), NULL, GL_STATIC_DRAW); 
+	
+    // Position
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
+	// Normal
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+
+	// TexCoord
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    
+    // Per Instance Position
+    glGenBuffers(1, &vbo_quadInstancePosition);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_quadInstancePosition);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * NUM_CORDS * numInstances, instancePositions, GL_STATIC_DRAW); 
+    glVertexAttribPointer(DOMAIN_ATTRIBUTE_INSTANCE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *)NULL);
+    glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_INSTANCE_POSITION);
+    glVertexAttribDivisor(DOMAIN_ATTRIBUTE_INSTANCE_POSITION, 1);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glBindVertexArray(0);
+}
 
 void initializePyramid(void)
 {
@@ -280,6 +339,21 @@ void displayQuad(void)
 	glBindVertexArray(0);
 }
 
+void displayInstancedQuads(int numInstances)
+{
+    glBindVertexArray(vao_quadInstanced);
+    
+    // drawing code of 12 lac lines
+    glDrawArraysInstanced(
+        GL_TRIANGLE_FAN,
+        0, // start index
+        4, // size - how may vertices to draw
+        numInstances  // how many instances to draw
+    );
+    
+    // unbind vao
+    glBindVertexArray(0);
+}
 
 void displayPyramid(void)
 {
@@ -294,8 +368,6 @@ void displayPyramid(void)
 
 	glBindVertexArray(0);
 }
-
-
 
 void displaySphere(void)
 {
@@ -362,17 +434,35 @@ void uninitializeQuad(void)
 	}
 }
 
+void uninitializInstancedQuads(void)
+{
+    if (vbo_quadInstancePosition) {
+
+		glDeleteBuffers(1, &vbo_quadInstancePosition);
+		vbo_quadInstancePosition = 0;
+	}
+    if (vbo_quadInstanced) {
+
+		glDeleteBuffers(1, &vbo_quadInstanced);
+		vbo_quadInstanced = 0;
+	}
+
+	if (vao_quadInstanced) {
+
+		glDeleteVertexArrays(1, &vao_quadInstanced);
+		vao_quadInstanced = 0;
+	}
+}
+
 void uninitializePyramid(void)
 {
     // Code
     if (vbo_pyramid) {
-
 		glDeleteBuffers(1, &vbo_pyramid);
 		vbo_pyramid = 0;
 	}
 
 	if (vao_pyramid) {
-
 		glDeleteVertexArrays(1, &vao_pyramid);
 		vao_pyramid = 0;
 	}
