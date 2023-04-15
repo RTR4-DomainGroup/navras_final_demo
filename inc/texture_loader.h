@@ -66,9 +66,6 @@ void Draw_Text(const char* text, size_t length);
 #include <GL/gl.h>
 #include "common.h"
 
-#define TEXTURE_DIR "res\\textures\\"
-#define AUDIO_DIR   "res\\audios\\"
-
 BOOL LoadGLTexture_UsingBitMap(GLuint* texture, TCHAR imageRecId[]);
 
 BOOL LoadGLTexture(GLuint* texture, TCHAR imageResourceID[]);
