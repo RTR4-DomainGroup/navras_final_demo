@@ -203,7 +203,7 @@ void initializeQuadForCloud(void)
     glGenVertexArrays(1, &vao_quad_cloud);
     glBindVertexArray(vao_quad_cloud);
 
-    glGenBuffers(1, &vbo_quad);
+    glGenBuffers(1, &vbo_quad_cloud);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_quad_cloud);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadPN), quadPN, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 

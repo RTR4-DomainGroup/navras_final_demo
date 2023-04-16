@@ -1,5 +1,5 @@
 #pragma once
-#include "../common.h"
+#include "../helper/common.h"
 
 struct CloudNoiseUniform
 {

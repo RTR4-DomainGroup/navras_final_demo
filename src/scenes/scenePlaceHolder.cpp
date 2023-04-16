@@ -10,17 +10,17 @@ GLuint texture_Marble;
 
 extern mat4 viewMatrix;
 
-GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
+//GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+//GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+//GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
+//
+//GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat MaterialShininess = 128.0f;
 
-GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialShininess = 128.0f;
-
-GLfloat angleCube;
+//GLfloat angleCube;
 
 // Noise related Code changes
 struct CloudNoiseUniform sceneCloudNoiseUniform;
@@ -54,16 +54,16 @@ int initializeScene_PlaceHolder(void)
 
     // Code.
     // Texture
-	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
-		//uninitialize();
-		LOG("LoadGLTexture FAILED!!!\n");
-		return(-1);
+	//if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
+	//	//uninitialize();
+	//	LOG("LoadGLTexture FAILED!!!\n");
+	//	return(-1);
 
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
-	}
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+	//}
 
 
     // initializeCube();
@@ -152,7 +152,7 @@ void displayScene_PlaceHolder(void)
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
