@@ -7,6 +7,8 @@ GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
 
+extern mat4 viewMatrix;
+
 GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -30,13 +32,13 @@ int initializeScene_PlaceHolder(void)
     // Texture
 	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
 		//uninitialize();
-		fprintf(gpFile, "LoadGLTexture FAILED!!!\n");
+		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
 
 	}
 	else
 	{
-		fprintf(gpFile, "LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 
 
@@ -65,7 +67,7 @@ void displayScene_PlaceHolder(void)
 	mat4 translationMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
 
 	// Square
 	// Transformations

@@ -72,8 +72,10 @@ enum {
 #include <GL/gl.h>
 
 #define TEXTURE_DIR "res\\textures\\"
-
 #define AUDIO_DIR "res\\audios\\"
+
+// #define PATH_SEPARATOR '\\'
+#define PATH_SEPARATOR '/'
 
 #else
 
@@ -89,8 +91,15 @@ enum {
 
 // logging helpers
 int log_open(char const* FileName, char const* Mode);
-int log_printf(char const* const _Format, ...);
+int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...);
 int log_close();
 
+char* currentDateTime(char* log_buffer);
+char* vararg2string(const char* format, ...);
 
+// #define LOG(print_buff) \
+// 	log_printf_novararg( __FILE__, __FUNCTION__, __LINE__,  vararg2string(print_buff))
 
+#define LOG(format, ...) \
+	log_printf(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
+	

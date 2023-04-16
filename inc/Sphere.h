@@ -298,8 +298,8 @@ public:
 void makeSphere(Mesh& sphereMesh, float fRadius, int iSlices, int iStacks)
 {
     // code
-    float drho = float(DOMAIN_PI) / float(iStacks);
-    float dtheta = 2.0 * float(DOMAIN_PI) / float(iSlices);
+    float drho = float(M_PI) / float(iStacks);
+    float dtheta = 2.0 * float(M_PI) / float(iSlices);
     float ds = 1.0 / float(iSlices);
     float dt = 1.0 / float(iStacks);
     float t = 1.0;

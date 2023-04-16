@@ -2,6 +2,8 @@
 #include "../inc/common.h"
 #include "../inc/shaders.h"
 #include "../inc/scenes/scenes.h"
+#include "../inc/camera.h"
+#include "../inc/audioplayer.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -17,7 +19,11 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HWND ghwnd = NULL;
 BOOL gbFullScreen = FALSE;
 BOOL gbActiveWindow = FALSE;
-FILE* gpFile = NULL;
+
+// audio
+BOOL gbPlayback = FALSE;
+
+// FILE* gpFile = NULL;
 HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
@@ -44,16 +50,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	int iWCoorx, iWCoory;
 
 	// Code
-	if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
+	// if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
 
-		MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
-		exit(0);
+	// 	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
+	// 	exit(0);
 
-	}
-	else {
+	// }
+	// else {
 
-		fprintf(gpFile, "Log File SuccessFully Created!!!\n");
-	}
+	// 	LOG("Log File SuccessFully Created!!!\n");
+	// }
 
 	// Initialisation Of WNDCLASSEX Structure
 	wndclass.cbSize = sizeof(WNDCLASSEX);
@@ -103,7 +109,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	if(iRetVal < 0)
 	{
 
-		fprintf(gpFile, "Initialize() FAILED!!!\n");
+		LOG("Initialize() FAILED!!!\n");
 		uninitialize();
 		return(-1);
 
@@ -153,6 +159,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	// Function Declarations
 	void ToggleFullScreen(void);
 	void resize(int, int);
+	int playSong(int );
+	void togglePlayback();
+
+
+	// variables
+	static int songId; 
 
 	// Code
 	switch (iMsg) {
@@ -172,13 +184,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 		switch (wParam) {
 
-		case 27:
+		case VK_ESCAPE:
 			DestroyWindow(hwnd);
+			break;
+
+		case VK_SPACE:
+			// playSong(songId);
+			togglePlayback();
 			break;
 
 		default:
 			break;
-
 		}
 		break;
 
@@ -189,7 +205,48 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case 'f':
 			ToggleFullScreen();
 			break;
-
+		case 'W':
+		case 'w':
+			cameraEyeZ = cameraEyeZ - 1.0f;
+			cameraCenterZ = cameraCenterZ - 1.0f;
+			break;
+		case 'S':
+		case 's':
+			cameraEyeZ = cameraEyeZ + 1.0f;
+			cameraCenterZ = cameraCenterZ + 1.0f;
+			break;
+		case 'A':
+		case 'a':
+			cameraEyeX = cameraEyeX - 1.0f;
+			cameraCenterX = cameraCenterX - 1.0f;
+			break;
+		case 'D':
+		case 'd':
+			cameraEyeX = cameraEyeX + 1.0f;
+			cameraCenterX = cameraCenterX + 1.0f;
+			break;
+		case 'Q':
+		case 'q':
+			cameraEyeY = cameraEyeY - 1.0f;
+			cameraCenterY = cameraCenterY - 1.0f;
+			break;
+		case 'E':
+		case 'e':
+			cameraEyeY = cameraEyeY + 1.0f;
+			cameraCenterY = cameraCenterY + 1.0f;
+			break;
+		case 'n':
+			playSong(songId);
+			songId++;
+			if(songId > NUM_AUDIO-1)
+				songId = 0;
+			break;	
+		case 'b':
+			playSong(songId);
+			songId--;
+			if(songId < 0)
+				songId = NUM_AUDIO-1;
+			break;	
 		default:
 			break;
 
@@ -215,6 +272,52 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
 
+}
+
+int playSong(int songId)
+{
+	// variable
+	static int lastSongId = -1;
+ 
+	// code
+	// if(gbPlayback && lastSongId == songId) 
+	// {
+	// 	pauseAudio();
+	// 	gbPlayback = FALSE;
+	// }
+	// else if (!gbPlayback && lastSongId == songId)
+	// {
+	// 	resumeAudio();
+	// 	gbPlayback = TRUE;
+	// }
+	// else
+	{
+		char audiopath[64] = {0};
+		snprintf(audiopath, sizeof(audiopath), "%s%s", AUDIO_DIR, szAudios[songId]);
+		if(initializeAudio(audiopath))
+		{
+			LOG("initializeAudio() failed for file: %s\n", audiopath);
+			return (-1);
+		}
+		playAudio();
+	}
+	lastSongId = songId;
+	return (0);
+}
+
+void togglePlayback()
+{
+	// code
+	if(gbPlayback) 
+	{
+		pauseAudio();
+		gbPlayback = FALSE;
+	}
+	else
+	{
+		resumeAudio();
+		gbPlayback = TRUE;
+	} 
 }
 
 int initialize(void) {
@@ -279,13 +382,13 @@ int initialize(void) {
     if(initAllShaders())
     {
 
-        fprintf(gpFile, "All Shaders were successfull !!!\n");
+        LOG("All Shaders were successfull !!!\n");
 
     }
     else
     {
 
-        fprintf(gpFile, "All Shaders FAILED !!!\n");
+        LOG("All Shaders FAILED !!!\n");
         return (-6);
 
     }
@@ -296,10 +399,23 @@ int initialize(void) {
 	if(initializeScene_PlaceHolder() != 0)
 	{
 
-		fprintf(gpFile, "initializeScene_PlaceHolder() FAILED !!!\n");
+		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
         return (-8);
 
 	}
+
+	// initialize camera
+	cameraEyeX = 0.0f;
+	cameraEyeY = 0.0f;
+	cameraEyeZ = 20.0f;
+
+	cameraCenterX = 0.0f;
+	cameraCenterY = 0.0f;
+	cameraCenterZ = 0.0f;
+
+	cameraUpX = 0.0f;
+	cameraUpY = 1.0f;
+	cameraUpZ = 0.0f;
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
@@ -328,18 +444,18 @@ void printGLInfo(void) {
 	GLint numExtentions = 0;
 
 	// Code
-	fprintf(gpFile, "OpenGL Vendor: %s\n", glGetString(GL_VENDOR));							// Graphic Card's Company
-	fprintf(gpFile, "OpenGL Renderer: %s\n", glGetString(GL_RENDERER));						// Graphic Card
-	fprintf(gpFile, "OpenGL Version: %s\n", glGetString(GL_VERSION));						// Graphic Card/Driver Version
-	fprintf(gpFile, "OpenGLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));	// Shading Language Version
+	LOG("OpenGL Vendor: %s\n", glGetString(GL_VENDOR));							// Graphic Card's Company
+	LOG("OpenGL Renderer: %s\n", glGetString(GL_RENDERER));						// Graphic Card
+	LOG("OpenGL Version: %s\n", glGetString(GL_VERSION));						// Graphic Card/Driver Version
+	LOG("OpenGLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));	// Shading Language Version
 
 	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtentions);
 
-	fprintf(gpFile, "No. OF Supported Extensions: %d\n", numExtentions);
+	LOG("No. OF Supported Extensions: %d\n", numExtentions);
 
 	for (int i = 0; i < numExtentions; i++) {
 	
-		fprintf(gpFile, "%s\n", glGetStringi(GL_EXTENSIONS, i));
+		LOG("%s\n", glGetStringi(GL_EXTENSIONS, i));
 
 	}
 
@@ -389,9 +505,11 @@ void ToggleFullScreen(void) {
 
 void display(void)
 {
-
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// set camera
+	setCamera();
 
 	// Call Scenes Display Here
 	displayScene_PlaceHolder();
@@ -429,6 +547,9 @@ void uninitialize(void) {
 	void ToggleFullScreen(void);
 
 	// Code
+
+	// audio
+	uninitializeAudio();
 
 	//uninitialize all scenes
 	uninitializeScene_PlaceHolder();
@@ -470,12 +591,12 @@ void uninitialize(void) {
 
 	}
 
-	if (gpFile) {
+	// if (gpFile) {
 
-		fprintf(gpFile, "Log File Close!!!\n");
-		fclose(gpFile);
-		gpFile = NULL;
+	// 	LOG("Log File Close!!!\n");
+	// 	fclose(gpFile);
+	// 	gpFile = NULL;
 
-	}
+	// }
 
 }

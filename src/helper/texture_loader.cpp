@@ -1,7 +1,7 @@
 #include "../../inc/texture_loader.h"
 
 // Texture lib header
-#include "../../inc/SOIL/SOIL.h"
+#include "SOIL/include/SOIL.h"
 
 
 #ifdef __linux__ 
@@ -18,7 +18,7 @@ GLboolean LoadGLTexture(GLuint* a, TCHAR b[])
 #elif _WIN32
 
 
-#pragma comment(lib, "lib\\SOIL\\SOIL.lib")
+#pragma comment(lib, "SOIL\\lib\\SOIL.lib")
 
 // windows code goes here
 
@@ -87,7 +87,7 @@ GLboolean LoadGLTexture_UsingSOIL(GLuint* texture, const char* path)
     );
     if(imageData == NULL)
     {
-		log_printf("SOIL_load_image() failed for file: %s\n", path);
+		LOG("SOIL_load_image() failed for file: %s\n", path);
         return (GL_FALSE);
     }
 
@@ -148,7 +148,7 @@ GLboolean LoadGLTextureData_UsingSOIL(TEXTURE* texture, const char* path)
     );
     if(imageData == NULL)
     {
-		log_printf("SOIL_load_image() failed for file: %s\n", path);
+		LOG("SOIL_load_image() failed for file: %s\n", path);
         return (GL_FALSE);
     }
 
@@ -247,9 +247,9 @@ GLboolean LoadGLTexture_Cubemap(GLuint* texture, const char* path)
         char imagepath[64] = {0};
         snprintf(imagepath, sizeof(imagepath), "%s%s", path, szCubeFaces[i]);
 
-		log_printf("SOIL_load_image() failed for file: %s\n", path);
+		LOG("SOIL_load_image() failed for file: %s\n", path);
 
-        log_printf("loading image %s for texture\n", imagepath);
+        LOG("loading image %s for texture\n", imagepath);
 
         imageData = SOIL_load_image(
             imagepath,
