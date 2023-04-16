@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../common.h"
-#include "../geometry.h"
+#include "../helper/common.h"
+#include "../helper/geometry.h"
 #include "../shaders/ADSLightShader.h"
 
 int initializeScene_PlaceHolder(void);

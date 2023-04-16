@@ -1,9 +1,9 @@
 // Header Files
-#include "../inc/common.h"
-#include "../inc/shaders.h"
+#include "../inc/helper/common.h"
+#include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
-#include "../inc/camera.h"
-#include "../inc/audioplayer.h"
+#include "../inc/helper/camera.h"
+#include "../inc/helper/audioplayer.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")

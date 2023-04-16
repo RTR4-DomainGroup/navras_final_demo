@@ -19,7 +19,7 @@
 #include <AL/include/al.h>
 #include <AL/include/alc.h>
 
-#include "../../inc/common.h"
+#include "../../inc/helper/common.h"
 
 #pragma comment(lib, "AL\\lib\\OpenAL32.lib")
 

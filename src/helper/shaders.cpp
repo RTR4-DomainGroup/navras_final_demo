@@ -1,5 +1,5 @@
-#include "../../inc/common.h"
-#include "../../inc/shaders.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/BillboardingShader.h"

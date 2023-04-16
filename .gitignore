@@ -1,3 +1,8 @@
+lib/ffmpeg
+lib/external
+
+dll/
+
 res/audio
 res/videos
 res/textures
@@ -9,3 +14,4 @@ src/*.obj
 Log.txt
 
 .vs/
+*.zip
