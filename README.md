@@ -1,8 +1,9 @@
 
 # navras_final_demo
-# Resources
-Resource Files may include icons, images, videos and high-res textures.
+# Resources and Libraries
+Resource Files may include libraries, icons, images, videos and high-res textures.
 
-############ Download libraries for project from here: 
-https://drive.google.com/drive/folders/1LTev5GM2O1gFrAHH55_4D8gshxkaOtFZ?usp=share_link
+############ Download libraries and resources for project from here: 
+https://drive.google.com/drive/folders/1L9A3AoO1_Roq9J9Tu1sKcFHRMEs3pD4Y
 
+git 
