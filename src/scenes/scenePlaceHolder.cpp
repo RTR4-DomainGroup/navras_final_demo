@@ -25,6 +25,10 @@ extern mat4 perspectiveProjectionMatrix;
 
 extern FILE* gpFile;
 
+/// Steps
+// 1. initialize(load) texture
+// 2. initialize geometry
+// 3. initialize geometry
 int initializeScene_PlaceHolder(void)
 {
 
