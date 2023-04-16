@@ -1,5 +1,5 @@
 // Helper Camera Utility
-#include "../../inc/camera.h"
+#include "../../inc/helper/camera.h"
 
 GLfloat cameraEyeX;
 GLfloat cameraEyeY;
