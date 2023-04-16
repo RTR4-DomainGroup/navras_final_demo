@@ -1,4 +1,4 @@
-#include "../inc/resources.h"
+#include "../inc/helper/resources.h"
 
 MYICON ICON Icon.ico
 

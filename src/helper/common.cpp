@@ -1,4 +1,4 @@
-#include "../../inc/common.h"
+#include "../../inc/helper/common.h"
 
 
 #pragma once
@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../inc/constants.h"
+#include "../../inc/helper/constants.h"
 
 #ifdef __linux__ 
 
