@@ -1,6 +1,6 @@
-#include "../../inc/common.h"
-#include "../../inc/geometry.h"
-#include "../../inc/Sphere.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/geometry.h"
+#include "../../inc/helper/Sphere.h"
 
 // cube
 GLuint vao_Cube;

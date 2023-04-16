@@ -1,3 +1,6 @@
+lib/ffmpeg
+lib/external
+
 res/audio
 res/videos
 res/textures
