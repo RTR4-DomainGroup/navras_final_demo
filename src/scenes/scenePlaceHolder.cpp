@@ -1,11 +1,13 @@
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/scenes/scenePlaceHolder.h"
-#include "../../inc/texture_loader.h"
+#include "../../inc/helper/texture_loader.h"
 
 GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
+
+extern mat4 viewMatrix;
 
 GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -30,14 +32,21 @@ int initializeScene_PlaceHolder(void)
     // Texture
 	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
 		//uninitialize();
-		fprintf(gpFile, "LoadGLTexture FAILED!!!\n");
+		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
 
 	}
 	else
 	{
-		fprintf(gpFile, "LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
+
+
+    // initializeCube();
+    // initializePyramid();
+    // initializeQuad();
+    // initializeTriangle();
+    initializeSphere();
 
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
@@ -58,7 +67,7 @@ void displayScene_PlaceHolder(void)
 	mat4 translationMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
 
 	// Square
 	// Transformations
@@ -71,7 +80,7 @@ void displayScene_PlaceHolder(void)
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 
-	//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
 
@@ -90,7 +99,7 @@ void displayScene_PlaceHolder(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_Marble);
 	
-    //glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
+    glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
 
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
@@ -110,9 +119,14 @@ void displayScene_PlaceHolder(void)
 
 
 	// Call Geometry over here 
-	displayCube();
+	// displayCube();
+	// displayTriangle();
+    // displayQuad();
+    // displayPyramid();
+	displaySphere();
 
-	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);	
@@ -135,11 +149,18 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
+    uninitializeSphere();
+    // uninitializeTriangle();
+    // uninitializeQuad();
+    // uninitializePyramid();
+    // uninitializeCube();
+
 	if(texture_Marble)
 	{
 		glDeleteTextures(1, &texture_Marble);
 		texture_Marble = NULL;
 	}
 
+	
 }
 
