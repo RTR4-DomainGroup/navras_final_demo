@@ -4,6 +4,8 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/audioplayer.h"
+#include "../inc/shaders/TerrainShader.h"
+#include "../inc/scenes/scenePlaceHolder.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -396,6 +398,7 @@ int initialize(void) {
 
 	// Initialize Scenes
 
+
 	if(initializeScene_PlaceHolder() != 0)
 	{
 
@@ -419,7 +422,7 @@ int initialize(void) {
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 	//Depth Related Changes
 	glClearDepth(1.0f);
