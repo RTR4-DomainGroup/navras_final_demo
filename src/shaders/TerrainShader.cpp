@@ -189,7 +189,7 @@ int initializeTerrainShader(void)
         "} \n";
 
     // Create the Vertex Shader object.
-    GLuint tessallationEvaluationShadderObject = glCreateShader(GL_TESS_CONTROL_SHADER);
+    GLuint tessallationEvaluationShadderObject = glCreateShader(GL_TESS_EVALUATION_SHADER);
 
     // Give the shader source to shader object.
     // Actually 3rd parameter is array if you have multiple shader source code

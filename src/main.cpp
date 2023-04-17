@@ -422,7 +422,7 @@ int initialize(void) {
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	//Depth Related Changes
 	glClearDepth(1.0f);
@@ -539,7 +539,7 @@ void resize(int width, int height) {
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 100.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
 
 }

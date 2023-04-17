@@ -44,6 +44,8 @@ int initializeScene_PlaceHolder(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 
+	//initializeTerrainShader();
+
 	if (initializeTerrain() != 0) {
 	
 		LOG("initializeTerrain() FAILED!!!\n");
@@ -59,7 +61,7 @@ int initializeScene_PlaceHolder(void)
     // initializePyramid();
     // initializeQuad();
     // initializeTriangle();
-    // initializeSphere();
+     //initializeSphere();
 
 	
 
@@ -146,35 +148,9 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/	
 
-	//displayTerrain();
+	displayTerrain();
 	
-	terrainUniform1 = useTerrainShader();
-
-	vmath::mat4 mv_matrix = viewMatrix * scale(10.0f, 10.0f, 10.0f);
-
-	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
-
-	glUniformMatrix4fv(terrainUniform1.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
-	glUniformMatrix4fv(terrainUniform1.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
-	glUniformMatrix4fv(terrainUniform1.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
-
-	glUniform1f(terrainUniform1.uniform_dmap_depth, 15.0f);
-	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	glUniform1i(terrainUniform1.uniform_enable_fog, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_Marble);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, texture_Marble);
-
-	glPatchParameteri(GL_PATCH_VERTICES, 4);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glDrawArraysInstanced(GL_PATCHES, 0, 4, 64 * 64);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
+	
 
 
 }
