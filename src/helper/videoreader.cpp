@@ -1,5 +1,5 @@
 #include "../../inc/video_reader.h"
-#include "../../inc/common.h"
+#include "../../inc/helper/common.h"
 
 bool video_reader_open(VideoReaderState* state, const char* fileName)
 {    

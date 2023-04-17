@@ -2,7 +2,7 @@
 
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/shaders/FSQuadShader.h"
-#include "../../inc/texture_loader.h"
+#include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/videoEffect.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"

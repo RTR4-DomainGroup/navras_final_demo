@@ -1,7 +1,7 @@
 #pragma once
 #include "../video_reader.h"
-#include "../common.h"
-#include "../geometry.h"
+#include "../helper/common.h"
+#include "../helper/geometry.h"
 
 int initializeVideoEffect(const char*);
 

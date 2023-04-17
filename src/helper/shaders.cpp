@@ -4,7 +4,7 @@
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 
-BOOL initAllShaders(void)
+bool initAllShaders(void)
 {
 
     // Variable Declarations
