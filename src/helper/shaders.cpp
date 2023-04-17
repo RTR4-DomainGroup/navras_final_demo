@@ -1,28 +1,42 @@
-#include "../../inc/common.h"
-#include "../../inc/shaders.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/GodraysShader.h"
-#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/TerrainShader.h"
 
-bool initAllShaders(void)
+BOOL initAllShaders(void)
 {
+
     // Variable Declarations
 
+    
+
     // Code
-    if(initializeADSShader() != 0 &&
-        initializeGodraysShader() != 0 && 
-        initializeFSQuadShader() != 0)
+    if(initializeADSShader() != 0)
     {
-        return false;
+        return FALSE;
     }
 
-    return true;
+    if (initializeGodraysShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeTerrainShader() != 0)
+    {
+        return FALSE;
+    }
+
+    return TRUE;
+
 }
+
 
 void uninitAllShaders(void)
 {
 
     // Code
+    uninitializeTerrainShader();
     uninitializeGodraysShader();
     uninitializeADSShader();
 

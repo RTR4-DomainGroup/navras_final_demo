@@ -1,19 +1,15 @@
 // Header Files
-#include "../inc/common.h"
-#include "../inc/shaders.h"
+#include "../inc/helper/common.h"
+#include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
-#include "../inc/camera.h"
-#include "../inc/audioplayer.h"
+#include "../inc/helper/camera.h"
+#include "../inc/helper/audioplayer.h"
+#include "../inc/shaders/TerrainShader.h"
 #include "../inc/scenes/scenePlaceHolder.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
-#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#pragma comment(lib, "ffmpeg/lib/avutil.lib")
-#pragma comment(lib, "ffmpeg/lib/swscale.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -402,6 +398,7 @@ int initialize(void) {
 
 	// Initialize Scenes
 
+
 	if(initializeScene_PlaceHolder() != 0)
 	{
 
@@ -542,7 +539,8 @@ void resize(int width, int height) {
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 100.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+
 
 }
 

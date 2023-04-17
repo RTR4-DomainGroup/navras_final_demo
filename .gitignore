@@ -1,11 +1,9 @@
-res/audio
-res/videos
-res/textures
-res/models
-res/fonts
+ext/
+res/
 
+*.obj
 *.exe
-src/*.obj
 Log.txt
 
 .vs/
+*.zip

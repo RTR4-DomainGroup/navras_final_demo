@@ -1,6 +1,6 @@
-#include "../../inc/common.h"
-#include "../../inc/geometry.h"
-#include "../../inc/Sphere.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/geometry.h"
+#include "../../inc/helper/Sphere.h"
 
 // cube
 GLuint vao_Cube;
@@ -37,7 +37,7 @@ void initializeCube(void)
 {
     const GLfloat cubePNT[] = 
     {
-                                                //PCNT
+                                                //PNT
         // positions                       //normals                   //texture
 
         // Top face                          // Top face              // Top face
@@ -75,31 +75,22 @@ void initializeCube(void)
         -1.0f, 1.0f, -1.0f,            -1.0f, 0.0f, 0.0f,              0.0f,1.0f,
         -1.0f, -1.0f, -1.0f,           -1.0f, 0.0f, 0.0f,              0.0f,0.0f,
         -1.0f, -1.0f, 1.0f,            -1.0f, 0.0f, 0.0f,              1.0f,0.0f
-    
-    
+        
     };
 
-    const GLfloat quadPNT[] =
-    {
-        // Front face                       // Front face             // Front face
-        1.0f, 1.0f, 0.0f,               0.0f, 0.0f, 1.0f,             1.0f,1.0f,
-        -1.0f, 1.0f, 0.0f,              0.0f, 0.0f, 1.0f,             0.0f,1.0f,
-        -1.0f, -1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             0.0f,0.0f,
-        1.0f, -1.0f, 0.0f,              0.0f, 0.0f, 1.0f,             1.0f,0.0f,
-    };
-
-    // VAO AND VBO RELATED CODE
+        // VAO AND VBO RELATED CODE
 	// vao_Cube
 	glGenVertexArrays(1, &vao_Cube);
 	glBindVertexArray(vao_Cube);
 
 	glGenBuffers(1, &vbo_Cube);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_Cube);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePNT), cubePNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePNT), cubePNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
 	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
 
 	// Normal
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
@@ -109,14 +100,15 @@ void initializeCube(void)
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
 
-	glBindVertexArray(0);    
+	glBindVertexArray(0);
+    
 }
 
 void initializeTriangle(void)
 {
     const GLfloat trianglePNT[] = 
     {
-        //PNT
+                                                //PNT
         // positions                  //normals                    //texture
 
         0.0f, 1.0f, 0.0f,         0.0f, 0.447214f, 0.894427f,        0.5, 1.0, // front-top 
@@ -131,7 +123,7 @@ void initializeTriangle(void)
 
 	glGenBuffers(1, &vbo_triangle);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_triangle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(trianglePNT), trianglePNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(trianglePNT), trianglePNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
@@ -149,18 +141,19 @@ void initializeTriangle(void)
     
 }
 
+
 void initializeQuad(void)
 {
     const GLfloat quadPNT[] = 
     {
-        //PCNT
+                                                //PNT
         // positions                     //normals                   //texture
 
         // Front face                     // Front face             // Front face
-        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             1.0f, 1.0f,
-        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             0.0f, 1.0f,
-        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             1.0f,1.0f,
+        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             0.0f,1.0f,
+        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f,0.0f,
     };
 
         // VAO AND VBO RELATED CODE
@@ -170,7 +163,7 @@ void initializeQuad(void)
 
 	glGenBuffers(1, &vbo_quad);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
@@ -188,11 +181,12 @@ void initializeQuad(void)
     
 }
 
+
 void initializePyramid(void)
 {
     const GLfloat pyramidPNT[] = 
     {
-        //PCNT
+                                                //PNT
         // positions                  //normals                   //texture
 
         // front            
@@ -225,7 +219,7 @@ void initializePyramid(void)
 
 	glGenBuffers(1, &vbo_pyramid);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_pyramid);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPNT), pyramidPNT, GL_STATIC_DRAW); // sizeof(PCNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(pyramidPNT), pyramidPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
@@ -242,6 +236,7 @@ void initializePyramid(void)
 	glBindVertexArray(0);
     
 }
+
 
 void initializeSphere(void)
 {
@@ -284,6 +279,7 @@ void displayQuad(void)
 	glBindVertexArray(0);
 }
 
+
 void displayPyramid(void)
 {
     // Code
@@ -297,6 +293,8 @@ void displayPyramid(void)
 
 	glBindVertexArray(0);
 }
+
+
 
 void displaySphere(void)
 {

@@ -1,4 +1,4 @@
-#include "../../inc/texture_loader.h"
+#include "../../inc/helper/texture_loader.h"
 
 // Texture lib header
 #include "SOIL/include/SOIL.h"
