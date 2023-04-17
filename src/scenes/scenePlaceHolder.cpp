@@ -3,10 +3,13 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/SkyboxEffect.h"
+#include "../../inc/effects/TerrainEffect.h"
 
 GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
+
+struct TerrainUniform terrainUniform1;
 
 extern mat4 viewMatrix;
 
@@ -18,7 +21,7 @@ GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
 GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialShininess = 128.0f;
+GLfloat MaterialShininess = 50.0f;
 
 GLfloat angleCube;
 
@@ -45,7 +48,12 @@ void displayScene_PlaceHolder(void)
 	displaySkybox();
 
 	// Un-use ShaderProgramObject
-	glUseProgram(0);	
+	glUseProgram(0);
+
+	displayTerrain();
+	
+	
+
 
 }
 
@@ -67,6 +75,7 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
+	uninitializeTerrain();
     uninitializeSphere();
     // uninitializeTriangle();
     // uninitializeQuad();

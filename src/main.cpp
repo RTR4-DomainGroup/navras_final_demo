@@ -4,6 +4,8 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/audioplayer.h"
+#include "../inc/shaders/TerrainShader.h"
+#include "../inc/scenes/scenePlaceHolder.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -390,6 +392,8 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
+
+
 	if(initializeScene_PlaceHolder() != 0)
 	{
 		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
@@ -511,7 +515,6 @@ void display(void)
 
 	// Call Scenes Display Here
 	displayScene_PlaceHolder();
-	LOG("displayScene_PlaceHolder() Success !!!\n");
 
 	SwapBuffers(ghdc);
 
@@ -535,7 +538,7 @@ void resize(int width, int height) {
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 100.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
 
 }
