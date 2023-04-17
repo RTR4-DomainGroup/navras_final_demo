@@ -2,6 +2,7 @@
 #include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/GodraysShader.h"
+#include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
 
 BOOL initAllShaders(void)
@@ -10,10 +11,22 @@ BOOL initAllShaders(void)
     // Variable Declarations
 
     // Code
-    if(initializeADSShader() != 0 &&
-        initializeGodraysShader() != 0 &&
-        initializeBillboardingShader() != 0
-      )
+    if(initializeADSShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeGodraysShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeTerrainShader() != 0)
+    {
+        return FALSE;
+    }
+
+	if(initializeBillboardingShader() != 0)
     {
         return FALSE;
     }
@@ -22,12 +35,14 @@ BOOL initAllShaders(void)
 
 }
 
-void uninitializeAllShaders(void)
+void uninitAllShaders(void)
 {
 
     // Code
     uninitializeBillboardingShader();
+    uninitializeTerrainShader();
     uninitializeGodraysShader();
     uninitializeADSShader();
 
 }
+
