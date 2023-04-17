@@ -1,6 +1,6 @@
-#include "../../inc/common.h"
-#include "../../inc/geometry.h"
-#include "../../inc/texture_loader.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/geometry.h"
+#include "../../inc/helper/texture_loader.h"
 
 // vertex array object
 GLuint vao_instancing;
