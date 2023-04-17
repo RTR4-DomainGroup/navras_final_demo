@@ -10,19 +10,13 @@ BOOL initAllShaders(void)
 
     // Variable Declarations
 
-    
-
     // Code
     if (initializeADSShader() != 0)
     {
         return FALSE;
     }
+
     if (initializeSkyboxShader() != 0)
-    {
-        return FALSE;
-    }
-    if (initializeGodraysShader() != 0)
-    if(initializeADSShader() != 0)
     {
         return FALSE;
     }

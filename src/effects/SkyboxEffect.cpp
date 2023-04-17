@@ -1,12 +1,5 @@
 // Header Files
 
-#include <stdio.h>		// For File IO Functions
-#include <stdlib.h>		// For exit()
-
-// OpenGL Header Files
-#include <GL/glew.h>		// THIS MUST BE INCLUDED BEFORE gl.h
-#include <GL/gl.h>
-
 #include "../../inc/scenes/scenes.h"
 #include "../../inc/helper/vmath.h"
 #include "../../inc/helper/common.h"
@@ -27,7 +20,6 @@ GLfloat angleCubemap;
 
 int initializeScene_Skybox(void)
 {
-
 	// Code.
 	// Texture
 	if (LoadGLTexture_Cubemap(&texture_skybox, "res\\textures\\cubemap\\") == FALSE) 
@@ -59,11 +51,6 @@ void displaySkybox(void)
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-
-	//rotationMatrix_x = vmath::rotate(angleCubemap, 1.0f, 0.0f, 0.0f);
-	//rotationMatrix_y = vmath::rotate(angleCubemap, 0.0f, 1.0f, 0.0f);
-	//rotationMatrix_z = vmath::rotate(angleCubemap, 0.0f, 0.0f, 1.0f);
-	//rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
