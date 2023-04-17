@@ -61,9 +61,9 @@ void displaySkybox(void)
 	mat4 modelMatrix = mat4::identity();
 
 	//rotationMatrix_x = vmath::rotate(angleCubemap, 1.0f, 0.0f, 0.0f);
-	rotationMatrix_y = vmath::rotate(angleCubemap, 0.0f, 1.0f, 0.0f);
+	//rotationMatrix_y = vmath::rotate(angleCubemap, 0.0f, 1.0f, 0.0f);
 	//rotationMatrix_z = vmath::rotate(angleCubemap, 0.0f, 0.0f, 1.0f);
-	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
