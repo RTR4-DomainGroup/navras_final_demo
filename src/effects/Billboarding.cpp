@@ -150,7 +150,7 @@ void displayBillboarding(void)
     mat4 modelMatrix = mat4::identity();
     mat4 translationMatrix = mat4::identity();
     mat4 rotationMatrix = mat4::identity();
-    mat4 viewMatrix = mat4::identity(); 
+    // mat4 viewMatrix = mat4::identity(); 
     mat4 scaleMatrix = mat4::identity(); 
 
 //////////////////////////////
@@ -161,7 +161,6 @@ void displayBillboarding(void)
 
     translationMatrix = mat4::identity(); 
     modelMatrix = mat4::identity();
-    viewMatrix = vmath::lookat(camera.Eye, camera.Center, camera.Up);
 
     translationMatrix = vmath::translate(0.0f, -6.0f, 0.0f);
     // translationMatrix = vmath::translate(tf.x, tf.y,tf.z);

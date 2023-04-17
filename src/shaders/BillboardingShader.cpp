@@ -65,7 +65,7 @@ int initializeBillboardingShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(vertexShadderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS Vertex Shader Compilation Log: %s\n", log);
+				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
 			}
@@ -104,7 +104,7 @@ int initializeBillboardingShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(fragmentShadderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS Fragment Shader Compilation Log: %s\n", log);
+				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
 			}
@@ -131,7 +131,7 @@ int initializeBillboardingShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(billboardingShaderProgramObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS ShaderProgram Linking Log: %s\n", log);
+				LOG("ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
 			}

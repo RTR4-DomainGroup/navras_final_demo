@@ -69,7 +69,7 @@ void displayTerrain() {
 	glBindTexture(GL_TEXTURE_2D, texture_Diffuse);
 
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawArraysInstanced(GL_PATCHES, 0, 4, 64 * 64);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
