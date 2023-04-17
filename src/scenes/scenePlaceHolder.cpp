@@ -49,10 +49,11 @@ int initializeScene_PlaceHolder(void)
 
     // initializeCube();
     // initializePyramid();
-    initializeQuad();
+    //initializeQuad();
+	initializeQuadForVideo();
     //initializeTriangle();
     initializeSphere();
-	initializeVideoEffect("res\\videos\\Smiley.mp4");
+	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
 	//initializeTerrainShader();
 
 	if (initializeTerrain() != 0) {
@@ -161,11 +162,10 @@ void displayScene_PlaceHolder(void)
 	glUseProgram(0);
 	glUseProgram(0);*/	
 
+	// fsqUniform = useFSQuadShader();
+	// displayVideoEffect(&fsqUniform);
+	// glUseProgram(0);
 	displayTerrain();
-	
-	
-
-
 }
 
 void updateScene_PlaceHolder(void)

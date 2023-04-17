@@ -7,10 +7,6 @@ int frameWidth, frameHeight;
 uint8_t* frame_data = NULL;
 struct VideoReaderState vr_state;
 
-GLuint vao_cube;
-GLuint vbo_cube_position;
-GLuint vbo_cube_texcoord;
-
 int initializeVideoEffect(const char* videoFile)
 {
     BOOL LoadGLTexture(GLuint *, GLsizei, GLsizei, void*);

@@ -400,10 +400,7 @@ int initialize(void) {
 
     }
 
-
 	// Initialize Scenes
-
-
 	if(initializeScene_PlaceHolder() != 0)
 	{
 

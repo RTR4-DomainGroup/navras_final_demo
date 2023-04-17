@@ -2,6 +2,7 @@
 
 void initializeCube(void);
 void initializeQuad(void);
+void initializeQuadForVideo(void);
 void initializePyramid(void);
 void initializeSphere(void);
 void initializeTriangle(void );
