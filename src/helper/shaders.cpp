@@ -9,10 +9,20 @@ BOOL initAllShaders(void)
 
     // Variable Declarations
 
+    
+
     // Code
-    if(initializeADSShader() != 0 &&
-        initializeGodraysShader() != 0 &&
-        initializeTerrainShader() != 0)
+    if(initializeADSShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeGodraysShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeTerrainShader() != 0)
     {
         return FALSE;
     }
