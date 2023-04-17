@@ -1,6 +1,6 @@
 #include "../../inc/effects/videoEffect.h"
 #include "../../inc/shaders/FSQuadShader.h"
-extern FILE* gpFile;
+
 
 GLuint texture_frame;
 int frameWidth, frameHeight;
@@ -17,7 +17,7 @@ int initializeVideoEffect(const char* videoFile)
     // Code
     if (!video_reader_open(&vr_state, videoFile))
     {
-        fprintf(gpFile, "Failed to open video file.\n");
+        LOG("Failed to open video file.\n");
         return -1;
     }
     
@@ -27,15 +27,15 @@ int initializeVideoEffect(const char* videoFile)
 
     if (!video_reader_read_frame(&vr_state, frame_data))
     {
-        fprintf(gpFile, "Couldn't load video frame.\n");
+        LOG("Couldn't load video frame.\n");
         exit(-2);
     }
     if(LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data) == FALSE)
     {
-        fprintf(gpFile, "Unable to load Texture.\n");
+        LOG("Unable to load Texture.\n");
         return -3;
     }
-    fprintf(gpFile, "Frame Width = %d.\nFrame Height = %d.\n", frameWidth, frameHeight);
+    LOG("Frame Width = %d.\nFrame Height = %d.\n", frameWidth, frameHeight);
    
 
     return 0;
@@ -50,7 +50,7 @@ void displayVideoEffect( struct FSQuadUniform* fsqUniform)
     glActiveTexture(GL_TEXTURE0);
     if (!video_reader_read_frame(&vr_state, frame_data))
     {
-        fprintf(gpFile, "Couldn't load video frame.\n");
+        LOG("Couldn't load video frame.\n");
         exit(-1);
     }    
     LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);

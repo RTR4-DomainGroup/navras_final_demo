@@ -1,6 +1,5 @@
 #include "../../inc/video_reader.h"
-
-extern FILE *gpFile;
+#include "../../inc/common.h"
 
 bool video_reader_open(VideoReaderState* state, const char* fileName)
 {    
@@ -8,13 +7,13 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
     
     if (!state->avFormatContext)
     {
-        fprintf(gpFile, "Unable to Create AVFormatContext. \n");
+        LOG("Unable to Create AVFormatContext. \n");
         return false;
     }
     
     if(avformat_open_input(&state->avFormatContext, fileName, NULL, NULL) != 0)
     {
-        fprintf(gpFile, "Unable to open input file. \n");
+        LOG("Unable to open input Video file. \n");
         return false;
     }
 
@@ -42,40 +41,40 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
     }
     if (state->video_stream_index == -1)
     {
-        fprintf(gpFile, "Unable to find video stream index. \n");
+        LOG("Unable to find video stream index. \n");
         return false;
     }
     
     state->avCodecContext = avcodec_alloc_context3(avCodec);
     if (!state->avCodecContext)
     {
-        fprintf(gpFile, "Unable to allocate codec context. \n");
+        LOG("Unable to allocate codec context. \n");
         return false;
     }
     
     if (avcodec_parameters_to_context(state->avCodecContext, avCodecParams) < 0)
     {
-        fprintf(gpFile, "Unable to initialize AV codec context. \n");
+        LOG("Unable to initialize AV codec context. \n");
         return false;
     }
     
     if (avcodec_open2(state->avCodecContext, avCodec, NULL) < 0)
     {
-        fprintf(gpFile, "Unable to open AV codec. \n");
+        LOG("Unable to open AV codec. \n");
         return false;
     }
     
     state->avFrame = av_frame_alloc();
     if (!state->avFrame)
     {
-        fprintf(gpFile, "Unable to allocate memory AV Frame. \n");
+        LOG("Unable to allocate memory AV Frame. \n");
         return false;
     }
     
     state->avPacket = av_packet_alloc();
     if (!state->avPacket)
     {
-        fprintf(gpFile, "Unable to allocate memory AV Packet. \n");
+        LOG("Unable to allocate memory AV Packet. \n");
         return false;
     }
     
@@ -96,7 +95,7 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
         response = avcodec_send_packet(state->avCodecContext, state->avPacket);
         if (response < 0)
         {
-            fprintf(gpFile, "Failed to Decode AV Packet.\n");
+            LOG("Failed to Decode AV Packet.\n");
         }
         response = avcodec_receive_frame(state->avCodecContext, state->avFrame);
         
@@ -106,7 +105,7 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
         }
         else if (response < 0)
         {
-            fprintf(gpFile, "Failed to Decode AV Packet.\n");
+            LOG("Failed to Decode AV Packet.\n");
             return false;
         }
         av_packet_unref(state->avPacket);
@@ -118,7 +117,7 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
     
     if (!state->swsScaleContext)
     {
-        fprintf(gpFile, "Failed to get scale context.\n");
+        LOG("Failed to get scale context.\n");
         return false;
     }
     

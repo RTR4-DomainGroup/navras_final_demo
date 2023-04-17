@@ -1,7 +1,6 @@
 #include "../../inc/shaders/FSQuadShader.h"
 
 GLuint fsQuadShaderProgramObject;
-extern FILE* gpFile;
 struct FSQuadUniform fsQuadUniform;
 
 int initializeFSQuadShader(void)
@@ -55,7 +54,7 @@ int initializeFSQuadShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(vertexShaderObj, infoLogLength, &written, log);
-                fprintf(gpFile, "FSQuad Vertex Shader Compilation Log: %s\n", log);
+                LOG("FSQuad Vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
@@ -110,7 +109,7 @@ int initializeFSQuadShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(fragementShaderObj, infoLogLength, &written, log);
-                fprintf(gpFile, "FSQuad Fragment Shader Compilation Log: %s\n", log);
+                LOG("FSQuad Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
@@ -151,7 +150,7 @@ int initializeFSQuadShader(void)
                 GLsizei written;
 
                 glGetProgramInfoLog(fsQuadShaderProgramObject, infoLogLength, &written, log);
-                fprintf(gpFile, "FSQuad Shader Program Link Log: %s\n", log);
+                LOG("FSQuad Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeFSQuadShader();
             }
