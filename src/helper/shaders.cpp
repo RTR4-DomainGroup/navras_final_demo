@@ -3,6 +3,7 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/TerrainShader.h"
+#include "../../inc/shaders/PBRGeometryShader.h"
 
 BOOL initAllShaders(void)
 {
@@ -23,6 +24,10 @@ BOOL initAllShaders(void)
     }
 
     if (initializeTerrainShader() != 0)
+    {
+        return FALSE;
+    }
+    if (initializePBRGeometryShader() != 0)
     {
         return FALSE;
     }

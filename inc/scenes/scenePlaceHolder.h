@@ -3,6 +3,7 @@
 #include "../helper/common.h"
 #include "../helper/geometry.h"
 #include "../shaders/ADSLightShader.h"
+#include "../shaders/PBRGeometryShader.h"
 
 int initializeScene_PlaceHolder(void);
 void displayScene_PlaceHolder(void);
