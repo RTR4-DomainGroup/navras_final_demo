@@ -433,7 +433,7 @@ void uninitializeQuad(void)
 	}
 }
 
-void uninitializInstancedQuads(void)
+void uninitializeInstancedQuads(void)
 {
     if (vbo_quadInstancePosition) {
 

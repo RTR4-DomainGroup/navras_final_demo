@@ -4,6 +4,7 @@
 
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/ADSLights.h"
+#include "../../inc/effects/Billboarding.h"
 
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/common.h"
@@ -21,15 +22,15 @@ int initializeScene_PlaceHolder(void)
 	// initializeADSLight();
 
 
-	if (initializeTerrain() != 0) 
-	{
-		LOG("initializeTerrain() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeTerrain() Successfull!!!\n");
-	}
+	// if (initializeTerrain() != 0) 
+	// {
+	// 	LOG("initializeTerrain() FAILED!!!\n");
+	// 	return(-1);
+	// }
+	// else
+	// {
+	// 	LOG("initializeTerrain() Successfull!!!\n");
+	// }
 
     // initializeCube();
     // initializePyramid();
@@ -37,7 +38,7 @@ int initializeScene_PlaceHolder(void)
     // initializeTriangle();
      //initializeSphere();
 
-	
+	initializeBillboarding();	
 
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
@@ -61,7 +62,9 @@ void displayScene_PlaceHolder(void)
     // displayPyramid();
 	// displaySphere();
 
-	displayTerrain();
+	// displayTerrain();
+
+	displayBillboarding();
 	
 	
 
@@ -75,13 +78,16 @@ void updateScene_PlaceHolder(void)
 	// Code
 	// updateADSLight();
 
+	updateBillboarding();
+
 }
 
 void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
-	uninitializeTerrain();
+	uninitializeBillboarding();
+	// uninitializeTerrain();
 
     // uninitializeSphere();
     // uninitializeTriangle();

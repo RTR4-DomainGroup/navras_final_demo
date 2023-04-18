@@ -2,7 +2,7 @@
 
 void initializeCube(void);
 void initializeQuad(void);
-void initializeInstancedQuad(int numInstances);
+void initializeInstancedQuad(int numInstances, GLfloat* instancePositions);
 void initializePyramid(void);
 void initializeSphere(void);
 void initializeTriangle(void );
@@ -19,6 +19,6 @@ void uninitializeCube(void);
 void uninitializePyramid(void);
 void uninitializeSphere(void);
 void uninitializeQuad(void);
-void uninitializInstancedQuads(void);
+void uninitializeInstancedQuads(void);
 void uninitializeTriangle(void);
 

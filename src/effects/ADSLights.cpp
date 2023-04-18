@@ -8,7 +8,6 @@ GLuint texture_Marble;
 struct ADSUniform sceneADSUniform;
 
 
-extern mat4 viewMatrix;
 
 GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -22,12 +21,13 @@ GLfloat MaterialShininess = 50.0f;
 
 GLfloat angleCube;
 
+extern mat4 viewMatrix;
 extern mat4 perspectiveProjectionMatrix;
 
 int initializeADSLight() {
     // Texture
 	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
-	if (LoadGLTexture(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -36,6 +36,7 @@ int initializeADSLight() {
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
+	return (0);
 }
 
 
