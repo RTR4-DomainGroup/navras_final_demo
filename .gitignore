@@ -1,5 +1,5 @@
-ext
-res
+ext/
+res/
 
 *.obj
 *.exe
