@@ -18,11 +18,11 @@ extern mat4 perspectiveProjectionMatrix;
 
 GLfloat angleCubemap;
 
-int initializeScene_Skybox(void)
+int initializeSkybox(void)
 {
 	// Code.
 	// Texture
-	if (LoadGLTexture_Cubemap(&texture_skybox, "res\\textures\\cubemap\\") == FALSE) 
+	if (LoadGLTexture_Cubemap(&texture_skybox, "res\\textures\\Skybox\\") == FALSE) 
 	{
 		LOG("LoadGLTexture_Cubemap() FAILED!!!\n");
 		return(-1);
@@ -34,6 +34,7 @@ int initializeScene_Skybox(void)
 	}
 
 	initializeCubemap();
+
 	return 0;
 }
 
@@ -41,15 +42,14 @@ int initializeScene_Skybox(void)
 void displaySkybox(void)
 {
 	// Code
+	glEnable(GL_TEXTURE_CUBE_MAP);
+
 	sceneSkyBoxUniform = useSkyboxShader();
 
 	// Transformations
 	mat4 translationMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix_x = mat4::identity();
-	mat4 rotationMatrix_y = mat4::identity();
-	mat4 rotationMatrix_z = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
@@ -66,6 +66,8 @@ void displaySkybox(void)
 	displayCubemap();
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	glDisable(GL_TEXTURE_CUBE_MAP);
 
 	// Un-use the Shader Program Object
 	glUseProgram(0);

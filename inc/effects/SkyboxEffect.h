@@ -2,7 +2,7 @@
 #include "../../inc/shaders/SkyboxShader.h"
 
 
-int initializeScene_Skybox(void);
+int initializeSkybox(void);
 void displaySkybox(void);
 void updateSkybox(void);
 void uninitialiseSkybox(void);

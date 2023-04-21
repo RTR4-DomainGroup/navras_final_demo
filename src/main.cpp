@@ -425,7 +425,6 @@ int initialize(void) {
 	
 	// Enabling The Texture
 	//glEnable(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_CUBE_MAP);
 
 	perspectiveProjectionMatrix = mat4::identity();
 

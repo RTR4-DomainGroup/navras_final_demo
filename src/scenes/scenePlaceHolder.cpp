@@ -45,8 +45,6 @@ int initializeScene_PlaceHolder(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 
-	//initializeTerrainShader();
-
 	if (initializeTerrain() != 0) {
 
 		LOG("initializeTerrain() FAILED!!!\n");
@@ -58,13 +56,23 @@ int initializeScene_PlaceHolder(void)
 		LOG("initializeTerrain() Successfull!!!\n");
 	}
 
+	// Call For Skybox
+	if (initializeSkybox() != 0) {
+
+		LOG("initializeSkybox() FAILED!!!\n");
+		return(-1);
+
+	}
+	else
+	{
+		LOG("initializeSkybox() Successfull!!!\n");
+	}
+
 	// initializeCube();
 	// initializePyramid();
 	// initializeQuad();
 	// initializeTriangle();
-	 //initializeSphere();
-
-	initializeScene_Skybox();
+	// initializeSphere();
 
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
