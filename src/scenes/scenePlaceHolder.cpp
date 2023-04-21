@@ -3,6 +3,7 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
+#include "../../inc/effects/StarfieldEffect.h"
 
 GLuint texture_Marble;
 
@@ -63,6 +64,17 @@ int initializeScene_PlaceHolder(void)
     // initializeTriangle();
      //initializeSphere();
 
+	
+	if (initializeStarfield() != 0) 
+	{
+
+		LOG("initializeScene_Starfield() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeScene_Starfield() Successfull!!!\n");
+	}
 	
 
 	//
@@ -149,9 +161,8 @@ void displayScene_PlaceHolder(void)
 	glUseProgram(0);*/	
 
 	displayTerrain();
-	
-	
-
+		
+	displayStarfield();
 
 }
 
@@ -159,6 +170,9 @@ void updateScene_PlaceHolder(void)
 {
 
 	// Code
+
+	updateStarfield();
+
 	angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
 	{
@@ -171,8 +185,9 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
-	uninitializeTerrain();
-    uninitializeSphere();
+	uninitializeStarfield();
+	//uninitializeTerrain();
+    //uninitializeSphere();
     // uninitializeTriangle();
     // uninitializeQuad();
     // uninitializePyramid();
