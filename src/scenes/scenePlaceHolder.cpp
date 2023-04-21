@@ -65,7 +65,7 @@ int initializeScene_PlaceHolder(void)
      //initializeSphere();
 
 	
-	if (initializeScene_Starfield() != 0) 
+	if (initializeStarfield() != 0) 
 	{
 
 		LOG("initializeScene_Starfield() FAILED!!!\n");
@@ -160,9 +160,9 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/	
 
-	//displayTerrain();
+	displayTerrain();
 		
-	displayScene_Starfield();
+	displayStarfield();
 
 }
 
@@ -171,7 +171,7 @@ void updateScene_PlaceHolder(void)
 
 	// Code
 
-	updateScene_Starfield();
+	updateStarfield();
 
 	angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
@@ -185,7 +185,7 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
-	uninitializeScene_Starfield();
+	uninitializeStarfield();
 	//uninitializeTerrain();
     //uninitializeSphere();
     // uninitializeTriangle();

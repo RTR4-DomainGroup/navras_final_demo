@@ -31,7 +31,7 @@ static inline float random_float()
 	return (res - 1.0f);
 }
 
-int initializeScene_Starfield() 
+int initializeStarfield() 
 {
 	
 	if (LoadGLTexture_UsingSOIL(&texture_star, "res/textures/Starfield/Star.png") == FALSE)
@@ -84,7 +84,7 @@ int initializeScene_Starfield()
 
 }
 
-void displayScene_Starfield()
+void displayStarfield()
 {
 
 	// Code
@@ -123,18 +123,20 @@ void displayScene_Starfield()
 		glDrawArrays(GL_POINTS, 0, NUM_STARS);
 	glBindVertexArray(0);
 
+	glDisable(GL_BLEND);
+
 	glUseProgram(0);
 
 }
 
-void updateScene_Starfield(void)
+void updateStarfield(void)
 {
 	// Code
 	currentTime = currentTime + 0.05;
 
 }
 
-void uninitializeScene_Starfield() {
+void uninitializeStarfield() {
 
 	if (texture_star)
 	{

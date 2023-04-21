@@ -1,8 +1,8 @@
 #pragma once
 #include "../shaders/StarfieldShader.h"
 
-int initializeScene_Starfield(void);
-void displayScene_Starfield(void);
-void updateScene_Starfield(void);
-void uninitializeScene_Starfield(void);
+int initializeStarfield(void);
+void displayStarfield(void);
+void updateStarfield(void);
+void uninitializeStarfield(void);
 
