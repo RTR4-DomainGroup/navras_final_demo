@@ -3,6 +3,7 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
+#include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/helper/camera.h"
 
 GLuint texture_Marble;
@@ -51,7 +52,7 @@ int initializeScene_PlaceHolder(void)
 	//{
 	//	LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	//}
-	if (LoadGLTexture_UsingSOIL(&texture_albedo,"res/textures/albedo.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_albedo,"res/textures/pbr/albedo.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -62,7 +63,7 @@ int initializeScene_PlaceHolder(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 	
-	if (LoadGLTexture_UsingSOIL(&texture_normal,"res/textures/albedo.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_normal,"res/textures/pbr/albedo.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -73,7 +74,7 @@ int initializeScene_PlaceHolder(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 	
-	if (LoadGLTexture_UsingSOIL(&texture_metallic,"res/textures/albedo.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_metallic,"res/textures/pbr/albedo.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -84,7 +85,7 @@ int initializeScene_PlaceHolder(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 	
-	if (LoadGLTexture_UsingSOIL(&texture_roughness,"res/textures/albedo.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_roughness,"res/textures/pbr/albedo.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -95,7 +96,7 @@ int initializeScene_PlaceHolder(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 	
-	if (LoadGLTexture_UsingSOIL(&texture_ao,"res/textures/albedo.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_ao,"res/textures/pbr/albedo.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -125,6 +126,17 @@ int initializeScene_PlaceHolder(void)
     // initializeTriangle();
      initializeSphere();
 
+	
+	if (initializeStarfield() != 0) 
+	{
+
+		LOG("initializeScene_Starfield() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeScene_Starfield() Successfull!!!\n");
+	}
 	
 
 	//
@@ -233,7 +245,7 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);	
 
-	//displayTerrain();
+	displayTerrain();
 	
 	
 
@@ -244,6 +256,9 @@ void updateScene_PlaceHolder(void)
 {
 
 	// Code
+
+	updateStarfield();
+
 	angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
 	{
@@ -256,8 +271,9 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
-	uninitializeTerrain();
-    uninitializeSphere();
+	uninitializeStarfield();
+	//uninitializeTerrain();
+    //uninitializeSphere();
     // uninitializeTriangle();
     // uninitializeQuad();
     // uninitializePyramid();
