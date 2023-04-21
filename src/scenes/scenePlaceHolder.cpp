@@ -3,6 +3,7 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
+#include "../../inc/effects/CloudEffect.h"
 
 GLuint texture_Marble;
 
@@ -31,8 +32,8 @@ extern FILE* gpFile;
 int initializeScene_PlaceHolder(void)
 {
 
-    // Code.
-    // Texture
+	// Code.
+	// Texture
 	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
@@ -47,7 +48,7 @@ int initializeScene_PlaceHolder(void)
 	//initializeTerrainShader();
 
 	if (initializeTerrain() != 0) {
-	
+
 		LOG("initializeTerrain() FAILED!!!\n");
 		return(-1);
 
@@ -57,13 +58,25 @@ int initializeScene_PlaceHolder(void)
 		LOG("initializeTerrain() Successfull!!!\n");
 	}
 
+	// initialize Cloud Noise Shader
+
+	if (initializeCloud() != 0)
+	{
+		LOG("initializeCloud() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() Successfull!!!\n");
+	}
+
     // initializeCube();
     // initializePyramid();
     // initializeQuad();
     // initializeTriangle();
      //initializeSphere();
 
-	
+	initializeCloud();
 
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
@@ -148,22 +161,22 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/	
 
-	displayTerrain();
-	
-	
-
-
+	// displayTerrain();
+	displayCloud();
 }
 
 void updateScene_PlaceHolder(void)
 {
 
 	// Code
-	angleCube = angleCube + 1.0f;
-	if (angleCube >= 360.0f)
-	{
-		angleCube -= 360.0f;
-	}
+	//angleCube = angleCube + 1.0f;
+	//if (angleCube >= 360.0f)
+	//{
+	//	angleCube -= 360.0f;
+	//}
+
+	// update Cloud
+	updateCloud();
 
 }
 
@@ -171,6 +184,7 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
+	uninitializeCloud();
 	uninitializeTerrain();
     uninitializeSphere();
     // uninitializeTriangle();

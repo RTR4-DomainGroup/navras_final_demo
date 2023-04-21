@@ -9,8 +9,6 @@ BOOL initAllShaders(void)
 {
     // Variable Declarations
 
-    
-
     // Code
     if(initializeADSShader() != 0)
     {
@@ -26,6 +24,7 @@ BOOL initAllShaders(void)
     {
         return FALSE;
     }
+
     if(intializeCloudNoiseShader() != 0)
     {
         return FALSE;

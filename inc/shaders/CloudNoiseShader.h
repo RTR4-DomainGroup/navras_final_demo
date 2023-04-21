@@ -24,8 +24,6 @@ struct CloudNoiseUniform
 	GLuint noiseSamplerUniform;
 	GLuint skyColorUniform;
 	GLuint cloudColorUniform;
-
-	// more noise related Uniforms as required
 };
 
 int intializeCloudNoiseShader(void);
