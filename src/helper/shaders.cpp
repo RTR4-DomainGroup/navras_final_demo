@@ -4,6 +4,7 @@
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/TerrainShader.h"
+#include "../../inc/shaders/StarfieldShader.h"
 
 BOOL initAllShaders(void)
 {
@@ -30,6 +31,12 @@ BOOL initAllShaders(void)
     {
         return FALSE;
     }
+
+    if (initializeStarfieldShader() != 0)
+    {
+        return FALSE;
+    }
+
     return TRUE;
 
 }
@@ -38,6 +45,7 @@ BOOL initAllShaders(void)
 void uninitAllShaders(void)
 {
     // Code
+    uninitializeStarfieldShader();
     uninitializeTerrainShader();
     uninitializeGodraysShader();
     uninitializeSkyboxShader();

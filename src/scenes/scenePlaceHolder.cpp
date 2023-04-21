@@ -3,6 +3,7 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
+#include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 
 GLuint texture_Marble;
@@ -68,11 +69,24 @@ int initializeScene_PlaceHolder(void)
 		LOG("initializeSkybox() Successfull!!!\n");
 	}
 
-	// initializeCube();
-	// initializePyramid();
-	// initializeQuad();
-	// initializeTriangle();
-	// initializeSphere();
+    // initializeCube();
+    // initializePyramid();
+    // initializeQuad();
+    // initializeTriangle();
+     //initializeSphere();
+
+	
+	if (initializeStarfield() != 0) 
+	{
+
+		LOG("initializeStarfield() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeStarfield() Successfull!!!\n");
+	}
+	
 
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
@@ -138,6 +152,7 @@ void displayScene_PlaceHolder(void)
 	displayTerrain();
 
 	displaySkybox();
+	displayStarfield();
 }
 
 void updateScene_PlaceHolder(void)
@@ -145,6 +160,7 @@ void updateScene_PlaceHolder(void)
 
 	// Code
 	updateSkybox();
+	updateStarfield();
 
 	angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
@@ -159,8 +175,9 @@ void uninitializeScene_PlaceHolder(void)
 
 	// Code
 	uninitialiseSkybox();
-	uninitializeTerrain();
-	uninitializeSphere();
+	uninitializeStarfield();
+	//uninitializeTerrain();
+	//uninitializeSphere();
 	// uninitializeTriangle();
 	// uninitializeQuad();
 	// uninitializePyramid();

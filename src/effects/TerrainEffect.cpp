@@ -50,7 +50,7 @@ void displayTerrain() {
 
 	terrainUniform = useTerrainShader();
 
-	vmath::mat4 mv_matrix = viewMatrix * scale(10.0f, 10.0f, 10.0f);
+	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 	
 	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
 

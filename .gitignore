@@ -6,4 +6,5 @@ res
 Log.txt
 
 .vs/
+.vscode/
 *.zip

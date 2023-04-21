@@ -52,8 +52,8 @@ void displaySkybox(void)
 	mat4 scaleMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
-	scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 	
 	glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
