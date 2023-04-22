@@ -55,11 +55,15 @@ void displayCloud(void)
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	mat4 rotateX = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-	scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-	modelMatrix = translationMatrix * scaleMatrix;
+	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
+	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+	scaleMatrix = vmath::scale(1600.0f, 900.0f, 1.0f);
+	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotateX;
 
 	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);

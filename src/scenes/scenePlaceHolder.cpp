@@ -76,8 +76,6 @@ int initializeScene_PlaceHolder(void)
     // initializeTriangle();
      //initializeSphere();
 
-	initializeCloud();
-
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
 
@@ -161,8 +159,8 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/	
 
-	// displayTerrain();
 	displayCloud();
+	displayTerrain();
 }
 
 void updateScene_PlaceHolder(void)
@@ -184,8 +182,8 @@ void uninitializeScene_PlaceHolder(void)
 {
 
 	// Code
-	uninitializeCloud();
 	uninitializeTerrain();
+	uninitializeCloud();
     uninitializeSphere();
     // uninitializeTriangle();
     // uninitializeQuad();
