@@ -6,6 +6,7 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
+//#include "../../inc/Noise.h"
 
 GLuint texture_Marble;
 
@@ -13,17 +14,39 @@ struct ADSUniform sceneADSUniform;
 
 struct TerrainUniform terrainUniform1;
 
+struct CloudNoiseUniform sceneCloudNoiseUniform;
+
 extern mat4 viewMatrix;
 
-GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
+//GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+//GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+//GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
+//
+//GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat MaterialShininess = 50.0f;
 
-GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialShininess = 50.0f;
+float myScale = 1.0f;
+
+float noiseScale = 2.0f;
+bool noiseScaleIncrement = true;
+
+GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
+
+GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialShininess = 128.0f;
+
+GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+
+GLuint noise_texture;
 
 GLfloat angleCube;
 
@@ -72,7 +95,8 @@ int initializeScene_PlaceHolder(void)
 
 	// initialize Cloud Noise Shader
 
-	if (initializeCloud() != 0)
+	noise_texture = initializeCloud();
+	if (noise_texture == 0)
 	{
 		LOG("initializeCloud() FAILED!!!\n");
 		return(-1);
@@ -162,7 +186,53 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/
 
-	displayCloud();
+	glEnable(GL_TEXTURE_3D);
+
+	sceneCloudNoiseUniform = useCloudNoiseShader();
+
+	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	mat4 rotateX = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
+
+	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
+	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
+	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotateX;
+
+	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
+	glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+	glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+
+	glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
+	glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+	glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+
+	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
+	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
+	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
+
+	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_3D, noise_texture);
+
+	displayQuad();
+
+	glUseProgram(0);
+
+	glDisable(GL_TEXTURE_3D);
+
 	displayTerrain();
 
 	// displaySkybox();
@@ -176,14 +246,14 @@ void updateScene_PlaceHolder(void)
 	updateSkybox();
 	updateStarfield();
 
-	angleCube = angleCube + 1.0f;
+	/*angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
 	{
 		angleCube -= 360.0f;
-	}
+	}*/
 
 	// update Cloud
-	updateCloud();
+	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 
 }
 
@@ -195,6 +265,12 @@ void uninitializeScene_PlaceHolder(void)
 	uninitializeStarfield();
 	uninitializeTerrain();
 	uninitializeCloud();
+
+	if (noise_texture)
+	{
+		glDeleteTextures(1, &noise_texture);
+		noise_texture = 0;
+	}
 	uninitializeSphere();
 	//uninitializeTerrain();
 	//uninitializeSphere();
@@ -202,6 +278,8 @@ void uninitializeScene_PlaceHolder(void)
 	// uninitializeQuad();
 	// uninitializePyramid();
 	// uninitializeCube();
+
+	uninitializeQuad();
 
 	if (texture_Marble)
 	{

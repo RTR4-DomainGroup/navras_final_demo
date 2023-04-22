@@ -5,29 +5,29 @@
 
 extern mat4 perspectiveProjectionMatrix;
 
-struct CloudNoiseUniform sceneCloudNoiseUniform;
+//struct CloudNoiseUniform sceneCloudNoiseUniform;
+//
+//float myScale = 1.0f;
+//
+//float noiseScale = 0.5f;
+//bool noiseScaleIncrement = true;
+//
+//GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
+//
+//GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat materialShininess = 128.0f;
+//
+//GLfloat skyColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat cloudColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//
+//GLuint noise_texture;
 
-float myScale = 1.0f;
-
-float noiseScale = 0.5f;
-bool noiseScaleIncrement = true;
-
-GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
-
-GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat materialShininess = 128.0f;
-
-GLfloat skyColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat cloudColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-GLuint noise_texture;
-
-int initializeCloud(void)
+GLuint initializeCloud(void)
 {
 	// function declarations
 	GLuint CreateNoise3D(void);
@@ -40,68 +40,71 @@ int initializeCloud(void)
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//loadNoiseTexture();
-	noise_texture = CreateNoise3D();
+	//noise_texture = CreateNoise3D();
 
-	return(0);
+	GLuint texture_id = 0;
+	texture_id = CreateNoise3D();
+
+	return(texture_id);
 }
 
-void displayCloud(void)
-{
-	// code
-	glEnable(GL_TEXTURE_3D);
+//void displayCloud(void)
+//{
+//	// code
+//	glEnable(GL_TEXTURE_3D);
+//
+//	sceneCloudNoiseUniform = useCloudNoiseShader();
+//
+//	mat4 translationMatrix = mat4::identity();
+//	mat4 scaleMatrix = mat4::identity();
+//	mat4 modelMatrix = mat4::identity();
+//	mat4 rotateX = mat4::identity();
+//	//mat4 viewMatrix = mat4::identity();
+//
+//	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
+//	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
+//	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+//	scaleMatrix = vmath::scale(1600.0f, 900.0f, 1.0f);
+//	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
+//	modelMatrix = translationMatrix * scaleMatrix * rotateX;
+//
+//	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+//	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+//	glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+//
+//	glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
+//	glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+//	glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
+//	glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+//
+//	glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
+//	glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+//	glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
+//	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+//
+//	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
+//	//glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
+//	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+//	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
+//
+//	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+//
+//	glActiveTexture(GL_TEXTURE0);
+//	glBindTexture(GL_TEXTURE_3D, noise_texture);
+//
+//	displayQuad();
+//
+//	glUseProgram(0);
+//
+//	glDisable(GL_TEXTURE_3D);
+//}
 
-	sceneCloudNoiseUniform = useCloudNoiseShader();
-
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	mat4 rotateX = mat4::identity();
-	//mat4 viewMatrix = mat4::identity();
-
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-	scaleMatrix = vmath::scale(1600.0f, 900.0f, 1.0f);
-	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotateX;
-
-	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-	glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-	//glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-
-	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, noise_texture);
-
-	displayQuad();
-
-	glUseProgram(0);
-
-	glDisable(GL_TEXTURE_3D);
-}
-
-void updateCloud(void)
+void updateCloud(bool noiseScaleIncrement, float noiseScale, float iterator)
 {
 	// code
 	if (noiseScaleIncrement)
 	{
-		noiseScale = noiseScale + 0.0001f;
+		noiseScale = noiseScale + iterator;
 		if (noiseScale > 0.5f)
 		{
 			noiseScaleIncrement = false;
@@ -109,7 +112,7 @@ void updateCloud(void)
 	}
 	else
 	{
-		noiseScale = noiseScale - 0.0001f;
+		noiseScale = noiseScale - iterator;
 		if (noiseScale < 0.01f)
 		{
 			noiseScaleIncrement = true;
@@ -122,9 +125,9 @@ void uninitializeCloud(void)
 	// code
 	uninitializeQuad();
 	uninitializeNoiseTexture();
-	if (noise_texture)
+	/*if (noise_texture)
 	{
 		glDeleteTextures(1, &noise_texture);
 		noise_texture = 0;
-	}
+	}*/
 }

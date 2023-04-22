@@ -91,7 +91,7 @@ int intializeCloudNoiseShader(void)
 		"uniform vec3 u_ks;\n" \
 		"uniform float u_materialShininess;\n" \
 		"uniform sampler3D u_noiseSampler;\n" \
-		/*"uniform vec3 u_skyColor;\n" \*/
+		"uniform vec3 u_skyColor;\n" \
 		"uniform vec3 u_cloudColor;\n" \
 		"uniform float u_noiseScale;\n" \
 		"out vec4 fragColor;\n" \
@@ -110,8 +110,8 @@ int intializeCloudNoiseShader(void)
 			"vec4 noisevec = texture(u_noiseSampler, MCposition * u_noiseScale);\n" \
 			"float intensity = (noisevec[0] + noisevec[1] + noisevec[2] + noisevec[3] + 0.03125) * 1.5;\n" \
 			/*"vec3 color = mix(skyColor, cloudColor, intensity) * light_intensity;\n" \*/
-			/*"vec3 color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \*/
-			"vec3 color = u_cloudColor * intensity * phong_ads_color;\n" \
+			"vec3 color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \
+			//"vec3 color = u_cloudColor * intensity * phong_ads_color;\n" \
 			/*"vec3 color = vec3(1.0);\n" \*/
 			"fragColor = vec4(color, 1.0);\n" \
 		"}\n";
