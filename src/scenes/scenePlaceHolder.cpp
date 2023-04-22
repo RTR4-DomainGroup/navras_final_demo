@@ -151,8 +151,8 @@ void displayScene_PlaceHolder(void)
 
 	displayTerrain();
 
-	displaySkybox();
-	displayStarfield();
+	//displaySkybox();
+	//displayStarfield();
 }
 
 void updateScene_PlaceHolder(void)

@@ -12,6 +12,10 @@ struct TerrainUniform
     GLuint textureSamplerUniform1;
     GLuint textureSamplerUniform2;
 
+    GLuint densityUniform;
+    GLuint gradientUniform;
+    GLuint skyColorUniform;
+
 };
 
 int initializeTerrainShader(void);

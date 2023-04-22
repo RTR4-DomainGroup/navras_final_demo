@@ -14,6 +14,10 @@ bool enable_fog;
 
 extern mat4 perspectiveProjectionMatrix;
 
+GLfloat density = 0.5;
+GLfloat gradient = 0.5;
+GLfloat skyColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+
 int initializeTerrain() {
 	
 	if (LoadGLTexture_UsingSOIL(&texture_Displacement, "res/textures/DisplacementMapTerrain.jpg") == FALSE) {
@@ -60,7 +64,11 @@ void displayTerrain() {
 
 	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
+
+	glUniform1f(terrainUniform.densityUniform, density);
+	glUniform1f(terrainUniform.gradientUniform, gradient);
+	glUniform4fv(terrainUniform.skyColorUniform, 1, skyColor);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_Displacement);
