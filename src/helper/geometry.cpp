@@ -6,6 +6,10 @@
 GLuint vao_Cube;
 GLuint vbo_Cube;
 
+// Cubemap
+GLuint vao_cubemap;
+GLuint vbo_cubemap;
+
 // pyramid
 GLuint vao_pyramid; 
 GLuint vbo_pyramid;
@@ -20,17 +24,6 @@ GLuint vbo_triangle;
 
 // sphere
 static sphere::Mesh objSphere;
-
-// int initializeGeometry(void)
-// {
-//     // Code
-//     initializeCube();
-//     initializeSphere();
-//     initializePyramid();
-//     initializeQuad();
-//     initializeTriangle();
-//     return(0);
-// }
 
 void initializeCube(void)
 {
@@ -98,6 +91,66 @@ void initializeCube(void)
 	// TexCoord
 	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+
+	glBindVertexArray(0);
+    
+}
+
+void initializeCubemap(void)
+{
+    const GLfloat cubePosition[] = 
+    {
+		// right
+		1.0f, 1.0f, -1.0f,
+		1.0f, 1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, -1.0f,
+
+		// left
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, 1.0f,
+		
+		// top
+		1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f, 1.0f,
+		
+		// bottom
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		
+		// front
+		1.0f, 1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		-1.0f, -1.0f, 1.0f,
+		1.0f, -1.0f, 1.0f,
+		
+		// back
+		1.0f, 1.0f, -1.0f,
+		-1.0f, 1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f
+
+    };
+
+    // VAO AND VBO RELATED CODE
+	// vao_Cube
+	glGenVertexArrays(1, &vao_cubemap);
+	glBindVertexArray(vao_cubemap);
+
+	glGenBuffers(1, &vbo_cubemap);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_cubemap);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePosition), cubePosition, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	
+	// Position
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glBindVertexArray(0);
     
@@ -256,6 +309,21 @@ void displayCube(void)
 	glBindVertexArray(0);
 }
 
+void displayCubemap(void)
+{
+    // Code
+    glBindVertexArray(vao_cubemap);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
+
+	glBindVertexArray(0);
+}
+
 void displayTriangle(void)
 {
     // Code
@@ -296,16 +364,6 @@ void displaySphere(void)
     objSphere.draw();
 }
 
-// void uninitializeGeometry(void)
-// {
-//     // Code
-//     uninitializeTriangle();
-//     uninitializeQuad();
-//     uninitializePyramid();
-//     uninitializeSphere();
-//     uninitializeCube();
-
-// }
 
 void uninitializeCube(void)
 {
@@ -320,6 +378,22 @@ void uninitializeCube(void)
 
 		glDeleteVertexArrays(1, &vao_Cube);
 		vao_Cube = 0;
+	}
+}
+
+void uninitializeCubemap(void)
+{
+    // Code
+    if (vbo_cubemap) {
+
+		glDeleteBuffers(1, &vbo_cubemap);
+		vbo_cubemap = 0;
+	}
+
+	if (vao_cubemap) {
+
+		glDeleteVertexArrays(1, &vao_cubemap);
+		vao_cubemap = 0;
 	}
 }
 
