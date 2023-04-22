@@ -3,12 +3,12 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
+#include "../../inc/shaders/CloudNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
 
 BOOL initAllShaders(void)
 {
-
     // Variable Declarations
 
     // Code
@@ -32,6 +32,11 @@ BOOL initAllShaders(void)
         return FALSE;
     }
 
+    if(intializeCloudNoiseShader() != 0)
+    {
+        return FALSE;
+    }
+
     if (initializeStarfieldShader() != 0)
     {
         return FALSE;
@@ -50,5 +55,5 @@ void uninitAllShaders(void)
     uninitializeGodraysShader();
     uninitializeSkyboxShader();
     uninitializeADSShader();
-
+    uninitializeCloudNoiseShader();
 }

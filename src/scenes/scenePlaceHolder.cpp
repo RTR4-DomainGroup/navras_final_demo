@@ -5,6 +5,7 @@
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
+#include "../../inc/effects/CloudEffect.h"
 
 GLuint texture_Marble;
 
@@ -67,6 +68,18 @@ int initializeScene_PlaceHolder(void)
 	else
 	{
 		LOG("initializeSkybox() Successfull!!!\n");
+	}
+
+	// initialize Cloud Noise Shader
+
+	if (initializeCloud() != 0)
+	{
+		LOG("initializeCloud() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() Successfull!!!\n");
 	}
 
     // initializeCube();
@@ -149,10 +162,11 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/
 
+	displayCloud();
 	displayTerrain();
 
-	displaySkybox();
-	displayStarfield();
+	// displaySkybox();
+	// displayStarfield();
 }
 
 void updateScene_PlaceHolder(void)
@@ -168,6 +182,9 @@ void updateScene_PlaceHolder(void)
 		angleCube -= 360.0f;
 	}
 
+	// update Cloud
+	updateCloud();
+
 }
 
 void uninitializeScene_PlaceHolder(void)
@@ -176,6 +193,9 @@ void uninitializeScene_PlaceHolder(void)
 	// Code
 	uninitialiseSkybox();
 	uninitializeStarfield();
+	uninitializeTerrain();
+	uninitializeCloud();
+	uninitializeSphere();
 	//uninitializeTerrain();
 	//uninitializeSphere();
 	// uninitializeTriangle();

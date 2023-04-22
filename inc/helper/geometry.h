@@ -21,4 +21,3 @@ void uninitializePyramid(void);
 void uninitializeSphere(void);
 void uninitializeQuad(void);
 void uninitializeTriangle(void);
-

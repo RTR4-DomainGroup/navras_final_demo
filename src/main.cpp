@@ -52,16 +52,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	int iWCoorx, iWCoory;
 
 	// Code
-	// if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
+	//if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
 
-	// 	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
-	// 	exit(0);
+	//	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
+	//	exit(0);
 
-	// }
-	// else {
+	//}
+	//else {
 
-	// 	LOG("Log File SuccessFully Created!!!\n");
-	// }
+	//	LOG("Log File SuccessFully Created!!!\n");
+	//}
 
 	// Initialisation Of WNDCLASSEX Structure
 	wndclass.cbSize = sizeof(WNDCLASSEX);
@@ -592,12 +592,12 @@ void uninitialize(void) {
 
 	}
 
-	// if (gpFile) {
+	//if (gpFile) {
 
-	// 	LOG("Log File Close!!!\n");
-	// 	fclose(gpFile);
-	// 	gpFile = NULL;
+	//	fprintf(gpFile, "Log File Close!!!\n");
+	//	fclose(gpFile);
+	//	gpFile = NULL;
 
-	// }
+	//}
 
 }

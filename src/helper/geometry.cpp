@@ -22,7 +22,6 @@ GLuint vbo_quad;
 GLuint vao_triangle; 
 GLuint vbo_triangle;
 
-
 // sphere
 static sphere::Mesh objSphere;
 
@@ -234,7 +233,6 @@ void initializeQuad(void)
     
 }
 
-
 void initializePyramid(void)
 {
     const GLfloat pyramidPNT[] = 
@@ -289,7 +287,6 @@ void initializePyramid(void)
 	glBindVertexArray(0);
     
 }
-
 
 void initializeSphere(void)
 {
@@ -347,7 +344,6 @@ void displayQuad(void)
 	glBindVertexArray(0);
 }
 
-
 void displayPyramid(void)
 {
     // Code
@@ -361,8 +357,6 @@ void displayPyramid(void)
 
 	glBindVertexArray(0);
 }
-
-
 
 void displaySphere(void)
 {
