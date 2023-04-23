@@ -8,8 +8,9 @@
 #include "../../inc/effects/CloudEffect.h"
 //#include "../../inc/Noise.h"
 
-#define ENABLE_CLOUD_NOISE
+//#define ENABLE_CLOUD_NOISE
 #define ENABLE_TERRIAN
+#define ENABLE_SKYBOX
 
 GLuint texture_Marble;
 
@@ -61,6 +62,10 @@ extern FILE* gpFile;
 
 float displacementmap_depth;
 
+// Variables For Skybox
+GLuint texture_skybox;
+struct SkyboxUniform sceneSkyBoxUniform;
+
 int initializeScene_PlaceHolder(void)
 {
 
@@ -82,8 +87,8 @@ int initializeScene_PlaceHolder(void)
 	terrainTextureVariables.albedoPath = "res/textures/DiffuseMapTerrain.jpg";
 	terrainTextureVariables.displacementPath = "res/textures/DisplacementMapTerrain.jpg";
 
-
-	if (initializeTerrain(&terrainTextureVariables) != 0) {
+	if (initializeTerrain(&terrainTextureVariables) != 0) 
+	{
 
 		LOG("initializeTerrain() FAILED!!!\n");
 		return(-1);
@@ -96,8 +101,9 @@ int initializeScene_PlaceHolder(void)
 
 #endif
 
-	// Call For Skybox
-	if (initializeSkybox() != 0) {
+#ifdef ENABLE_SKYBOX
+	if (initializeSkybox(&texture_skybox, "res\\textures\\Skybox\\") != 0) 
+	{
 
 		LOG("initializeSkybox() FAILED!!!\n");
 		return(-1);
@@ -107,6 +113,7 @@ int initializeScene_PlaceHolder(void)
 	{
 		LOG("initializeSkybox() Successfull!!!\n");
 	}
+#endif
 
 	// initialize Cloud Noise Shader
 
@@ -256,9 +263,6 @@ void displayScene_PlaceHolder(void)
 #endif
 
 
-
-
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -291,7 +295,27 @@ void displayScene_PlaceHolder(void)
 
 #endif
 
-	// displaySkybox();
+#ifdef ENABLE_SKYBOX
+
+	sceneSkyBoxUniform = useSkyboxShader();
+
+	// Transformations
+	mat4 translationMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	displaySkybox(texture_skybox);
+#endif
+
 	// displayStarfield();
 }
 
@@ -299,7 +323,6 @@ void updateScene_PlaceHolder(void)
 {
 
 	// Code
-	updateSkybox();
 	updateStarfield();
 
 	/*angleCube = angleCube + 1.0f;
@@ -317,9 +340,11 @@ void updateScene_PlaceHolder(void)
 
 void uninitializeScene_PlaceHolder(void)
 {
-
 	// Code
-	uninitialiseSkybox();
+#ifdef ENABLE_SKYBOX
+	uninitialiseSkybox(texture_skybox);
+#endif
+
 	uninitializeStarfield();
 
 #ifdef ENABLE_TERRIAN
