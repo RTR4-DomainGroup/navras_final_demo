@@ -9,8 +9,9 @@
 //#include "../../inc/Noise.h"
 
 //#define ENABLE_CLOUD_NOISE
-#define ENABLE_TERRIAN
-#define ENABLE_SKYBOX
+//#define ENABLE_TERRIAN
+//#define ENABLE_SKYBOX
+#define ENABLE_STARFIELD
 
 GLuint texture_Marble;
 
@@ -65,6 +66,12 @@ float displacementmap_depth;
 // Variables For Skybox
 GLuint texture_skybox;
 struct SkyboxUniform sceneSkyBoxUniform;
+
+// Variables For Starfield
+GLuint texture_star; 
+double deltaTime;
+struct StarfieldUniform sceneStarfieldUniform;
+
 
 int initializeScene_PlaceHolder(void)
 {
@@ -136,8 +143,8 @@ int initializeScene_PlaceHolder(void)
     // initializeTriangle();
      //initializeSphere();
 
-	
-	if (initializeStarfield() != 0) 
+#ifdef ENABLE_STARFIELD
+	if (initializeStarfield(&texture_star, "res/textures/Starfield/Star.png") != 0)
 	{
 
 		LOG("initializeStarfield() FAILED!!!\n");
@@ -147,6 +154,7 @@ int initializeScene_PlaceHolder(void)
 	{
 		LOG("initializeStarfield() Successfull!!!\n");
 	}
+#endif // ENABLE_STARFIELD
 	
 	displacementmap_depth = 15.0f;
 
@@ -316,14 +324,45 @@ void displayScene_PlaceHolder(void)
 	displaySkybox(texture_skybox);
 #endif
 
-	// displayStarfield();
+#ifdef ENABLE_STARFIELD
+
+	sceneStarfieldUniform = useStarfieldShader();
+
+	float time = (float)deltaTime;
+
+	time = time * 0.05f;
+	time = time - floor(time);
+
+	// Transformations
+	mat4 translationMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+
+	glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+	displayStarfield(texture_star);
+
+#endif // ENABLE_STARFIELD
+
 }
 
 void updateScene_PlaceHolder(void)
 {
 
 	// Code
-	updateStarfield();
+#ifdef ENABLE_STARFIELD
+	deltaTime = updateStarfield(deltaTime);
+#endif // ENABLE_STARFIELD
 
 	/*angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
@@ -341,11 +380,14 @@ void updateScene_PlaceHolder(void)
 void uninitializeScene_PlaceHolder(void)
 {
 	// Code
+#ifdef ENABLE_STARFIELD
+	uninitializeStarfield(texture_star);
+#endif // ENABLE_STARFIELD
+
+
 #ifdef ENABLE_SKYBOX
 	uninitialiseSkybox(texture_skybox);
 #endif
-
-	uninitializeStarfield();
 
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);

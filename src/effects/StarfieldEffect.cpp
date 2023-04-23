@@ -4,17 +4,9 @@
 
 #define NUM_STARS 2000
 
-struct StarfieldUniform sceneStarfieldUniform;
-
-GLuint texture_star;
-
 GLuint star_vao;						// Vertex Array Object
 GLuint star_buffer;						// Vertex Buffer Object
 
-extern mat4 viewMatrix;
-extern mat4 perspectiveProjectionMatrix;
-
-double currentTime;
 static unsigned int seed = 0x13371337;
 
 static inline float random_float()
@@ -31,17 +23,17 @@ static inline float random_float()
 	return (res - 1.0f);
 }
 
-int initializeStarfield() 
+int initializeStarfield(GLuint* texture, const char* path)
 {
 	
-	if (LoadGLTexture_UsingSOIL(&texture_star, "res/textures/Starfield/Star.png") == FALSE)
+	if (LoadGLTexture_UsingSOIL(texture, path) == FALSE)
 	{
 		LOG("LoadGLTexture texture_star For Starfield FAILED!!!\n");
 		return(-1);
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull for Starfield = %u!!!\n", texture_star);
+		LOG("LoadGLTexture Successfull for Starfield = %u!!!\n", texture);
 	}
 
 	glGenVertexArrays(1, &star_vao);
@@ -84,36 +76,12 @@ int initializeStarfield()
 
 }
 
-void displayStarfield()
+void displayStarfield(GLuint texture)
 {
 
 	// Code
-	sceneStarfieldUniform = useStarfieldShader();
-
-	float time = (float)currentTime;
-
-	time = time * 0.05f;
-	time = time - floor(time);
-
-	// Transformations
-	mat4 translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-
-	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_star);
-	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -129,19 +97,20 @@ void displayStarfield()
 
 }
 
-void updateStarfield(void)
+float updateStarfield(float time)
 {
 	// Code
-	currentTime = currentTime + 0.05;
-
+	time = time + 0.05;
+	return time;
 }
 
-void uninitializeStarfield() {
+void uninitializeStarfield(GLuint texture)
+{
 
-	if (texture_star)
+	if (texture)
 	{
-		glDeleteTextures(1, &texture_star);
-		texture_star = NULL;
+		glDeleteTextures(1, &texture);
+		texture = NULL;
 	}
 
 	// Delete/Unintilization of Vertex Buffer Object
