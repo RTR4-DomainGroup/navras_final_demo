@@ -8,6 +8,8 @@
 #include "../../inc/effects/CloudEffect.h"
 //#include "../../inc/Noise.h"
 
+#define ENABLE_CLOUD_NOISE
+
 GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
@@ -95,6 +97,7 @@ int initializeScene_PlaceHolder(void)
 
 	// initialize Cloud Noise Shader
 
+#ifdef ENABLE_CLOUD_NOISE
 	noise_texture = initializeCloud();
 	if (noise_texture == 0)
 	{
@@ -105,6 +108,7 @@ int initializeScene_PlaceHolder(void)
 	{
 		LOG("initializeCloud() Successfull!!!\n");
 	}
+#endif
 
     // initializeCube();
     // initializePyramid();
@@ -186,6 +190,8 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);*/
 
+#ifdef ENABLE_CLOUD_NOISE
+
 	glEnable(GL_TEXTURE_3D);
 
 	sceneCloudNoiseUniform = useCloudNoiseShader();
@@ -233,6 +239,8 @@ void displayScene_PlaceHolder(void)
 
 	glDisable(GL_TEXTURE_3D);
 
+#endif
+
 	displayTerrain();
 
 	// displaySkybox();
@@ -252,8 +260,10 @@ void updateScene_PlaceHolder(void)
 		angleCube -= 360.0f;
 	}*/
 
+#ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
+#endif
 
 }
 
@@ -264,21 +274,24 @@ void uninitializeScene_PlaceHolder(void)
 	uninitialiseSkybox();
 	uninitializeStarfield();
 	uninitializeTerrain();
-	uninitializeCloud();
+	
 
+#ifdef ENABLE_CLOUD_NOISE
+
+	uninitializeCloud();
 	if (noise_texture)
 	{
 		glDeleteTextures(1, &noise_texture);
 		noise_texture = 0;
 	}
+#endif
+
 	uninitializeSphere();
 	//uninitializeTerrain();
-	//uninitializeSphere();
 	// uninitializeTriangle();
 	// uninitializeQuad();
 	// uninitializePyramid();
 	// uninitializeCube();
-
 	uninitializeQuad();
 
 	if (texture_Marble)
