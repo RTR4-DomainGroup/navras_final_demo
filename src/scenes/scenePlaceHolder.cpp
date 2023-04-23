@@ -9,14 +9,17 @@
 //#include "../../inc/Noise.h"
 
 #define ENABLE_CLOUD_NOISE
+#define ENABLE_TERRIAN
 
 GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
 
-struct TerrainUniform terrainUniform1;
+struct TerrainUniform terrainUniform;
 
 struct CloudNoiseUniform sceneCloudNoiseUniform;
+
+struct TextureVariables terrainTextureVariables;
 
 extern mat4 viewMatrix;
 
@@ -56,6 +59,8 @@ extern mat4 perspectiveProjectionMatrix;
 
 extern FILE* gpFile;
 
+float displacementmap_depth;
+
 int initializeScene_PlaceHolder(void)
 {
 
@@ -69,10 +74,16 @@ int initializeScene_PlaceHolder(void)
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture Marble Successfull = %u!!!\n", texture_Marble);
 	}
 
-	if (initializeTerrain() != 0) {
+#ifdef ENABLE_TERRIAN
+
+	terrainTextureVariables.albedoPath = "res/textures/DiffuseMapTerrain.jpg";
+	terrainTextureVariables.displacementPath = "res/textures/DisplacementMapTerrain.jpg";
+
+
+	if (initializeTerrain(&terrainTextureVariables) != 0) {
 
 		LOG("initializeTerrain() FAILED!!!\n");
 		return(-1);
@@ -82,6 +93,8 @@ int initializeScene_PlaceHolder(void)
 	{
 		LOG("initializeTerrain() Successfull!!!\n");
 	}
+
+#endif
 
 	// Call For Skybox
 	if (initializeSkybox() != 0) {
@@ -128,6 +141,7 @@ int initializeScene_PlaceHolder(void)
 		LOG("initializeStarfield() Successfull!!!\n");
 	}
 	
+	displacementmap_depth = 15.0f;
 
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
@@ -241,7 +255,41 @@ void displayScene_PlaceHolder(void)
 
 #endif
 
+
+
+
+
+#ifdef ENABLE_TERRIAN
+	// Terrain
+
+	terrainUniform = useTerrainShader();
+
+	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+
+	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
+
+	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
+	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
+	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
+
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
+	glUniform1i(terrainUniform.uniform_enable_fog, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
+
+
 	displayTerrain();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUseProgram(0);
+
+#endif
 
 	// displaySkybox();
 	// displayStarfield();
@@ -273,11 +321,14 @@ void uninitializeScene_PlaceHolder(void)
 	// Code
 	uninitialiseSkybox();
 	uninitializeStarfield();
-	uninitializeTerrain();
-	
+
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif
 
 #ifdef ENABLE_CLOUD_NOISE
 
+	
 	uninitializeCloud();
 	if (noise_texture)
 	{
@@ -287,12 +338,6 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 	uninitializeSphere();
-	//uninitializeTerrain();
-	// uninitializeTriangle();
-	// uninitializeQuad();
-	// uninitializePyramid();
-	// uninitializeCube();
-	uninitializeQuad();
 
 	if (texture_Marble)
 	{
