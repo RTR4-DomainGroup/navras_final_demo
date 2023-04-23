@@ -72,7 +72,6 @@ GLuint texture_star;
 double deltaTime;
 struct StarfieldUniform sceneStarfieldUniform;
 
-
 int initializeScene_PlaceHolder(void)
 {
 
@@ -339,7 +338,7 @@ void displayScene_PlaceHolder(void)
 	mat4 scaleMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -3.0f);					// glTranslatef() is replaced by this line.
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
@@ -351,6 +350,7 @@ void displayScene_PlaceHolder(void)
 	glUniform1f(sceneStarfieldUniform.timeUniform, time);
 
 	displayStarfield(texture_star);
+	glUseProgram(0);
 
 #endif // ENABLE_STARFIELD
 
@@ -387,7 +387,7 @@ void uninitializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_SKYBOX
 	uninitialiseSkybox(texture_skybox);
-#endif
+#endif // ENABLE_SKYBOX
 
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);

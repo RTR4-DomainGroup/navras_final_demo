@@ -2,7 +2,7 @@
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
 
-#define NUM_STARS 2000
+#define NUM_STARS 5000
 
 GLuint star_vao;						// Vertex Array Object
 GLuint star_buffer;						// Vertex Buffer Object
@@ -52,14 +52,14 @@ int initializeStarfield(GLuint* texture, const char* path)
 	star_t* star = (star_t*)glMapBufferRange(GL_ARRAY_BUFFER, 0, NUM_STARS * sizeof(star_t), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 	int i;
 
-	for (i = 0; i < 1000; i++)
+	for (i = 0; i < NUM_STARS; i++)
 	{
-		star[i].position[0] = (random_float() * 2.0f - 1.0f) * 200.0f;
-		star[i].position[1] = (random_float() * 2.0f - 1.0f) * 200.0f;
+		star[i].position[0] = (random_float() * 2.0f - 1.0f) * 350.0f;
+		star[i].position[1] = (random_float() * 2.0f - 1.0f) * 350.0f;
 		star[i].position[2] = random_float();
-		star[i].color[0] = 0.8f + random_float() * 0.2f;
-		star[i].color[1] = 0.8f + random_float() * 0.2f;
-		star[i].color[2] = 0.8f + random_float() * 0.2f;
+		star[i].color[0] = 0.3f + random_float() * 0.2f;
+		star[i].color[1] = 0.3f + random_float() * 0.2f;
+		star[i].color[2] = 0.3f + random_float() * 0.2f;
 	}
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -71,6 +71,7 @@ int initializeStarfield(GLuint* texture, const char* path)
 	glBindVertexArray(0);
 
 	glEnable(GL_POINT_SPRITE);
+	glEnable(GL_TEXTURE_2D);
 
 	return 0;
 
@@ -93,14 +94,12 @@ void displayStarfield(GLuint texture)
 
 	glDisable(GL_BLEND);
 
-	glUseProgram(0);
-
 }
 
 float updateStarfield(float time)
 {
 	// Code
-	time = time + 0.05;
+	time = time + 0.00025;
 	return time;
 }
 
