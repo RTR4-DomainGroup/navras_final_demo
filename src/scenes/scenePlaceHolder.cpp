@@ -10,8 +10,8 @@
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
-//#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
+#define ENABLE_SKYBOX
+//#define ENABLE_STARFIELD
 
 GLuint texture_Marble;
 
@@ -321,6 +321,7 @@ void displayScene_PlaceHolder(void)
 	glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	displaySkybox(texture_skybox);
+	glUseProgram(0);
 #endif
 
 #ifdef ENABLE_STARFIELD
