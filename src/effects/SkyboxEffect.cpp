@@ -43,9 +43,6 @@ void displaySkybox(GLuint texture)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	glDisable(GL_TEXTURE_CUBE_MAP);
-
-	// Un-use the Shader Program Object
-	glUseProgram(0);
 }
 
 void uninitialiseSkybox(GLuint texture)
