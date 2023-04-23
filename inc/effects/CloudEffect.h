@@ -1,7 +1,7 @@
 #pragma once
 #include "../shaders/CloudNoiseShader.h"
 
-int initializeCloud(void);
-void displayCloud(void);
-void updateCloud(void);
+GLuint initializeCloud(void);
+//void displayCloud(void);
+void updateCloud(bool, float, float);
 void uninitializeCloud(void);
