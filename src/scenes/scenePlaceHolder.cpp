@@ -237,12 +237,6 @@ void uninitializeScene_PlaceHolder(void)
 	uninitializeTerrain(&terrainTextureVariables);
 	uninitializeCloud();
 	uninitializeSphere();
-	//uninitializeTerrain();
-	//uninitializeSphere();
-	// uninitializeTriangle();
-	// uninitializeQuad();
-	// uninitializePyramid();
-	// uninitializeCube();
 
 	if (texture_Marble)
 	{
