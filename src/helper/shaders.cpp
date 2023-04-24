@@ -2,6 +2,7 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
+#include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
@@ -17,6 +18,11 @@ BOOL initAllShaders(void)
     }
 
     if (initializeSkyboxShader() != 0)
+    {
+        return FALSE;
+    }
+    
+    if(initializeFSQuadShader() != 0)
     {
         return FALSE;
     }
@@ -42,9 +48,7 @@ BOOL initAllShaders(void)
     }
 
     return TRUE;
-
 }
-
 
 void uninitAllShaders(void)
 {

@@ -7,6 +7,8 @@
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
+
+
 //#include "../../inc/Noise.h"
 
 #define FBO_WIDTH 800
@@ -85,8 +87,11 @@ struct StarfieldUniform sceneStarfieldUniform;
 struct GodraysUniform sceneGodRaysUniform;
 GLfloat lightPosition_gr[] = {0.0f, 20.0f, -35.0f, 1.0f};
 
+
 int initializeScene_PlaceHolder(void)
 {
+	// Function Declarations
+	int initializeGodRays(void);
 
 	// Code.
 	// Texture
@@ -118,6 +123,7 @@ int initializeScene_PlaceHolder(void)
 		LOG("initializeTerrain() Successfull!!!\n");
 	}
 	initializeSphere(1.5f, 60, 60);
+	initializeGodRays();
 #endif
 
 #ifdef ENABLE_SKYBOX
@@ -286,10 +292,8 @@ void displayScene_PlaceHolder(void)
 #ifdef ENABLE_TERRIAN
 	void displayTerraineScene(int);
 	// Terrain
-	displayTerraineScene(1);
-
-	
-
+	//displayTerraineScene(1);
+	displayGodRays(WIN_WIDTH, WIN_HEIGHT);
 #endif
 
 #ifdef ENABLE_SKYBOX
@@ -446,10 +450,10 @@ void displayGodRays(int width, int height)
 	modelMatrix = translationMatrix;
 
 	glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
-	glUniform1f(sceneGodRaysUniform.decay, 0.94815f);
-    glUniform1f(sceneGodRaysUniform.density, 4.8f);
+	glUniform1f(sceneGodRaysUniform.decay, 1.0f);
+    glUniform1f(sceneGodRaysUniform.density, 0.92f);
     glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
-    glUniform1f(sceneGodRaysUniform.weight, 0.9987f);
+    glUniform1f(sceneGodRaysUniform.weight, 0.06f);
 
 	glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);

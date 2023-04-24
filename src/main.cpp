@@ -3,9 +3,11 @@
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
+#include "../inc/helper/framebuffer.h"
 #include "../inc/helper/audioplayer.h"
 #include "../inc/shaders/TerrainShader.h"
 #include "../inc/scenes/scenePlaceHolder.h"
+#include "../inc/shaders/FSQuadShader.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -30,6 +32,13 @@ HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
 mat4 perspectiveProjectionMatrix;
+
+int winWidth;
+int winHeight;
+struct FSQuadUniform sceneFSQuadUniform;
+
+extern struct FrameBufferDetails fboColorPass;
+extern struct FrameBufferDetails fboGodRayPass;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -506,6 +515,9 @@ void ToggleFullScreen(void) {
 
 void display(void)
 {
+	// Function declarations
+	void resize(int, int);
+
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -514,6 +526,23 @@ void display(void)
 
 	// Call Scenes Display Here
 	displayScene_PlaceHolder();
+
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    resize(winWidth, winHeight);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	sceneFSQuadUniform = useFSQuadShader();
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(sceneFSQuadUniform.textureSamplerUniform1, 0);
+	glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(sceneFSQuadUniform.textureSamplerUniform1, 1);
+	glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
+
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
 
 	SwapBuffers(ghdc);
 
@@ -534,6 +563,8 @@ void resize(int width, int height) {
 	if (height == 0)			// To Avoid Divided by 0(in Future)
 		height = 1;
 
+	winWidth = width;
+	winHeight = height;
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
