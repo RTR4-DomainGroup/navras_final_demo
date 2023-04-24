@@ -9,7 +9,7 @@
 //#include "../../inc/Noise.h"
 #include "../../inc/helper/staticmodel.h"
 
-#pragma comment(lib, "assimp-vc142-mtd.lib")
+
 
 //PROPERTIES OF VERTEX:
 typedef struct _STATIC_MODEL
@@ -22,7 +22,7 @@ STATIC_MODEL rockModel;
 
 void drawStaticModel(STATIC_MODEL staticModel);
 void loadStaticModel(const char* path, STATIC_MODEL* staticModel);
-void unloadStaticModel(STATIC_MODEL staticModel);
+void unloadStaticModel(STATIC_MODEL* staticModel);
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
@@ -414,7 +414,7 @@ void updateScene_PlaceHolder(void)
 	// Code
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
-#endif // ENABLE_STARFIELD
+#endif
 
 	/*angleCube = angleCube + 1.0f;
 	if (angleCube >= 360.0f)
@@ -434,12 +434,12 @@ void uninitializeScene_PlaceHolder(void)
 	// Code
 #ifdef ENABLE_STARFIELD
 	uninitializeStarfield(texture_star);
-#endif // ENABLE_STARFIELD
+#endif
 
 
 #ifdef ENABLE_SKYBOX
 	uninitialiseSkybox(texture_skybox);
-#endif // ENABLE_SKYBOX
+#endif
 
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);
@@ -464,6 +464,9 @@ void uninitializeScene_PlaceHolder(void)
 		texture_Marble = NULL;
 	}
 
+	//UNINIT models
+	unloadStaticModel(&rockModel);
+
 }
 
 
@@ -472,7 +475,7 @@ void loadStaticModel(const char* path, STATIC_MODEL* staticModel)
 	staticModel->pModel = new StaticModel(path, true);
 	if (staticModel->pModel == NULL)
 	{
-		fprintf(gpFile, ("loadStaticModel() new Model Failed.\n"));
+		LOG("loadStaticModel() new Model Failed.\n");
 	}
 }
 
@@ -481,11 +484,11 @@ void drawStaticModel(STATIC_MODEL staticModel)
 	staticModel.pModel->Draw();
 }
 
-void unloadStaticModel(STATIC_MODEL staticModel)
+void unloadStaticModel(STATIC_MODEL *staticModel)
 {
-//	if (staticModel)
-//	{
-//		delete staticModel;
-//		staticModel = nullptr;
-//	}
+	if (staticModel->pModel)
+	{
+		delete staticModel->pModel;
+		staticModel->pModel = nullptr;
+	}
 }

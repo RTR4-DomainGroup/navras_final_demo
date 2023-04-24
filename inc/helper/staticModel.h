@@ -73,6 +73,42 @@ public:
         setupMesh();
     }
 
+    // destructor
+    ~Mesh()
+    {
+        vertices.clear();   //vertices will be cleared (clear data)
+        vertices.shrink_to_fit();  //free unused memory
+
+        for (int i = 0; i < textures.size(); i++)
+        {
+            glDeleteTextures(1, &textures[i].id);
+        }
+
+        textures.clear();   //textures clear
+        textures.shrink_to_fit();
+
+        indices.clear();
+        indices.shrink_to_fit();
+
+        if (VAO)
+        {
+            glDeleteVertexArrays(1, &VAO);
+            VAO = 0;
+        }
+
+        if (VBO)
+        {
+            glDeleteBuffers(1, &VBO);
+            VBO = 0;
+        }
+
+        if (EBO)
+        {
+            glDeleteBuffers(1, &EBO);
+            EBO = 0;
+        }
+    }
+
     // render the mesh
     void Draw()
     {
@@ -170,7 +206,7 @@ class StaticModel
 public:
     // model data 
     vector<StaticModelTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-    vector<Mesh>    meshes;
+    vector<Mesh*>    meshes;
     string directory;
     bool gammaCorrection;
 
@@ -182,25 +218,43 @@ public:
     // constructor, expects a filepath to a 3D model.
     StaticModel(string const& path, bool gamma = false) : gammaCorrection(gamma)
     {
-        fprintf(gpFile, "\nEntry to function = %s\n", __FUNCTION__);
+        LOG("------------------------------------------------------------------------------\n");
+        LOG("Entry to function = %s\n", __FUNCTION__);
         loadModel(path);
-        fprintf(gpFile, "Exit from function = %s\n", __FUNCTION__);
+        LOG("Exit from function = %s\n", __FUNCTION__);
+        LOG("------------------------------------------------------------------------------\n");
+    }
+
+    //destructor
+    ~StaticModel()
+    {
+
+        //MessageBox(NULL, TEXT("~Model"), NULL, MB_OK);
+        //fprintf(gpFile, "in ~Model\n");
+        textures_loaded.clear();
+        textures_loaded.shrink_to_fit();
+
+        for (int i = 0; i < meshes.size(); i++)
+        {
+            delete meshes[i];
+        }
+        meshes.clear();
+        meshes.shrink_to_fit();
     }
 
     // draws the model, and thus all its meshes
     void Draw()
     {
         for (unsigned int i = 0; i < meshes.size(); i++)
-            meshes[i].Draw();
+            meshes[i]->Draw();
     }
 
 private:
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
     void loadModel(string const& path)
     {
-        fprintf(gpFile, "Entry to function = %s\n", __FUNCTION__);
-        fprintf(gpFile, "obj file path = %s\n", path.c_str());
-
+        LOG("Entry to function = %s\n", __FUNCTION__);
+        LOG("obj file path = %s\n", path.c_str());
 
         // read file via ASSIMP
         Assimp::Importer importer;
@@ -208,18 +262,18 @@ private:
         // check for errors
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
-            fprintf(gpFile, "ERROR::ASSIMP:: %s\n", importer.GetErrorString());
+            LOG("ERROR::ASSIMP:: %s\n", importer.GetErrorString());
             return;
         }
         // retrieve the directory path of the filepath
         directory = path.substr(0, path.find_last_of('/'));
 
-        //fprintf(gpFile, "model directory = %s\n", directory.c_str());
+        LOG("model directory = %s\n", directory.c_str());
 
         // process ASSIMP's root node recursively
         processNode(scene->mRootNode, scene);
 
-        fprintf(gpFile, "Exit from function = %s\n", __FUNCTION__);
+        LOG("Exit from function = %s\n", __FUNCTION__);
     }
 
     // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -241,7 +295,7 @@ private:
 
     }
 
-    Mesh processMesh(aiMesh* mesh, const aiScene* scene)
+    Mesh* processMesh(aiMesh* mesh, const aiScene* scene)
     {
         // data to fill
         vector<StaticModelVertex> vertices;
@@ -374,10 +428,10 @@ private:
             textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
         }
 
-        fprintf(gpFile, "mesh number = %zu\n", meshes.size());
+        LOG("mesh number = %zu\n", meshes.size());
 
         // return a mesh object created from the extracted mesh data
-        return Mesh(vertices, indices, textures);
+        return new Mesh(vertices, indices, textures);
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
@@ -433,8 +487,8 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
 
     if (data)
     {
-        fprintf(gpFile, "SUCCESS : texture directory = %s\n", directory.c_str());
-        fprintf(gpFile, "SUCCESS : texture filename = %s\n", filename.c_str());
+        LOG("SUCCESS : texture directory = %s\n", directory.c_str());
+        LOG("SUCCESS : texture filename = %s\n", filename.c_str());
 
         GLenum format;
         if (nrComponents == 1)
@@ -461,8 +515,8 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
     }
     else
     {
-        fprintf(gpFile, "ERROR : texture directory = %s\n", directory.c_str());
-        fprintf(gpFile, "ERROR: texture filename = %s\n", filename.c_str());
+        LOG("ERROR : texture directory = %s\n", directory.c_str());
+        LOG("ERROR: texture filename = %s\n", filename.c_str());
         //MessageBox(NULL, TEXT("Texture not loaded"), TEXT("ERROR"), MB_OK);
         SOIL_free_image_data(data);
     }
