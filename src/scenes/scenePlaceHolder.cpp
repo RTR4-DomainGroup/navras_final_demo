@@ -9,8 +9,8 @@
 //#include "../../inc/Noise.h"
 
 //#define ENABLE_CLOUD_NOISE
-//#define ENABLE_TERRIAN
-#define ENABLE_SKYBOX
+#define ENABLE_TERRIAN
+//#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 
 GLuint texture_Marble;
