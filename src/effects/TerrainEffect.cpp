@@ -1,10 +1,8 @@
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
+#include "../../inc/helper/geometry.h"
 
-extern FILE* gpFile;
-
-extern mat4 perspectiveProjectionMatrix;
 
 int initializeTerrain(TextureVariables *terrainTexture) {
 	
@@ -12,7 +10,6 @@ int initializeTerrain(TextureVariables *terrainTexture) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Displacement For Terrain FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -23,7 +20,6 @@ int initializeTerrain(TextureVariables *terrainTexture) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Diffuse For Terrain FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -31,21 +27,14 @@ int initializeTerrain(TextureVariables *terrainTexture) {
 	}
 
 	return 0;
-
 }
 
 void displayTerrain() {
 
 	// Code
-
-	
-
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawArraysInstanced(GL_PATCHES, 0, 4, 64 * 64);
-
-	
-
 }
 
 void uninitializeTerrain(TextureVariables *terrainTexture) {
@@ -61,5 +50,4 @@ void uninitializeTerrain(TextureVariables *terrainTexture) {
 		glDeleteTextures(1, &terrainTexture->albedo);
 		terrainTexture->albedo = NULL;
 	}
-
 }

@@ -103,16 +103,23 @@ int initializeADSShader(void)
 		"{ \n" \
 			"vec4 phong_ads_light; \n" \
 			"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
-			"vec4 ambient = u_la * u_ka; \n" \
-			"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
-			"vec3 normalized_light_direction = normalize(lightDirection); \n" \
-			"vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
-			"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
-			"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-			"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
-			"phong_ads_light = ambient + diffuse + specular; \n" \
-			"FragColor = phong_ads_light; \n" \
-			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
+			"if(u_lightingEnable == 1)" \
+			"\n" \
+			"{\n" \
+				"vec4 ambient = u_la * u_ka; \n" \
+				"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
+				"vec3 normalized_light_direction = normalize(lightDirection); \n" \
+				"vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
+				"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
+				"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
+				"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+				"phong_ads_light = ambient + diffuse + specular; \n" \
+				"FragColor = phong_ads_light; \n" \
+			"}\n" \
+			"else" \
+			"{" \
+				"FragColor = a_color_out; \n" \
+			"}" \
 		"} \n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);

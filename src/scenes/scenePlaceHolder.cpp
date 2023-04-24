@@ -1,18 +1,22 @@
 // This File Will Be Replaced by Scene*.cpp
-
+#include "../../inc/helper/framebuffer.h"
 #include "../../inc/scenes/scenePlaceHolder.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
+#include "../../inc/effects/GodraysEffect.h"
 //#include "../../inc/Noise.h"
 
-//#define ENABLE_CLOUD_NOISE
-//#define ENABLE_TERRIAN
-#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
+#define FBO_WIDTH 800
+#define FBO_HEIGHT 600
 
+//#define ENABLE_CLOUD_NOISE
+#define ENABLE_TERRIAN
+//#define ENABLE_SKYBOX
+//#define ENABLE_STARFIELD
+GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
 
 struct ADSUniform sceneADSUniform;
@@ -24,6 +28,10 @@ struct CloudNoiseUniform sceneCloudNoiseUniform;
 struct TextureVariables terrainTextureVariables;
 
 extern mat4 viewMatrix;
+
+struct FrameBufferDetails fboBlackPass;
+struct FrameBufferDetails fboColorPass;
+struct FrameBufferDetails fboGodRayPass;
 
 //GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 //GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -72,6 +80,11 @@ GLuint texture_star;
 double deltaTime;
 struct StarfieldUniform sceneStarfieldUniform;
 
+
+// Varaiables for God Rays
+struct GodraysUniform sceneGodRaysUniform;
+GLfloat lightPosition_gr[] = {0.0f, 20.0f, -35.0f, 1.0f};
+
 int initializeScene_PlaceHolder(void)
 {
 
@@ -90,8 +103,8 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_TERRIAN
 
-	terrainTextureVariables.albedoPath = "res/textures/DiffuseMapTerrain.jpg";
-	terrainTextureVariables.displacementPath = "res/textures/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.albedoPath = "res/textures/terrain/DiffuseMapTerrain.jpg";
+	terrainTextureVariables.displacementPath = "res/textures/terrain/DisplacementMapTerrain.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
@@ -104,7 +117,7 @@ int initializeScene_PlaceHolder(void)
 	{
 		LOG("initializeTerrain() Successfull!!!\n");
 	}
-
+	initializeSphere(1.5f, 60, 60);
 #endif
 
 #ifdef ENABLE_SKYBOX
@@ -138,9 +151,9 @@ int initializeScene_PlaceHolder(void)
 
     // initializeCube();
     // initializePyramid();
-    // initializeQuad();
+    initializeQuad();
     // initializeTriangle();
-     //initializeSphere();
+    // initializeSphere(5.0f, 60, 60);
 
 #ifdef ENABLE_STARFIELD
 	if (initializeStarfield(&texture_star, "res/textures/Starfield/Star.png") != 0)
@@ -271,34 +284,11 @@ void displayScene_PlaceHolder(void)
 
 
 #ifdef ENABLE_TERRIAN
+	void displayTerraineScene(int);
 	// Terrain
+	displayTerraineScene(1);
 
-	terrainUniform = useTerrainShader();
-
-	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
-
-	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
-
-	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
-
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
-	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	glUniform1i(terrainUniform.uniform_enable_fog, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
-
-
-	displayTerrain();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
+	
 
 #endif
 
@@ -355,6 +345,123 @@ void displayScene_PlaceHolder(void)
 
 #endif // ENABLE_STARFIELD
 
+}
+
+void displayTerraineScene(int godRays = 1)
+{
+	terrainUniform = useTerrainShader();
+
+	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+
+	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
+
+	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
+	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
+	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
+
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
+	glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
+
+
+	displayTerrain();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	glUseProgram(0);
+	sceneADSUniform = useADSShader();
+	mat4 translationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	translationMatrix = vmath::translate(0.0f, 20.0f, -35.0f);
+	modelMatrix = translationMatrix;
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
+	displaySphere(whiteSphere);
+	glUseProgram(0);
+}
+
+int initializeGodRays(void)
+{
+    fboBlackPass.textureWidth = FBO_WIDTH;
+    fboBlackPass.textureHeight = FBO_HEIGHT;
+
+    fboColorPass.textureWidth = FBO_WIDTH;
+    fboColorPass.textureHeight = FBO_HEIGHT;
+
+    fboGodRayPass.textureWidth = FBO_WIDTH;
+    fboGodRayPass.textureHeight = FBO_HEIGHT;
+
+    createFBO(&fboBlackPass);
+    createFBO(&fboColorPass);
+    createFBO(&fboGodRayPass);
+
+	return(0);
+}
+
+void resize_godRayPasses(int fboWidh, int fboHeight)
+{
+	glViewport(0, 0, (GLsizei) fboWidh, (GLsizei)fboHeight);
+}
+
+void displayGodRays(int width, int height)
+{
+	// Function declarations
+	void resize_godRayPasses(int, int);
+
+	// Black pass
+	glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	resize_godRayPasses(width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	displayTerraineScene(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Color Pass
+	glBindFramebuffer(GL_FRAMEBUFFER, fboColorPass.frameBuffer);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	resize_godRayPasses(width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	displayTerraineScene(1);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// God Rays Pass
+	glBindFramebuffer(GL_FRAMEBUFFER, fboGodRayPass.frameBuffer);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	resize_godRayPasses(width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	sceneGodRaysUniform = useGodRaysShader();
+
+	mat4 translationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	translationMatrix = vmath::translate(0.0f, 20.0f, -35.0f);
+	modelMatrix = translationMatrix;
+
+	glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
+	glUniform1f(sceneGodRaysUniform.decay, 0.94815f);
+    glUniform1f(sceneGodRaysUniform.density, 4.8f);
+    glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
+    glUniform1f(sceneGodRaysUniform.weight, 0.9987f);
+
+	glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
+    glUniform1i(sceneGodRaysUniform.godraysampler, 0);
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void updateScene_PlaceHolder(void)

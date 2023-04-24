@@ -1,4 +1,3 @@
-#include "../../inc/helper/common.h"
 #include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/SkyboxShader.h"

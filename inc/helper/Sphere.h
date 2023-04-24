@@ -177,12 +177,15 @@ public:
         cleanupMeshData();
     }
     
-    inline void draw()
+    inline void draw(GLfloat* color)
     {
         // code
         // bind vao
         glBindVertexArray(vao);
-
+        if(color)
+        {
+            glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, color);
+        }
         // draw
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_index);
