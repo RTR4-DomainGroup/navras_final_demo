@@ -1,3 +1,4 @@
+#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/scenes/scenePlaceHolder.h"
@@ -6,23 +7,11 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
+#include "../../inc/effects/StaticModelLoadingEffect.h"
 //#include "../../inc/Noise.h"
-#include "../../inc/helper/staticmodel.h"
-
-
-
-//PROPERTIES OF VERTEX:
-typedef struct _STATIC_MODEL
-{
-	StaticModel* pModel;
-
-}STATIC_MODEL;
 
 STATIC_MODEL rockModel;
 
-void drawStaticModel(STATIC_MODEL staticModel);
-void loadStaticModel(const char* path, STATIC_MODEL* staticModel);
-void unloadStaticModel(STATIC_MODEL* staticModel);
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
@@ -469,26 +458,3 @@ void uninitializeScene_PlaceHolder(void)
 
 }
 
-
-void loadStaticModel(const char* path, STATIC_MODEL* staticModel)
-{
-	staticModel->pModel = new StaticModel(path, true);
-	if (staticModel->pModel == NULL)
-	{
-		LOG("loadStaticModel() new Model Failed.\n");
-	}
-}
-
-void drawStaticModel(STATIC_MODEL staticModel)
-{
-	staticModel.pModel->Draw();
-}
-
-void unloadStaticModel(STATIC_MODEL *staticModel)
-{
-	if (staticModel->pModel)
-	{
-		delete staticModel->pModel;
-		staticModel->pModel = nullptr;
-	}
-}

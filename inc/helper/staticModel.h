@@ -3,6 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "../../inc/helper/common.h"
 #include "SOIL/include/SOIL.h"
 #include "stb_image.h"
 #include "vmath.h"
@@ -13,23 +14,12 @@
 #include <iostream>
 #include <map>
 #include <vector>
+
 using namespace std;
 using namespace vmath;
 
-
-FILE* gpFile = NULL;
-GLuint shaderProgramObject;
-
-
-enum
-{
-    SPK_ATTRIBUTE_POSITION = 0,
-    SPK_ATTRIBUTE_COLOR,
-    SPK_ATTRIBUTE_NORMAL,
-    SPK_ATTRIBUTE_TEXCOORD,
-    SPK_ATTRIBUTE_TANGENT,
-    SPK_ATTRIBUTE_BITANGENT,
-};
+extern FILE* gpFile;
+extern GLuint shaderProgObj;
 
 struct StaticModelVertex {
     // position
@@ -137,7 +127,7 @@ public:
                 number = std::to_string(heightNr++); // transfer unsigned int to stream
 
             // now set the sampler to the correct texture unit
-            glUniform1i(glGetUniformLocation(shaderProgramObject, (name + number).c_str()), i);
+            glUniform1i(glGetUniformLocation(shaderProgObj, (name + number).c_str()), i);
             // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
@@ -176,20 +166,20 @@ private:
 
         // set the vertex attribute pointers
         // vertex Positions
-        glEnableVertexAttribArray(SPK_ATTRIBUTE_POSITION);
-        glVertexAttribPointer(SPK_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)0);
+        glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+        glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)0);
         // vertex normals
-        glEnableVertexAttribArray(SPK_ATTRIBUTE_NORMAL);
-        glVertexAttribPointer(SPK_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Normal));
+        glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+        glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Normal));
         // vertex texture coords
-        glEnableVertexAttribArray(SPK_ATTRIBUTE_TEXCOORD);
-        glVertexAttribPointer(SPK_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, TexCoords));
+        glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+        glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, TexCoords));
         // vertex tangent
-        glEnableVertexAttribArray(SPK_ATTRIBUTE_TANGENT);
-        glVertexAttribPointer(SPK_ATTRIBUTE_TANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Tangent));
+        glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TANGENT);
+        glVertexAttribPointer(DOMAIN_ATTRIBUTE_TANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Tangent));
         // vertex bitangent
-        glEnableVertexAttribArray(SPK_ATTRIBUTE_BITANGENT);
-        glVertexAttribPointer(SPK_ATTRIBUTE_BITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Bitangent));
+        glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_BITANGENT);
+        glVertexAttribPointer(DOMAIN_ATTRIBUTE_BITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Bitangent));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
@@ -199,7 +189,6 @@ private:
         glBindVertexArray(0);
     }
 };
-
 
 class StaticModel
 {
@@ -524,8 +513,4 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
     return textureID;
 }
 
-void uninitializeModel(void)
-{
-
-}
 
