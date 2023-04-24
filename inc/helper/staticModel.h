@@ -3,6 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "SOIL/include/SOIL.h"
 #include "stb_image.h"
 #include "vmath.h"
 
@@ -30,7 +31,7 @@ enum
     SPK_ATTRIBUTE_BITANGENT,
 };
 
-struct Vertex {
+struct StaticModelVertex {
     // position
     vec3 Position;
     // normal
@@ -43,7 +44,7 @@ struct Vertex {
     vec3 Bitangent;
 };
 
-struct Texture {
+struct StaticModelTexture {
     unsigned int id;
     string type;
     string path;
@@ -55,14 +56,14 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
 class Mesh {
 public:
     // mesh Data
-    vector<Vertex>       vertices;
+    vector<StaticModelVertex>       vertices;
     vector<unsigned int> indices;
-    vector<Texture>      textures;
+    vector<StaticModelTexture>      textures;
     unsigned int VAO;
 
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<StaticModelVertex> vertices, vector<unsigned int> indices, vector<StaticModelTexture> textures)
     {
         this->vertices = vertices;
         this->indices = indices;
@@ -134,25 +135,25 @@ private:
         // A great thing about structs is that their memory layout is sequential for all its items.
         // The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
         // again translates to 3/2 floats which translates to a byte array.
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(StaticModelVertex), &vertices[0], GL_STATIC_DRAW);
 
 
         // set the vertex attribute pointers
         // vertex Positions
         glEnableVertexAttribArray(SPK_ATTRIBUTE_POSITION);
-        glVertexAttribPointer(SPK_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+        glVertexAttribPointer(SPK_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)0);
         // vertex normals
         glEnableVertexAttribArray(SPK_ATTRIBUTE_NORMAL);
-        glVertexAttribPointer(SPK_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+        glVertexAttribPointer(SPK_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Normal));
         // vertex texture coords
         glEnableVertexAttribArray(SPK_ATTRIBUTE_TEXCOORD);
-        glVertexAttribPointer(SPK_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+        glVertexAttribPointer(SPK_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, TexCoords));
         // vertex tangent
         glEnableVertexAttribArray(SPK_ATTRIBUTE_TANGENT);
-        glVertexAttribPointer(SPK_ATTRIBUTE_TANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
+        glVertexAttribPointer(SPK_ATTRIBUTE_TANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Tangent));
         // vertex bitangent
         glEnableVertexAttribArray(SPK_ATTRIBUTE_BITANGENT);
-        glVertexAttribPointer(SPK_ATTRIBUTE_BITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
+        glVertexAttribPointer(SPK_ATTRIBUTE_BITANGENT, 3, GL_FLOAT, GL_FALSE, sizeof(StaticModelVertex), (void*)offsetof(StaticModelVertex, Bitangent));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
@@ -164,22 +165,22 @@ private:
 };
 
 
-class Model
+class StaticModel
 {
 public:
     // model data 
-    vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+    vector<StaticModelTexture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
 
-    Model()
+    StaticModel()
     {
 
     }
 
     // constructor, expects a filepath to a 3D model.
-    Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
+    StaticModel(string const& path, bool gamma = false) : gammaCorrection(gamma)
     {
         fprintf(gpFile, "\nEntry to function = %s\n", __FUNCTION__);
         loadModel(path);
@@ -243,14 +244,14 @@ private:
     Mesh processMesh(aiMesh* mesh, const aiScene* scene)
     {
         // data to fill
-        vector<Vertex> vertices;
+        vector<StaticModelVertex> vertices;
         vector<unsigned int> indices;
-        vector<Texture> textures;
+        vector<StaticModelTexture> textures;
 
         // walk through each of the mesh's vertices
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
-            Vertex vertex;
+            StaticModelVertex vertex;
             vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
             // positions
             vector[0] = mesh->mVertices[i].x;
@@ -360,16 +361,16 @@ private:
             // normal: texture_normalN
 
             // 1. diffuse maps
-            vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+            vector<StaticModelTexture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
             textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
             // 2. specular maps
-            vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+            vector<StaticModelTexture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
             textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
             // 3. normal maps
-            std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+            std::vector<StaticModelTexture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
             textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
             // 4. height maps
-            std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+            std::vector<StaticModelTexture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
             textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
         }
 
@@ -381,9 +382,9 @@ private:
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.
     // the required info is returned as a Texture struct.
-    vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
+    vector<StaticModelTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName)
     {
-        vector<Texture> textures;
+        vector<StaticModelTexture> textures;
         for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
         {
             aiString str;
@@ -401,7 +402,7 @@ private:
             }
             if (!skip)
             {   // if texture hasn't been loaded already, load it
-                Texture texture;
+                StaticModelTexture texture;
                 texture.id = TextureFromFile(str.C_Str(), this->directory);
 
                 if (texture.id == 0)
