@@ -84,8 +84,8 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_TERRIAN
 
-	terrainTextureVariables.albedoPath = "res/textures/DiffuseMapTerrain.jpg";
-	terrainTextureVariables.displacementPath = "res/textures/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.albedoPath = "res/textures/terrain/DiffuseMapTerrain.jpg";
+	terrainTextureVariables.displacementPath = "res/textures/terrain/DisplacementMapTerrain.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
