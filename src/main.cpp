@@ -52,16 +52,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	int iWCoorx, iWCoory;
 
 	// Code
-	// if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
+	//if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
 
-	// 	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
-	// 	exit(0);
+	//	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
+	//	exit(0);
 
-	// }
-	// else {
+	//}
+	//else {
 
-	// 	LOG("Log File SuccessFully Created!!!\n");
-	// }
+	//	LOG("Log File SuccessFully Created!!!\n");
+	//}
 
 	// Initialisation Of WNDCLASSEX Structure
 	wndclass.cbSize = sizeof(WNDCLASSEX);
@@ -384,32 +384,26 @@ int initialize(void) {
     if(initAllShaders())
     {
         LOG("All Shaders were successfull !!!\n");
-
     }
     else
     {
-
         LOG("All Shaders FAILED !!!\n");
         return (-6);
-
     }
-
 
 	// Initialize Scenes
 
 
 	if(initializeScene_PlaceHolder() != 0)
 	{
-
 		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
         return (-8);
-
 	}
 
 	// initialize camera
 	cameraEyeX = 0.0f;
 	cameraEyeY = 0.0f;
-	cameraEyeZ = 20.0f;
+	cameraEyeZ = 6.0f;
 
 	cameraCenterX = 0.0f;
 	cameraCenterY = 0.0f;
@@ -430,7 +424,7 @@ int initialize(void) {
 
 	
 	// Enabling The Texture
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
 
@@ -443,24 +437,29 @@ int initialize(void) {
 void printGLInfo(void) {
 
 	// Local Variable Declarations
-	GLint numExtentions = 0;
+	GLint numExtensions = 0;
 
 	// Code
-	LOG("OpenGL Vendor: %s\n", glGetString(GL_VENDOR));							// Graphic Card's Company
-	LOG("OpenGL Renderer: %s\n", glGetString(GL_RENDERER));						// Graphic Card
-	LOG("OpenGL Version: %s\n", glGetString(GL_VERSION));						// Graphic Card/Driver Version
-	LOG("OpenGLSL Version: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));	// Shading Language Version
+	// ***** Writing Graphics Card Related Info in Log File  ***** //
+	LOG("\n   **********************************************************\n");
+	LOG("   ***** Graphics Card Information Details *****\n");
+	LOG("   **********************************************************\n");
+	LOG("   OpenGL Vendor	: %s \n", glGetString(GL_VENDOR));
+	LOG("   OpenGL Renderer	: %s \n", glGetString(GL_RENDERER));
+	LOG("   OpenGL Version	: %s \n", glGetString(GL_VERSION));
+	LOG("   GLSL Version	: %s \n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	// GLSL - Graphics Library Shading Language
 
-	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtentions);
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+	LOG("   **********************************************************\n");
+	LOG("   Number of Supported Extensions: %d \n", numExtensions);
+	LOG("   **********************************************************\n");
 
-	LOG("No. OF Supported Extensions: %d\n", numExtentions);
-
-	for (int i = 0; i < numExtentions; i++) {
-	
-		LOG("%s\n", glGetStringi(GL_EXTENSIONS, i));
-
+	for (int i = 0; i < numExtensions; i++)
+	{
+		LOG("   %s \n", glGetStringi(GL_EXTENSIONS, i));
 	}
-
+	LOG("**********************************************************\n");
 }
 
 void ToggleFullScreen(void) {
@@ -593,12 +592,12 @@ void uninitialize(void) {
 
 	}
 
-	// if (gpFile) {
+	//if (gpFile) {
 
-	// 	LOG("Log File Close!!!\n");
-	// 	fclose(gpFile);
-	// 	gpFile = NULL;
+	//	fprintf(gpFile, "Log File Close!!!\n");
+	//	fclose(gpFile);
+	//	gpFile = NULL;
 
-	// }
+	//}
 
 }

@@ -4,8 +4,6 @@
 // Variable Declarations
 GLuint adsShaderProgramObject;
 
-extern FILE* gpFile;
-
 ADSUniform adsUniform;
 
 int initializeADSShader(void)
