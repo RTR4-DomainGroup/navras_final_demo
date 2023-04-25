@@ -41,6 +41,7 @@ struct TextureVariables {
 
 };
 
+
 #ifdef __linux__ 
 
 //linux code goes here

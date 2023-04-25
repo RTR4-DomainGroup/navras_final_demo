@@ -4,7 +4,6 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/audioplayer.h"
-#include "../inc/shaders/TerrainShader.h"
 #include "../inc/scenes/scenePlaceHolder.h"
 
 // OpenGL Libraries
@@ -30,6 +29,10 @@ HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
 mat4 perspectiveProjectionMatrix;
+
+// framebuffer related variables
+int windowWidth;
+int windowHeight;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -534,6 +537,9 @@ void resize(int width, int height) {
 	if (height == 0)			// To Avoid Divided by 0(in Future)
 		height = 1;
 
+	windowWidth = width;
+	windowHeight = height;
+
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
@@ -556,7 +562,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolder();
 
 	//uninitialize all shaders
-	uninitializeADSShader();
+	uninitAllShaders();
 
 	if (gbFullScreen) {
 
