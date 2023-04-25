@@ -17,11 +17,12 @@
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
-#define ENABLE_SKYBOX
-#define ENABLE_CLOUD_NOISE
-#define ENABLE_TERRIAN
+// #define ENABLE_SKYBOX
+// #define ENABLE_CLOUD_NOISE
+// #define ENABLE_TERRIAN
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
+#define ENABLE_BILLBOARDING
 
 // GLuint texture_Marble;
 
@@ -117,6 +118,7 @@ int initializeScene_PlaceHolder(void)
 	// }
 
 #ifdef ENABLE_TERRIAN
+	displacementmap_depth = 15.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
@@ -183,10 +185,11 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif // ENABLE_STARFIELD
 	
-	displacementmap_depth = 15.0f;
+#ifdef ENABLE_BILLBOARDING	
 
 	initializeBillboarding();	
 
+#endif // ENABLE_BILLBOARDING
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
 
@@ -351,10 +354,10 @@ void displayScene_PlaceHolder(void)
 	sceneSkyBoxUniform = useSkyboxShader();
 
 	// Transformations
-	mat4 translationMatrix = mat4::identity();
+	// mat4 translationMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
+	// mat4 scaleMatrix = mat4::identity();
+	// mat4 modelMatrix = mat4::identity();
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
@@ -420,7 +423,11 @@ void updateScene_PlaceHolder(void)
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif
+
+
+#ifdef ENABLE_BILLBOARDING
 	updateBillboarding();
+#endif
 
 }
 
@@ -431,9 +438,12 @@ void uninitializeScene_PlaceHolder(void)
 #ifdef ENABLE_STARFIELD
 	uninitializeStarfield(texture_star);
 #endif // ENABLE_STARFIELD
-	uninitializeBillboarding();
-	// uninitializeTerrain();
 
+#ifdef ENABLE_BILLBOARDING
+	uninitializeBillboarding();
+#endif
+
+	// uninitializeTerrain();
     // uninitializeSphere();
     // uninitializeTriangle();
     // uninitializeQuad();
