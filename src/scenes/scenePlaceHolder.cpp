@@ -6,6 +6,7 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
+#include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 
 #include "../../inc/effects/ADSLights.h"
@@ -17,6 +18,9 @@
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
 #define ENABLE_SKYBOX
+#define ENABLE_CLOUD_NOISE
+#define ENABLE_TERRIAN
+//#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 
 // GLuint texture_Marble;
@@ -114,8 +118,8 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_TERRIAN
 
-	terrainTextureVariables.albedoPath = "res/textures/DiffuseMapTerrain.jpg";
-	terrainTextureVariables.displacementPath = "res/textures/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
@@ -132,7 +136,7 @@ int initializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_SKYBOX
-	if (initializeSkybox(&texture_skybox, "res\\textures\\Skybox\\") != 0) 
+	if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox\\") != 0)
 	{
 
 		LOG("initializeSkybox() FAILED!!!\n");
@@ -167,7 +171,7 @@ int initializeScene_PlaceHolder(void)
      //initializeSphere();
 
 #ifdef ENABLE_STARFIELD
-	if (initializeStarfield(&texture_star, "res/textures/Starfield/Star.png") != 0)
+	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
 
 		LOG("initializeStarfield() FAILED!!!\n");
