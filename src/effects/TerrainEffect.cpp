@@ -2,8 +2,6 @@
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
 
-extern FILE* gpFile;
-
 extern mat4 perspectiveProjectionMatrix;
 
 int initializeTerrain(TextureVariables *terrainTexture) {
