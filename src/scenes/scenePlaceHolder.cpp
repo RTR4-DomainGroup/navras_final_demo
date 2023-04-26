@@ -8,10 +8,10 @@
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 
 STATIC_MODEL rockModel;
-
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
@@ -85,8 +85,8 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_TERRIAN
 
-	terrainTextureVariables.albedoPath = "res/textures/terrain/DiffuseMapTerrain.jpg";
-	terrainTextureVariables.displacementPath = "res/textures/terrain/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
@@ -103,7 +103,7 @@ int initializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_SKYBOX
-	if (initializeSkybox(&texture_skybox, "res\\textures\\Skybox\\") != 0) 
+	if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox\\") != 0)
 	{
 
 		LOG("initializeSkybox() FAILED!!!\n");
@@ -138,7 +138,7 @@ int initializeScene_PlaceHolder(void)
      //initializeSphere();
 
 #ifdef ENABLE_STARFIELD
-	if (initializeStarfield(&texture_star, "res/textures/Starfield/Star.png") != 0)
+	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
 
 		LOG("initializeStarfield() FAILED!!!\n");
