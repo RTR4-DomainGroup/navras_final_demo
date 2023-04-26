@@ -3,9 +3,6 @@
 
 // Variable Declarations
 GLuint billboardingShaderProgramObject;
-
-extern FILE* gpFile;
-
 BillboardingUniform billboardingUniform;
 
 int initializeBillboardingShader(void)
@@ -139,17 +136,13 @@ int initializeBillboardingShader(void)
 	}
 
 	//
+
 	billboardingUniform.modelMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_modelMatrix");
 	billboardingUniform.viewMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_viewMatrix");
 	billboardingUniform.projectionMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_projectionMatrix");
 	billboardingUniform.textureSamplerUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_texturesampler");
 	billboardingUniform.billboardingEnableUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_billboarding");
-
     
-	glUseProgram(billboardingShaderProgramObject);
-    glUniform1i(billboardingUniform.textureSamplerUniform, 0);
-	glUseProgram(0);
-
 	return(0);
 
 }

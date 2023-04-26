@@ -44,18 +44,15 @@ void displayADSLight() {
     sceneADSUniform = useADSShader();
 
 	// Here The Game STarts
-	// Triangle
+	
 	// Transformations
 	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
+
 	mat4 modelMatrix = mat4::identity();
 	//mat4 viewMatrix = mat4::identity();
-
-	// Square
-	// Transformations
-	translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
+	
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
@@ -89,12 +86,7 @@ void displayADSLight() {
 	glUniform4fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, MaterialShininess);
 
-
-
-
-
 	// glBindTexture(GL_TEXTURE_2D, 0);
-
 
 }
 

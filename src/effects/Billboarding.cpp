@@ -13,7 +13,6 @@
 // GLuint vbo_position_basequad; 
 // GLuint vbo_texcoords; 
 
-TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 extern mat4 viewMatrix;
@@ -44,133 +43,122 @@ int initializeBillboarding(void)
     initializeQuad();
 
 
-	// Load The Texture
-	char imagefile[64] = {0};
-
-	sprintf(imagefile, "%sgrass.png", TEXTURE_DIR);
-	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-	{
-        LOG("Texture loading failed for image %s\n", imagefile);
-        return (-6);
-    }
-
 	return (retVal);
 }
 
+// void displayBillboarding(void)
+// {
+//     BillboardingUniform billboardingUniform = useBillboardingShader();
+
+//     // Code
+
+//     // transformations
+//     mat4 translationMatrix = mat4::identity();
+//     mat4 rotationMatrix = mat4::identity();
+//     mat4 scaleMatrix = mat4::identity();
+
+//     mat4 modelMatrix = mat4::identity();
+
+// //////////////////////////////
+//     // base quad
+
+//     // repeat the recoded casset again
+//     translationMatrix = vmath::translate(0.0f, -6.0f, 0.0f);
+//     rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+//     // scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
+
+//     modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+//     // send to shader
+//     glUniformMatrix4fv(
+//         billboardingUniform.modelMatrixUniform, // which uniform
+//         1, // 
+//         GL_FALSE,
+//         modelMatrix
+//     );
+
+//     glUniformMatrix4fv(
+//         billboardingUniform.viewMatrixUniform, // which uniform
+//         1, // 
+//         GL_FALSE,
+//         viewMatrix
+//     );
+
+//     glUniformMatrix4fv(
+//         billboardingUniform.projectionMatrixUniform, // which uniform4
+//         1, // 
+//         GL_FALSE,
+//         perspectiveProjectionMatrix
+//     );
+//     glUniform1i(billboardingUniform.billboardingEnableUniform, 0);
+
+//     displayQuad();
+
+// //////////////////////////////////////////
+//     // instanced quads with grass texture
+
+//     translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
+//     if(texture_grass.height > texture_grass.width)
+//         scaleMatrix = vmath::scale(texture_grass.width/(GLfloat)texture_grass.height, 1.0f, 1.0f);
+//     else
+//         scaleMatrix = vmath::scale(1.0f, texture_grass.height/(GLfloat)texture_grass.width, 1.0f);
+//     modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+//     // send to shader
+//     glUniformMatrix4fv(
+//         billboardingUniform.modelMatrixUniform, // which uniform
+//         1, // 
+//         GL_FALSE,
+//         modelMatrix
+//     );
+//     glUniformMatrix4fv(
+//         billboardingUniform.viewMatrixUniform, // which uniform
+//         1, // 
+//         GL_FALSE,
+//         viewMatrix
+//     );
+//     glUniformMatrix4fv(
+//         billboardingUniform.projectionMatrixUniform, // which uniform
+//         1, // 
+//         GL_FALSE,
+//         perspectiveProjectionMatrix
+//     );
+
+//     glActiveTexture(GL_TEXTURE0);
+//     glBindTexture(GL_TEXTURE_2D, texture_grass.id);
+//     glUniform1i(billboardingUniform.textureSamplerUniform, 0);
+
+//     // if(bBillboardingEnabled)
+//     glUniform1i(billboardingUniform.billboardingEnableUniform, 1);
+//     // else
+//     //     glUniform1i(billboardingUniform.billboardingEnableUniform, 0);
+
+//     displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+    
+//     glBindTexture(GL_TEXTURE_2D, 0);
+// }
+
+
 void displayBillboarding(void)
 {
-    BillboardingUniform billboardingUniform = useBillboardingShader();
-
-
-    // Code
-
-    // transformations
-    mat4 translationMatrix = mat4::identity();
-    mat4 rotationMatrix = mat4::identity();
-    mat4 modelMatrix = mat4::identity();
-    // mat4 viewMatrix = mat4::identity(); 
-    mat4 scaleMatrix = mat4::identity(); 
-
-//////////////////////////////
-    // base quad
-
-    // repeat the recoded casset again
-    translationMatrix = mat4::identity(); 
-    modelMatrix = mat4::identity();
-
-    translationMatrix = vmath::translate(0.0f, -6.0f, 0.0f);
-    mat4 rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
-    scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
-    // scaleMatrix = vmath::scale(tf.x, tf.y,tf.z);
-
-    modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_x;
-
-    // send to shader
-    glUniformMatrix4fv(
-        billboardingUniform.modelMatrixUniform, // which uniform
-        1, // 
-        GL_FALSE,
-        modelMatrix
-    );
-
-    glUniformMatrix4fv(
-        billboardingUniform.viewMatrixUniform, // which uniform
-        1, // 
-        GL_FALSE,
-        viewMatrix
-    );
-
-    glUniformMatrix4fv(
-        billboardingUniform.projectionMatrixUniform, // which uniform4
-        1, // 
-        GL_FALSE,
-        perspectiveProjectionMatrix
-    );
-    glUniform1i(billboardingUniform.billboardingEnableUniform, 0);
-
-    displayQuad();
-
-
-    //
-    glBindVertexArray(0);
-
-
-//////////////////////////////////////////
-
-    translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-    if(texture_grass.height > texture_grass.width)
-        scaleMatrix = vmath::scale(texture_grass.width/(GLfloat)texture_grass.height, 1.0f, 1.0f);
-    else
-        scaleMatrix = vmath::scale(1.0f, texture_grass.height/(GLfloat)texture_grass.width, 1.0f);
-    modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-    // send to shader
-    glUniformMatrix4fv(
-        billboardingUniform.modelMatrixUniform, // which uniform
-        1, // 
-        GL_FALSE,
-        modelMatrix
-    );
-    glUniformMatrix4fv(
-        billboardingUniform.viewMatrixUniform, // which uniform
-        1, // 
-        GL_FALSE,
-        viewMatrix
-    );
-    glUniformMatrix4fv(
-        billboardingUniform.projectionMatrixUniform, // which uniform
-        1, // 
-        GL_FALSE,
-        perspectiveProjectionMatrix
-    );
-
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-    glUniform1i(billboardingUniform.textureSamplerUniform, 0);
-
-    // if(bBillboardingEnabled)
-    glUniform1i(billboardingUniform.billboardingEnableUniform, 1);
-    // else
-    //     glUniform1i(billboardingUniform.billboardingEnableUniform, 0);
-
     displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
     
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
 
 float angleForYRotation = 0.0f;
 float radius = 30.0f;
 
-// float radius = 0.0f;
 void updateBillboarding(void)
 {
-
     angleForYRotation = angleForYRotation + 0.1f;
     if(angleForYRotation >= 360.0)
         angleForYRotation = 0.0;
 
-    float xDistance = 0.0f;
-    static float zDistance = 0.0f;
+    // float xDistance = 0.0f;
+    // static float zDistance = 0.0f;
     // zDistance = tf_R;
 
     // float radn = DEG2RADN(angleForYRotation);
@@ -182,17 +170,9 @@ void updateBillboarding(void)
 
 void uninitializeBillboarding(void)
 {
-
     // Code
-    // texture
-    if(texture_grass.id)
-    {
-        glDeleteTextures(1, &texture_grass.id);
-        texture_grass.id = 0;
-    }
     
     uninitializeQuad();
     uninitializeInstancedQuads();
-
 }
 

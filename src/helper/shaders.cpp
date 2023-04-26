@@ -56,8 +56,8 @@ BOOL initAllShaders(void)
 void uninitializeAllShaders(void)
 {
     // Code
-    uninitializeStarfieldShader();
     uninitializeBillboardingShader();
+    uninitializeStarfieldShader();
     uninitializeTerrainShader();
     uninitializeGodraysShader();
     uninitializeSkyboxShader();
