@@ -81,7 +81,7 @@ void Draw_Text(const char* text, size_t length);
 // macros
 
 // internal headers
-#include "types.h"
+#include "geometrytypes.h"
 
 // typedefs
 // typedef VERTEX TRANFORM;
