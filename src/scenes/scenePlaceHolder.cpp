@@ -11,7 +11,6 @@
 #include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 
-STATIC_MODEL rockModel;
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
@@ -66,6 +65,9 @@ struct SkyboxUniform sceneSkyBoxUniform;
 GLuint texture_star; 
 double deltaTime;
 struct StarfieldUniform sceneStarfieldUniform;
+
+//Model variables
+STATIC_MODEL rockModel;
 
 int initializeScene_PlaceHolder(void)
 {

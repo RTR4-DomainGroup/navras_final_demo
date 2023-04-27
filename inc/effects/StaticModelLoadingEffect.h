@@ -5,7 +5,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
 #include "../../ext/SOIL/include/SOIL.h"
 #include "../../inc/helper/stb_image.h"
 
@@ -18,17 +17,6 @@
 
 using namespace std;
 using namespace vmath;
-
-extern FILE* gpFile;
-extern GLuint shaderProgObj;
-
-
-//PROPERTIES OF VERTEX:
-typedef struct _STATIC_MODEL
-{
-    StaticModel* pModel;
-
-}STATIC_MODEL;
 
 struct StaticModelVertex {
     // position
@@ -48,7 +36,6 @@ struct StaticModelTexture {
     string type;
     string path;
 };
-
 
 
 class Mesh {
@@ -110,6 +97,14 @@ public:
     // the required info is returned as a Texture struct.
     vector<StaticModelTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 };
+
+
+//PROPERTIES OF VERTEX:
+typedef struct _STATIC_MODEL
+{
+    StaticModel* pModel;
+
+}STATIC_MODEL;
 
 
 unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);

@@ -1,7 +1,7 @@
 #pragma once
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 
-
+GLuint shaderProgObj;
 
 /*############### MESH ###############*/
 
@@ -147,7 +147,7 @@ StaticModel::StaticModel()
 }
 
 // constructor, expects a filepath to a 3D model.
-StaticModel::StaticModel(string const& path, bool gamma = false) : gammaCorrection(gamma)
+StaticModel::StaticModel(string const& path, bool gamma) : gammaCorrection(gamma)
 {
     LOG("------------------------------------------------------------------------------\n");
     LOG("Entry to function = %s\n", __FUNCTION__);
@@ -227,7 +227,7 @@ void StaticModel::processNode(aiNode* node, const aiScene* scene)
 
 }
 
-StaticModel::Mesh* processMesh(aiMesh* mesh, const aiScene* scene)
+Mesh* StaticModel::processMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     vector<StaticModelVertex> vertices;
