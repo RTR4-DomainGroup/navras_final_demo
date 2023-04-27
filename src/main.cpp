@@ -487,9 +487,7 @@ void ToggleFullScreen(void) {
 
 			ShowCursor(FALSE);
 			gbFullScreen = TRUE;
-
 		}
-
 	}
 	else {
 

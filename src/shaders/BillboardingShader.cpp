@@ -140,7 +140,7 @@ int initializeBillboardingShader(void)
 	billboardingUniform.modelMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_modelMatrix");
 	billboardingUniform.viewMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_viewMatrix");
 	billboardingUniform.projectionMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_projectionMatrix");
-	billboardingUniform.textureSamplerUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_texturesampler");
+	billboardingUniform.textureSamplerUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_textureSampler");
 	billboardingUniform.billboardingEnableUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_billboarding");
     
 	return(0);

@@ -13,8 +13,6 @@
 // GLuint vbo_position_basequad; 
 // GLuint vbo_texcoords; 
 
-TEXTURE texture_flower;
-
 extern mat4 viewMatrix;
 extern mat4 perspectiveProjectionMatrix;
 
@@ -40,7 +38,7 @@ int initializeBillboarding(void)
     }
 
     initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
-    initializeQuad();
+    // initializeQuad();
 
 
 	return (retVal);
@@ -139,11 +137,20 @@ int initializeBillboarding(void)
 // }
 
 
-void displayBillboarding(void)
+void displayBillboardingGrass(void)
 {
     glActiveTexture(GL_TEXTURE0);
+
     displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-    
+
+}
+
+void displayBillboardingFlower(void)
+{
+    glActiveTexture(GL_TEXTURE0);
+
+    displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+
 }
 
 

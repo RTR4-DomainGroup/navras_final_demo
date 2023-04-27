@@ -27,6 +27,7 @@
 
 // GLuint texture_Marble;
 TEXTURE texture_grass;
+TEXTURE texture_flower;
 
 // struct ADSUniform sceneADSUniform;
 
@@ -42,15 +43,19 @@ float myScale = 1.0f;
 float noiseScale = 2.0f;
 bool noiseScaleIncrement = true;
 
-GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
 
-GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat materialShininess = 128.0f;
+GLuint texture_Marble;
+
+GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
+
+GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat MaterialShininess = 50.0f;
+
 
 GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
 GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
@@ -61,6 +66,8 @@ extern mat4 perspectiveProjectionMatrix;
 
 
 float displacementmap_depth;
+
+GLfloat angleCube = 0.0f;
 
 // Variables For Skybox
 GLuint texture_skybox;
@@ -80,6 +87,18 @@ int initializeScene_PlaceHolder(void)
 
     // Code.
 #ifdef ENABLE_ADSLIGHT
+    // Texture
+	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
+		//uninitialize();
+		LOG("LoadGLTexture FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+	}
+
 	initializeADSLight();
 #endif // ENABLE_ADSLIGHT
 
@@ -167,12 +186,20 @@ int initializeScene_PlaceHolder(void)
 #ifdef ENABLE_BILLBOARDING	
 
 	initializeBillboarding();	
+	initializeQuad();
 
 	// Load The Texture
 	char imagefile[64] = {0};
 
 	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	{
+        LOG("Texture loading failed for image %s\n", imagefile);
+        return (-6);
+    }
+
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
 	{
         LOG("Texture loading failed for image %s\n", imagefile);
         return (-6);
@@ -187,11 +214,54 @@ void displayScene_PlaceHolder(void)
 {
 	// Code
 	// Here The Game STarts
+	
+	// Transformations
+	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+
+	mat4 modelMatrix = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
+	
+	mat4 rotationMatrix_x = mat4::identity();
+	mat4 rotationMatrix_y = mat4::identity();
+	mat4 rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
+	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
+	// rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
+	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 #ifdef ENABLE_ADSLIGHT
+	struct ADSUniform sceneADSUniform;
 
-	// glBindTexture(GL_TEXTURE_2D, 0);
+    sceneADSUniform = useADSShader();
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_Marble);
+	
+	// Sending texture Related Uniforms
+    glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
+
+	// Sending Light Related Uniforms
+	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
+	glUniform4fv(sceneADSUniform.laUniform, 1, LightAmbient);
+	glUniform4fv(sceneADSUniform.ldUniform, 1, LightDiffuse);
+	glUniform4fv(sceneADSUniform.lsUniform, 1, LightSpecular);
+	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, LightPosition);
+	glUniform4fv(sceneADSUniform.kaUniform, 1, MaterialAmbient);
+	glUniform4fv(sceneADSUniform.kdUniform, 1, MaterialDiffuse);
+	glUniform4fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
+	glUniform1f(sceneADSUniform.materialShininessUniform, MaterialShininess);
+
 	displayADSLight();
+	// glBindTexture(GL_TEXTURE_2D, 0);
 
 #endif // ENABLE_ADSLIGHT
 
@@ -208,22 +278,18 @@ void displayScene_PlaceHolder(void)
 
     // Code
 
-    // transformations
-    mat4 translationMatrix = mat4::identity();
-    mat4 rotationMatrix = mat4::identity();
-    mat4 scaleMatrix = mat4::identity();
-
-    mat4 modelMatrix = mat4::identity();
-
-
 //////////////////////////////////////////
     // instanced quads with grass texture
 
-    translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-    if(texture_grass.height > texture_grass.width)
-        scaleMatrix = vmath::scale(texture_grass.width/(GLfloat)texture_grass.height, 1.0f, 1.0f);
-    else
-        scaleMatrix = vmath::scale(1.0f, texture_grass.height/(GLfloat)texture_grass.width, 1.0f);
+    // translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
+
+
+	if(texture_grass.height > texture_grass.width)
+		scaleMatrix = vmath::scale(texture_grass.width/(GLfloat)texture_grass.height, 1.0f, 1.0f);
+	else
+		scaleMatrix = vmath::scale(1.0f, texture_grass.height/(GLfloat)texture_grass.width, 1.0f);
+
+
     modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
     // send to shader
@@ -255,9 +321,36 @@ void displayScene_PlaceHolder(void)
     //     glUniform1i(billboardingUniform.billboardingEnableUniform, 0);
 
 
+ 
     glBindTexture(GL_TEXTURE_2D, texture_grass.id);
 
-	displayBillboarding();
+	displayBillboardingGrass();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+/// Flower
+
+	if(texture_flower.height > texture_flower.width)
+		scaleMatrix = vmath::scale(texture_flower.width/(GLfloat)texture_flower.height, 1.0f, 1.0f);
+	else
+		scaleMatrix = vmath::scale(1.0f, texture_flower.height/(GLfloat)texture_flower.width, 1.0f);
+
+	translationMatrix = vmath::translate(1.5f, 0.0f, -6.0f);
+
+    modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+    // send to shader
+    glUniformMatrix4fv(
+        billboardingUniform.modelMatrixUniform, // which uniform
+        1, // 
+        GL_FALSE,
+        modelMatrix
+    );
+
+    glBindTexture(GL_TEXTURE_2D, texture_flower.id);
+
+	displayBillboardingFlower();
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
 #endif // ENABLE_BILLBOARDING
@@ -410,6 +503,11 @@ void updateScene_PlaceHolder(void)
 
 	// Code
 #ifdef ENABLE_ADSLIGHT
+    angleCube = angleCube + 1.0f;
+	if (angleCube >= 360.0f)
+	{
+		angleCube -= 360.0f;
+	}
 	updateADSLight();
 #endif // ENABLE_ADSLIGHT
 	
@@ -435,13 +533,14 @@ void updateScene_PlaceHolder(void)
 void uninitializeScene_PlaceHolder(void)
 {
 	// Code
-	
+
 	// uninitializeTerrain();
     // uninitializeSphere();
     // uninitializeTriangle();
     // uninitializeQuad();
     // uninitializePyramid();
-    // uninitializeCube();
+    uninitializeCube();
+
 	
 #ifdef ENABLE_BILLBOARDING
 	uninitializeBillboarding();
@@ -477,11 +576,13 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 	// uninitializeSphere();
+#ifdef ENABLE_ADSLIGHT
+	if (texture_Marble)
+	{
+		glDeleteTextures(1, &texture_Marble);
+		texture_Marble = NULL;
+	}
 
-	// if (texture_Marble)
-	// {
-	// 	glDeleteTextures(1, &texture_Marble);
-	// 	texture_Marble = NULL;
-	// }
+#endif // ENABLE_ADSLIGHT
 
 }
