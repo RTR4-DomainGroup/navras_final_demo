@@ -1,19 +1,18 @@
+#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/scenes/scenePlaceHolder.h"
-
+#include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
+#include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 
 #include "../../inc/effects/ADSLights.h"
 #include "../../inc/effects/Billboarding.h"
-
-#include "../../inc/helper/texture_loader.h"
-#include "../../inc/helper/common.h"
 
 // #define ENABLE_CLOUD_NOISE
 // #define ENABLE_TERRIAN
@@ -23,9 +22,10 @@
 // #define ENABLE_SKYBOX
 // #define ENABLE_STARFIELD
 // #define ENABLE_ADSLIGHT
+// #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
 
-// GLuint texture_Marble;
+GLuint texture_Marble;
 TEXTURE texture_grass;
 TEXTURE texture_flower;
 
@@ -40,34 +40,31 @@ struct TextureVariables terrainTextureVariables;
 extern mat4 viewMatrix;
 
 float myScale = 1.0f;
+
 float noiseScale = 2.0f;
 bool noiseScaleIncrement = true;
 
+GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
 
-GLuint texture_Marble;
-
-GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat LightSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-GLfloat LightPosition[] = { 0.0f, 0.0f, 100.0f, 1.0f };
-
-GLfloat MaterialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat MaterialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat MaterialShininess = 50.0f;
-
+GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialShininess = 128.0f;
 
 GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
 GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
 
 GLuint noise_texture;
 
+GLfloat angleCube;
+
 extern mat4 perspectiveProjectionMatrix;
 
 
 float displacementmap_depth;
-
-GLfloat angleCube = 0.0f;
 
 // Variables For Skybox
 GLuint texture_skybox;
@@ -78,10 +75,10 @@ GLuint texture_star;
 double deltaTime;
 struct StarfieldUniform sceneStarfieldUniform;
 
-/// Steps
-// 1. initialize(load) texture
-// 2. initialize geometry
-// 3. initialize geometry
+//Model variables
+STATIC_MODEL rockModel;
+STATIC_MODEL streetLightModel;
+
 int initializeScene_PlaceHolder(void)
 {
 
@@ -102,18 +99,6 @@ int initializeScene_PlaceHolder(void)
 	initializeADSLight();
 #endif // ENABLE_ADSLIGHT
 
-	// Code.
-	// Texture
-	//// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
-	// if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
-	// 	//uninitialize();
-	// 	LOG("LoadGLTexture FAILED!!!\n");
-	// 	return(-1);
-	// }
-	// else
-	// {
-	// 	LOG("LoadGLTexture Marble Successfull = %u!!!\n", texture_Marble);
-	// }
 
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 15.0f;
@@ -183,20 +168,18 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif // ENABLE_STARFIELD
 	
+
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+#endif
+
+
 #ifdef ENABLE_BILLBOARDING	
 
 	initializeBillboarding();	
 	initializeQuad();
-
-	// Load The Texture
-	char imagefile[64] = {0};
-
-	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
-	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-	{
-        LOG("Texture loading failed for image %s\n", imagefile);
-        return (-6);
-    }
 
 	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
@@ -219,9 +202,7 @@ void displayScene_PlaceHolder(void)
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
-
 	mat4 modelMatrix = mat4::identity();
-	//mat4 viewMatrix = mat4::identity();
 	
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
@@ -361,10 +342,6 @@ void displayScene_PlaceHolder(void)
 
 	sceneCloudNoiseUniform = useCloudNoiseShader();
 
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	mat4 rotateX = mat4::identity();
 	//mat4 viewMatrix = mat4::identity();
 
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
@@ -439,17 +416,11 @@ void displayScene_PlaceHolder(void)
 
 #endif
 
-
 #ifdef ENABLE_SKYBOX
 
 	sceneSkyBoxUniform = useSkyboxShader();
 
 	// Transformations
-	// mat4 translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	// mat4 scaleMatrix = mat4::identity();
-	// mat4 modelMatrix = mat4::identity();
-
 	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
@@ -461,7 +432,6 @@ void displayScene_PlaceHolder(void)
 	displaySkybox(texture_skybox);
 	glUseProgram(0);
 #endif
-
 
 #ifdef ENABLE_STARFIELD
 
@@ -493,9 +463,69 @@ void displayScene_PlaceHolder(void)
 	glUseProgram(0);
 
 #endif // ENABLE_STARFIELD
+
+#ifdef ENABLE_STATIC_MODELS
+	//MODELS
+	mat4 translationMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 rotationMatrix_x = mat4::identity();
+	mat4 rotationMatrix_y = mat4::identity();
+	mat4 rotationMatrix_z = mat4::identity();
+
+	sceneADSUniform = useADSShader();
+
+	// Sending Light Related Uniforms
+	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
+	glUniform4fv(sceneADSUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneADSUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneADSUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneADSUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneADSUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
+
+
+	// ------ Rock Model ------
+	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(rockModel);
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	viewMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ Streetlight Model ------
+	translationMatrix = vmath::translate(1.0f, -2.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(streetLightModel);
+
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
+#endif
+
 }
 
 void updateScene_PlaceHolder(void)
@@ -510,12 +540,11 @@ void updateScene_PlaceHolder(void)
 	}
 	updateADSLight();
 #endif // ENABLE_ADSLIGHT
-	
 
 
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
-#endif // ENABLE_STARFIELD
+#endif
 
 
 #ifdef ENABLE_CLOUD_NOISE
@@ -575,14 +604,19 @@ void uninitializeScene_PlaceHolder(void)
 	}
 #endif
 
-	// uninitializeSphere();
 #ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)
 	{
 		glDeleteTextures(1, &texture_Marble);
 		texture_Marble = NULL;
 	}
-
 #endif // ENABLE_ADSLIGHT
 
+#ifdef ENABLE_STATIC_MODELS
+	//UNINIT models
+	unloadStaticModel(&rockModel);
+	unloadStaticModel(&streetLightModel);
+#endif
+
 }
+

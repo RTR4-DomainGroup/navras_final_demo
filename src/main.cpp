@@ -10,6 +10,7 @@
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
+#pragma comment(lib, "assimp-vc142-mtd.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
