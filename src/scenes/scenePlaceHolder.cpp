@@ -29,7 +29,7 @@ GLuint texture_Marble;
 TEXTURE texture_grass;
 TEXTURE texture_flower;
 
-// struct ADSUniform sceneADSUniform;
+struct ADSUniform sceneADSUniform;
 
 struct TerrainUniform terrainUniform;
 
@@ -181,6 +181,14 @@ int initializeScene_PlaceHolder(void)
 	initializeBillboarding();	
 	initializeQuad();
 
+	char imagefile[64] = {};
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	{
+        LOG("Texture loading failed for image %s\n", imagefile);
+        return (-6);
+    }
+
 	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
 	{
@@ -208,7 +216,7 @@ void displayScene_PlaceHolder(void)
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	// translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
 	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
@@ -466,14 +474,6 @@ void displayScene_PlaceHolder(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
-	mat4 translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix_x = mat4::identity();
-	mat4 rotationMatrix_y = mat4::identity();
-	mat4 rotationMatrix_z = mat4::identity();
 
 	sceneADSUniform = useADSShader();
 
@@ -574,6 +574,11 @@ void uninitializeScene_PlaceHolder(void)
 #ifdef ENABLE_BILLBOARDING
 	uninitializeBillboarding();
 	    // texture
+    if(texture_flower.id)
+    {
+        glDeleteTextures(1, &texture_flower.id);
+        texture_flower.id = 0;
+    }
     if(texture_grass.id)
     {
         glDeleteTextures(1, &texture_grass.id);
