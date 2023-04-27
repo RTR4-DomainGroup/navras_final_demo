@@ -11,11 +11,11 @@
 #include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 
-
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_TERRIAN
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
+#define ENABLE_STATIC_MODELS
 
 GLuint texture_Marble;
 
@@ -68,6 +68,7 @@ struct StarfieldUniform sceneStarfieldUniform;
 
 //Model variables
 STATIC_MODEL rockModel;
+STATIC_MODEL streetLightModel;
 
 int initializeScene_PlaceHolder(void)
 {
@@ -157,10 +158,11 @@ int initializeScene_PlaceHolder(void)
 	//
 	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
 
-	//MODELS
+#ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
-
+	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+#endif
 
 	return 0;
 
@@ -361,6 +363,7 @@ void displayScene_PlaceHolder(void)
 
 #endif
 
+#ifdef ENABLE_STATIC_MODELS
 	//MODELS
 	mat4 translationMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -373,15 +376,6 @@ void displayScene_PlaceHolder(void)
 
 	sceneADSUniform = useADSShader();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	
-	modelMatrix = translationMatrix * scaleMatrix;
-
-	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
 	glUniform4fv(sceneADSUniform.laUniform, 1, lightAmbient);
@@ -393,9 +387,42 @@ void displayScene_PlaceHolder(void)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+
+	// ------ Rock Model ------
+	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
 	drawStaticModel(rockModel);
 
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	viewMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ Streetlight Model ------
+	translationMatrix = vmath::translate(1.0f, -2.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(streetLightModel);
+
 	glUseProgram(0);
+#endif
 
 }
 
@@ -455,8 +482,11 @@ void uninitializeScene_PlaceHolder(void)
 		texture_Marble = NULL;
 	}
 
+#ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel);
+	unloadStaticModel(&streetLightModel);
+#endif
 
 }
 
