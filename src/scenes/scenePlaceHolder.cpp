@@ -134,8 +134,6 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif
 
-	// initialize Cloud Noise Shader
-
 #ifdef ENABLE_CLOUD_NOISE
 	noise_texture = initializeCloud();
 	if (noise_texture == 0)
@@ -216,7 +214,7 @@ void displayScene_PlaceHolder(void)
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	// translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
 	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
@@ -324,7 +322,7 @@ void displayScene_PlaceHolder(void)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height/(GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(1.5f, 0.0f, -6.0f);
+	translationMatrix = vmath::translate(1.5f, 0.0f, 0.0f);
 
     modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
