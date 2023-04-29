@@ -3,6 +3,7 @@
 #include "../../inc/helper/camera.h"
 #include "../../inc/helper/geometry.h"
 
+extern mat4 perspectiveProjectionMatrix;
 
 int initializeTerrain(TextureVariables *terrainTexture) {
 	
@@ -33,7 +34,7 @@ void displayTerrain() {
 
 	// Code
 	glPatchParameteri(GL_PATCH_VERTICES, 4);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glDrawArraysInstanced(GL_PATCHES, 0, 4, 64 * 64);
 }
 

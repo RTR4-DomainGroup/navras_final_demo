@@ -17,10 +17,12 @@ using namespace vmath;
 enum {
 
 	DOMAIN_ATTRIBUTE_POSITION = 0,
+	DOMAIN_ATTRIBUTE_INSTANCE_POSITION,
 	DOMAIN_ATTRIBUTE_COLOR,
 	DOMAIN_ATTRIBUTE_NORMAL,
-	DOMAIN_ATTRIBUTE_TEXTURE0
-
+	DOMAIN_ATTRIBUTE_TEXTURE0,
+	DOMAIN_ATTRIBUTE_TANGENT,
+	DOMAIN_ATTRIBUTE_BITANGENT,
 };
 
 struct TextureVariables {
@@ -40,6 +42,7 @@ struct TextureVariables {
 	char* displacementPath;
 
 };
+
 
 #ifdef __linux__ 
 

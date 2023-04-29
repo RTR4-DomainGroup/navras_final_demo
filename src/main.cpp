@@ -5,13 +5,13 @@
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/audioplayer.h"
-#include "../inc/shaders/TerrainShader.h"
 #include "../inc/scenes/scenePlaceHolder.h"
 #include "../inc/shaders/FSQuadShader.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
+#pragma comment(lib, "assimp-vc142-mtd.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -32,6 +32,10 @@ HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
 mat4 perspectiveProjectionMatrix;
+
+// framebuffer related variables
+int windowWidth;
+int windowHeight;
 
 int winWidth;
 int winHeight;
@@ -218,33 +222,33 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 		case 'W':
 		case 'w':
-			cameraEyeZ = cameraEyeZ - 1.0f;
-			cameraCenterZ = cameraCenterZ - 1.0f;
+			cameraEyeZ = cameraEyeZ - 0.25f;
+			cameraCenterZ = cameraCenterZ - 0.25f;
 			break;
 		case 'S':
 		case 's':
-			cameraEyeZ = cameraEyeZ + 1.0f;
-			cameraCenterZ = cameraCenterZ + 1.0f;
+			cameraEyeZ = cameraEyeZ + 0.25f;
+			cameraCenterZ = cameraCenterZ + 0.25f;
 			break;
 		case 'A':
 		case 'a':
-			cameraEyeX = cameraEyeX - 1.0f;
-			cameraCenterX = cameraCenterX - 1.0f;
+			cameraEyeX = cameraEyeX - 0.25f;
+			cameraCenterX = cameraCenterX - 0.25f;
 			break;
 		case 'D':
 		case 'd':
-			cameraEyeX = cameraEyeX + 1.0f;
-			cameraCenterX = cameraCenterX + 1.0f;
+			cameraEyeX = cameraEyeX + 0.25f;
+			cameraCenterX = cameraCenterX + 0.25f;
 			break;
 		case 'Q':
 		case 'q':
-			cameraEyeY = cameraEyeY - 1.0f;
-			cameraCenterY = cameraCenterY - 1.0f;
+			cameraEyeY = cameraEyeY - 0.25f;
+			cameraCenterY = cameraCenterY - 0.25f;
 			break;
 		case 'E':
 		case 'e':
-			cameraEyeY = cameraEyeY + 1.0f;
-			cameraCenterY = cameraCenterY + 1.0f;
+			cameraEyeY = cameraEyeY + 0.25f;
+			cameraCenterY = cameraCenterY + 0.25f;
 			break;
 		case 'n':
 			playSong(songId);
@@ -496,9 +500,7 @@ void ToggleFullScreen(void) {
 
 			ShowCursor(FALSE);
 			gbFullScreen = TRUE;
-
 		}
-
 	}
 	else {
 
@@ -528,7 +530,7 @@ void display(void)
 	displayScene_PlaceHolder();
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    resize(winWidth, winHeight);
+    resize(windowWidth, windowHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	sceneFSQuadUniform = useFSQuadShader();
@@ -563,8 +565,8 @@ void resize(int width, int height) {
 	if (height == 0)			// To Avoid Divided by 0(in Future)
 		height = 1;
 
-	winWidth = width;
-	winHeight = height;
+	windowWidth = width;
+	windowHeight = height;
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
@@ -587,7 +589,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolder();
 
 	//uninitialize all shaders
-	uninitializeADSShader();
+	uninitializeAllShaders();
 
 	if (gbFullScreen) {
 

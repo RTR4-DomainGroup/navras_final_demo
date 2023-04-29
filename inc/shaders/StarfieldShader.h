@@ -7,6 +7,7 @@ struct StarfieldUniform
     GLuint viewMatrix;
     GLuint projectionMatrix;
     GLuint textureSamplerUniform;
+    GLuint uniform_enable_godRays;
 
     GLuint timeUniform;
     mat4 perspectiveProjectionMatrix;

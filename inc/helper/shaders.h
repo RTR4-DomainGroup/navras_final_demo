@@ -2,4 +2,4 @@
 #include "common.h"
 
 BOOL initAllShaders(void);
-void uninitAllShaders(void);
+void uninitializeAllShaders(void);
