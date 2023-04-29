@@ -9,6 +9,7 @@
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
+#pragma comment(lib, "assimp-vc142-mtd.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -212,33 +213,33 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 		case 'W':
 		case 'w':
-			cameraEyeZ = cameraEyeZ - 1.0f;
-			cameraCenterZ = cameraCenterZ - 1.0f;
+			cameraEyeZ = cameraEyeZ - 0.25f;
+			cameraCenterZ = cameraCenterZ - 0.25f;
 			break;
 		case 'S':
 		case 's':
-			cameraEyeZ = cameraEyeZ + 1.0f;
-			cameraCenterZ = cameraCenterZ + 1.0f;
+			cameraEyeZ = cameraEyeZ + 0.25f;
+			cameraCenterZ = cameraCenterZ + 0.25f;
 			break;
 		case 'A':
 		case 'a':
-			cameraEyeX = cameraEyeX - 1.0f;
-			cameraCenterX = cameraCenterX - 1.0f;
+			cameraEyeX = cameraEyeX - 0.25f;
+			cameraCenterX = cameraCenterX - 0.25f;
 			break;
 		case 'D':
 		case 'd':
-			cameraEyeX = cameraEyeX + 1.0f;
-			cameraCenterX = cameraCenterX + 1.0f;
+			cameraEyeX = cameraEyeX + 0.25f;
+			cameraCenterX = cameraCenterX + 0.25f;
 			break;
 		case 'Q':
 		case 'q':
-			cameraEyeY = cameraEyeY - 1.0f;
-			cameraCenterY = cameraCenterY - 1.0f;
+			cameraEyeY = cameraEyeY - 0.25f;
+			cameraCenterY = cameraCenterY - 0.25f;
 			break;
 		case 'E':
 		case 'e':
-			cameraEyeY = cameraEyeY + 1.0f;
-			cameraCenterY = cameraCenterY + 1.0f;
+			cameraEyeY = cameraEyeY + 0.25f;
+			cameraCenterY = cameraCenterY + 0.25f;
 			break;
 		case 'n':
 			playSong(songId);
@@ -490,9 +491,7 @@ void ToggleFullScreen(void) {
 
 			ShowCursor(FALSE);
 			gbFullScreen = TRUE;
-
 		}
-
 	}
 	else {
 
@@ -562,7 +561,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolder();
 
 	//uninitialize all shaders
-	uninitAllShaders();
+	uninitializeAllShaders();
 
 	if (gbFullScreen) {
 

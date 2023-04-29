@@ -122,7 +122,7 @@ int initializeWaterShader(void)
             "float refractiveFactor = dot(viewVector, vec3(0.0, 1.0, 0.0)); \n" \
             /*"refractiveFactor = pow(refractiveFactor, 10.0); \n" \*/
 
-            "texture_color = mix(texture_Reflection, texture_Refraction, 0.5); \n" \
+            "texture_color = mix(texture_Reflection, texture_Refraction, 0.1); \n" \
             "texture_color = mix(texture_color, vec4(0.0, 0.3, 0.5, 1.0), 0.2); \n" \
         
             "FragColor = texture_color; \n" \
