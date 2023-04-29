@@ -25,6 +25,10 @@ GLuint vao_quadInstanced;
 GLuint vbo_quadInstanced; // PNT
 GLuint vbo_texcoords; // InstancePosition 
 
+// quad Water
+GLuint vao_water_quad;
+GLuint vbo_water_quad;
+
 // triangle
 GLuint vao_triangle; 
 GLuint vbo_triangle;
@@ -357,6 +361,45 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
 
 }
 
+void initializeWaterQuad(void)
+{
+	const GLfloat quadPNT[] =
+	{
+				//PNT
+		// positions                     //normals                   //texture
+
+		// Front face                     // Front face             // Front face
+		1.0f, 0.0f, 1.0f,             0.0f, 1.0f, 0.0f,             1.0f,1.0f,
+		-1.0f, 0.0f, 1.0f,            0.0f, 1.0f, 0.0f,             0.0f,1.0f,
+		-1.0f, 0.0f, -1.0f,           0.0f, 1.0f, 0.0f,             0.0f,0.0f,
+		1.0f, 0.0f, -1.0f,            0.0f, 1.0f, 0.0f,             1.0f,0.0f
+	};
+
+	// VAO AND VBO RELATED CODE
+	// vao_Cube
+	glGenVertexArrays(1, &vao_water_quad);
+	glBindVertexArray(vao_water_quad);
+
+	glGenBuffers(1, &vbo_water_quad);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_water_quad);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+
+	// Position
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
+	// Normal
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+
+	// TexCoord
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+
+	glBindVertexArray(0);
+
+}
+
 void initializePyramid(void)
 {
     const GLfloat pyramidPNT[] = 
@@ -484,6 +527,16 @@ void displayInstancedQuads(int numInstances)
     glBindVertexArray(0);
 }
 
+void displayWaterQuad(void)
+{
+	// Code
+	glBindVertexArray(vao_water_quad);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+	glBindVertexArray(0);
+}
+
 void displayPyramid(void)
 {
     // Code
@@ -586,6 +639,22 @@ void uninitializeInstancedQuads(void)
 
 		glDeleteVertexArrays(1, &vao_quadInstanced);
 		vao_quadInstanced = 0;
+	}
+}
+
+void uninitializeWaterQuad(void)
+{
+	// Code
+	if (vbo_water_quad) {
+
+		glDeleteBuffers(1, &vbo_water_quad);
+		vbo_water_quad = 0;
+	}
+
+	if (vao_water_quad) {
+
+		glDeleteVertexArrays(1, &vao_water_quad);
+		vao_water_quad = 0;
 	}
 }
 
