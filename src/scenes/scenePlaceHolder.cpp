@@ -1,27 +1,33 @@
 #pragma once
 // This File Will Be Replaced by Scene*.cpp
 
-#include "../../inc/scenes/scenePlaceHolder.h"
-#include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/WaterEffect.h"
+#include "../../inc/effects/StaticModelLoadingEffect.h"
+
+#include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/waterframebuffer.h"
 #include "../../inc/helper/camera.h"
-#include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/helper/common.h"
+#include "../../inc/helper/geometry.h"
+
+#include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/CloudNoiseShader.h"
+#include "../../inc/shaders/BillboardingShader.h"
+
+#include "../../inc/scenes/scenePlaceHolder.h"
 //#include "../../inc/Noise.h"
-#include "../../inc/effects/Billboarding.h"
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_CLOUD_NOISE
 #define ENABLE_TERRIAN
 #define ENABLE_WATER
-//#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
+// #define ENABLE_SKYBOX
+// #define ENABLE_STARFIELD
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
@@ -244,7 +250,18 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_BILLBOARDING	
 
-	initializeBillboarding();	
+    GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+    // generate positions per instance
+    for(int i = 0; i < NO_OF_INSTANCES; i++)
+    {
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+3] = 1.0f;
+		LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+    }
+
+    initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
 	initializeQuad();
 
 	char imagefile[64] = {};
@@ -561,13 +578,9 @@ void displayScene_PlaceHolder(void)
 
 	billboardingEffectUniform = useBillboardingShader();
 
-	// Code
-
 //////////////////////////////////////////
+
 	// instanced quads with grass texture
-
-	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -581,7 +594,7 @@ void displayScene_PlaceHolder(void)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
-
+	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -599,7 +612,7 @@ void displayScene_PlaceHolder(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
 
-	displayBillboardingGrass();
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -620,7 +633,7 @@ void displayScene_PlaceHolder(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
 
-	displayBillboardingFlower();
+    displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -806,7 +819,8 @@ void displayWaterFramebuffers(void) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
 
-	displayBillboardingGrass();
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -827,7 +841,7 @@ void displayWaterFramebuffers(void) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
 
-	displayBillboardingFlower();
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -984,7 +998,8 @@ void displayWaterFramebuffers(void) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
 
-	displayBillboardingGrass();
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1005,7 +1020,7 @@ void displayWaterFramebuffers(void) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
 
-	displayBillboardingFlower();
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1045,7 +1060,6 @@ void updateScene_PlaceHolder(void)
 
 
 #ifdef ENABLE_BILLBOARDING
-	updateBillboarding();
 #endif
 
 #ifdef ENABLE_WATER
@@ -1063,8 +1077,10 @@ void uninitializeScene_PlaceHolder(void)
 
 	
 #ifdef ENABLE_BILLBOARDING
-	uninitializeBillboarding();
-	    // texture
+    uninitializeQuad();
+    uninitializeInstancedQuads();
+
+	// texture
     if(texture_flower.id)
     {
         glDeleteTextures(1, &texture_flower.id);

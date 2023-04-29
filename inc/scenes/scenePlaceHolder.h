@@ -1,10 +1,5 @@
 #pragma once
 
-#include "../helper/common.h"
-#include "../helper/geometry.h"
-#include "../shaders/ADSLightShader.h"
-#include "../shaders/CloudNoiseShader.h"
-
 //int initializeInterleaved(void);
 //void displayInterleaved(void);
 //void updateInterleaved(void);
