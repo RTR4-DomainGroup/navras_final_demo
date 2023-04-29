@@ -29,7 +29,7 @@
 //#define ENABLE_SKYBOX
 #define ENABLE_STARFIELD
 
-#define ENABLE_STATIC_MODELS
+#define ENABLE_STATIC_MODELS	
 #define ENABLE_BILLBOARDING
 #define ENABLE_GODRAYS
 
@@ -307,13 +307,13 @@ int initializeScene_PlaceHolder(void)
 void displayScene_PlaceHolder(void)
 {
 	// Function Declarations
-	void displayGodRays(int, int);
+	void displayWaterFramebuffers(void);
 
 	// Code
 	// Here The Game STarts
 
 	//2 framebuffers for water effect
-	displayGodRays(WIN_WIDTH, WIN_HEIGHT);
+	displayWaterFramebuffers();
 	
 	glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
@@ -648,9 +648,9 @@ void displayScene_PlaceHolder(void)
 
 }
 
-void displayWaterFramebuffers(int godRays = 1) {
+void displayWaterFramebuffers() {
 	//  Function Declaration
-	void displayTerraineScene(int godRays);
+	void displayTerraineScene(int);
 
 	// Code
 
@@ -677,7 +677,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-	glUniform1i(waterUniform.uniform_enable_godRays, godRays);
 
 	float distance = 2 * (cameraEyeY - waterHeight);
 	cameraEyeY -= distance;
@@ -688,7 +687,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	setCamera();
 
 	//glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-
 
 
 
@@ -754,7 +752,7 @@ void displayWaterFramebuffers(int godRays = 1) {
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
-	displayTerraineScene(godRays);
+	displayTerraineScene(1);
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
@@ -788,7 +786,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
 	// if(bBillboardingEnabled)
 	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
@@ -846,7 +843,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-	glUniform1i(waterUniform.uniform_enable_godRays, godRays);
 
 
 #ifdef ENABLE_CLOUD_NOISE
@@ -886,7 +882,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
 	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
 	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-	glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -934,6 +929,20 @@ void displayWaterFramebuffers(int godRays = 1) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
+	/*if (godRays == 0)
+	{
+		sceneADSUniform = useADSShader();
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		translationMatrix = vmath::translate(0.0f, 20.0f, -35.0f);
+		modelMatrix = translationMatrix;
+		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
+		displaySphere(whiteSphere);
+		glUseProgram(0);
+	}*/
 
 #endif
 
@@ -968,7 +977,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
 	// if(bBillboardingEnabled)
 	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
@@ -1009,22 +1017,6 @@ void displayWaterFramebuffers(int godRays = 1) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_CLIP_DISTANCE0);
-		
-	if (godRays == 0)
-	{
-		sceneADSUniform = useADSShader();
-		translationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		translationMatrix = vmath::translate(0.0f, 20.0f, -35.0f);
-		modelMatrix = translationMatrix;
-		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
-		displaySphere(whiteSphere);
-		glUseProgram(0);
-	}
-	
 
 }
 
@@ -1049,8 +1041,6 @@ void displayTerraineScene(int godRays)
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
-
-
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -1086,14 +1076,14 @@ void displayGodRays(int width, int height)
 {
 	// Function declarations
 	void resize_godRayPasses(int, int);
-	void displayWaterFramebuffers(int);
+	//void displayWaterFramebuffers(int);
 
 	// Black pass
 	glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	resize_godRayPasses(width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	displayWaterFramebuffers(0);
+	//displayWaterFramebuffers(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Color Pass
@@ -1101,7 +1091,7 @@ void displayGodRays(int width, int height)
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	resize_godRayPasses(width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	displayWaterFramebuffers(1);
+	//displayWaterFramebuffers(1);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// God Rays Pass

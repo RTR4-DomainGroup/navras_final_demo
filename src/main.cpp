@@ -529,7 +529,7 @@ void display(void)
 	// Call Scenes Display Here
 	displayScene_PlaceHolder();
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	/*glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     resize(windowWidth, windowHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -544,7 +544,7 @@ void display(void)
 
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);
+	glUseProgram(0);*/
 
 	SwapBuffers(ghdc);
 
