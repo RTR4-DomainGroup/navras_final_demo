@@ -4,7 +4,6 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/audioplayer.h"
-#include "../inc/shaders/TerrainShader.h"
 #include "../inc/scenes/scenePlaceHolder.h"
 
 // OpenGL Libraries
@@ -31,6 +30,10 @@ HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
 mat4 perspectiveProjectionMatrix;
+
+// framebuffer related variables
+int windowWidth;
+int windowHeight;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -210,33 +213,33 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 		case 'W':
 		case 'w':
-			cameraEyeZ = cameraEyeZ - 1.0f;
-			cameraCenterZ = cameraCenterZ - 1.0f;
+			cameraEyeZ = cameraEyeZ - 0.25f;
+			cameraCenterZ = cameraCenterZ - 0.25f;
 			break;
 		case 'S':
 		case 's':
-			cameraEyeZ = cameraEyeZ + 1.0f;
-			cameraCenterZ = cameraCenterZ + 1.0f;
+			cameraEyeZ = cameraEyeZ + 0.25f;
+			cameraCenterZ = cameraCenterZ + 0.25f;
 			break;
 		case 'A':
 		case 'a':
-			cameraEyeX = cameraEyeX - 1.0f;
-			cameraCenterX = cameraCenterX - 1.0f;
+			cameraEyeX = cameraEyeX - 0.25f;
+			cameraCenterX = cameraCenterX - 0.25f;
 			break;
 		case 'D':
 		case 'd':
-			cameraEyeX = cameraEyeX + 1.0f;
-			cameraCenterX = cameraCenterX + 1.0f;
+			cameraEyeX = cameraEyeX + 0.25f;
+			cameraCenterX = cameraCenterX + 0.25f;
 			break;
 		case 'Q':
 		case 'q':
-			cameraEyeY = cameraEyeY - 1.0f;
-			cameraCenterY = cameraCenterY - 1.0f;
+			cameraEyeY = cameraEyeY - 0.25f;
+			cameraCenterY = cameraCenterY - 0.25f;
 			break;
 		case 'E':
 		case 'e':
-			cameraEyeY = cameraEyeY + 1.0f;
-			cameraCenterY = cameraCenterY + 1.0f;
+			cameraEyeY = cameraEyeY + 0.25f;
+			cameraCenterY = cameraCenterY + 0.25f;
 			break;
 		case 'n':
 			playSong(songId);
@@ -532,6 +535,9 @@ void resize(int width, int height) {
 	// Code
 	if (height == 0)			// To Avoid Divided by 0(in Future)
 		height = 1;
+
+	windowWidth = width;
+	windowHeight = height;
 
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);

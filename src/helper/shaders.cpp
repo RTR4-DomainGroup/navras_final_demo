@@ -6,6 +6,7 @@
 #include "../../inc/shaders/CloudNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
+#include "../inc/shaders/WaterShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
 
 BOOL initAllShaders(void)
@@ -49,6 +50,11 @@ BOOL initAllShaders(void)
     }
 
 
+    if (initializeWaterShader() != 0)
+    {
+        return FALSE;
+    }
+
     return TRUE;
 
 }
@@ -57,6 +63,7 @@ void uninitializeAllShaders(void)
 {
     // Code
     uninitializeBillboardingShader();
+    uninitializeWaterShader();
     uninitializeStarfieldShader();
     uninitializeTerrainShader();
     uninitializeGodraysShader();
