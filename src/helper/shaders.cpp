@@ -6,6 +6,7 @@
 #include "../../inc/shaders/CloudNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
+#include "../../inc/shaders/BillboardingShader.h"
 
 BOOL initAllShaders(void)
 {
@@ -42,14 +43,20 @@ BOOL initAllShaders(void)
         return FALSE;
     }
 
+	if(initializeBillboardingShader() != 0)
+    {
+        return FALSE;
+    }
+
+
     return TRUE;
 
 }
 
-
-void uninitAllShaders(void)
+void uninitializeAllShaders(void)
 {
     // Code
+    uninitializeBillboardingShader();
     uninitializeStarfieldShader();
     uninitializeTerrainShader();
     uninitializeGodraysShader();
@@ -57,3 +64,4 @@ void uninitAllShaders(void)
     uninitializeADSShader();
     uninitializeCloudNoiseShader();
 }
+

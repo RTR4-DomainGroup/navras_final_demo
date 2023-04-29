@@ -488,9 +488,7 @@ void ToggleFullScreen(void) {
 
 			ShowCursor(FALSE);
 			gbFullScreen = TRUE;
-
 		}
-
 	}
 	else {
 
@@ -557,7 +555,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolder();
 
 	//uninitialize all shaders
-	uninitializeADSShader();
+	uninitializeAllShaders();
 
 	if (gbFullScreen) {
 

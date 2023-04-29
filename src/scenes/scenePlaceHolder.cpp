@@ -11,13 +11,23 @@
 #include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 
-//#define ENABLE_CLOUD_NOISE
-//#define ENABLE_TERRIAN
-//#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
-#define ENABLE_STATIC_MODELS
+#include "../../inc/effects/ADSLights.h"
+#include "../../inc/effects/Billboarding.h"
+
+// #define ENABLE_CLOUD_NOISE
+// #define ENABLE_TERRIAN
+// #define ENABLE_SKYBOX
+// #define ENABLE_CLOUD_NOISE
+// #define ENABLE_TERRIAN
+// #define ENABLE_SKYBOX
+// #define ENABLE_STARFIELD
+// #define ENABLE_ADSLIGHT
+// #define ENABLE_STATIC_MODELS
+#define ENABLE_BILLBOARDING
 
 GLuint texture_Marble;
+TEXTURE texture_grass;
+TEXTURE texture_flower;
 
 struct ADSUniform sceneADSUniform;
 
@@ -53,7 +63,6 @@ GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern FILE* gpFile;
 
 float displacementmap_depth;
 
@@ -73,20 +82,26 @@ STATIC_MODEL streetLightModel;
 int initializeScene_PlaceHolder(void)
 {
 
-	// Code.
-	// Texture
-	if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
+    // Code.
+#ifdef ENABLE_ADSLIGHT
+    // Texture
+	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
-		LOG("LoadGLTexture Marble Successfull = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
 	}
 
+	initializeADSLight();
+#endif // ENABLE_ADSLIGHT
+
+
 #ifdef ENABLE_TERRIAN
+	displacementmap_depth = 15.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
@@ -118,8 +133,6 @@ int initializeScene_PlaceHolder(void)
 		LOG("initializeSkybox() Successfull!!!\n");
 	}
 #endif
-
-	// initialize Cloud Noise Shader
 
 #ifdef ENABLE_CLOUD_NOISE
 	noise_texture = initializeCloud();
@@ -153,10 +166,6 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif // ENABLE_STARFIELD
 	
-	displacementmap_depth = 15.0f;
-
-	//
-	//ZeroMemory(&sceneADSUniform, sizeof(struct ADSUniform));
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
@@ -164,44 +173,68 @@ int initializeScene_PlaceHolder(void)
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 #endif
 
-	return 0;
 
+#ifdef ENABLE_BILLBOARDING	
+
+	initializeBillboarding();	
+	initializeQuad();
+
+	char imagefile[64] = {};
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	{
+        LOG("Texture loading failed for image %s\n", imagefile);
+        return (-6);
+    }
+
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
+	{
+        LOG("Texture loading failed for image %s\n", imagefile);
+        return (-6);
+    }
+
+#endif // ENABLE_BILLBOARDING
+
+	return 0;
 }
 
 void displayScene_PlaceHolder(void)
 {
-
 	// Code
-	// Here The Game Starts
-
-	/*sceneADSUniform = useADSShader();
-
+	// Here The Game STarts
+	
 	// Transformations
 	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
+	
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
-	rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
-	rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
-	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
+	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
+	// rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
+	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+#ifdef ENABLE_ADSLIGHT
+	struct ADSUniform sceneADSUniform;
 
+    sceneADSUniform = useADSShader();
 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_Marble);
-	glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
+	
+	// Sending texture Related Uniforms
+    glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
 
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
@@ -214,28 +247,107 @@ void displayScene_PlaceHolder(void)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, MaterialShininess);
 
-	// Call Geometry over here
-	// displayCube();
-	// displayTriangle();
-	// displayQuad();
-	// displayPyramid();
-	displaySphere();
-
+	displayADSLight();
 	// glBindTexture(GL_TEXTURE_2D, 0);
 
-	// Un-use ShaderProgramObject
-	glUseProgram(0);*/
+#endif // ENABLE_ADSLIGHT
 
+	// Call Geometry over here 
+	// displayCube();
+	// displayTriangle();
+    // displayQuad();
+    // displayPyramid();
+	// displaySphere();
+
+#ifdef ENABLE_BILLBOARDING	
+
+    BillboardingUniform billboardingUniform = useBillboardingShader();
+
+    // Code
+
+//////////////////////////////////////////
+    // instanced quads with grass texture
+
+    // translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
+
+
+	if(texture_grass.height > texture_grass.width)
+		scaleMatrix = vmath::scale(texture_grass.width/(GLfloat)texture_grass.height, 1.0f, 1.0f);
+	else
+		scaleMatrix = vmath::scale(1.0f, texture_grass.height/(GLfloat)texture_grass.width, 1.0f);
+
+
+    modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+    // send to shader
+    glUniformMatrix4fv(
+        billboardingUniform.modelMatrixUniform, // which uniform
+        1, // 
+        GL_FALSE,
+        modelMatrix
+    );
+    glUniformMatrix4fv(
+        billboardingUniform.viewMatrixUniform, // which uniform
+        1, // 
+        GL_FALSE,
+        viewMatrix
+    );
+    glUniformMatrix4fv(
+        billboardingUniform.projectionMatrixUniform, // which uniform
+        1, // 
+        GL_FALSE,
+        perspectiveProjectionMatrix
+    );
+
+
+    glUniform1i(billboardingUniform.textureSamplerUniform, 0);
+
+    // if(bBillboardingEnabled)
+    glUniform1i(billboardingUniform.billboardingEnableUniform, 1);
+    // else
+    //     glUniform1i(billboardingUniform.billboardingEnableUniform, 0);
+
+
+ 
+    glBindTexture(GL_TEXTURE_2D, texture_grass.id);
+
+	displayBillboardingGrass();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+/// Flower
+
+	if(texture_flower.height > texture_flower.width)
+		scaleMatrix = vmath::scale(texture_flower.width/(GLfloat)texture_flower.height, 1.0f, 1.0f);
+	else
+		scaleMatrix = vmath::scale(1.0f, texture_flower.height/(GLfloat)texture_flower.width, 1.0f);
+
+	translationMatrix = vmath::translate(1.5f, 0.0f, 0.0f);
+
+    modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+    // send to shader
+    glUniformMatrix4fv(
+        billboardingUniform.modelMatrixUniform, // which uniform
+        1, // 
+        GL_FALSE,
+        modelMatrix
+    );
+
+    glBindTexture(GL_TEXTURE_2D, texture_flower.id);
+
+	displayBillboardingFlower();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+#endif // ENABLE_BILLBOARDING
+	
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
 
 	sceneCloudNoiseUniform = useCloudNoiseShader();
 
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	mat4 rotateX = mat4::identity();
 	//mat4 viewMatrix = mat4::identity();
 
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
@@ -315,11 +427,6 @@ void displayScene_PlaceHolder(void)
 	sceneSkyBoxUniform = useSkyboxShader();
 
 	// Transformations
-	mat4 translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-
 	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
@@ -361,18 +468,10 @@ void displayScene_PlaceHolder(void)
 	displayStarfield(texture_star);
 	glUseProgram(0);
 
-#endif
+#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
-	mat4 translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix_x = mat4::identity();
-	mat4 rotationMatrix_y = mat4::identity();
-	mat4 rotationMatrix_z = mat4::identity();
 
 	sceneADSUniform = useADSShader();
 
@@ -421,6 +520,7 @@ void displayScene_PlaceHolder(void)
 
 	drawStaticModel(streetLightModel);
 
+	// Un-use ShaderProgramObject
 	glUseProgram(0);
 #endif
 
@@ -430,19 +530,29 @@ void updateScene_PlaceHolder(void)
 {
 
 	// Code
+#ifdef ENABLE_ADSLIGHT
+    angleCube = angleCube + 1.0f;
+	if (angleCube >= 360.0f)
+	{
+		angleCube -= 360.0f;
+	}
+	updateADSLight();
+#endif // ENABLE_ADSLIGHT
+
+
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
 #endif
 
-	/*angleCube = angleCube + 1.0f;
-	if (angleCube >= 360.0f)
-	{
-		angleCube -= 360.0f;
-	}*/
 
 #ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
+#endif
+
+
+#ifdef ENABLE_BILLBOARDING
+	updateBillboarding();
 #endif
 
 }
@@ -450,14 +560,37 @@ void updateScene_PlaceHolder(void)
 void uninitializeScene_PlaceHolder(void)
 {
 	// Code
-#ifdef ENABLE_STARFIELD
-	uninitializeStarfield(texture_star);
+
+	// uninitializeTerrain();
+    // uninitializeSphere();
+    // uninitializeTriangle();
+    // uninitializeQuad();
+    // uninitializePyramid();
+    uninitializeCube();
+
+	
+#ifdef ENABLE_BILLBOARDING
+	uninitializeBillboarding();
+	    // texture
+    if(texture_flower.id)
+    {
+        glDeleteTextures(1, &texture_flower.id);
+        texture_flower.id = 0;
+    }
+    if(texture_grass.id)
+    {
+        glDeleteTextures(1, &texture_grass.id);
+        texture_grass.id = 0;
+    }
 #endif
 
+#ifdef ENABLE_STARFIELD
+	uninitializeStarfield(texture_star);
+#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_SKYBOX
 	uninitialiseSkybox(texture_skybox);
-#endif
+#endif // ENABLE_SKYBOX
 
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);
@@ -474,13 +607,13 @@ void uninitializeScene_PlaceHolder(void)
 	}
 #endif
 
-	uninitializeSphere();
-
+#ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)
 	{
 		glDeleteTextures(1, &texture_Marble);
 		texture_Marble = NULL;
 	}
+#endif // ENABLE_ADSLIGHT
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
