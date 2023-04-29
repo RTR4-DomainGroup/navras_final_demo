@@ -3,7 +3,7 @@
 
 // Variable Declarations
 GLuint billboardingShaderProgramObject;
-BillboardingUniform billboardingUniform;
+static BillboardingUniform billboardingUniform;
 
 int initializeBillboardingShader(void)
 {
@@ -134,8 +134,6 @@ int initializeBillboardingShader(void)
 			}
 		}
 	}
-
-	//
 
 	billboardingUniform.modelMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_modelMatrix");
 	billboardingUniform.viewMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_viewMatrix");

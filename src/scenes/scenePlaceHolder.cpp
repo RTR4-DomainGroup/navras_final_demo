@@ -14,14 +14,12 @@
 #include "../../inc/effects/ADSLights.h"
 #include "../../inc/effects/Billboarding.h"
 
-// #define ENABLE_CLOUD_NOISE
-// #define ENABLE_TERRIAN
-// #define ENABLE_SKYBOX
+#define ENABLE_ADSLIGHT
+
 // #define ENABLE_CLOUD_NOISE
 // #define ENABLE_TERRIAN
 // #define ENABLE_SKYBOX
 // #define ENABLE_STARFIELD
-// #define ENABLE_ADSLIGHT
 // #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
 
@@ -223,7 +221,6 @@ void displayScene_PlaceHolder(void)
 	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 #ifdef ENABLE_ADSLIGHT
-	struct ADSUniform sceneADSUniform;
 
     sceneADSUniform = useADSShader();
 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -238,14 +235,14 @@ void displayScene_PlaceHolder(void)
 
 	// Sending Light Related Uniforms
 	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneADSUniform.laUniform, 1, LightAmbient);
-	glUniform4fv(sceneADSUniform.ldUniform, 1, LightDiffuse);
-	glUniform4fv(sceneADSUniform.lsUniform, 1, LightSpecular);
-	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, LightPosition);
-	glUniform4fv(sceneADSUniform.kaUniform, 1, MaterialAmbient);
-	glUniform4fv(sceneADSUniform.kdUniform, 1, MaterialDiffuse);
-	glUniform4fv(sceneADSUniform.ksUniform, 1, MaterialSpecular);
-	glUniform1f(sceneADSUniform.materialShininessUniform, MaterialShininess);
+	glUniform4fv(sceneADSUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneADSUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneADSUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneADSUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneADSUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
 	displayADSLight();
 	// glBindTexture(GL_TEXTURE_2D, 0);
@@ -263,20 +260,14 @@ void displayScene_PlaceHolder(void)
 
     BillboardingUniform billboardingUniform = useBillboardingShader();
 
-    // Code
-
 //////////////////////////////////////////
     // instanced quads with grass texture
-
-    // translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-
-
 	if(texture_grass.height > texture_grass.width)
 		scaleMatrix = vmath::scale(texture_grass.width/(GLfloat)texture_grass.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height/(GLfloat)texture_grass.width, 1.0f);
 
-
+    // translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
     modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
     // send to shader
@@ -315,6 +306,7 @@ void displayScene_PlaceHolder(void)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
+//////////////////////////////////////////
 /// Flower
 
 	if(texture_flower.height > texture_flower.width)
