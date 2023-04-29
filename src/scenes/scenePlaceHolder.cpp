@@ -25,9 +25,9 @@
 #define ENABLE_TERRIAN
 #define ENABLE_WATER
 
-//#define ENABLE_CLOUD_NOISE
+#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
+//#define ENABLE_STARFIELD
 
 #define ENABLE_STATIC_MODELS	
 #define ENABLE_BILLBOARDING
@@ -734,7 +734,7 @@ void displayWaterFramebuffers() {
 	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
 	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
 	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-	glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
+	//glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 	glActiveTexture(GL_TEXTURE0);
