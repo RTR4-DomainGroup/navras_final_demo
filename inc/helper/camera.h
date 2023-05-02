@@ -28,3 +28,6 @@ struct Camera
 };
 
 void setCamera(void);
+
+GLfloat impreciselerp(GLfloat, GLfloat, GLfloat);
+GLfloat preciselerp(GLfloat, GLfloat, GLfloat);

@@ -14,6 +14,7 @@
 #include "../../inc/helper/common.h"
 //#include "../../inc/Noise.h"
 #include "../../inc/effects/Billboarding.h"
+#include "../../inc/helper/camera.h"
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -1055,6 +1056,9 @@ void updateScene_PlaceHolder(void)
 		moveFactor -= 360.0f;
 #endif
 
+	// update camera using lerp
+	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
+	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
 }
 
 void uninitializeScene_PlaceHolder(void)

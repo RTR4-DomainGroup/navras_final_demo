@@ -24,3 +24,13 @@ void setCamera(void)
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 }
+
+GLfloat impreciselerp(GLfloat v0, GLfloat v1, GLfloat t)
+{
+	return v0 + t * (v1 - v0);
+}
+
+GLfloat preciselerp(GLfloat v0, GLfloat v1, GLfloat t)
+{
+	return (1 - t) * v0 + t * v1;
+}

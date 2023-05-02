@@ -1,10 +1,14 @@
 // Header Files
+
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/audioplayer.h"
 #include "../inc/scenes/scenePlaceHolder.h"
+
+#define _USE_MATH_DEFINES 1
+#include <math.h>		// for PI
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -34,6 +38,9 @@ mat4 perspectiveProjectionMatrix;
 // framebuffer related variables
 int windowWidth;
 int windowHeight;
+
+float cameraCounterSideWays = 3.2f;
+float cameraCounterUpDownWays = 3.2f;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -167,6 +174,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	void resize(int, int);
 	int playSong(int );
 	void togglePlayback();
+	void resetCamera(void);
 
 
 	// variables
@@ -199,7 +207,30 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			togglePlayback();
 			break;
 
+		case 38:	// Up
+			LOG("cameraCounterUpDownWays : %f\n", cameraCounterUpDownWays);
+			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
+			cameraCounterUpDownWays += 0.025f;
+			break;
+		case 40:	// down
+			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
+			cameraCounterUpDownWays -= 0.025f;
+			break;
+		case 37:	// left
+			//LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
+			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
+			cameraCounterSideWays += 0.025f;
+			break;
+		case 39:	// right
+			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
+			cameraCounterSideWays -= 0.025f;
+			break;
 		default:
+			LOG("keypress : %d\n", wParam);
 			break;
 		}
 		break;
@@ -241,6 +272,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			cameraEyeY = cameraEyeY + 0.25f;
 			cameraCenterY = cameraCenterY + 0.25f;
 			break;
+		case 'R':
+		case 'r':
+			resetCamera();
+			break;
+		case 'P':
+		case 'p':
+			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f]", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
+			break;
 		case 'n':
 			playSong(songId);
 			songId++;
@@ -254,6 +293,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 				songId = NUM_AUDIO-1;
 			break;	
 		default:
+			LOG("keypress for camera : %d\n", wParam);
 			break;
 
 		}
@@ -334,6 +374,7 @@ int initialize(void) {
 	BOOL LoadGLTexture(GLuint*, TCHAR[]);
 	void printGLInfo(void);
 	void uninitialize(void);
+	void resetCamera(void);
 
 	// Variable Declarations
 	PIXELFORMATDESCRIPTOR pfd;
@@ -405,17 +446,7 @@ int initialize(void) {
 	}
 
 	// initialize camera
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
+	resetCamera();
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
@@ -436,6 +467,24 @@ int initialize(void) {
 
 	return(0);
 
+}
+
+void resetCamera(void)
+{
+	cameraEyeX = 0.0f;
+	cameraEyeY = 0.0f;
+	cameraEyeZ = 6.0f;
+
+	cameraCenterX = 0.0f;
+	cameraCenterY = 0.0f;
+	cameraCenterZ = 0.0f;
+
+	cameraUpX = 0.0f;
+	cameraUpY = 1.0f;
+	cameraUpZ = 0.0f;
+
+	cameraCounterSideWays = 3.2f;
+	cameraCounterUpDownWays = 3.2f;
 }
 
 void printGLInfo(void) {
