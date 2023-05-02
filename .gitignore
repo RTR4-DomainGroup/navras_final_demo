@@ -1,9 +1,11 @@
-ext/
-res/
+ext
+res
 
 *.obj
 *.exe
 Log.txt
 
 .vs/
+.vscode/
 *.zip
+
