@@ -262,7 +262,6 @@ int initializeScene_PlaceHolder(void)
     }
 
     initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
-	initializeQuad();
 
 	char imagefile[64] = {};
 	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
@@ -288,6 +287,7 @@ void displayScene_PlaceHolder(void)
 {
 	// Function Declarations
 	void displayWaterFramebuffers(void);
+	void displayBillboarding(void);
 
 	// Code
 	// Here The Game STarts
@@ -311,7 +311,7 @@ void displayScene_PlaceHolder(void)
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	// translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
 	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
@@ -576,68 +576,7 @@ void displayScene_PlaceHolder(void)
 
 #ifdef ENABLE_BILLBOARDING	
 
-	billboardingEffectUniform = useBillboardingShader();
-
-//////////////////////////////////////////
-
-	// instanced quads with grass texture
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	if (texture_grass.height > texture_grass.width)
-		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-
-	// if(bBillboardingEnabled)
-	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-	// else
-	//     glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	/// Flower
-
-	if (texture_flower.height > texture_flower.width)
-		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
-
-	translationMatrix = vmath::translate(1.5f, 0.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-
-    displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
+	displayBillboarding();
 
 #endif // ENABLE_BILLBOARDING
 
@@ -646,6 +585,9 @@ void displayScene_PlaceHolder(void)
 
 void displayWaterFramebuffers(void) {
 
+	// forward declaration
+	void displayBillboarding(void);
+	
 	// Code
 
 	mat4 translationMatrix = mat4::identity();
@@ -681,9 +623,6 @@ void displayWaterFramebuffers(void) {
 	setCamera();
 
 	//glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-
-
-
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -744,9 +683,6 @@ void displayWaterFramebuffers(void) {
 #endif
 
 
-
-
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -782,70 +718,7 @@ void displayWaterFramebuffers(void) {
 #ifdef ENABLE_BILLBOARDING	
 
 	// Code
-	billboardingEffectUniform = useBillboardingShader();
-//////////////////////////////////////////
-	// instanced quads with grass texture
-
-	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	if (texture_grass.height > texture_grass.width)
-		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-
-	// if(bBillboardingEnabled)
-	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-	// else
-	//     glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	/// Flower
-
-	if (texture_flower.height > texture_flower.width)
-		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
-
-	translationMatrix = vmath::translate(1.5f, 0.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
+	displayBillboarding();
 
 #endif // ENABLE_BILLBOARDING
 	
@@ -961,70 +834,7 @@ void displayWaterFramebuffers(void) {
 
 #ifdef ENABLE_BILLBOARDING	
 
-	// Code
-	billboardingEffectUniform = useBillboardingShader();
-//////////////////////////////////////////
-	// instanced quads with grass texture
-
-	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	if (texture_grass.height > texture_grass.width)
-		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-
-	// if(bBillboardingEnabled)
-	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-	// else
-	//     glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 0);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	/// Flower
-
-	if (texture_flower.height > texture_flower.width)
-		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
-
-	translationMatrix = vmath::translate(1.5f, 0.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
+	displayBillboarding();
 
 #endif // ENABLE_BILLBOARDING
 
@@ -1033,6 +843,69 @@ void displayWaterFramebuffers(void) {
 	glDisable(GL_CLIP_DISTANCE0);
 
 }
+
+void displayBillboarding(void)
+{
+	// variable declaration
+	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	
+	// code
+	billboardingEffectUniform = useBillboardingShader();
+
+//////////////////////////////////////////
+
+	// instanced quads with grass texture
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();\
+
+	// send to shader
+	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	/// Grass
+	if (texture_grass.height > texture_grass.width)
+		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
+	else
+		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
+
+	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
+	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	/// Flower
+	if (texture_flower.height > texture_flower.width)
+		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
+	else
+		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
+
+	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	// send to shader
+	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
+    displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUseProgram(0);
+}
+
 
 void updateScene_PlaceHolder(void)
 {
@@ -1077,7 +950,6 @@ void uninitializeScene_PlaceHolder(void)
 
 	
 #ifdef ENABLE_BILLBOARDING
-    uninitializeQuad();
     uninitializeInstancedQuads();
 
 	// texture
