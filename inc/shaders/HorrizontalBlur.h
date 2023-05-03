@@ -12,3 +12,5 @@ struct HorrizontalBlurUniform
 int initialize_horrizontalBlur(void);
 
 HorrizontalBlurUniform useHorrizontalBlurShader(void);
+
+void uninitialize_horrizontalBlurShader(void);

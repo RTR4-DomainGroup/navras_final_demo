@@ -194,3 +194,30 @@ VerticalBlurUniform useHorrizontalBlurShader(void)
     glUseProgram(shaderProgram_verticalBlur);
     return vBlurUniform;
 }
+
+void uninitialize_verticalBlurShader(void)
+{
+    if (shaderProgram_verticalBlur)
+    {
+        GLsizei numAttachedShader;
+		glUseProgram(shaderProgram_verticalBlur);
+		glGetProgramiv(shaderProgram_verticalBlur, GL_ATTACHED_SHADERS, &numAttachedShader);
+		GLuint* shaderObjects = NULL;
+		shaderObjects = (GLuint*)malloc(numAttachedShader * sizeof(GLuint));
+		glGetAttachedShaders(shaderProgram_verticalBlur, numAttachedShader, &numAttachedShader, shaderObjects);
+		for (GLsizei i = 0; i < numAttachedShader; i++) {
+		
+			glDetachShader(shaderProgram_verticalBlur, shaderObjects[i]);
+			glDeleteShader(shaderObjects[i]);
+			shaderObjects[i] = 0;
+
+		}
+
+		free(shaderObjects);
+		shaderObjects = NULL;
+
+		glUseProgram(0);
+		glDeleteProgram(shaderProgram_verticalBlur);
+		shaderProgram_verticalBlur = 0;
+    }
+}
