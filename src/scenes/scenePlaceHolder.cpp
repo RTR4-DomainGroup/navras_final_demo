@@ -25,6 +25,7 @@
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
+#define ENABLE_GAUSSIAN_BLUR
 
 GLuint texture_Marble;
 TEXTURE texture_grass;
@@ -79,7 +80,6 @@ GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-
 float displacementmap_depth;
 
 // Variables For Skybox
@@ -97,7 +97,6 @@ STATIC_MODEL streetLightModel;
 
 int initializeScene_PlaceHolder(void)
 {
-
     // Code.
 #ifdef ENABLE_ADSLIGHT
     // Texture
@@ -114,7 +113,6 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 
-
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 15.0f;
 
@@ -123,10 +121,8 @@ int initializeScene_PlaceHolder(void)
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
-
 		LOG("initializeTerrain() FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -234,13 +230,11 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif // ENABLE_STARFIELD
 	
-
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 #endif
-
 
 #ifdef ENABLE_BILLBOARDING	
 
@@ -339,7 +333,6 @@ void displayScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 	
-	
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
@@ -386,7 +379,6 @@ void displayScene_PlaceHolder(void)
 	glDisable(GL_TEXTURE_3D);
 
 #endif
-
 
 #ifdef ENABLE_TERRIAN
 	// Terrain
@@ -628,11 +620,9 @@ void displayScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
-
 }
 
 void displayWaterFramebuffers(void) {
-
 	// Code
 
 	mat4 translationMatrix = mat4::identity();
@@ -668,9 +658,6 @@ void displayWaterFramebuffers(void) {
 	setCamera();
 
 	//glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-
-
-
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -730,10 +717,6 @@ void displayWaterFramebuffers(void) {
 
 #endif
 
-
-
-
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -767,13 +750,8 @@ void displayWaterFramebuffers(void) {
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
-
 	// Code
 	billboardingEffectUniform = useBillboardingShader();
-//////////////////////////////////////////
-	// instanced quads with grass texture
-
-	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -834,15 +812,9 @@ void displayWaterFramebuffers(void) {
 	glUseProgram(0);
 
 #endif // ENABLE_BILLBOARDING
-	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 	glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
 
@@ -854,8 +826,7 @@ void displayWaterFramebuffers(void) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-
-
+	glUseProgram(0);
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -907,8 +878,6 @@ void displayWaterFramebuffers(void) {
 	glDisable(GL_TEXTURE_3D);
 
 #endif
-
-
 
 #ifdef ENABLE_TERRIAN
 	// Terrain
@@ -1014,14 +983,11 @@ void displayWaterFramebuffers(void) {
 #endif // ENABLE_BILLBOARDING
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	glDisable(GL_CLIP_DISTANCE0);
-
 }
 
 void updateScene_PlaceHolder(void)
 {
-
 	// Code
 #ifdef ENABLE_ADSLIGHT
     angleCube = angleCube + 1.0f;
@@ -1032,17 +998,14 @@ void updateScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 
-
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
 #endif
-
 
 #ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif
-
 
 #ifdef ENABLE_BILLBOARDING
 	updateBillboarding();
@@ -1060,8 +1023,6 @@ void updateScene_PlaceHolder(void)
 void uninitializeScene_PlaceHolder(void)
 {
 	// Code
-
-	
 #ifdef ENABLE_BILLBOARDING
 	uninitializeBillboarding();
 	    // texture
@@ -1094,7 +1055,6 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_CLOUD_NOISE
-
 	
 	uninitializeCloud();
 	if (noise_texture)
@@ -1127,4 +1087,3 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 }
-
