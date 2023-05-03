@@ -189,7 +189,7 @@ int initialize_verticalBlur()
     return (0);
 }
 
-VerticalBlurUniform useHorrizontalBlurShader(void)
+VerticalBlurUniform useVerticalBlurShader(void)
 {
     glUseProgram(shaderProgram_verticalBlur);
     return vBlurUniform;

@@ -12,8 +12,10 @@
 #include "../../inc/helper/camera.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/helper/common.h"
+#include "../../inc/helper/framebuffer.h"
 //#include "../../inc/Noise.h"
 #include "../../inc/effects/Billboarding.h"
+#include "../../inc/effects/GaussianBlurEffect.h"
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -46,6 +48,8 @@ struct WaterUniform waterUniform;
 struct TextureVariables waterTextureVariables;
 struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
 struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+
+
 GLfloat waterHeight = 0.0f;
 GLfloat moveFactor = 0.0f;
 GLfloat planeReflection[] = { 0.0f, 1.0f, 0.0f, -waterHeight };
@@ -258,6 +262,13 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+	if(initializeGaussianBlur() == false)
+	{
+		LOG("Initialize Gaussian Blur Effect FAILED!!");
+		return (-7);
+	}
+#endif
 	return 0;
 }
 
@@ -512,7 +523,6 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 #endif
-
 
 #ifdef ENABLE_WATER
 	waterUniform = useWaterShader();
@@ -826,7 +836,7 @@ void displayWaterFramebuffers(void) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-	glUseProgram(0);
+	//glUseProgram(0);
 
 #ifdef ENABLE_CLOUD_NOISE
 

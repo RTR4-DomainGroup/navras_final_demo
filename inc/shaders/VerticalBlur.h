@@ -9,5 +9,5 @@ struct VerticalBlurUniform
 };
 
 int initialize_verticalBlur(void);
-VerticalBlurUniform useHorrizontalBlurShader(void);
+VerticalBlurUniform useVerticalBlurShader(void);
 void uninitialize_verticalBlurShader(void);
