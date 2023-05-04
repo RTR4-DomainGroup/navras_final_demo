@@ -1169,4 +1169,8 @@ void uninitializeScene_PlaceHolder(void)
 	unloadStaticModel(&streetLightModel);
 #endif
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+	uninitializeGaussianBlur(&gaussianBlurEffect);
+#endif
+
 }

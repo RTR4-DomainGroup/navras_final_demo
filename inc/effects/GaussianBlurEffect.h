@@ -12,3 +12,4 @@ struct GaussianBlurEffect
 
 bool initializeGaussianBlur(GaussianBlurEffect*);
 void displayGaussianBlur(void);
+void uninitializeGaussianBlur(GaussianBlurEffect*);
