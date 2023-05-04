@@ -1,6 +1,7 @@
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
@@ -16,6 +17,11 @@ BOOL initAllShaders(void)
     // Variable Declarations
 
     // Code
+    if (initializeFSQuadShader() != 0)
+    {
+        return FALSE;
+    }
+
     if (initializeADSShader() != 0)
     {
         return FALSE;
