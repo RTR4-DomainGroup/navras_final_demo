@@ -1,5 +1,6 @@
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/shaders.h"
+#include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/SkyboxShader.h"
@@ -56,7 +57,6 @@ BOOL initAllShaders(void)
     {
         return FALSE;
     }
-
 
     if (initializeWaterShader() != 0)
     {

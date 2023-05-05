@@ -2,6 +2,9 @@
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/helper/texture_loader.h"
+#include "../../inc/effects/videoEffect.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
@@ -18,16 +21,18 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #include "../../inc/shaders/FSQuadShader.h"
 
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+//#define ENABLE_ADSLIGHT		//##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_CLOUD_NOISE
 #define ENABLE_TERRIAN
 #define ENABLE_WATER
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
+#define ENABLE_FOG
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
+//#define ENABLE_VIDEO_RENDER
 #define ENABLE_GAUSSIAN_BLUR
 
 GLuint texture_Marble;
@@ -35,6 +40,7 @@ TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneADSUniform;
+struct FSQuadUniform fsqUniform;
 
 struct TerrainUniform terrainUniform;
 
@@ -106,9 +112,21 @@ struct StarfieldUniform sceneStarfieldUniform;
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
 
+GLfloat density = 0.15;
+GLfloat gradient = 0.5;
+GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+
 int initializeScene_PlaceHolder(void)
 {
     // Code.
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo();
+    //initializeTriangle();
+    //initializeSphere();
+	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
+
+#else
+
 #ifdef ENABLE_ADSLIGHT
     // Texture
 	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
@@ -173,8 +191,6 @@ int initializeScene_PlaceHolder(void)
 
 	}
 
-
-	//
 	waterRefractionFrameBufferDetails.textureWidth = 1280;
 	waterRefractionFrameBufferDetails.textureHeight = 720;
 
@@ -290,6 +306,12 @@ void displayScene_PlaceHolder(void)
 	void displayScene(int, int);
 	// Code
 	// Here The Game STarts
+#ifdef ENABLE_VIDEO_RENDER
+	fsqUniform = useFSQuadShader();
+	displayVideoEffect(&fsqUniform);
+	glUseProgram(0);
+
+#else
 
 	//2 framebuffers for water effect
 	displayWaterFramebuffers();
@@ -322,7 +344,7 @@ void displayScene_PlaceHolder(void)
     	glBindTexture(GL_TEXTURE_2D, 0);
 
 	#endif
-	
+	#endif
 }
 
 void displayScene(int width, int height)
@@ -341,14 +363,6 @@ void displayScene(int width, int height)
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
-
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
-	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
-	// rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
-	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 #ifdef ENABLE_ADSLIGHT
 	
@@ -374,6 +388,11 @@ void displayScene(int width, int height)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+	//glUniform1i(sceneADSUniform.fogEnableUniform, 1);
+	//glUniform1f(sceneADSUniform.densityUniform, density);
+	//glUniform1f(sceneADSUniform.gradientUniform, gradient);
+	//glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
+
 	// Call Geometry over here 
 	displayCube();
 	// displayTriangle();
@@ -382,10 +401,11 @@ void displayScene(int width, int height)
 	// displaySphere();
 	
 	glUseProgram(0);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
 #endif // ENABLE_ADSLIGHT
+	
 	
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -449,7 +469,14 @@ void displayScene(int width, int height)
 
 	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
+
+#ifdef ENABLE_FOG
+	glUniform1i(terrainUniform.fogEnableUniform, 1);
+	glUniform1f(terrainUniform.densityUniform, density);
+	glUniform1f(terrainUniform.gradientUniform, gradient);
+	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
+#endif // DEBUG
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
@@ -458,6 +485,9 @@ void displayScene(int width, int height)
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
 
 
+	// fsqUniform = useFSQuadShader();
+	// displayVideoEffect(&fsqUniform);
+	// glUseProgram(0);
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -530,6 +560,10 @@ void displayScene(int width, int height)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+	glUniform1i(sceneADSUniform.fogEnableUniform, 1);
+	glUniform1f(sceneADSUniform.densityUniform, density);
+	glUniform1f(sceneADSUniform.gradientUniform, gradient);
+	glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
 
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
@@ -677,7 +711,6 @@ void displayScene(int width, int height)
 
 void displayWaterFramebuffers(void) {
 	// Code
-
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -715,7 +748,6 @@ void displayWaterFramebuffers(void) {
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
-
 	sceneCloudNoiseUniform = useCloudNoiseShader();
 
 	translationMatrix = mat4::identity();
@@ -729,8 +761,6 @@ void displayWaterFramebuffers(void) {
 
 	rotateX = mat4::identity();
 	
-	//mat4 viewMatrix = mat4::identity();
-
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
 	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
@@ -818,7 +848,6 @@ void displayWaterFramebuffers(void) {
 		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -958,7 +987,6 @@ void displayWaterFramebuffers(void) {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
 
-
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -971,7 +999,7 @@ void displayWaterFramebuffers(void) {
 
 	// Code
 	billboardingEffectUniform = useBillboardingShader();
-//////////////////////////////////////////
+
 	// instanced quads with grass texture
 
 	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
@@ -988,7 +1016,6 @@ void displayWaterFramebuffers(void) {
 		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
