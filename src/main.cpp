@@ -4,7 +4,9 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
+#include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
+#include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolder.h"
 #include "../inc/shaders/FSQuadShader.h"
 
@@ -12,6 +14,11 @@
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "assimp-vc142-mtd.lib")
+#pragma comment(lib, "ffmpeg/lib/avformat.lib")
+#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
+#pragma comment(lib, "ffmpeg/lib/avformat.lib")
+#pragma comment(lib, "ffmpeg/lib/avutil.lib")
+#pragma comment(lib, "ffmpeg/lib/swscale.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
@@ -43,6 +50,14 @@ struct FSQuadUniform sceneFSQuadUniform;
 
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
+
+static scene_t currentScene = SCENE_INVALID;
+
+bool sceneFadeOut = false;
+
+// extern
+// extern scene_t sceneStack[];
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -405,13 +420,26 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
-
+    scenePush(SCENE_3);
+    scenePush(SCENE_2);
+    scenePush(SCENE_1);
+    scenePush(SCENE_0);
 
 	if(initializeScene_PlaceHolder() != 0)
 	{
 		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
         return (-8);
 	}
+
+	// if(initializeScene_Scene0() != 0)
+	// {
+	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
+    //     return (-8);
+	// }
+
+
+
+	// currentScene = scenePop();
 
 	// initialize camera
 	cameraEyeX = 0.0f;
@@ -527,24 +555,18 @@ void display(void)
 	setCamera();
 
 	// Call Scenes Display Here
-	displayScene_PlaceHolder();
-
-	/*glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    resize(windowWidth, windowHeight);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	sceneFSQuadUniform = useFSQuadShader();
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(sceneFSQuadUniform.textureSamplerUniform1, 0);
-	glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
-
-	glActiveTexture(GL_TEXTURE1);
-	glUniform1i(sceneFSQuadUniform.textureSamplerUniform1, 1);
-	glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
-
-	displayQuad();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);*/
+	if(currentScene == SCENE_0)
+	{
+		// displayScene_Scene0();
+	}
+	else if(currentScene == SCENE_1)
+	{
+		// displayScene_Scene1();
+	}
+	else
+	{
+		displayScene_PlaceHolder();
+	}
 
 	SwapBuffers(ghdc);
 
@@ -554,9 +576,27 @@ void update(void)
 {
 
 	// Code
+	// switch scene
+	if(sceneFadeOut == true)
+	{
+		currentScene = scenePop();
+		sceneFadeOut = false;
+	} 
+
 	
 	// Call Scenes Update Here
-	updateScene_PlaceHolder();
+	if(currentScene == SCENE_0)
+	{
+		// updateScene_Scene0();
+	}
+	else if(currentScene == SCENE_1)
+	{
+		// updateScene_Scene1();
+	}
+	else
+	{
+		updateScene_PlaceHolder();
+	}
 }
 
 void resize(int width, int height) {
@@ -587,6 +627,9 @@ void uninitialize(void) {
 
 	//uninitialize all scenes
 	uninitializeScene_PlaceHolder();
+	// uninitializeScene_Scene0();
+	// uninitializeScene_Scene1();
+
 
 	//uninitialize all shaders
 	uninitializeAllShaders();

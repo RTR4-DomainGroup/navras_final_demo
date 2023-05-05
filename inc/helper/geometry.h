@@ -4,6 +4,7 @@ void initializeCube(void);
 void initializeCubemap(void);
 void initializeQuad(void);
 void initializeInstancedQuad(int numInstances, GLfloat* instancePositions);
+void initializeQuadForVideo(void);
 void initializePyramid(void);
 
 void initializeTriangle(void);
