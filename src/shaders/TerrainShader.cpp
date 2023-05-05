@@ -20,6 +20,7 @@ int initializeTerrainShader(void)
         "uniform float u_density; \n"	\
         "uniform float u_gradient; \n"	\
         "uniform mat4 mv_matrix; \n"    \
+        "uniform int u_fogEnable; \n" \
         "out float visibility; \n"		\
         "void main(void) \n" \
         "{ \n" \
@@ -30,11 +31,13 @@ int initializeTerrainShader(void)
             "vs_out.tc = (vertices[gl_VertexID].xz + offs + vec2(0.5)) / 64.0; \n" \
             "gl_Position = vertices[gl_VertexID] + vec4(float(x - 32), 0.0,	float(y - 32), 0.0); \n" \
 
-			"vec4 positionRelativeToCamera = vec4(1.0f, 1.0f, 1.0f, 1.0f); \n"		\
-			"positionRelativeToCamera = mv_matrix * a_position; \n"			        \
-			"float distance = length(positionRelativeToCamera.xyz); \n"				\
-			"visibility = exp(-pow((distance * u_density), u_gradient)); \n"		\
-			"visibility = clamp(visibility, 0.0f, 1.0f); \n"						\
+			"if (u_fogEnable == 1) \n" \
+			"{ \n" \
+				"vec4 positionRelativeToCamera = mv_matrix * a_position; \n"		\
+				"float distance = length(positionRelativeToCamera.xyz); \n"							\
+				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
+				"visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
+			"} \n" \
         "} \n";
 
     // Create the Vertex Shader object.
@@ -252,7 +255,8 @@ int initializeTerrainShader(void)
             "uniform bool enable_fog = true; \n" \
             "uniform vec4 fog_color = vec4(0.7, 0.8, 0.9, 0.0); \n" \
             "in float visibility_tes; \n"   \
-            "uniform vec4 u_skyColor; \n"	\
+            "uniform vec4 u_skyFogColor; \n"	\
+    		"uniform int u_fogEnable; \n" \
         "in TES_OUT \n" \
         "{ \n" \
             "vec2 tc; \n" \
@@ -272,7 +276,11 @@ int initializeTerrainShader(void)
         "void main(void) \n" \
         "{ \n" \
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
-             "FragColor = mix(u_skyColor, landscape, visibility_tes); \n" \
+            "FragColor = landscape; \n" \
+            "if (u_fogEnable == 1) \n" \
+            "{ \n" \
+                "FragColor = mix(u_skyFogColor, landscape, visibility_tes); \n" \
+            "} \n" \
         "} \n";
     
      // Create the Fragment Shader object.
@@ -363,7 +371,8 @@ int initializeTerrainShader(void)
 
     terrainShaderUniform.gradientUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_gradient");
     terrainShaderUniform.densityUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_density");
-    terrainShaderUniform.skyColorUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_skyColor");
+    terrainShaderUniform.skyFogColorUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_skyFogColor");
+    terrainShaderUniform.fogEnableUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_fogEnable");
 
     glUseProgram(shaderProgramObj_terrain);
     glUniform1i(terrainShaderUniform.textureSamplerUniform1, 0);

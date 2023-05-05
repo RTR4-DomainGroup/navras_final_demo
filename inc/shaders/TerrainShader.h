@@ -14,7 +14,8 @@ struct TerrainUniform
 
     GLuint densityUniform;
     GLuint gradientUniform;
-    GLuint skyColorUniform;
+    GLuint skyFogColorUniform;
+    GLuint fogEnableUniform;
 
 };
 

@@ -28,11 +28,18 @@ int initializeADSShader(void)
 		"uniform mat4 u_projectionMatrix; \n" \
 		"uniform vec4 u_lightPosition; \n" \
 		"uniform int u_lightingEnable; \n" \
+		"uniform int u_fogEnable; \n" \
+
+		"uniform float u_density; \n"	\
+		"uniform float u_gradient; \n"	\
+
 		"out vec3 transformedNormals; \n" \
 		"out vec3 lightDirection; \n" \
 		"out vec3 viewerVector;\n" \
 		"out vec4 a_color_out;\n" \
 		"out vec2 a_texcoord_out;\n" \
+		"out float visibility; \n"		\
+
 		"void main(void) \n" \
 		"{ \n" \
 			"if (u_lightingEnable == 1) \n" \
@@ -46,6 +53,14 @@ int initializeADSShader(void)
 			"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position; \n" \
 			"a_color_out = a_color;\n" \
 			"a_texcoord_out = a_texcoord;\n" \
+
+			"if (u_fogEnable == 1) \n" \
+			"{ \n" \
+				"vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * a_position; \n"		\
+				"float distance = length(positionRelativeToCamera.xyz); \n"							\
+				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
+				"visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
+			"} \n" \
 		"} \n";
 
 	GLuint vertexShadderObject = glCreateShader(GL_VERTEX_SHADER);
@@ -89,6 +104,8 @@ int initializeADSShader(void)
 		"in vec3 transformedNormals; \n" \
 		"in vec3 lightDirection; \n" \
 		"in vec3 viewerVector;\n" \
+		"in float visibility; \n"		\
+
 		"uniform vec4 u_la; \n" \
 		"uniform vec4 u_ld; \n" \
 		"uniform vec4 u_ls; \n" \
@@ -97,7 +114,10 @@ int initializeADSShader(void)
 		"uniform vec4 u_ks; \n" \
 		"uniform float u_materialShininess; \n" \
 		"uniform int u_lightingEnable; \n" \
+		"uniform int u_fogEnable; \n" \
 		"uniform sampler2D u_texturesampler;\n" \
+		"uniform vec4 u_skyFogColor; \n"	\
+
 		"out vec4 FragColor; \n" \
 		"void main(void) \n" \
 		"{ \n" \
@@ -112,6 +132,10 @@ int initializeADSShader(void)
 			"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
 			"phong_ads_light = ambient + diffuse + specular; \n" \
 			"FragColor = phong_ads_light; \n" \
+			"if (u_fogEnable == 1) \n" \
+			"{ \n" \
+				"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
+			"} \n" \
 			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
 		"} \n";
 
@@ -189,7 +213,11 @@ int initializeADSShader(void)
 	adsUniform.lightingEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightingEnable");
 	adsUniform.textureSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "u_texturesampler");
 
-    
+	adsUniform.gradientUniform = glGetUniformLocation(adsShaderProgramObject, "u_gradient");
+	adsUniform.densityUniform = glGetUniformLocation(adsShaderProgramObject, "u_density");
+	adsUniform.skyFogColorUniform = glGetUniformLocation(adsShaderProgramObject, "u_skyFogColor");
+	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
+
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform, 0);
 	glUseProgram(0);
