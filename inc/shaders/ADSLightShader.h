@@ -24,6 +24,11 @@ struct ADSUniform
 
     GLuint lightingEnableUniform;
 
+    GLuint densityUniform;
+    GLuint gradientUniform;
+    GLuint skyFogColorUniform;
+    GLuint fogEnableUniform;
+
 };
 
 int initializeADSShader(void);

@@ -18,17 +18,18 @@
 //#include "../../inc/Noise.h"
 #include "../../inc/effects/Billboarding.h"
 
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+//#define ENABLE_ADSLIGHT		//##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_CLOUD_NOISE
 #define ENABLE_TERRIAN
-#define ENABLE_WATER
+//#define ENABLE_WATER
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
+#define ENABLE_FOG
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
-#define ENABLE_VIDEO_RENDER
+//#define ENABLE_VIDEO_RENDER
 
 GLuint texture_Marble;
 TEXTURE texture_grass;
@@ -99,6 +100,10 @@ struct StarfieldUniform sceneStarfieldUniform;
 //Model variables
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
+
+GLfloat density = 0.15;
+GLfloat gradient = 0.5;
+GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 int initializeScene_PlaceHolder(void)
 {
@@ -324,6 +329,11 @@ void displayScene_PlaceHolder(void)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+	//glUniform1i(sceneADSUniform.fogEnableUniform, 1);
+	//glUniform1f(sceneADSUniform.densityUniform, density);
+	//glUniform1f(sceneADSUniform.gradientUniform, gradient);
+	//glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
+
 	// Call Geometry over here 
 	displayCube();
 	// displayTriangle();
@@ -397,7 +407,14 @@ void displayScene_PlaceHolder(void)
 
 	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
+
+#ifdef ENABLE_FOG
+	glUniform1i(terrainUniform.fogEnableUniform, 1);
+	glUniform1f(terrainUniform.densityUniform, density);
+	glUniform1f(terrainUniform.gradientUniform, gradient);
+	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
+#endif // DEBUG
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
@@ -481,6 +498,10 @@ void displayScene_PlaceHolder(void)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+	glUniform1i(sceneADSUniform.fogEnableUniform, 1);
+	glUniform1f(sceneADSUniform.densityUniform, density);
+	glUniform1f(sceneADSUniform.gradientUniform, gradient);
+	glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
 
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
