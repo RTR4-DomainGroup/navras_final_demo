@@ -15,14 +15,17 @@
 #include "../../inc/helper/camera.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/helper/common.h"
+#include "../../inc/helper/framebuffer.h"
 //#include "../../inc/Noise.h"
 #include "../../inc/effects/Billboarding.h"
+#include "../../inc/effects/GaussianBlurEffect.h"
+#include "../../inc/shaders/FSQuadShader.h"
 
 //#define ENABLE_ADSLIGHT		//##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_CLOUD_NOISE
 #define ENABLE_TERRIAN
-//#define ENABLE_WATER
+#define ENABLE_WATER
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 #define ENABLE_FOG
@@ -30,6 +33,7 @@
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
+#define ENABLE_GAUSSIAN_BLUR
 
 GLuint texture_Marble;
 TEXTURE texture_grass;
@@ -51,6 +55,14 @@ struct WaterUniform waterUniform;
 struct TextureVariables waterTextureVariables;
 struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
 struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+
+// Gaussian Blur related variables
+struct GaussianBlurEffect gaussianBlurEffect;
+struct HorrizontalBlurUniform horizontalBlurUniform;
+struct VerticalBlurUniform verticalBlurUniform;
+struct FrameBufferDetails fullSceneFbo;
+struct FSQuadUniform fsGaussBlurQuadUniform;
+
 GLfloat waterHeight = 0.0f;
 GLfloat moveFactor = 0.0f;
 GLfloat planeReflection[] = { 0.0f, 1.0f, 0.0f, -waterHeight };
@@ -85,7 +97,6 @@ GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-
 float displacementmap_depth;
 
 // Variables For Skybox
@@ -107,7 +118,6 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 int initializeScene_PlaceHolder(void)
 {
-
     // Code.
 #ifdef ENABLE_VIDEO_RENDER
 	initializeQuadForVideo();
@@ -268,6 +278,23 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+	initializeQuad();
+	if(initializeGaussianBlur(&gaussianBlurEffect) == false)
+	{
+		LOG("Initialize Gaussian Blur Effect FAILED!!");
+		return (-7);
+	}
+
+	fullSceneFbo.textureWidth = 1920;
+	fullSceneFbo.textureHeight = 1080;
+
+	if (createFBO(&fullSceneFbo) == false)
+	{
+		LOG("Unable to create FBO for entire scene");
+		return (-8);
+	}
+	
 #endif
 	return 0;
 }
@@ -276,7 +303,7 @@ void displayScene_PlaceHolder(void)
 {
 	// Function Declarations
 	void displayWaterFramebuffers(void);
-
+	void displayScene(int, int);
 	// Code
 	// Here The Game STarts
 #ifdef ENABLE_VIDEO_RENDER
@@ -289,8 +316,40 @@ void displayScene_PlaceHolder(void)
 	//2 framebuffers for water effect
 	displayWaterFramebuffers();
 	
-	glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+	#ifndef  ENABLE_GAUSSIAN_BLUR
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		displayScene(windowWidth, windowHeight);
+	#else
+		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
+		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight, 
+		0.1f, 1000.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		displayScene(fullSceneFbo.textureWidth, fullSceneFbo.textureHeight);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		displayGaussianBlur();
+
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsGaussBlurQuadUniform = useFSQuadShader();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+		displayQuad();
+		glUseProgram(0);
+    	glBindTexture(GL_TEXTURE_2D, 0);
+
+	#endif
+	#endif
+}
+
+void displayScene(int width, int height)
+{
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -345,6 +404,9 @@ void displayScene_PlaceHolder(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 #endif
 
+#endif // ENABLE_ADSLIGHT
+	
+	
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
@@ -645,13 +707,9 @@ void displayScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
-
-#endif
-
 }
 
 void displayWaterFramebuffers(void) {
-
 	// Code
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -775,11 +833,8 @@ void displayWaterFramebuffers(void) {
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
-
 	// Code
 	billboardingEffectUniform = useBillboardingShader();
-//////////////////////////////////////////
-	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -841,7 +896,6 @@ void displayWaterFramebuffers(void) {
 #endif // ENABLE_BILLBOARDING
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
@@ -854,6 +908,7 @@ void displayWaterFramebuffers(void) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
+	//glUseProgram(0);
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -1008,13 +1063,47 @@ void displayWaterFramebuffers(void) {
 #endif // ENABLE_BILLBOARDING
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 	glDisable(GL_CLIP_DISTANCE0);
+}
+
+void displayGaussianBlur(void)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurEffect.horrizontalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurEffect.horrizontalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurEffect.horrizontalFBDetails.textureHeight);
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+    horizontalBlurUniform = useHorrizontalBlurShader();
+
+    glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
+    glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
+	displayQuad();    
+    glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurEffect.verticalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurEffect.verticalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurEffect.verticalFBDetails.textureHeight);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	verticalBlurUniform = useVerticalBlurShader();
+	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
+    glUniform1i(verticalBlurUniform.vblurTexSamplerUniform, 0);
+	displayQuad();
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void updateScene_PlaceHolder(void)
 {
-
 	// Code
 #ifdef ENABLE_ADSLIGHT
     angleCube = angleCube + 1.0f;
@@ -1050,7 +1139,6 @@ void updateScene_PlaceHolder(void)
 void uninitializeScene_PlaceHolder(void)
 {
 	// Code
-
 #ifdef ENABLE_BILLBOARDING
 	uninitializeBillboarding();
 	    // texture
@@ -1083,7 +1171,7 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_CLOUD_NOISE
-
+	
 	uninitializeCloud();
 	if (noise_texture)
 	{
@@ -1098,7 +1186,6 @@ void uninitializeScene_PlaceHolder(void)
 		glDeleteTextures(1, &texture_Marble);
 		texture_Marble = NULL;
 	}
-
 	uninitializeCube();
 
 #endif // ENABLE_ADSLIGHT
@@ -1109,5 +1196,8 @@ void uninitializeScene_PlaceHolder(void)
 	unloadStaticModel(&streetLightModel);
 #endif
 
-}
+#ifdef ENABLE_GAUSSIAN_BLUR
+	uninitializeGaussianBlur(&gaussianBlurEffect);
+#endif
 
+}
