@@ -2,6 +2,9 @@
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/helper/texture_loader.h"
+#include "../../inc/effects/videoEffect.h"
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
@@ -25,12 +28,14 @@
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
+#define ENABLE_VIDEO_RENDER
 
 GLuint texture_Marble;
 TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneADSUniform;
+struct FSQuadUniform fsqUniform;
 
 struct TerrainUniform terrainUniform;
 
@@ -103,6 +108,14 @@ int initializeScene_PlaceHolder(void)
 {
 
     // Code.
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo();
+    //initializeTriangle();
+    //initializeSphere();
+	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
+
+#else
+
 #ifdef ENABLE_ADSLIGHT
     // Texture
 	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
@@ -118,7 +131,6 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 
-
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 15.0f;
 
@@ -127,10 +139,8 @@ int initializeScene_PlaceHolder(void)
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
-
 		LOG("initializeTerrain() FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -142,7 +152,6 @@ int initializeScene_PlaceHolder(void)
 #ifdef ENABLE_WATER
 
 	waterTextureVariables.displacementPath = "res/textures/water/waterDUDV.bmp";
-
 
 	if (initializeWater(&waterTextureVariables) != 0) {
 
@@ -171,8 +180,6 @@ int initializeScene_PlaceHolder(void)
 
 	}
 
-
-	//
 	waterRefractionFrameBufferDetails.textureWidth = 1280;
 	waterRefractionFrameBufferDetails.textureHeight = 720;
 
@@ -219,12 +226,6 @@ int initializeScene_PlaceHolder(void)
 
 #endif
 
-    // initializeCube();
-    // initializePyramid();
-    // initializeQuad();
-    // initializeTriangle();
-     //initializeSphere();
-
 #ifdef ENABLE_STARFIELD
 	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
@@ -238,13 +239,11 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif // ENABLE_STARFIELD
 	
-
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 #endif
-
 
 #ifdef ENABLE_BILLBOARDING	
 
@@ -268,6 +267,7 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#endif
 	return 0;
 }
 
@@ -278,6 +278,12 @@ void displayScene_PlaceHolder(void)
 
 	// Code
 	// Here The Game STarts
+#ifdef ENABLE_VIDEO_RENDER
+	fsqUniform = useFSQuadShader();
+	displayVideoEffect(&fsqUniform);
+	glUseProgram(0);
+
+#else
 
 	//2 framebuffers for water effect
 	displayWaterFramebuffers();
@@ -297,14 +303,6 @@ void displayScene_PlaceHolder(void)
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
-
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
-	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
-	// rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
-	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 #ifdef ENABLE_ADSLIGHT
 	
@@ -343,12 +341,9 @@ void displayScene_PlaceHolder(void)
 	// displaySphere();
 	
 	glUseProgram(0);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
-#endif // ENABLE_ADSLIGHT
-	
-	
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
@@ -396,7 +391,6 @@ void displayScene_PlaceHolder(void)
 
 #endif
 
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -426,6 +420,9 @@ void displayScene_PlaceHolder(void)
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
 
 
+	// fsqUniform = useFSQuadShader();
+	// displayVideoEffect(&fsqUniform);
+	// glUseProgram(0);
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -539,7 +536,6 @@ void displayScene_PlaceHolder(void)
 	glUseProgram(0);
 #endif
 
-
 #ifdef ENABLE_WATER
 	waterUniform = useWaterShader();
 
@@ -647,12 +643,13 @@ void displayScene_PlaceHolder(void)
 #endif // ENABLE_BILLBOARDING
 
 
+#endif
+
 }
 
 void displayWaterFramebuffers(void) {
 
 	// Code
-
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -687,13 +684,9 @@ void displayWaterFramebuffers(void) {
 
 	//glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 
-
-
-
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
-
 	sceneCloudNoiseUniform = useCloudNoiseShader();
 
 	translationMatrix = mat4::identity();
@@ -707,8 +700,6 @@ void displayWaterFramebuffers(void) {
 
 	rotateX = mat4::identity();
 	
-	//mat4 viewMatrix = mat4::identity();
-
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
 	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
@@ -748,10 +739,6 @@ void displayWaterFramebuffers(void) {
 
 #endif
 
-
-
-
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -789,8 +776,6 @@ void displayWaterFramebuffers(void) {
 	// Code
 	billboardingEffectUniform = useBillboardingShader();
 //////////////////////////////////////////
-	// instanced quads with grass texture
-
 	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
 
 	translationMatrix = mat4::identity();
@@ -805,7 +790,6 @@ void displayWaterFramebuffers(void) {
 		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -852,15 +836,10 @@ void displayWaterFramebuffers(void) {
 	glUseProgram(0);
 
 #endif // ENABLE_BILLBOARDING
-	
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 	glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
 
@@ -872,8 +851,6 @@ void displayWaterFramebuffers(void) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-
-
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -926,8 +903,6 @@ void displayWaterFramebuffers(void) {
 
 #endif
 
-
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -954,7 +929,6 @@ void displayWaterFramebuffers(void) {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
 
-
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -967,7 +941,7 @@ void displayWaterFramebuffers(void) {
 
 	// Code
 	billboardingEffectUniform = useBillboardingShader();
-//////////////////////////////////////////
+
 	// instanced quads with grass texture
 
 	// translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
@@ -984,7 +958,6 @@ void displayWaterFramebuffers(void) {
 		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -1034,7 +1007,6 @@ void displayWaterFramebuffers(void) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glDisable(GL_CLIP_DISTANCE0);
-
 }
 
 void updateScene_PlaceHolder(void)
@@ -1050,17 +1022,14 @@ void updateScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 
-
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
 #endif
-
 
 #ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif
-
 
 #ifdef ENABLE_BILLBOARDING
 	updateBillboarding();
@@ -1079,7 +1048,6 @@ void uninitializeScene_PlaceHolder(void)
 {
 	// Code
 
-	
 #ifdef ENABLE_BILLBOARDING
 	uninitializeBillboarding();
 	    // texture
@@ -1113,7 +1081,6 @@ void uninitializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_CLOUD_NOISE
 
-	
 	uninitializeCloud();
 	if (noise_texture)
 	{
@@ -1129,11 +1096,6 @@ void uninitializeScene_PlaceHolder(void)
 		texture_Marble = NULL;
 	}
 
-	// uninitializeTerrain();
-	// uninitializeSphere();
-	// uninitializeTriangle();
-	// uninitializeQuad();
-	// uninitializePyramid();
 	uninitializeCube();
 
 #endif // ENABLE_ADSLIGHT
