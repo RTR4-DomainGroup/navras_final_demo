@@ -107,7 +107,7 @@ int initializeScene_PlaceHolder(void)
 #ifdef ENABLE_VIDEO_RENDER
 	initializeQuadForVideo();
     //initializeTriangle();
-    initializeSphere();
+    //initializeSphere();
 	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
 
 #else

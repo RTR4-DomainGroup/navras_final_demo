@@ -124,7 +124,8 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
     uint8_t* dest[4] = { frame_buffer, NULL, NULL, NULL };
     int dest_lineSize[4] = {state->width * 4, 0, 0, 0 };
     sws_scale(state->swsScaleContext, state->avFrame->data, state->avFrame->linesize, 0, state->avFrame->height, dest, dest_lineSize);
-
+    //av_frame_free(&state->avFrame);
+    sws_freeContext(state->swsScaleContext);
     return true;
 
 }
