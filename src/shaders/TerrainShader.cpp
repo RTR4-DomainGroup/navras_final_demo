@@ -34,9 +34,9 @@ int initializeTerrainShader(void)
 			"if (u_fogEnable == 1) \n" \
 			"{ \n" \
 				"vec4 positionRelativeToCamera = mv_matrix * a_position; \n"		\
-				"float distance = length(positionRelativeToCamera.xyz); \n"							\
-				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
-				"visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
+				"float distance = length(positionRelativeToCamera.xyz); \n"			\
+				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"	\
+				"visibility = clamp(visibility, 0.0f, 1.0f); \n"					\
 			"} \n" \
         "} \n";
 

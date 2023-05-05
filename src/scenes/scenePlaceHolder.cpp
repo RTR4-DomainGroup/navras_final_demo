@@ -25,10 +25,11 @@
 //#define ENABLE_WATER
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
+#define ENABLE_FOG
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
-#define ENABLE_VIDEO_RENDER
+//#define ENABLE_VIDEO_RENDER
 
 GLuint texture_Marble;
 TEXTURE texture_grass;
@@ -396,7 +397,7 @@ void displayScene_PlaceHolder(void)
 
 	terrainUniform = useTerrainShader();
 
-	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -2.0f, -20.0f) * scale(10.0f, 1.0f, 10.0f));
+	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -2.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 
 	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
 
@@ -408,10 +409,12 @@ void displayScene_PlaceHolder(void)
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 
+#ifdef ENABLE_FOG
 	glUniform1i(terrainUniform.fogEnableUniform, 1);
 	glUniform1f(terrainUniform.densityUniform, density);
 	glUniform1f(terrainUniform.gradientUniform, gradient);
 	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
+#endif // DEBUG
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
