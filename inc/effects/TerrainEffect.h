@@ -1,6 +1,6 @@
 #pragma once
 #include "../shaders/TerrainShader.h"
 
-int initializeTerrain(void);
+int initializeTerrain(struct TextureVariables*);
 void displayTerrain(void);
-void uninitializeTerrain(void);
+void uninitializeTerrain(struct TextureVariables*);

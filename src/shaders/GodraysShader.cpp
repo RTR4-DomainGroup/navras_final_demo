@@ -1,7 +1,7 @@
 #include "../../inc/shaders/GodraysShader.h"
 
 GLuint shaderProgramObj_godrays;
-extern FILE* gpFile;
+//extern FILE* gpFile;
 
 struct GodraysUniform godRaysUniform;
 

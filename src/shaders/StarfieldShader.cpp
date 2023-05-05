@@ -33,7 +33,7 @@ int initializeStarfieldShader(void)
 			"newVertex.z = newVertex.z +  u_time;\n"											\
 			"newVertex.z = fract(newVertex.z); \n"												\
 			"float size = (20.0 * newVertex.z * newVertex.z); \n"								\
-			"a_color_out = smoothstep(1.0, 7.0, size) * a_color; \n"							\
+			"a_color_out = smoothstep(4.0, 7.0, size) * a_color; \n"							\
 			"newVertex.z = (999.9 * newVertex.z) - 1000.0; \n"									\
 
 			"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * newVertex; \n"	\
@@ -143,7 +143,7 @@ int initializeStarfieldShader(void)
 	glAttachShader(shaderProgramObj_starfield, vertexShaderObject);
 	glAttachShader(shaderProgramObj_starfield, fragmentShaderObject);
 	glBindAttribLocation(shaderProgramObj_starfield, DOMAIN_ATTRIBUTE_POSITION, "a_position");
-	//glBindAttribLocation(shaderProgramObj_starfield, DOMAIN_ATTRIBUTE_COLOR, "a_color");
+	glBindAttribLocation(shaderProgramObj_starfield, DOMAIN_ATTRIBUTE_COLOR, "a_color");
 	glBindAttribLocation(shaderProgramObj_starfield, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 
 	// ***** Link Shader Program Object ***** //
