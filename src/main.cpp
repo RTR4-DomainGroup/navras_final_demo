@@ -1,5 +1,7 @@
 // Header Files
 
+#include <WindowsX.h>	// for mouse move x and y coordinates
+
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
@@ -39,8 +41,19 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
+// camera related variables for movement in scene during debugging
 float cameraCounterSideWays = 3.2f;
 float cameraCounterUpDownWays = 3.2f;
+
+BOOL mouseLeftClickActive = FALSE;
+float mouseX;
+float mouseY;
+
+bool firstMouse = true;
+float yaw = -180.0f;
+float pitch = 0.0f;
+float lastX = 800.0f / 2.0f;
+float lastY = 600.0f / 2.0f;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
 
@@ -297,6 +310,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			break;
 
 		}
+		break;
+
+	case WM_MOUSEMOVE:
+		mouseX = (float)GET_X_LPARAM(lParam);
+		mouseY = (float)GET_Y_LPARAM(lParam);
+		break;
+
+	case WM_LBUTTONDOWN:
+		mouseLeftClickActive = TRUE;
+		break;
+
+	case WM_LBUTTONUP:
+		mouseLeftClickActive = FALSE;
 		break;
 
 	case WM_SIZE:
@@ -572,11 +598,51 @@ void display(void)
 
 void update(void)
 {
+	// local function declarations
+	void updateMouseMovement(void);
 
 	// Code
 	
 	// Call Scenes Update Here
 	updateScene_PlaceHolder();
+
+	// camera movement related updates
+	updateMouseMovement();
+}
+
+void updateMouseMovement(void)
+{
+	if (firstMouse)
+	{
+		lastX = mouseX;
+		lastY = mouseY;
+		firstMouse = false;
+	}
+
+	float xoffset = mouseX - lastX;
+	float yoffset = lastY - mouseY; // reversed since y-coordinates go from bottom to top
+	lastX = mouseX;
+	lastY = mouseY;
+
+	float sensitivity = 0.3f; // change this value to your liking
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 90.0f)
+		pitch = 90.0f;
+	if (pitch < -90.0f)
+		pitch = -90.0f;
+
+	if (mouseLeftClickActive == TRUE)
+	{
+		cameraCenterX = cameraEyeX + cos(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
+		cameraCenterY = cameraEyeY + sin(pitch * M_PI / 180.0f);
+		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
+	}
 }
 
 void resize(int width, int height) {
