@@ -9,7 +9,6 @@ int initializeWater(TextureVariables *waterTexture) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Displacement For Water FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -19,16 +18,13 @@ int initializeWater(TextureVariables *waterTexture) {
 	//
 	initializeWaterQuad();
 
-
 	return 0;
-
 }
 
 void displayWater() {
 
 	// Code
 	displayWaterQuad();
-	
 }
 
 void uninitializeWater(TextureVariables *waterTexture) {
