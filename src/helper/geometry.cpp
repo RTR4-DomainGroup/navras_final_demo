@@ -495,10 +495,10 @@ void initializePyramid(void)
     
 }
 
-void initializeSphere(void)
+void initializeSphere(float radius, int slices, int stacks)
 {
     // code
-    sphere::makeSphere(objSphere, 2.0, 30, 30);
+    sphere::makeSphere(objSphere, radius, slices, stacks);
 }
 
 void displayCube(void)
@@ -591,10 +591,10 @@ void displayPyramid(void)
 	glBindVertexArray(0);
 }
 
-void displaySphere(void)
+void displaySphere(GLfloat* color)
 {
     // code
-    objSphere.draw();
+    objSphere.draw(color);
 }
 
 void uninitializeCube(void)

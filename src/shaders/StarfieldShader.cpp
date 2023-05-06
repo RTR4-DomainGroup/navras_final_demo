@@ -89,12 +89,20 @@ int initializeStarfieldShader(void)
 		"flat in vec4 a_color_out; \n"													\
 		"uniform sampler2D u_textureSampler; \n"										\
 		"in vec2 a_texcoord_out; \n"													\
-
+		"uniform bool enable_godRays = true; \n" \
 		"out vec4 FragColor; \n"														\
 
 		"void main(void) \n"															\
 		"{ \n"																			\
-			"FragColor = a_color_out * texture(u_textureSampler, gl_PointCoord); \n"	\
+			"if (enable_godRays) \n" \
+			"{" \
+				"FragColor = a_color_out * texture(u_textureSampler, gl_PointCoord); \n"	\
+			"}" \
+			"else" \
+			"{\n" \
+				"FragColor = a_color_out; \n"	\
+			"}\n" \
+			
 		"}";
 
 	// ***** Creating Shader Object ***** //
@@ -184,7 +192,7 @@ int initializeStarfieldShader(void)
     starfieldUniform.projectionMatrix = glGetUniformLocation(shaderProgramObj_starfield, "u_projectionMatrix");
 	starfieldUniform.timeUniform = glGetUniformLocation(shaderProgramObj_starfield, "u_time");
 	starfieldUniform.textureSamplerUniform = glGetUniformLocation(shaderProgramObj_starfield, "u_textureSampler");
-
+	starfieldUniform.uniform_enable_godRays = glGetUniformLocation(shaderProgramObj_starfield, "enable_godRays");
     return (0);
 }
 
