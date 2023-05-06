@@ -179,7 +179,7 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_GODRAYS
 	int initializeGodRays(void);
-	initializeSphere(1.5f, 60, 60);
+	initializeSphere(1.0f, 60, 60);
 	initializeGodRays();
 	initializeQuad();
 #endif // ENABLE_GODRAYS
@@ -264,7 +264,6 @@ int initializeScene_PlaceHolder(void)
 #ifdef ENABLE_STARFIELD
 	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
-
 		LOG("initializeStarfield() FAILED!!!\n");
 		return(-1);
 	}
@@ -409,14 +408,14 @@ void displayScene_PlaceHolder(void)
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
-	translationMatrix = vmath::translate(-5.0f, 5.0f, -25.0f);
+	translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
 	modelMatrix = translationMatrix;
 
 	glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
 	glUniform1f(sceneGodRaysUniform.decay, 1.0f);
-	glUniform1f(sceneGodRaysUniform.density, 0.92f);
-	glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
-	glUniform1f(sceneGodRaysUniform.weight, 0.06f);
+	glUniform1f(sceneGodRaysUniform.density, 0.82f);
+	glUniform1f(sceneGodRaysUniform.exposure, 0.2f);
+	glUniform1f(sceneGodRaysUniform.weight, 0.03f);
 
 	glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
@@ -464,6 +463,37 @@ void displayScene(int width, int height, int godRays = 1)
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
+
+#ifdef ENABLE_STARFIELD
+	
+	sceneStarfieldUniform = useStarfieldShader();
+
+	float time = (float)deltaTime;
+
+	time = time * 0.05f;
+	time = time - floor(time);
+
+	// Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+	glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
+	glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+	displayStarfield(texture_star);
+	glUseProgram(0);
+
+#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_ADSLIGHT
 	
@@ -595,36 +625,6 @@ void displayScene(int width, int height, int godRays = 1)
 	glUseProgram(0);
 #endif
 
-#ifdef ENABLE_STARFIELD
-
-	sceneStarfieldUniform = useStarfieldShader();
-
-	float time = (float)deltaTime;
-
-	time = time * 0.05f;
-	time = time - floor(time);
-
-	// Transformations
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-
-	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
-
-	glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
-	displayStarfield(texture_star);
-	glUseProgram(0);
-
-#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
@@ -645,7 +645,7 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniform1f(sceneADSUniform.densityUniform, density);
 	glUniform1f(sceneADSUniform.gradientUniform, gradient);
 	glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneADSUniform.uniform_enable_godRays, 0);
+	glUniform1i(sceneADSUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 0);
 	//glUniform1i(sceneADSUniform.)
 	// ------ Rock Model ------
