@@ -94,6 +94,7 @@ int intializeCloudNoiseShader(void)
 		"uniform vec3 u_skyColor;\n" \
 		"uniform vec3 u_cloudColor;\n" \
 		"uniform float u_noiseScale;\n" \
+		"uniform bool enable_godRays = true; \n" \
 		"out vec4 fragColor;\n" \
 		"void main(void)\n" \
 		"{\n" \
@@ -113,7 +114,14 @@ int intializeCloudNoiseShader(void)
 			"vec3 color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \
 			/*"vec3 color = u_cloudColor * intensity * phong_ads_color;\n" \*/
 			/*"vec3 color = vec3(1.0);\n" \*/
-			"fragColor = vec4(color, 1.0);\n" \
+			"if (enable_godRays) \n" \
+			"{\n" \
+				"fragColor = vec4(color, 1.0);\n" \
+			"}\n"
+			"else\n" \
+			"{\n" \
+				"fragColor = vec4(0.0, 0.0, 0.0, 1.0);\n" \
+			"}\n" \
 		"}\n";
 
 	GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
@@ -188,7 +196,7 @@ int intializeCloudNoiseShader(void)
 
 	cloudNoiseUniform.scaleUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_scale");
 	cloudNoiseUniform.noiseScaleUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_noiseScale");
-
+	cloudNoiseUniform.uniform_enable_godRays = glGetUniformLocation(cloudNoiseShaderProgramObject, "enable_godRays");
 
 	glUseProgram(cloudNoiseShaderProgramObject);
 	// some code may come here

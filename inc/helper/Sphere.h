@@ -161,6 +161,8 @@ public:
                                false,0,0);
         glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
         glBindBuffer(GL_ARRAY_BUFFER,0);
+
+        
         
         // vbo for index
         glGenBuffers(1, &vbo_index);
@@ -177,14 +179,18 @@ public:
         cleanupMeshData();
     }
     
-    inline void draw()
+    inline void draw(GLfloat* color)
     {
         // code
         // bind vao
         glBindVertexArray(vao);
-
+        if(color)
+        {
+            glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, color);
+        }
         // draw
 
+        glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f, 1.0f, 1.0f));
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_index);
         glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0);
 
@@ -312,10 +318,10 @@ void makeSphere(Mesh& sphereMesh, float fRadius, int iSlices, int iStacks)
     for (i = 0; i < iStacks; i++)
     {
         float rho = float(i * drho);
-        float srho = float(sin(rho));
-        float crho = float(cos(rho));
-        float srhodrho = float(sin(rho + drho));
-        float crhodrho = float(cos(rho + drho));
+        float srho = float(sinf(rho));
+        float crho = float(cosf(rho));
+        float srhodrho = float(sinf(rho + drho));
+        float crhodrho = float(cosf(rho + drho));
         
         // Many sources of OpenGL sphere drawing code uses a triangle fan
         // for the caps of the sphere. This however introduces texturing
@@ -337,8 +343,8 @@ void makeSphere(Mesh& sphereMesh, float fRadius, int iSlices, int iStacks)
         for ( j = 0; j < iSlices; j++)
         {
             float theta = (j == iSlices) ? 0.0 : j * dtheta;
-            float stheta = float(-sin(theta));
-            float ctheta = float(cos(theta));
+            float stheta = float(-sinf(theta));
+            float ctheta = float(cosf(theta));
             
             float x = stheta * srho;
             float y = ctheta * srho;
@@ -367,8 +373,8 @@ void makeSphere(Mesh& sphereMesh, float fRadius, int iSlices, int iStacks)
             vertex[1][2] = z * fRadius;
             
             theta = ((j+1) == iSlices) ? 0.0 : (j+1) * dtheta;
-            stheta = float(-sin(theta));
-            ctheta = float(cos(theta));
+            stheta = float(-sinf(theta));
+            ctheta = float(cosf(theta));
             
             x = stheta * srho;
             y = ctheta * srho;

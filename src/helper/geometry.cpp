@@ -400,6 +400,46 @@ void initializeWaterQuad(void)
 
 }
 
+
+void initializeQuadForVideo(void)
+{
+    const GLfloat quadPNT[] = 
+    {
+                                                //PNT
+        // positions                     //normals                   //texture
+
+        // Front face                     // Front face             // Front face
+        1.0f, 1.0f, 0.0f,             0.0f, 0.0f, 1.0f,             1.0f, 0.0f,
+        -1.0f, 1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             0.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f, 1.0f,
+        1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f, 1.0f,
+    };
+
+        // VAO AND VBO RELATED CODE
+	// vao_Cube
+	glGenVertexArrays(1, &vao_quad);
+	glBindVertexArray(vao_quad);
+
+	glGenBuffers(1, &vbo_quad);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	
+	// Position
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
+	// Normal
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+
+	// TexCoord
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+
+	glBindVertexArray(0);
+    
+}
+
 void initializePyramid(void)
 {
     const GLfloat pyramidPNT[] = 
@@ -455,10 +495,10 @@ void initializePyramid(void)
     
 }
 
-void initializeSphere(void)
+void initializeSphere(float radius, int slices, int stacks)
 {
     // code
-    sphere::makeSphere(objSphere, 2.0, 30, 30);
+    sphere::makeSphere(objSphere, radius, slices, stacks);
 }
 
 void displayCube(void)
@@ -551,12 +591,11 @@ void displayPyramid(void)
 	glBindVertexArray(0);
 }
 
-void displaySphere(void)
+void displaySphere(GLfloat* color)
 {
     // code
-    objSphere.draw();
+    objSphere.draw(color);
 }
-
 
 void uninitializeCube(void)
 {
