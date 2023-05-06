@@ -28,6 +28,9 @@ struct ADSUniform
     GLuint gradientUniform;
     GLuint skyFogColorUniform;
     GLuint fogEnableUniform;
+    GLuint uniform_enable_godRays;
+
+    GLuint godrays_blackpass_sphere;
 
 };
 

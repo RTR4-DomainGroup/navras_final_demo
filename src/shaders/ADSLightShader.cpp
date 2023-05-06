@@ -117,26 +117,37 @@ int initializeADSShader(void)
 		"uniform int u_fogEnable; \n" \
 		"uniform sampler2D u_texturesampler;\n" \
 		"uniform vec4 u_skyFogColor; \n"	\
-
+		"uniform int enable_godRays; \n" \
+		"uniform int enable_sphere_color; \n" \
 		"out vec4 FragColor; \n" \
 		"void main(void) \n" \
 		"{ \n" \
-			"vec4 phong_ads_light; \n" \
-			"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
-			"vec4 ambient = u_la * u_ka; \n" \
-			"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
-			"vec3 normalized_light_direction = normalize(lightDirection); \n" \
-			"vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
-			"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
-			"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-			"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
-			"phong_ads_light = ambient + diffuse + specular; \n" \
-			"FragColor = phong_ads_light; \n" \
-			"if (u_fogEnable == 1) \n" \
-			"{ \n" \
-				"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
-			"} \n" \
-			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
+			"if (enable_godRays == 1) \n" \
+			"{\n" \
+				"vec4 phong_ads_light; \n" \
+				"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
+				"vec4 ambient = u_la * u_ka; \n" \
+				"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
+				"vec3 normalized_light_direction = normalize(lightDirection); \n" \
+				"vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
+				"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
+				"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
+				"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+				"phong_ads_light = ambient + diffuse + specular; \n" \
+				"FragColor = phong_ads_light; \n" \
+				"if (u_fogEnable == 1) \n" \
+				"{ \n" \
+					"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
+				"} \n" \
+			"}\n" \
+			"else if(enable_sphere_color == 1)\n" \
+			"{\n" \
+				"FragColor = a_color_out; \n" \
+			"}\n" \
+			"else\n" \
+			"{\n" \
+				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+			"}\n" \
 		"} \n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);
@@ -193,11 +204,8 @@ int initializeADSShader(void)
 				uninitializeADSShader();
 
 			}
-
 		}
-
 	}
-
 	//
 	adsUniform.modelMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_modelMatrix");
 	adsUniform.viewMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_viewMatrix");
@@ -217,6 +225,8 @@ int initializeADSShader(void)
 	adsUniform.densityUniform = glGetUniformLocation(adsShaderProgramObject, "u_density");
 	adsUniform.skyFogColorUniform = glGetUniformLocation(adsShaderProgramObject, "u_skyFogColor");
 	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
+	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
+	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform, 0);
