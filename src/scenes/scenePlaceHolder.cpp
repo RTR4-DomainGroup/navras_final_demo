@@ -853,6 +853,9 @@ void displayBillboarding(void)
 	mat4 modelMatrix = mat4::identity();
 	
 	// code
+	glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	billboardingEffectUniform = useBillboardingShader();
 
 //////////////////////////////////////////
@@ -904,6 +907,8 @@ void displayBillboarding(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
+	glDisable(GL_BLEND);
+
 }
 
 

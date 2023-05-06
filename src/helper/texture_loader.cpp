@@ -126,8 +126,6 @@ GLboolean LoadGLTexture_UsingSOIL(GLuint* texture, const char* path)
     glGenerateMipmap(GL_TEXTURE_2D);
 
     SOIL_free_image_data(imageData);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return (GL_TRUE);
 }
@@ -194,10 +192,6 @@ GLboolean LoadGLTextureData_UsingSOIL(TEXTURE* texture, const char* path)
     
     
     SOIL_free_image_data(imageData);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
-
     return (GL_TRUE);
 }
 
