@@ -28,12 +28,12 @@
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_TERRIAN
-//#define ENABLE_WATER
+#define ENABLE_WATER
 
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
-#define ENABLE_FOG
+//#define ENABLE_FOG
 
 #define ENABLE_STATIC_MODELS	
 #define ENABLE_BILLBOARDING
@@ -129,12 +129,11 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 // Varaiables for God Rays
 struct GodraysUniform sceneGodRaysUniform;
-GLfloat lightPosition_gr[] = {-5.0f, 5.0f, -25.0f, 1.0f};
+GLfloat lightPosition_gr[] = {0.0f, 10.0f, -35.0f, 1.0f};
 
 int initializeScene_PlaceHolder(void)
 {
 	// Function Declarations
-	
 
     // Code.
 #ifdef ENABLE_VIDEO_RENDER
@@ -564,7 +563,7 @@ void displayScene(int width, int height, int godRays = 1)
 		sceneADSUniform = useADSShader();
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
-		translationMatrix = vmath::translate(-5.0f, 5.0f, -25.0f);
+		translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
 		modelMatrix = translationMatrix;
 		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -647,7 +646,7 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniform1f(sceneADSUniform.gradientUniform, gradient);
 	glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
 	glUniform1i(sceneADSUniform.uniform_enable_godRays, 0);
-		glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 0);
 	//glUniform1i(sceneADSUniform.)
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
@@ -745,16 +744,17 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
+	
 	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
 
 	// if(bBillboardingEnabled)
 	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
+	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 	// else
 	//     glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 0);
 
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, texture_grass.id);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
 
 	displayBillboardingGrass();
 
@@ -774,8 +774,8 @@ void displayScene(int width, int height, int godRays = 1)
 	// send to shader
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, texture_flower.id);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
 
 	displayBillboardingFlower();
 
@@ -882,22 +882,7 @@ void displayWaterFramebuffers(int godRays = 1) {
 
 #ifdef ENABLE_TERRIAN
 	// Terrain
-
 	displayTerraineScene(godRays);
-	// if (godRays == 0)
-	// {
-	// 	sceneADSUniform = useADSShader();
-	// 	translationMatrix = mat4::identity();
-	// 	modelMatrix = mat4::identity();
-	// 	translationMatrix = vmath::translate(-5.0f, 5.0f, -25.0f);
-	// 	modelMatrix = translationMatrix;
-	// 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	// 	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	// 	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	// 	glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
-	// 	displaySphere(whiteSphere);
-	// 	glUseProgram(0);
-	// }
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
@@ -1031,22 +1016,7 @@ void displayWaterFramebuffers(int godRays = 1) {
 #ifdef ENABLE_TERRIAN
 	// Terrain
 	displayTerraineScene(godRays);
-	// if (godRays == 0)
-	// {
-	// 	sceneADSUniform = useADSShader();
-	// 	translationMatrix = mat4::identity();
-	// 	modelMatrix = mat4::identity();
-	// 	translationMatrix = vmath::translate(-5.0f, 5.0f, -25.0f);
-	// 	modelMatrix = translationMatrix;
-	// 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	// 	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	// 	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	// 	glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
-	// 	displaySphere(whiteSphere);
-	// 	glUseProgram(0);
-	// }
-	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	
 #ifdef ENABLE_FOG
 	glUniform1i(terrainUniform.fogEnableUniform, 1);
 	glUniform1f(terrainUniform.densityUniform, density);
