@@ -413,9 +413,9 @@ void displayScene_PlaceHolder(void)
 
 	glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
 	glUniform1f(sceneGodRaysUniform.decay, 1.0f);
-	glUniform1f(sceneGodRaysUniform.density, 0.82f);
-	glUniform1f(sceneGodRaysUniform.exposure, 0.2f);
-	glUniform1f(sceneGodRaysUniform.weight, 0.03f);
+	glUniform1f(sceneGodRaysUniform.density, 0.92f);
+	glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
+	glUniform1f(sceneGodRaysUniform.weight, 0.04f);
 
 	glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
