@@ -20,7 +20,7 @@
 #include "../../inc/effects/WaterEffect.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
-#include "../../inc/effects/Billboarding.h"
+// #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolder.h"
@@ -740,10 +740,10 @@ void displayScene(int width, int height, int godRays = 1)
 
 }
 
-void displayWaterFramebuffers(void) {
-
-	// forward declaration
-	void displayBillboarding(void);
+void displayWaterFramebuffers(int godRays = 1) {
+	//  Function Declaration
+	void displayTerraineScene(int);
+	
 	
 	// Code
 	mat4 translationMatrix = mat4::identity();
@@ -842,6 +842,8 @@ void displayWaterFramebuffers(void) {
 
 #ifdef ENABLE_BILLBOARDING	
 	// Code
+	void displayBillboarding(void);
+	
 	displayBillboarding();
 
 #endif // ENABLE_BILLBOARDING

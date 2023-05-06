@@ -13,12 +13,15 @@
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "assimp-vc142-mtd.lib")
+#pragma comment(lib, "SOIL/lib/SOIL.lib")
+#pragma comment(lib, "AL/lib/OpenAL32.lib")
 #pragma comment(lib, "ffmpeg/lib/avformat.lib")
 #pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 #pragma comment(lib, "ffmpeg/lib/avformat.lib")
 #pragma comment(lib, "ffmpeg/lib/avutil.lib")
 #pragma comment(lib, "ffmpeg/lib/swscale.lib")
+#pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
+
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600
