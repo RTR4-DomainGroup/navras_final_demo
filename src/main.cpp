@@ -12,6 +12,11 @@
 #pragma comment(lib, "glew32.lib")
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "assimp-vc142-mtd.lib")
+#pragma comment(lib, "ffmpeg/lib/avformat.lib")
+#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
+#pragma comment(lib, "ffmpeg/lib/avformat.lib")
+#pragma comment(lib, "ffmpeg/lib/avutil.lib")
+#pragma comment(lib, "ffmpeg/lib/swscale.lib")
 
 #define WIN_WIDTH  800
 #define WIN_HEIGHT  600

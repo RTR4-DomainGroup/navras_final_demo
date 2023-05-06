@@ -1,42 +1,46 @@
 #pragma once
 // This File Will Be Replaced by Scene*.cpp
 
+#include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/helper/texture_loader.h"
+#include "../../inc/effects/videoEffect.h"
+#include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/WaterEffect.h"
-#include "../../inc/effects/StaticModelLoadingEffect.h"
-
-#include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/waterframebuffer.h"
 #include "../../inc/helper/camera.h"
+#include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/helper/common.h"
-#include "../../inc/helper/geometry.h"
-
-#include "../../inc/shaders/ADSLightShader.h"
-#include "../../inc/shaders/CloudNoiseShader.h"
-#include "../../inc/shaders/BillboardingShader.h"
-
-#include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/helper/framebuffer.h"
 //#include "../../inc/Noise.h"
+#include "../../inc/effects/Billboarding.h"
+#include "../../inc/effects/GaussianBlurEffect.h"
+#include "../../inc/shaders/FSQuadShader.h"
 
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+//#define ENABLE_ADSLIGHT		//##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_CLOUD_NOISE
 #define ENABLE_TERRIAN
 #define ENABLE_WATER
-// #define ENABLE_SKYBOX
-// #define ENABLE_STARFIELD
+//#define ENABLE_SKYBOX
+//#define ENABLE_STARFIELD
+#define ENABLE_FOG
 
 #define ENABLE_STATIC_MODELS
 #define ENABLE_BILLBOARDING
+//#define ENABLE_VIDEO_RENDER
+#define ENABLE_GAUSSIAN_BLUR
 
 GLuint texture_Marble;
 TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneADSUniform;
+struct FSQuadUniform fsqUniform;
 
 struct TerrainUniform terrainUniform;
 
@@ -51,6 +55,14 @@ struct WaterUniform waterUniform;
 struct TextureVariables waterTextureVariables;
 struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
 struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+
+// Gaussian Blur related variables
+struct GaussianBlurEffect gaussianBlurEffect;
+struct HorrizontalBlurUniform horizontalBlurUniform;
+struct VerticalBlurUniform verticalBlurUniform;
+struct FrameBufferDetails fullSceneFbo;
+struct FSQuadUniform fsGaussBlurQuadUniform;
+
 GLfloat waterHeight = 0.0f;
 GLfloat moveFactor = 0.0f;
 GLfloat planeReflection[] = { 0.0f, 1.0f, 0.0f, -waterHeight };
@@ -85,7 +97,6 @@ GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-
 float displacementmap_depth;
 
 // Variables For Skybox
@@ -101,10 +112,21 @@ struct StarfieldUniform sceneStarfieldUniform;
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
 
+GLfloat density = 0.15;
+GLfloat gradient = 0.5;
+GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+
 int initializeScene_PlaceHolder(void)
 {
-
     // Code.
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo();
+    //initializeTriangle();
+    //initializeSphere();
+	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
+
+#else
+
 #ifdef ENABLE_ADSLIGHT
     // Texture
 	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
@@ -120,7 +142,6 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 
-
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 15.0f;
 
@@ -129,10 +150,8 @@ int initializeScene_PlaceHolder(void)
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
-
 		LOG("initializeTerrain() FAILED!!!\n");
 		return(-1);
-
 	}
 	else
 	{
@@ -144,7 +163,6 @@ int initializeScene_PlaceHolder(void)
 #ifdef ENABLE_WATER
 
 	waterTextureVariables.displacementPath = "res/textures/water/waterDUDV.bmp";
-
 
 	if (initializeWater(&waterTextureVariables) != 0) {
 
@@ -173,8 +191,6 @@ int initializeScene_PlaceHolder(void)
 
 	}
 
-
-	//
 	waterRefractionFrameBufferDetails.textureWidth = 1280;
 	waterRefractionFrameBufferDetails.textureHeight = 720;
 
@@ -221,12 +237,6 @@ int initializeScene_PlaceHolder(void)
 
 #endif
 
-    // initializeCube();
-    // initializePyramid();
-    // initializeQuad();
-    // initializeTriangle();
-     //initializeSphere();
-
 #ifdef ENABLE_STARFIELD
 	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
@@ -240,13 +250,11 @@ int initializeScene_PlaceHolder(void)
 	}
 #endif // ENABLE_STARFIELD
 	
-
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 #endif
-
 
 #ifdef ENABLE_BILLBOARDING	
 
@@ -280,6 +288,24 @@ int initializeScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+	initializeQuad();
+	if(initializeGaussianBlur(&gaussianBlurEffect) == false)
+	{
+		LOG("Initialize Gaussian Blur Effect FAILED!!");
+		return (-7);
+	}
+
+	fullSceneFbo.textureWidth = 1920;
+	fullSceneFbo.textureHeight = 1080;
+
+	if (createFBO(&fullSceneFbo) == false)
+	{
+		LOG("Unable to create FBO for entire scene");
+		return (-8);
+	}
+	
+#endif
 	return 0;
 }
 
@@ -287,16 +313,55 @@ void displayScene_PlaceHolder(void)
 {
 	// Function Declarations
 	void displayWaterFramebuffers(void);
+	void displayScene(int, int);
 	void displayBillboarding(void);
 
 	// Code
 	// Here The Game STarts
+#ifdef ENABLE_VIDEO_RENDER
+	fsqUniform = useFSQuadShader();
+	displayVideoEffect(&fsqUniform);
+	glUseProgram(0);
+
+#else
 
 	//2 framebuffers for water effect
 	displayWaterFramebuffers();
 	
-	glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+	#ifndef  ENABLE_GAUSSIAN_BLUR
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		displayScene(windowWidth, windowHeight);
+	#else
+		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
+		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight, 
+		0.1f, 1000.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		displayScene(fullSceneFbo.textureWidth, fullSceneFbo.textureHeight);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		displayGaussianBlur();
+
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsGaussBlurQuadUniform = useFSQuadShader();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+		displayQuad();
+		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+	#endif
+#endif
+}
+
+void displayScene(int width, int height)
+{
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -311,16 +376,7 @@ void displayScene_PlaceHolder(void)
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	// translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	// rotationMatrix_x = vmath::rotate(angleCube, 1.0f, 0.0f, 0.0f);
-	// rotationMatrix_y = vmath::rotate(angleCube, 0.0f, 1.0f, 0.0f);
-	// rotationMatrix_z = vmath::rotate(angleCube, 0.0f, 0.0f, 1.0f);
-	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
 #ifdef ENABLE_ADSLIGHT
-
     sceneADSUniform = useADSShader();
 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -343,6 +399,11 @@ void displayScene_PlaceHolder(void)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+	//glUniform1i(sceneADSUniform.fogEnableUniform, 1);
+	//glUniform1f(sceneADSUniform.densityUniform, density);
+	//glUniform1f(sceneADSUniform.gradientUniform, gradient);
+	//glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
+
 	// Call Geometry over here 
 	displayCube();
 	// displayTriangle();
@@ -351,8 +412,8 @@ void displayScene_PlaceHolder(void)
 	// displaySphere();
 	
 	glUseProgram(0);
-
 	glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
 #endif // ENABLE_ADSLIGHT
 	
@@ -404,7 +465,6 @@ void displayScene_PlaceHolder(void)
 
 #endif
 
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -420,7 +480,14 @@ void displayScene_PlaceHolder(void)
 
 	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
+
+#ifdef ENABLE_FOG
+	glUniform1i(terrainUniform.fogEnableUniform, 1);
+	glUniform1f(terrainUniform.densityUniform, density);
+	glUniform1f(terrainUniform.gradientUniform, gradient);
+	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
+#endif // DEBUG
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
@@ -429,6 +496,9 @@ void displayScene_PlaceHolder(void)
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
 
 
+	// fsqUniform = useFSQuadShader();
+	// displayVideoEffect(&fsqUniform);
+	// glUseProgram(0);
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -501,6 +571,10 @@ void displayScene_PlaceHolder(void)
 	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
 
+	glUniform1i(sceneADSUniform.fogEnableUniform, 1);
+	glUniform1f(sceneADSUniform.densityUniform, density);
+	glUniform1f(sceneADSUniform.gradientUniform, gradient);
+	glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
 
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
@@ -537,7 +611,6 @@ void displayScene_PlaceHolder(void)
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 #endif
-
 
 #ifdef ENABLE_WATER
 	waterUniform = useWaterShader();
@@ -580,7 +653,6 @@ void displayScene_PlaceHolder(void)
 
 #endif // ENABLE_BILLBOARDING
 
-
 }
 
 void displayWaterFramebuffers(void) {
@@ -589,7 +661,6 @@ void displayWaterFramebuffers(void) {
 	void displayBillboarding(void);
 	
 	// Code
-
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -627,7 +698,6 @@ void displayWaterFramebuffers(void) {
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
-
 	sceneCloudNoiseUniform = useCloudNoiseShader();
 
 	translationMatrix = mat4::identity();
@@ -641,8 +711,6 @@ void displayWaterFramebuffers(void) {
 
 	rotateX = mat4::identity();
 	
-	//mat4 viewMatrix = mat4::identity();
-
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
 	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
@@ -682,7 +750,6 @@ void displayWaterFramebuffers(void) {
 
 #endif
 
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -716,7 +783,6 @@ void displayWaterFramebuffers(void) {
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
-
 	// Code
 	displayBillboarding();
 
@@ -741,8 +807,7 @@ void displayWaterFramebuffers(void) {
 	waterUniform = useWaterShader();
 
 	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-
-
+	//glUseProgram(0);
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -795,8 +860,6 @@ void displayWaterFramebuffers(void) {
 
 #endif
 
-
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 
@@ -822,7 +885,6 @@ void displayWaterFramebuffers(void) {
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
-
 
 	displayTerrain();
 
@@ -909,12 +971,51 @@ void displayBillboarding(void)
 	glUseProgram(0);
 	glDisable(GL_BLEND);
 
+#endif // ENABLE_BILLBOARDING
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glDisable(GL_CLIP_DISTANCE0);
 }
 
+void displayGaussianBlur(void)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurEffect.horrizontalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurEffect.horrizontalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurEffect.horrizontalFBDetails.textureHeight);
+
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+    horizontalBlurUniform = useHorrizontalBlurShader();
+
+    glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
+    glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
+	displayQuad();    
+    glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurEffect.verticalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurEffect.verticalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurEffect.verticalFBDetails.textureHeight);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	verticalBlurUniform = useVerticalBlurShader();
+	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
+    glUniform1i(verticalBlurUniform.vblurTexSamplerUniform, 0);
+	displayQuad();
+	glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
 void updateScene_PlaceHolder(void)
 {
-
 	// Code
 #ifdef ENABLE_ADSLIGHT
     angleCube = angleCube + 1.0f;
@@ -925,17 +1026,14 @@ void updateScene_PlaceHolder(void)
 
 #endif // ENABLE_ADSLIGHT
 
-
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
 #endif
-
 
 #ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif
-
 
 #ifdef ENABLE_BILLBOARDING
 #endif
@@ -952,8 +1050,6 @@ void updateScene_PlaceHolder(void)
 void uninitializeScene_PlaceHolder(void)
 {
 	// Code
-
-	
 #ifdef ENABLE_BILLBOARDING
     uninitializeInstancedQuads();
 
@@ -987,7 +1083,6 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_CLOUD_NOISE
-
 	
 	uninitializeCloud();
 	if (noise_texture)
@@ -1019,5 +1114,8 @@ void uninitializeScene_PlaceHolder(void)
 	unloadStaticModel(&streetLightModel);
 #endif
 
-}
+#ifdef ENABLE_GAUSSIAN_BLUR
+	uninitializeGaussianBlur(&gaussianBlurEffect);
+#endif
 
+}
