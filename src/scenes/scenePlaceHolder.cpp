@@ -276,6 +276,9 @@ void displayScene_PlaceHolder(void)
 	// Code
 	// Here The Game STarts
 
+	// set camera
+	setCamera();
+
 	//2 framebuffers for water effect
 	displayWaterFramebuffers();
 	
@@ -290,10 +293,13 @@ void displayScene_PlaceHolder(void)
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
 	
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
+
+	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -640,6 +646,7 @@ void displayWaterFramebuffers(void) {
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
 
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
@@ -698,6 +705,8 @@ void displayWaterFramebuffers(void) {
 	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
 	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotateX;
+
+	viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
 	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);

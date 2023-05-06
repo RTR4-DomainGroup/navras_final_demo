@@ -13,16 +13,13 @@ GLfloat cameraUpX;
 GLfloat cameraUpY;
 GLfloat cameraUpZ;
 
-vmath::mat4 viewMatrix;
+Camera camera;
 
 void setCamera(void)
 {
-	Camera camera;
 	camera.eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
 	camera.center = { cameraCenterX, cameraCenterY, cameraCenterZ };
 	camera.up = { cameraUpX, cameraUpY, cameraUpZ };
-
-	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 }
 
 GLfloat impreciselerp(GLfloat v0, GLfloat v1, GLfloat t)
