@@ -24,6 +24,7 @@ struct CloudNoiseUniform
 	GLuint noiseSamplerUniform;
 	GLuint skyColorUniform;
 	GLuint cloudColorUniform;
+	GLuint uniform_enable_godRays;
 };
 
 int intializeCloudNoiseShader(void);

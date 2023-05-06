@@ -6,14 +6,16 @@ void initializeQuad(void);
 void initializeInstancedQuad(int numInstances, GLfloat* instancePositions);
 void initializeQuadForVideo(void);
 void initializePyramid(void);
-void initializeSphere(void);
+
 void initializeTriangle(void);
 void initializeWaterQuad(void);
+void initializeSphere(float radius, int slices, int stacks);
+void initializeTriangle(void );
 
 void displayGeometry(void);
 void displayCube(void);
 void displayCubemap(void);
-void displaySphere(void);
+void displaySphere(GLfloat*);
 void displayTriangle(void );
 void displayQuad(void );
 void displayInstancedQuads(int numInstances);

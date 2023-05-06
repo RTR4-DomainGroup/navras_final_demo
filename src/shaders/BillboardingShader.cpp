@@ -26,6 +26,7 @@ int initializeBillboardingShader(void)
     "uniform mat4 u_viewMatrix; \n" \
     "uniform mat4 u_projectionMatrix; \n" \
     "uniform int u_billboarding; \n" \
+	
     "out vec2 a_texcoord_out; \n" \
 
     "void main(void) \n" \
@@ -77,11 +78,19 @@ int initializeBillboardingShader(void)
     "in vec2 a_texcoord_out; \n" \
     // bind texture chi image 
     "uniform sampler2D u_textureSampler; \n" \
+	"uniform bool enable_godRays = true; \n" \
     "out vec4 FragColor; \n" \
     "void main(void) \n" \
     "{\n" \
-    "   vec4 tex = texture(u_textureSampler, a_texcoord_out); \n" \
-    "   FragColor = tex; \n" \
+		"if (enable_godRays) \n" \
+		"{\n" \
+			"   vec4 tex = texture(u_textureSampler, a_texcoord_out); \n" \
+			"   FragColor = tex; \n" \
+		"}\n" \
+		"else" \
+		"{\n" \
+			"FragColor =  vec4(0.0, 0.0, 0.0, 1.0);\n" \
+		"}" \
     "}\n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);
@@ -140,7 +149,7 @@ int initializeBillboardingShader(void)
 	billboardingUniform.projectionMatrixUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_projectionMatrix");
 	billboardingUniform.textureSamplerUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_textureSampler");
 	billboardingUniform.billboardingEnableUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_billboarding");
-    
+	billboardingUniform.uniform_enable_godRays = glGetUniformLocation(billboardingShaderProgramObject, "enable_godRays");
 	return(0);
 
 }

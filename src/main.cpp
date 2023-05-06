@@ -3,10 +3,12 @@
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
+#include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolder.h"
+#include "../inc/shaders/FSQuadShader.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -41,6 +43,13 @@ mat4 perspectiveProjectionMatrix;
 // framebuffer related variables
 int windowWidth;
 int windowHeight;
+
+int winWidth;
+int winHeight;
+struct FSQuadUniform sceneFSQuadUniform;
+
+extern struct FrameBufferDetails fboColorPass;
+extern struct FrameBufferDetails fboGodRayPass;
 
 static scene_t currentScene = SCENE_INVALID;
 
@@ -536,6 +545,9 @@ void ToggleFullScreen(void) {
 
 void display(void)
 {
+	// Function declarations
+	void resize(int, int);
+
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -595,7 +607,6 @@ void resize(int width, int height) {
 
 	windowWidth = width;
 	windowHeight = height;
-
         // 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 

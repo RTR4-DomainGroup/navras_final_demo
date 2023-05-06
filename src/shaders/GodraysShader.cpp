@@ -1,7 +1,7 @@
 #include "../../inc/shaders/GodraysShader.h"
 
 GLuint shaderProgramObj_godrays;
-//extern FILE* gpFile;
+extern FILE* gpFile;
 
 struct GodraysUniform godRaysUniform;
 
@@ -109,7 +109,7 @@ int initializeGodraysShader(void)
             "float illuminationDecay = 1.0;" \
             "\n" \
             
-            "lightPosition =  u_projectionMatrix * u_viewMatrix * u_modelMatrix * u_lightPositionOnScreen;"
+            "lightPosition =  u_projectionMatrix * u_viewMatrix * u_lightPositionOnScreen;"
             "lightPosition /= lightPosition.w;" \
             "\n" \
             "lightPosition += vec4(1.0);" \

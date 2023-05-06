@@ -253,6 +253,7 @@ int initializeTerrainShader(void)
         "\n" \
             "layout (binding = 1) uniform sampler2D tex_color; \n" \
             "uniform bool enable_fog = true; \n" \
+            "uniform bool enable_godRays = true; \n" \
             "uniform vec4 fog_color = vec4(0.7, 0.8, 0.9, 0.0); \n" \
             "in float visibility_tes; \n"   \
             "uniform vec4 u_skyFogColor; \n"	\
@@ -276,11 +277,18 @@ int initializeTerrainShader(void)
         "void main(void) \n" \
         "{ \n" \
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
-            "FragColor = landscape; \n" \
-            "if (u_fogEnable == 1) \n" \
+            "if (enable_godRays) \n" \
             "{ \n" \
-                "FragColor = mix(u_skyFogColor, landscape, visibility_tes); \n" \
-            "} \n" \
+                "FragColor = landscape; \n" \
+                "if (u_fogEnable == 1) \n" \
+                "{ \n" \
+                    "FragColor = mix(u_skyFogColor, landscape, visibility_tes); \n" \
+                "} \n" \
+            "}" \
+            "else \n" \
+            "{\n" \
+                "FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+            "}\n" \
         "} \n";
     
      // Create the Fragment Shader object.
@@ -366,6 +374,7 @@ int initializeTerrainShader(void)
     terrainShaderUniform.uniform_proj_matrix = glGetUniformLocation(shaderProgramObj_terrain, "proj_matrix");
     terrainShaderUniform.uniform_dmap_depth = glGetUniformLocation(shaderProgramObj_terrain, "displacementmap_depth");
     terrainShaderUniform.uniform_enable_fog = glGetUniformLocation(shaderProgramObj_terrain, "enable_fog");
+    terrainShaderUniform.uniform_enable_godRays = glGetUniformLocation(shaderProgramObj_terrain, "enable_godRays");
     terrainShaderUniform.textureSamplerUniform1 = glGetUniformLocation(shaderProgramObj_terrain, "tex_displacement");
     terrainShaderUniform.textureSamplerUniform2 = glGetUniformLocation(shaderProgramObj_terrain, "tex_color");
 
