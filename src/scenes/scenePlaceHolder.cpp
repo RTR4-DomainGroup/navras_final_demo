@@ -1,25 +1,27 @@
 #pragma once
 // This File Will Be Replaced by Scene*.cpp
 
-#include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/helper/texture_loader.h"
+#include "../../inc/helper/waterframebuffer.h"
+#include "../../inc/helper/camera.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/framebuffer.h"
+#include "../../inc/helper/texture_loader.h"
+
 #include "../../inc/shaders/FSQuadShader.h"
-#include "../../inc/helper/texture_loader.h"
+#include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/BillboardingShader.h"
+
 #include "../../inc/effects/videoEffect.h"
-#include "../../inc/helper/texture_loader.h"
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/StarfieldEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/WaterEffect.h"
-#include "../../inc/helper/waterframebuffer.h"
-#include "../../inc/helper/camera.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
-#include "../../inc/helper/common.h"
-#include "../../inc/helper/framebuffer.h"
-//#include "../../inc/Noise.h"
-#include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
-#include "../../inc/shaders/FSQuadShader.h"
+
+#include "../../inc/scenes/scenePlaceHolder.h"
 
 //#define ENABLE_ADSLIGHT		//##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -648,6 +650,7 @@ void displayScene(int width, int height)
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
+	void displayBillboarding(void);
 
 	displayBillboarding();
 
@@ -970,8 +973,6 @@ void displayBillboarding(void)
 
 	glUseProgram(0);
 	glDisable(GL_BLEND);
-
-#endif // ENABLE_BILLBOARDING
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
