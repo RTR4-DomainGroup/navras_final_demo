@@ -57,7 +57,9 @@ struct CloudNoiseUniform sceneCloudNoiseUniform;
 
 struct TextureVariables terrainTextureVariables;
 
+// variables for billboarding
 struct BillboardingUniform billboardingEffectUniform;
+GLuint frameTime = 0;
 
 // Water Related Variables
 struct WaterUniform waterUniform;
@@ -132,6 +134,7 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 // Varaiables for God Rays
 struct GodraysUniform sceneGodRaysUniform;
 GLfloat lightPosition_gr[] = {0.0f, 10.0f, -35.0f, 1.0f};
+
 
 int initializeScene_PlaceHolder(void)
 {
@@ -974,7 +977,7 @@ void displayBillboarding(void)
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();\
+	scaleMatrix = mat4::identity();
 
 	// send to shader
 	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -992,6 +995,7 @@ void displayBillboarding(void)
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
 	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
+	glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
@@ -1142,6 +1146,8 @@ void updateScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_BILLBOARDING
+	frameTime += 1;
+
 #endif
 
 #ifdef ENABLE_WATER
