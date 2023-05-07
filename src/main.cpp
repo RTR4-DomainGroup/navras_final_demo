@@ -248,26 +248,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
 			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
 			cameraCounterUpDownWays += 0.025f;
-			//upKeyPressed();
 			break;
 		case 40:	// down
 			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
 			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
 			cameraCounterUpDownWays -= 0.025f;
-			//downKeyPressed();
 			break;
 		case 37:	// left
 			//LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
 			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
 			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
 			cameraCounterSideWays += 0.025f;
-			//leftKeyPressed();
 			break;
 		case 39:	// right
 			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
 			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
 			cameraCounterSideWays -= 0.025f;
-			//rightKeyPressed();
 			break;
 		default:
 			LOG("keypress : %d\n", wParam);
@@ -286,47 +282,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case 'w':
 			cameraEyeZ = cameraEyeZ - 0.25f;
 			cameraCenterZ = cameraCenterZ - 0.25f;
-			//wKeyPressed();
 			break;
 		case 'S':
 		case 's':
 			cameraEyeZ = cameraEyeZ + 0.25f;
 			cameraCenterZ = cameraCenterZ + 0.25f;
-			//sKeyPressed();
 			break;
 		case 'A':
 		case 'a':
 			cameraEyeX = cameraEyeX - 0.25f;
 			cameraCenterX = cameraCenterX - 0.25f;
-			//aKeyPressed();
 			break;
 		case 'D':
 		case 'd':
 			cameraEyeX = cameraEyeX + 0.25f;
 			cameraCenterX = cameraCenterX + 0.25f;
-			//dKeyPressed();
 			break;
 		case 'Q':
 		case 'q':
 			cameraEyeY = cameraEyeY - 0.25f;
 			cameraCenterY = cameraCenterY - 0.25f;
-			//qKeyPressed();
 			break;
 		case 'E':
 		case 'e':
 			cameraEyeY = cameraEyeY + 0.25f;
 			cameraCenterY = cameraCenterY + 0.25f;
-			//eKeyPressed();
 			break;
 		case 'R':
 		case 'r':
 			resetCamera();
-			//rKeyPressed();
 			break;
 		case 'P':
 		case 'p':
 			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f]", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
-			//pKeyPressed();
 			break;
 		case 'n':
 			playSong(songId);
@@ -341,7 +329,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 				songId = NUM_AUDIO-1;
 			break;	
 		default:
-			LOG("keypress for camera : %d\n", wParam);
+			LOG("keypressed : %d\n", wParam);
 			break;
 
 		}
@@ -635,9 +623,6 @@ void display(void)
 
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// set camera
-	//setCamera();
 
 	// Call Scenes Display Here
 	if(currentScene == SCENE_0)
