@@ -1,3 +1,6 @@
+#define _USE_MATH_DEFINES 1
+#include <math.h>		// for PI
+
 #include "../../inc/video_reader.h"
 #include "../../inc/helper/common.h"
 

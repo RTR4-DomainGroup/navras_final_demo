@@ -1,4 +1,5 @@
 #pragma once
+
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/helper/texture_loader.h"
@@ -24,6 +25,7 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolder.h"
+
 
 #define FBO_WIDTH 800
 #define FBO_HEIGHT 600
@@ -85,7 +87,7 @@ struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-extern mat4 viewMatrix;
+mat4 viewMatrix;
 
 float myScale = 1.0f;
 
@@ -349,6 +351,13 @@ void displayScene_PlaceHolder(void)
 
 	// Code
 	// Here The Game STarts
+
+	// set camera
+	setCamera();
+
+	viewMatrix = mat4::identity();
+	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+
 #ifdef ENABLE_VIDEO_RENDER
 	fsqUniform = useFSQuadShader();
 	displayVideoEffect(&fsqUniform);
@@ -475,10 +484,13 @@ void displayScene(int width, int height, int godRays = 1)
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
 	
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
+
+	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
 #ifdef ENABLE_STARFIELD
 	
@@ -753,6 +765,7 @@ void displayWaterFramebuffers(int godRays = 1) {
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
 
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
@@ -805,6 +818,8 @@ void displayWaterFramebuffers(int godRays = 1) {
 	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
 	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotateX;
+
+	viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
 	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -1157,6 +1172,9 @@ void updateScene_PlaceHolder(void)
 		moveFactor -= 360.0f;
 #endif
 
+	// update camera using lerp
+	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
+	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
 }
 
 void uninitializeScene_PlaceHolder(void)
