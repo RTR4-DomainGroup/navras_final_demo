@@ -13,6 +13,6 @@ del *.obj
 
 del res\resources.res
 
-set PATH=%PATH%;.\ext\AL\bin\;.\ext\Assimp\bin\
+set PATH=%PATH%;.\ext\AL\bin\;.\ext\Assimp\bin\;.\ext\ffmpeg\bin\
 
 Navras.exe
