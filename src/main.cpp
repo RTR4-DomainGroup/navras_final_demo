@@ -520,7 +520,6 @@ int initialize(void) {
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
 	
 	// Enabling The Texture
 	//glEnable(GL_TEXTURE_2D);
@@ -528,6 +527,9 @@ int initialize(void) {
 	perspectiveProjectionMatrix = mat4::identity();
 
 	ToggleFullScreen();
+
+	//set fps to system
+	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
 
 	return(0);
 
@@ -602,7 +604,7 @@ void ToggleFullScreen(void) {
 
 			}
 
-			ShowCursor(FALSE);
+			ShowCursor(TRUE);		//usually kept false
 			gbFullScreen = TRUE;
 		}
 	}
