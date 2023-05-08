@@ -13,5 +13,5 @@ del *.obj
 
 del res\resources.res
 
-cmd /C execute.bat
+
 

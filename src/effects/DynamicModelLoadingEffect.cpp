@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 
 #define MAX_BONES 100
@@ -499,7 +500,7 @@ void DynamicModel::Draw()
         meshes[i]->Draw();
 }
 
-auto& DynamicModel::GetBoneInfoMap() 
+std::map<string, BoneInfo>& DynamicModel::GetBoneInfoMap()
 { 
     return m_BoneInfoMap; 
 }

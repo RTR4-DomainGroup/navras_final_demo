@@ -7,6 +7,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "../../ext/SOIL/include/SOIL.h"
 #include "../../inc/helper/stb_image.h"
@@ -94,7 +95,7 @@ public:
     ~DynamicMesh();
 
     // render the mesh
-    void Draw(GLuint shaderProgramObject);
+    void Draw();
 
     // initializes all the buffer objects/arrays
     void setupMesh();
@@ -122,7 +123,7 @@ public:
     // draws the model, and thus all its meshes
     void Draw();
 
-    auto& GetBoneInfoMap();
+    std::map<string, BoneInfo>& GetBoneInfoMap();
 
     int& GetBoneCount();
 

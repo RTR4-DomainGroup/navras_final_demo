@@ -233,7 +233,7 @@ int initializeADSDynamicShader(void)
 	{
 		byte str[100];
 		sprintf_s((char* const)str, 100, "u_finalBonesMatrices[%d]", i);
-		adsDynamicUniform.finalBonesMatricesUniform[i] = glGetUniformLocation(shaderProgramObject, (const GLchar*)str);
+		adsDynamicUniform.finalBonesMatricesUniform[i] = glGetUniformLocation(adsDynamicShaderProgramObject, (const GLchar*)str);
 	}
 
 	glUseProgram(adsDynamicShaderProgramObject);
@@ -245,7 +245,7 @@ int initializeADSDynamicShader(void)
 
 }
 
-struct ADSUniform useADSDynamicShader(void)
+struct ADSDynamicUniform useADSDynamicShader(void)
 {
     // Code
     glUseProgram(adsDynamicShaderProgramObject);
