@@ -90,6 +90,7 @@ int initializeWaterShader(void)
         "uniform sampler2D dudvMap;\n" \
 
         "uniform float u_moveFactor; \n" \
+        "uniform bool enable_godRays = true; \n" \
         "const float waveStrength = 0.01; \n" \
         "out vec4 FragColor; \n" \
 
@@ -124,8 +125,14 @@ int initializeWaterShader(void)
 
             "texture_color = mix(texture_Reflection, texture_Refraction, 0.1); \n" \
             "texture_color = mix(texture_color, vec4(0.0, 0.3, 0.5, 1.0), 0.2); \n" \
-        
-            "FragColor = texture_color; \n" \
+            "if (enable_godRays) \n" \
+            "{" \
+                "FragColor = texture_color; \n" \
+            "}" \
+            "else\n" \
+            "{\n"  \
+                "FragColor = vec4(0.0, 0.0, 0.0, 1.0);\n" \
+            "}\n" \
         "} \n";
     
      // Create the Fragment Shader object.
@@ -214,7 +221,7 @@ int initializeWaterShader(void)
     waterShaderUniform.moveFactorUniform = glGetUniformLocation(shaderProgramObj_water, "u_moveFactor");
     waterShaderUniform.planeUniform = glGetUniformLocation(shaderProgramObj_water, "u_plane");
     waterShaderUniform.cameraPositionUniform = glGetUniformLocation(shaderProgramObj_water, "u_cameraPosition");
-
+    waterShaderUniform.uniform_enable_godRays = glGetUniformLocation(shaderProgramObj_water, "enable_godRays");
     glUseProgram(shaderProgramObj_water);
     glUniform1i(waterShaderUniform.reflectionTextureSamplerUniform, 0);
     glUniform1i(waterShaderUniform.refractionTextureSamplerUniform, 1);

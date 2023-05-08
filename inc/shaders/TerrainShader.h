@@ -8,9 +8,15 @@ struct TerrainUniform
     GLint uniform_proj_matrix;
     GLint uniform_dmap_depth;
     GLint uniform_enable_fog;
+    GLint uniform_enable_godRays;
 
     GLuint textureSamplerUniform1;
     GLuint textureSamplerUniform2;
+
+    GLuint densityUniform;
+    GLuint gradientUniform;
+    GLuint skyFogColorUniform;
+    GLuint fogEnableUniform;
 
 };
 

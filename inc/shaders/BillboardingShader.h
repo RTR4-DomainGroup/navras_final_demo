@@ -12,6 +12,9 @@ struct BillboardingUniform
     
     // billboarding enable uniform
     GLuint billboardingEnableUniform;
+    GLuint frameTimeUniform;
+
+    GLuint uniform_enable_godRays;
 };
 
 int initializeBillboardingShader(void);

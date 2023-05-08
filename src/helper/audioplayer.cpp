@@ -21,7 +21,7 @@
 
 #include "../../inc/helper/common.h"
 
-#pragma comment(lib, "AL\\lib\\OpenAL32.lib")
+// #pragma comment(lib, "AL\\lib\\OpenAL32.lib")
 
 
 extern FILE* gpFile;

@@ -14,7 +14,7 @@ struct WaterUniform
     GLuint moveFactorUniform;
     GLuint planeUniform;
     GLuint cameraPositionUniform;
-
+    GLuint uniform_enable_godRays;
 };
 
 int initializeWaterShader(void);

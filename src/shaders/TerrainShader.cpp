@@ -16,6 +16,12 @@ int initializeTerrainShader(void)
         "{ \n" \
             "out vec2 tc; \n" \
         "} vs_out; \n" \
+        "in vec4 a_position; \n"		\
+        "uniform float u_density; \n"	\
+        "uniform float u_gradient; \n"	\
+        "uniform mat4 mv_matrix; \n"    \
+        "uniform int u_fogEnable; \n" \
+        "out float visibility; \n"		\
         "void main(void) \n" \
         "{ \n" \
             "vec4 vertices[] = vec4[](vec4(-0.5, 0.0, -0.5, 1.0), vec4(0.5, 0.0, -0.5, 1.0), vec4(-0.5, 0.0, 0.5, 1.0), vec4(0.5, 0.0, 0.5, 1.0)); \n" \
@@ -24,6 +30,14 @@ int initializeTerrainShader(void)
             "vec2 offs = vec2(x, y); \n" \
             "vs_out.tc = (vertices[gl_VertexID].xz + offs + vec2(0.5)) / 64.0; \n" \
             "gl_Position = vertices[gl_VertexID] + vec4(float(x - 32), 0.0,	float(y - 32), 0.0); \n" \
+
+			"if (u_fogEnable == 1) \n" \
+			"{ \n" \
+				"vec4 positionRelativeToCamera = mv_matrix * a_position; \n"		\
+				"float distance = length(positionRelativeToCamera.xyz); \n"			\
+				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"	\
+				"visibility = clamp(visibility, 0.0f, 1.0f); \n"					\
+			"} \n" \
         "} \n";
 
     // Create the Vertex Shader object.
@@ -77,7 +91,9 @@ int initializeTerrainShader(void)
         "{ \n" \
             "vec2 tc; \n" \
         "} tcs_out[]; \n" \
-        "uniform mat4 mvp_matrix; \n" \
+        "uniform mat4 mvp_matrix; \n"   \
+        "in float visibility[]; \n"     \
+        "out float visibility_tc[]; \n"   \
         "void main(void) \n" \
         "{ \n" \
             "if (gl_InvocationID == 0) \n" \
@@ -113,6 +129,7 @@ int initializeTerrainShader(void)
             "} \n" \
             "gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position; \n" \
             "tcs_out[gl_InvocationID].tc = tcs_in[gl_InvocationID].tc; \n" \
+            "visibility_tc[gl_InvocationID] = visibility[0]; \n" \
         "} \n";
 
     // Create the Vertex Shader object.
@@ -162,6 +179,8 @@ int initializeTerrainShader(void)
         "uniform mat4 mvp_matrix; \n" \
         "uniform mat4 proj_matrix; \n" \
         "uniform float displacementmap_depth; \n" \
+        "in float visibility_tc[]; \n"   \
+        "out float visibility_tes; \n"   \
         "in TCS_OUT \n" \
         "{ \n" \
             "vec2 tc; \n" \
@@ -186,6 +205,7 @@ int initializeTerrainShader(void)
             "tes_out.world_coord = p.xyz; \n" \
             "tes_out.eye_coord = P_eye.xyz; \n" \
             "gl_Position = mvp_matrix * p; \n" \
+            "visibility_tes = visibility_tc[0]; \n"   \
         "} \n";
 
     // Create the Vertex Shader object.
@@ -233,7 +253,11 @@ int initializeTerrainShader(void)
         "\n" \
             "layout (binding = 1) uniform sampler2D tex_color; \n" \
             "uniform bool enable_fog = true; \n" \
+            "uniform bool enable_godRays = true; \n" \
             "uniform vec4 fog_color = vec4(0.7, 0.8, 0.9, 0.0); \n" \
+            "in float visibility_tes; \n"   \
+            "uniform vec4 u_skyFogColor; \n"	\
+    		"uniform int u_fogEnable; \n" \
         "in TES_OUT \n" \
         "{ \n" \
             "vec2 tc; \n" \
@@ -253,14 +277,18 @@ int initializeTerrainShader(void)
         "void main(void) \n" \
         "{ \n" \
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
-            "if (enable_fog) \n" \
-            "{ \n" \
-             "FragColor = fog(landscape); \n" \
-            "} \n" \
-            "else \n" \
+            "if (enable_godRays) \n" \
             "{ \n" \
                 "FragColor = landscape; \n" \
-            "} \n" \
+                "if (u_fogEnable == 1) \n" \
+                "{ \n" \
+                    "FragColor = mix(u_skyFogColor, landscape, visibility_tes); \n" \
+                "} \n" \
+            "}" \
+            "else \n" \
+            "{\n" \
+                "FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+            "}\n" \
         "} \n";
     
      // Create the Fragment Shader object.
@@ -309,7 +337,7 @@ int initializeTerrainShader(void)
     glAttachShader(shaderProgramObj_terrain, fragementShaderObj);
 
     // Pre-linked binding of Shader program object
-    //glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_POSITION, "a_position");
+    glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_POSITION, "a_position");
     //glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 
     // Link the program
@@ -346,8 +374,14 @@ int initializeTerrainShader(void)
     terrainShaderUniform.uniform_proj_matrix = glGetUniformLocation(shaderProgramObj_terrain, "proj_matrix");
     terrainShaderUniform.uniform_dmap_depth = glGetUniformLocation(shaderProgramObj_terrain, "displacementmap_depth");
     terrainShaderUniform.uniform_enable_fog = glGetUniformLocation(shaderProgramObj_terrain, "enable_fog");
+    terrainShaderUniform.uniform_enable_godRays = glGetUniformLocation(shaderProgramObj_terrain, "enable_godRays");
     terrainShaderUniform.textureSamplerUniform1 = glGetUniformLocation(shaderProgramObj_terrain, "tex_displacement");
     terrainShaderUniform.textureSamplerUniform2 = glGetUniformLocation(shaderProgramObj_terrain, "tex_color");
+
+    terrainShaderUniform.gradientUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_gradient");
+    terrainShaderUniform.densityUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_density");
+    terrainShaderUniform.skyFogColorUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_skyFogColor");
+    terrainShaderUniform.fogEnableUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_fogEnable");
 
     glUseProgram(shaderProgramObj_terrain);
     glUniform1i(terrainShaderUniform.textureSamplerUniform1, 0);
