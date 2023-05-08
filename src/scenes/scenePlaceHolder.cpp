@@ -31,16 +31,14 @@
 #define FBO_HEIGHT 600
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_TERRIAN
-#define ENABLE_WATER
-
+//#define ENABLE_TERRIAN
+//#define ENABLE_WATER
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 //#define ENABLE_FOG
-
 #define ENABLE_STATIC_MODELS	
-#define ENABLE_BILLBOARDING
+//#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
 #define ENABLE_GODRAYS
@@ -127,6 +125,7 @@ struct StarfieldUniform sceneStarfieldUniform;
 //Model variables
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
+STATIC_MODEL bagModel;
 
 GLfloat density = 0.15;
 GLfloat gradient = 0.5;
@@ -284,6 +283,7 @@ int initializeScene_PlaceHolder(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	loadStaticModel("res/models/bag/backpack.obj", &bagModel);
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
@@ -675,6 +675,7 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniform1i(sceneADSUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 0);
 	//glUniform1i(sceneADSUniform.)
+	
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -706,6 +707,26 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(streetLightModel);
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ Bag Model ------
+	translationMatrix = vmath::translate(0.0f, -2.0f, -1.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(bagModel);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
@@ -1242,6 +1263,7 @@ void uninitializeScene_PlaceHolder(void)
 	//UNINIT models
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&streetLightModel);
+	unloadStaticModel(&bagModel);
 #endif
 
 #ifdef ENABLE_GAUSSIAN_BLUR
