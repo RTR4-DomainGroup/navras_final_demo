@@ -103,12 +103,12 @@ int initializeTerrainShader(void)
                     "float l1 = length(p3.xy - p2.xy) * (16.0 + 1.0); \n" \
                     "float l2 = length(p3.xy - p1.xy) * (16.0 + 1.0); \n" \
                     "float l3 = length(p1.xy - p0.xy) * (16.0 + 1.0); \n" \
-                    "gl_TessLevelOuter[0] = 4.0; \n" \
-                    "gl_TessLevelOuter[1] = 4.0; \n" \
-                    "gl_TessLevelOuter[2] = 4.0; \n" \
-                    "gl_TessLevelOuter[3] = 4.0; \n" \
-                    "gl_TessLevelInner[0] = 2.0; \n" \
-                    "gl_TessLevelInner[1] = 2.0; \n" \
+                    "gl_TessLevelOuter[0] = 4; \n" \
+                    "gl_TessLevelOuter[1] = 4; \n" \
+                    "gl_TessLevelOuter[2] = 4; \n" \
+                    "gl_TessLevelOuter[3] = 4; \n" \
+                    "gl_TessLevelInner[0] = 2; \n" \
+                    "gl_TessLevelInner[1] = 2; \n" \
                 "} \n" \
             "} \n" \
             "gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position; \n" \
