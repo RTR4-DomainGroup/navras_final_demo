@@ -27,8 +27,8 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 
 
-#define FBO_WIDTH 800
-#define FBO_HEIGHT 600
+#define FBO_WIDTH 1920
+#define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 //#define ENABLE_TERRIAN

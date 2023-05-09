@@ -29,8 +29,8 @@
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
 
-#define WIN_WIDTH  800
-#define WIN_HEIGHT  600
+//#define WIN_WIDTH  1920
+//#define WIN_HEIGHT  1080
 
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -64,8 +64,8 @@ float mouseY;
 bool firstMouse = true;
 float yaw = -180.0f;
 float pitch = 0.0f;
-float lastX = 800.0f / 2.0f;
-float lastY = 600.0f / 2.0f;
+float lastX = 1920.0f / 2.0f;
+float lastY = 1080.0f / 2.0f;
 
 int winWidth;
 int winHeight;
