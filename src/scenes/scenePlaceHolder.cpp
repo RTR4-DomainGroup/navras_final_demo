@@ -27,8 +27,8 @@
 #include "../../inc/scenes/scenePlaceHolder.h"
 
 
-#define FBO_WIDTH 800
-#define FBO_HEIGHT 600
+#define FBO_WIDTH 1920
+#define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_TERRIAN
@@ -41,7 +41,7 @@
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
-#define ENABLE_GODRAYS
+//#define ENABLE_GODRAYS
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -362,15 +362,17 @@ void displayScene_PlaceHolder(void)
 	glUseProgram(0);
 #else
 
-	// #if  (ENABLE_GAUSSIAN_BLUR && ifndef ENABLE_GODRAYS)
-	// 	//2 framebuffers for water effect
-	// 	displayWaterFramebuffers(1);
-	// 	glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-	// 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
-	// 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	// 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// 	displayScene(windowWidth, windowHeight);
-	#ifdef ENABLE_GAUSSIAN_BLUR
+	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
+		//2 framebuffers for water effect
+		displayWaterFramebuffers(1);
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
+			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		displayScene(windowWidth, windowHeight, 1);
+	
+	#elif ENABLE_GAUSSIAN_BLUR
 		displayWaterFramebuffers(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
