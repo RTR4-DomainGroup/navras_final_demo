@@ -29,8 +29,8 @@
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
 
-#define WIN_WIDTH  800
-#define WIN_HEIGHT  600
+//#define WIN_WIDTH  1920
+//#define WIN_HEIGHT  1080
 
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -533,6 +533,7 @@ int initialize(void) {
 
 	return(0);
 
+	resize(WIN_WIDTH, WIN_HEIGHT);
 }
 
 void resetCamera(void)
@@ -621,6 +622,22 @@ void ToggleFullScreen(void) {
 
 }
 
+void resize(int width, int height) {
+
+	// Code
+	if (height == 0)			// To Avoid Divided by 0(in Future)
+		height = 1;
+
+	windowWidth = width;
+	windowHeight = height;
+	// 
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+
+
+}
+
 void display(void)
 {
 	// Function declarations
@@ -676,57 +693,6 @@ void update(void)
 	}
 	// camera movement related updates
 	updateMouseMovement();
-}
-
-void updateMouseMovement(void)
-{
-	if (firstMouse)
-	{
-		lastX = mouseX;
-		lastY = mouseY;
-		firstMouse = false;
-	}
-
-	float xoffset = mouseX - lastX;
-	float yoffset = lastY - mouseY; // reversed since y-coordinates go from bottom to top
-	lastX = mouseX;
-	lastY = mouseY;
-
-	float sensitivity = 0.3f; // change this value to your liking
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (pitch > 90.0f)
-		pitch = 90.0f;
-	if (pitch < -90.0f)
-		pitch = -90.0f;
-
-	if (mouseLeftClickActive == TRUE)
-	{
-		cameraCenterX = cameraEyeX + cos(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
-		cameraCenterY = cameraEyeY + sin(pitch * M_PI / 180.0f);
-		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
-	}
-}
-
-void resize(int width, int height) {
-
-	// Code
-	if (height == 0)			// To Avoid Divided by 0(in Future)
-		height = 1;
-
-	windowWidth = width;
-	windowHeight = height;
-        // 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
-
-
 }
 
 void uninitialize(void) {
@@ -790,4 +756,39 @@ void uninitialize(void) {
 
 	//}
 
+}
+
+void updateMouseMovement(void)
+{
+	if (firstMouse)
+	{
+		lastX = mouseX;
+		lastY = mouseY;
+		firstMouse = false;
+	}
+
+	float xoffset = mouseX - lastX;
+	float yoffset = lastY - mouseY; // reversed since y-coordinates go from bottom to top
+	lastX = mouseX;
+	lastY = mouseY;
+
+	float sensitivity = 0.3f; // change this value to your liking
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 90.0f)
+		pitch = 90.0f;
+	if (pitch < -90.0f)
+		pitch = -90.0f;
+
+	if (mouseLeftClickActive == TRUE)
+	{
+		cameraCenterX = cameraEyeX + cos(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
+		cameraCenterY = cameraEyeY + sin(pitch * M_PI / 180.0f);
+		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
+	}
 }
