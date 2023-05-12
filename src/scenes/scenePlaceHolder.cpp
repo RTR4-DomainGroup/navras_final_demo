@@ -31,7 +31,7 @@
 #define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_TERRIAN
+//#define ENABLE_TERRIAN
 #define ENABLE_WATER
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
@@ -345,7 +345,7 @@ void displayScene_PlaceHolder(void)
 	void displayWaterFramebuffers(int);
 	void displayScene(int, int, int);
 	void displayGodRays(int, int);
-	void displayBillboarding(void);
+	void displayBillboarding(int);
 
 	// Code
 	// Here The Game STarts
@@ -353,6 +353,8 @@ void displayScene_PlaceHolder(void)
 	// set camera
 	setCamera();
 
+	mat4 translationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
 	viewMatrix = mat4::identity();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
@@ -405,6 +407,22 @@ void displayScene_PlaceHolder(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//2 framebuffers for water effect
 		//displayWaterFramebuffers(0);
+		sceneADSUniform = useADSShader();
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
+		modelMatrix = translationMatrix;
+		
+		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
+		glUniform1i(sceneADSUniform.uniform_enable_godRays, 0);
+		glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 1);
+		
+		displaySphere(NULL);
+		glUseProgram(0);
+
 		displayScene(fboBlackPass.textureWidth, fboBlackPass.textureHeight, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -429,8 +447,8 @@ void displayScene_PlaceHolder(void)
 
 		sceneGodRaysUniform = useGodRaysShader();
 
-		mat4 translationMatrix = mat4::identity();
-		mat4 modelMatrix = mat4::identity();
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
 		translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
 		modelMatrix = translationMatrix;
 
@@ -613,24 +631,6 @@ void displayScene(int width, int height, int godRays = 1)
 	void displayTerraineScene(int);
 	// Terrain
 	displayTerraineScene(godRays);
-	if (godRays == 0)
-	{
-		sceneADSUniform = useADSShader();
-		translationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
-		modelMatrix = translationMatrix;
-		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
-		glUniform1i(sceneADSUniform.uniform_enable_godRays, 0);
-		glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 1);
-		
-		displaySphere(NULL);
-		glUseProgram(0);
-	}
-	
 #endif
 
 #ifdef ENABLE_SKYBOX
@@ -649,7 +649,6 @@ void displayScene(int width, int height, int godRays = 1)
 	displaySkybox(texture_skybox);
 	glUseProgram(0);
 #endif
-
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
@@ -745,9 +744,9 @@ void displayScene(int width, int height, int godRays = 1)
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
-	void displayBillboarding(void);
+	void displayBillboarding(int);
 
-	displayBillboarding();
+	displayBillboarding(godRays);
 
 #endif // ENABLE_BILLBOARDING
 
@@ -858,9 +857,9 @@ void displayWaterFramebuffers(int godRays = 1) {
 
 #ifdef ENABLE_BILLBOARDING	
 	// Code
-	void displayBillboarding(void);
+	void displayBillboarding(int);
 	
-	displayBillboarding();
+	displayBillboarding(godRays);
 
 #endif // ENABLE_BILLBOARDING
 	
@@ -960,7 +959,7 @@ void displayWaterFramebuffers(int godRays = 1) {
 
 #ifdef ENABLE_BILLBOARDING	
 
-	displayBillboarding();
+	displayBillboarding(godRays);
 
 #endif // ENABLE_BILLBOARDING
 
@@ -970,7 +969,7 @@ void displayWaterFramebuffers(int godRays = 1) {
 
 }
 
-void displayBillboarding(void)
+void displayBillboarding(int godRays)
 {
 	// variable declaration
 	mat4 translationMatrix = mat4::identity();
@@ -983,8 +982,6 @@ void displayBillboarding(void)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	billboardingEffectUniform = useBillboardingShader();
-
-//////////////////////////////////////////
 
 	// instanced quads with grass texture
 	translationMatrix = mat4::identity();
@@ -1009,6 +1006,7 @@ void displayBillboarding(void)
 	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
 	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
 	glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
+	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
