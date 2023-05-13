@@ -40,8 +40,8 @@
 //#define ENABLE_STATIC_MODELS	
 //#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
-#define ENABLE_GAUSSIAN_BLUR
-//#define ENABLE_GODRAYS
+//#define ENABLE_GAUSSIAN_BLUR
+#define ENABLE_GODRAYS
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -370,10 +370,10 @@ void displayScene_PlaceHolderOutdoor(void)
 
 	// set cameraa
 
-	setCamera();
+	//setCamera();
 	//setCamera(&camera);
 
-	//rotateCamera(&camera, 0.0f, 0.0f, 0.0f, 10.0f, cameraAngle);
+	rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
@@ -978,7 +978,7 @@ void updateScene_PlaceHolderOutdoor(void)
 	// update camera using lerp
 	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
-	cameraAngle = cameraAngle + 2.0f;
+	cameraAngle = cameraAngle + 0.5f;
 	if (cameraAngle >= 360.0f)
 		cameraAngle -= 360.0f;
 }
