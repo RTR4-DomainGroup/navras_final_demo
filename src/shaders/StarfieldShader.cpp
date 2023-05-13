@@ -100,7 +100,7 @@ int initializeStarfieldShader(void)
 			"}" \
 			"else" \
 			"{\n" \
-				"FragColor = a_color_out; \n"	\
+				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n"	\
 			"}\n" \
 			
 		"}";

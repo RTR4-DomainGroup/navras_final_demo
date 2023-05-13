@@ -10,7 +10,8 @@
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
 #include "../inc/scenes/scenes.h"
-#include "../inc/scenes/scenePlaceHolder.h"
+#include "../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../inc/scenes/scenePlaceHolderIndoor.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
@@ -29,8 +30,8 @@
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
 
-#define WIN_WIDTH  800
-#define WIN_HEIGHT  600
+//#define WIN_WIDTH  1920
+//#define WIN_HEIGHT  1080
 
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -74,7 +75,7 @@ struct FSQuadUniform sceneFSQuadUniform;
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
 
-static scene_t currentScene = SCENE_INVALID;
+static scene_t currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 bool sceneFadeOut = false;
 
@@ -493,10 +494,16 @@ int initialize(void) {
     scenePush(SCENE_1);
     scenePush(SCENE_0);
 
-	if(initializeScene_PlaceHolder() != 0)
+	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
-		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
+		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
         return (-8);
+	}
+
+	if (initializeScene_PlaceHolderIndoor() != 0)
+	{
+		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
+		return (-8);
 	}
 
 	// if(initializeScene_Scene0() != 0)
@@ -520,7 +527,6 @@ int initialize(void) {
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
 	
 	// Enabling The Texture
 	//glEnable(GL_TEXTURE_2D);
@@ -529,8 +535,12 @@ int initialize(void) {
 
 	ToggleFullScreen();
 
+	//set fps to system
+	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
+
 	return(0);
 
+	resize(WIN_WIDTH, WIN_HEIGHT);
 }
 
 void resetCamera(void)
@@ -602,7 +612,7 @@ void ToggleFullScreen(void) {
 
 			}
 
-			ShowCursor(FALSE);
+			ShowCursor(TRUE);		//usually kept false
 			gbFullScreen = TRUE;
 		}
 	}
@@ -616,6 +626,22 @@ void ToggleFullScreen(void) {
 		gbFullScreen = FALSE;
 
 	}
+
+}
+
+void resize(int width, int height) {
+
+	// Code
+	if (height == 0)			// To Avoid Divided by 0(in Future)
+		height = 1;
+
+	windowWidth = width;
+	windowHeight = height;
+	// 
+	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
+
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+
 
 }
 
@@ -636,9 +662,17 @@ void display(void)
 	{
 		// displayScene_Scene1();
 	}
+	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
+	{
+		displayScene_PlaceHolderOutdoor();
+	}
+	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	{
+		displayScene_PlaceHolderIndoor();
+	}
 	else
 	{
-		displayScene_PlaceHolder();
+		currentScene = SCENE_INVALID;
 	}
 
 	SwapBuffers(ghdc);
@@ -668,63 +702,17 @@ void update(void)
 	{
 		// updateScene_Scene1();
 	}
-	else
+	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
 	{
-		updateScene_PlaceHolder();
+		updateScene_PlaceHolderOutdoor();
 	}
+	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	{
+		updateScene_PlaceHolderIndoor();
+	}
+
 	// camera movement related updates
 	updateMouseMovement();
-}
-
-void updateMouseMovement(void)
-{
-	if (firstMouse)
-	{
-		lastX = mouseX;
-		lastY = mouseY;
-		firstMouse = false;
-	}
-
-	float xoffset = mouseX - lastX;
-	float yoffset = lastY - mouseY; // reversed since y-coordinates go from bottom to top
-	lastX = mouseX;
-	lastY = mouseY;
-
-	float sensitivity = 0.3f; // change this value to your liking
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw += xoffset;
-	pitch += yoffset;
-
-	// make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (pitch > 90.0f)
-		pitch = 90.0f;
-	if (pitch < -90.0f)
-		pitch = -90.0f;
-
-	if (mouseLeftClickActive == TRUE)
-	{
-		cameraCenterX = cameraEyeX + cos(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
-		cameraCenterY = cameraEyeY + sin(pitch * M_PI / 180.0f);
-		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
-	}
-}
-
-void resize(int width, int height) {
-
-	// Code
-	if (height == 0)			// To Avoid Divided by 0(in Future)
-		height = 1;
-
-	windowWidth = width;
-	windowHeight = height;
-        // 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
-
-
 }
 
 void uninitialize(void) {
@@ -738,7 +726,8 @@ void uninitialize(void) {
 	uninitializeAudio();
 
 	//uninitialize all scenes
-	uninitializeScene_PlaceHolder();
+	uninitializeScene_PlaceHolderOutdoor();
+	uninitializeScene_PlaceHolderIndoor();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
@@ -788,4 +777,39 @@ void uninitialize(void) {
 
 	//}
 
+}
+
+void updateMouseMovement(void)
+{
+	if (firstMouse)
+	{
+		lastX = mouseX;
+		lastY = mouseY;
+		firstMouse = false;
+	}
+
+	float xoffset = mouseX - lastX;
+	float yoffset = lastY - mouseY; // reversed since y-coordinates go from bottom to top
+	lastX = mouseX;
+	lastY = mouseY;
+
+	float sensitivity = 0.3f; // change this value to your liking
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (pitch > 90.0f)
+		pitch = 90.0f;
+	if (pitch < -90.0f)
+		pitch = -90.0f;
+
+	if (mouseLeftClickActive == TRUE)
+	{
+		cameraCenterX = cameraEyeX + cos(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
+		cameraCenterY = cameraEyeY + sin(pitch * M_PI / 180.0f);
+		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
+	}
 }
