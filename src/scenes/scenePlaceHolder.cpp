@@ -33,9 +33,9 @@
 
 #define ENABLE_TERRIAN
 #define ENABLE_WATER
-//#define ENABLE_CLOUD_NOISE
+#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
+//#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 //#define ENABLE_STATIC_MODELS	
 //#define ENABLE_BILLBOARDING
@@ -342,10 +342,8 @@ int initializeScene_PlaceHolder(void)
 void displayScene_PlaceHolder(void)
 {
 	// Function Declarations
-	void displayWaterFramebuffers(int);
-	void displayScene(int, int, int);
+	void displayPasses(int,bool,bool,bool);
 	void displayGodRays(int, int);
-	void displayBillboarding(int);
 
 	// Code
 	// Here The Game STarts
@@ -372,7 +370,7 @@ void displayScene_PlaceHolder(void)
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayScene(windowWidth, windowHeight, 1);
+		displayPasses(1, false, false, true);
 	
 	#elif defined(ENABLE_GAUSSIAN_BLUR)
 		displayWaterFramebuffers(1);
@@ -382,7 +380,7 @@ void displayScene_PlaceHolder(void)
 		0.1f, 1000.0f);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayScene(fullSceneFbo.textureWidth, fullSceneFbo.textureHeight, 1);
+		displayPasses(1, false, false, true);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		displayGaussianBlur();
@@ -399,7 +397,24 @@ void displayScene_PlaceHolder(void)
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
 	#else
-		displayWaterFramebuffers(1);
+
+		// Water Frame Buffers
+		// Reflection
+		glEnable(GL_CLIP_DISTANCE0);
+		glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
+		glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+			displayPasses(1,true,true,false);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// Refraction
+		glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
+		glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+			displayPasses(1,true, false, false);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_CLIP_DISTANCE0);
+
 		// GodRay Black pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
@@ -409,6 +424,8 @@ void displayScene_PlaceHolder(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//2 framebuffers for water effect
 		//displayWaterFramebuffers(0);
+			displayPasses(0, false, false, true);
+
 		sceneADSUniform = useADSShader();
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -424,8 +441,7 @@ void displayScene_PlaceHolder(void)
 		
 		displaySphere(NULL);
 		glUseProgram(0);
-
-		displayScene(fboBlackPass.textureWidth, fboBlackPass.textureHeight, 0);
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// GodRay Color Pass
@@ -436,7 +452,7 @@ void displayScene_PlaceHolder(void)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//displayWaterFramebuffers(1);
-		displayScene(fboBlackPass.textureWidth, fboBlackPass.textureHeight, 1);
+			displayPasses(1, false, false, true);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// God Rays Pass
@@ -494,24 +510,48 @@ void displayScene_PlaceHolder(void)
 #endif
 }
 
-void displayScene(int width, int height, int godRays = 1)
-{
+void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false ,bool isReflection = false, bool waterDraw = false) {
 	
-	// Transformations
+	
+	// Code
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
 	mat4 viewMatrix = mat4::identity();
-	
+
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
+	mat4 rotateX = mat4::identity();
+
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	setCamera();
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (recordWaterReflectionRefraction == true) {
+		waterUniform = useWaterShader();
+
+			float distance = 2.0f * (cameraEyeY - waterHeight);
+			if(isReflection == true){
+				glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
+				cameraEyeY -= distance;
+				setCamera();
+				glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+				cameraEyeY += distance;
+				setCamera();
+			}
+
+			if (isReflection == false) {
+				glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
+				glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+			}
+	}
 
 #ifdef ENABLE_STARFIELD
-	
+
 	sceneStarfieldUniform = useStarfieldShader();
 
 	float time = (float)deltaTime;
@@ -541,60 +581,30 @@ void displayScene(int width, int height, int godRays = 1)
 
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_ADSLIGHT
-    sceneADSUniform = useADSShader();
-	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_Marble);
-	
-	// Sending texture Related Uniforms
-    glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
-
-	// Sending Light Related Uniforms
-	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneADSUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneADSUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneADSUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneADSUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneADSUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneADSUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneADSUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneADSUniform.materialShininessUniform, materialShininess);
-	glUniform1i(sceneADSUniform.uniform_enable_godRays, godRays);
-
-	//glUniform1i(sceneADSUniform.fogEnableUniform, 1);
-	//glUniform1f(sceneADSUniform.densityUniform, density);
-	//glUniform1f(sceneADSUniform.gradientUniform, gradient);
-	//glUniform4fv(sceneADSUniform.skyFogColorUniform, 1, skyFogColor);
-
-	// Call Geometry over here 
-	displayCube();
-	// displayTriangle();
-	// displayQuad();
-	// displayPyramid();
-	// displaySphere();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);
-	
-#endif
-	
 #ifdef ENABLE_CLOUD_NOISE
 
 	glEnable(GL_TEXTURE_3D);
-
 	sceneCloudNoiseUniform = useCloudNoiseShader();
 
-	//mat4 viewMatrix = mat4::identity();
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
 
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	rotateX = mat4::identity();
+	
 	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
 	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
 	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
 	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix;
+	modelMatrix = translationMatrix * scaleMatrix * rotateX;
+
+	//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
 	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -615,7 +625,6 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
 	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
 	glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-
 	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -630,9 +639,39 @@ void displayScene(int width, int height, int godRays = 1)
 #endif
 
 #ifdef ENABLE_TERRIAN
-	void displayTerraineScene(int);
 	// Terrain
-	displayTerraineScene(godRays);
+	terrainUniform = useTerrainShader();
+
+	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+
+	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
+
+	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
+	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
+	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
+
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
+	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
+	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
+
+#ifdef ENABLE_FOG
+	glUniform1i(terrainUniform.fogEnableUniform, 1);
+	glUniform1f(terrainUniform.densityUniform, density);
+	glUniform1f(terrainUniform.gradientUniform, gradient);
+	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
+#endif // DEBUG
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
+	displayTerrain();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUseProgram(0);
 #endif
 
 #ifdef ENABLE_SKYBOX
@@ -677,7 +716,7 @@ void displayScene(int width, int height, int godRays = 1)
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	
+
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -710,278 +749,55 @@ void displayScene(int width, int height, int godRays = 1)
 	glUseProgram(0);
 #endif
 
-#ifdef ENABLE_WATER
-	waterUniform = useWaterShader();
+if(waterDraw == true){
+	#ifdef ENABLE_WATER
+		waterUniform = useWaterShader();
 
-	translationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
+		translationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
+		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-	scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
-	
-	modelMatrix = translationMatrix * scaleMatrix;
+		scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
 
-	glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		modelMatrix = translationMatrix * scaleMatrix;
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
+		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
 
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
 
-	glUniform1f(waterUniform.moveFactorUniform, moveFactor);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
 
-	displayWater();
+		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);
+		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
 
-#endif
+		displayWater();
 
-#ifdef ENABLE_BILLBOARDING	
-	void displayBillboarding(int);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glUseProgram(0);
 
-	displayBillboarding(godRays);
-
-#endif // ENABLE_BILLBOARDING
-
+	#endif
 }
 
-void displayWaterFramebuffers(int godRays = 1) {
-	//  Function Declaration
-	void displayTerraineScene(int);
-	
-	
-	// Code
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
-
-	mat4 rotationMatrix_x = mat4::identity();
-	mat4 rotationMatrix_y = mat4::identity();
-	mat4 rotationMatrix_z = mat4::identity();
-
-	mat4 rotateX = mat4::identity();
-
-	glEnable(GL_CLIP_DISTANCE0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
-
-	glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	waterUniform = useWaterShader();
-
-	glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-
-	float distance = 2 * (cameraEyeY - waterHeight);
-	cameraEyeY -= distance;
-
-	setCamera();
-
-	cameraEyeY += distance;
-	setCamera();
-
-	//glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-
-#ifdef ENABLE_CLOUD_NOISE
-
-	glEnable(GL_TEXTURE_3D);
-	sceneCloudNoiseUniform = useCloudNoiseShader();
-
+#ifdef ENABLE_BILLBOARDING	
+	// variable declaration
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
 
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	rotateX = mat4::identity();
-	
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
-	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotateX;
-
-	viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
-
-	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-	glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-	//glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, noise_texture);
-
-	displayQuad();
-
-	glUseProgram(0);
-
-	glDisable(GL_TEXTURE_3D);
-
-#endif
-
-#ifdef ENABLE_TERRIAN
-	// Terrain
-	displayTerraineScene(godRays);
-#endif
-
-#ifdef ENABLE_BILLBOARDING	
-	// Code
-	void displayBillboarding(int);
-	
-	displayBillboarding(godRays);
-
-#endif // ENABLE_BILLBOARDING
-	
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-	glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
-
-	glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	waterUniform = useWaterShader();
-
-	glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-	//glUseProgram(0);
-
-#ifdef ENABLE_CLOUD_NOISE
-
-	glEnable(GL_TEXTURE_3D);
-
-	sceneCloudNoiseUniform = useCloudNoiseShader();
-
-	translationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	rotateX = mat4::identity();
-	//mat4 viewMatrix = mat4::identity();
-
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
-	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotateX;
-
-	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-	glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, noise_texture);
-
-	displayQuad();
-
-	glUseProgram(0);
-
-	glDisable(GL_TEXTURE_3D);
-
-#endif
-
-#ifdef ENABLE_TERRIAN
-	// Terrain
-	displayTerraineScene(godRays);
-	
-#ifdef ENABLE_FOG
-	glUniform1i(terrainUniform.fogEnableUniform, 1);
-	glUniform1f(terrainUniform.densityUniform, density);
-	glUniform1f(terrainUniform.gradientUniform, gradient);
-	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
-#endif // DEBUG
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
-
-	displayTerrain();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
-#endif
-
-#ifdef ENABLE_BILLBOARDING	
-
-	displayBillboarding(godRays);
-
-#endif // ENABLE_BILLBOARDING
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glDisable(GL_CLIP_DISTANCE0);
-
-}
-
-void displayBillboarding(int godRays)
-{
-	// variable declaration
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	
 	// code
 	glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	billboardingEffectUniform = useBillboardingShader();
 
@@ -1030,51 +846,13 @@ void displayBillboarding(int godRays)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-    displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
 	glDisable(GL_BLEND);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glDisable(GL_CLIP_DISTANCE0);
-}
-
-void displayTerraineScene(int godRays)
-{
-	terrainUniform = useTerrainShader();
-
-	vmath::mat4 mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
-
-	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
-
-	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
-
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
-	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
-	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
-
-#ifdef ENABLE_FOG
-	glUniform1i(terrainUniform.fogEnableUniform, 1);
-	glUniform1f(terrainUniform.densityUniform, density);
-	glUniform1f(terrainUniform.gradientUniform, gradient);
-	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
-#endif // DEBUG
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
-	displayTerrain();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	glUseProgram(0);
+#endif // ENABLE_BILLBOARDING
 	
 }
 
