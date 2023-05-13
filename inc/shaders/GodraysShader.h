@@ -12,6 +12,11 @@ struct GodraysUniform
     GLuint exposure;
     GLuint lightPositionOnScreen;
     GLuint godraysampler;
+    GLuint dispersalUniform;
+    GLuint haloWidthUniform;
+    GLuint intensityUniform;
+    GLuint distortionUniform;
+    GLuint godrays_lfEnabled;
 };
 
 
