@@ -40,8 +40,8 @@
 //#define ENABLE_STATIC_MODELS	
 //#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
-//#define ENABLE_GAUSSIAN_BLUR
-#define ENABLE_GODRAYS
+#define ENABLE_GAUSSIAN_BLUR
+//#define ENABLE_GODRAYS
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -361,7 +361,22 @@ void displayScene_PlaceHolder(void)
 	displayVideoEffect(&fsqUniform);
 	glUseProgram(0);
 #else
+		// Water Frame Buffers
+		// Reflection
+		glEnable(GL_CLIP_DISTANCE0);
+		glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
+		glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+		displayPasses(1, true, true, false);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+		// Refraction
+		glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
+		glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+		displayPasses(1, true, false, false);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_CLIP_DISTANCE0);
 	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
 		//2 framebuffers for water effect
 		displayWaterFramebuffers(1);
@@ -373,7 +388,7 @@ void displayScene_PlaceHolder(void)
 		displayPasses(1, false, false, true);
 	
 	#elif defined(ENABLE_GAUSSIAN_BLUR)
-		displayWaterFramebuffers(1);
+		displayPasses(1, false, false, true);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight, 
@@ -398,22 +413,7 @@ void displayScene_PlaceHolder(void)
     	glBindTexture(GL_TEXTURE_2D, 0);
 	#else
 
-		// Water Frame Buffers
-		// Reflection
-		glEnable(GL_CLIP_DISTANCE0);
-		glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
-		glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
-			displayPasses(1,true,true,false);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		// Refraction
-		glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
-		glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
-			displayPasses(1,true, false, false);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glDisable(GL_CLIP_DISTANCE0);
+		
 
 		// GodRay Black pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
