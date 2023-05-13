@@ -144,7 +144,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform4fv(sceneIndoorADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneIndoorADSUniform.materialShininessUniform, materialShininess);
 
-	glUniform1i(sceneIndoorADSUniform.fogEnableUniform, 1);
+	glUniform1i(sceneIndoorADSUniform.fogEnableUniform, 0);
 	glUniform1f(sceneIndoorADSUniform.densityUniform, density);
 	glUniform1f(sceneIndoorADSUniform.gradientUniform, gradient);
 	glUniform4fv(sceneIndoorADSUniform.skyFogColorUniform, 1, skyFogColor);
