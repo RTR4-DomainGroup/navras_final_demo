@@ -126,12 +126,11 @@ int initializeGodraysShader(void)
             "\n" \
             "vec4 RadialBlur = vec4(0.0); \n" \
             "vec3 LensFlareHalo = vec3(0.0); \n" \
-            "lightPosition =  u_projectionMatrix * u_viewMatrix * u_lightPositionOnScreen;"
-            "lightPosition /= lightPosition.w;" \
-            "\n" \
-            "lightPosition += vec4(1.0);" \
-            "\n" \
-            "lightPosition *= 0.5;" \
+            "vec4 lightPosition3D = u_projectionMatrix * u_viewMatrix  * u_lightPositionOnScreen; \n"	\
+			"lightPosition3D = lightPosition3D / lightPosition3D.w; \n"									\
+			"lightPosition3D = lightPosition3D + vec4(1.0); \n"											\
+			"lightPosition3D = lightPosition3D * 0.5; \n"												\
+			"lightPosition = lightPosition3D; \n"														\
 
             "if(u_godRays_lf_Enabled == 1)" \
             "{\n" \
@@ -154,39 +153,28 @@ int initializeGodraysShader(void)
                     "illuminationDecay *= u_decay;" \
                     "\n" \
                 "}"
-                "RadialBlur *= u_exposure;" \
-                //"FragColor = vec4(FragColor.rgb, 1.0);"
+                "FragColor *= u_exposure;" \
                 "\n" \
             "}\n" \
-                																										\
-			"vec2 TexCoordinates = texcoord; \n"																									\
-            "vec2 u_SunPosProj = lightPosition.xy;\n" \
+                																										                        \
+			"vec2 TexCoordinates = texcoord; \n"																								\
+            "vec2 u_SunPosProj = lightPosition.xy;\n"                                                                                           \
 			"vec2 RadialBlurVector = (u_SunPosProj - TexCoordinates) / NUM_SAMPLES; \n"															\
-
-			/*"for(int i = 0; i < NUM_SAMPLES; i++)	\n"																								\
-			"{ \n"																																		\
-				"RadialBlur += texture2D(u_godraysampler, TexCoordinates).rgb; \n"																\
-				"TexCoordinates = TexCoordinates + RadialBlurVector; \n"																				\
-			"} \n"	*/
-
-			//"RadialBlur = RadialBlur / NUM_SAMPLES; \n"																							\
-
 			    
-			"TexCoordinates = 1.0 - texcoord; \n"																							\
-			"vec2 LensFlareVector = (vec2(0.5) - TexCoordinates) * u_dispersal; \n"																		\
-			"vec2 LensFlareOffset = vec2(0.0); \n"																										\
+			"TexCoordinates = 1.0 - texcoord; \n"																							    \
+			"vec2 LensFlareVector = (vec2(0.5) - TexCoordinates) * u_dispersal; \n"																\
+			"vec2 LensFlareOffset = vec2(0.0); \n"																								\
 
-			"for(int i = 0; i < 5; i++) \n"																												\
-			"{ \n"																																		\
+			"for(int i = 0; i < 5; i++) \n"																										\
+			"{ \n"																																\
 				"LensFlareHalo = LensFlareHalo + texture2DDistorted(u_godraysampler, TexCoordinates, LensFlareOffset).rgb; \n"					\
-				"LensFlareOffset = LensFlareOffset + LensFlareVector; \n"																				\
-			"} \n"																																		\
+				"LensFlareOffset = LensFlareOffset + LensFlareVector; \n"																		\
+			"} \n"																																\
 
 			"LensFlareHalo = LensFlareHalo + texture2DDistorted(u_godraysampler, TexCoordinates, normalize(LensFlareVector) * u_haloWidth); \n"	\
-			"LensFlareHalo = LensFlareHalo / 6.0; \n"																									\
+			"LensFlareHalo = LensFlareHalo / 6.0; \n"																							\
 
-            "FragColor = vec4((texture2D(u_godraysampler, TexCoordinates).rgb + (RadialBlur.rgb + LensFlareHalo)) * u_intensity, 1.0); \n"			\
-
+            "FragColor += vec4((texture2D(u_godraysampler, TexCoordinates).rgb + (LensFlareHalo)) * u_intensity, 1.0); \n"			            \
         "}";
     
      // Create the Fragment Shader object.
@@ -281,7 +269,6 @@ int initializeGodraysShader(void)
     godRaysUniform.dispersalUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_dispersal");
     godRaysUniform.haloWidthUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_haloWidth");
     godRaysUniform.intensityUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_intensity");
-
 
     return (0);
 }

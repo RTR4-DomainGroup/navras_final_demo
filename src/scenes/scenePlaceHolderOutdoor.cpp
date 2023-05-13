@@ -485,6 +485,7 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+
 		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
 		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
 		glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
