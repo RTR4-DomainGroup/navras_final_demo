@@ -40,8 +40,8 @@
 //#define ENABLE_STATIC_MODELS	
 //#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
-#define ENABLE_GAUSSIAN_BLUR
-//#define ENABLE_GODRAYS
+//#define ENABLE_GAUSSIAN_BLUR
+#define ENABLE_GODRAYS
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -134,6 +134,11 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 // Varaiables for God Rays
 struct GodraysUniform sceneGodRaysUniform;
 GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
+
+GLfloat dispersal = 0.1875f;
+GLfloat haloWidth = 0.45f;
+GLfloat intensity = 1.5f;
+GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
 
 int initializeScene_PlaceHolderOutdoor(void)
@@ -479,6 +484,11 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
+		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
+		glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
+		glUniform3fv(sceneGodRaysUniform.distortionUniform, 1, distortion);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);

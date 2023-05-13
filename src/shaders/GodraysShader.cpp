@@ -167,9 +167,9 @@ int initializeGodraysShader(void)
 			"{ \n"																																		\
 				"RadialBlur += texture2D(u_godraysampler, TexCoordinates).rgb; \n"																\
 				"TexCoordinates = TexCoordinates + RadialBlurVector; \n"																				\
-			"} \n"	*/																																	\
+			"} \n"	*/
 
-			"RadialBlur = RadialBlur / NUM_SAMPLES; \n"																							\
+			//"RadialBlur = RadialBlur / NUM_SAMPLES; \n"																							\
 
 			    
 			"TexCoordinates = 1.0 - texcoord; \n"																							\
@@ -185,7 +185,7 @@ int initializeGodraysShader(void)
 			"LensFlareHalo = LensFlareHalo + texture2DDistorted(u_godraysampler, TexCoordinates, normalize(LensFlareVector) * u_haloWidth); \n"	\
 			"LensFlareHalo = LensFlareHalo / 6.0; \n"																									\
 
-            "FragColor = vec4((texture2D(u_godraysampler, a_texcoord_out).rgb + (RadialBlur + LensFlareHalo)) * u_intensity, 1.0); \n"			\
+            "FragColor = vec4((texture2D(u_godraysampler, TexCoordinates).rgb + (RadialBlur.rgb + LensFlareHalo)) * u_intensity, 1.0); \n"			\
 
         "}";
     
