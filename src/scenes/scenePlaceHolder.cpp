@@ -31,17 +31,17 @@
 #define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-//#define ENABLE_TERRIAN
+#define ENABLE_TERRIAN
 #define ENABLE_WATER
 //#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
+#define ENABLE_STARFIELD
 //#define ENABLE_FOG
-#define ENABLE_STATIC_MODELS	
-#define ENABLE_BILLBOARDING
+//#define ENABLE_STATIC_MODELS	
+//#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
-//#define ENABLE_GODRAYS
+#define ENABLE_GODRAYS
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -374,7 +374,7 @@ void displayScene_PlaceHolder(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		displayScene(windowWidth, windowHeight, 1);
 	
-	#elif ENABLE_GAUSSIAN_BLUR
+	#elif defined(ENABLE_GAUSSIAN_BLUR)
 		displayWaterFramebuffers(1);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
