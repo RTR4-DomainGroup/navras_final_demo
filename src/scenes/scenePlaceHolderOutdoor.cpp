@@ -24,7 +24,7 @@
 // #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
 
-#include "../../inc/scenes/scenePlaceHolder.h"
+#include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 
 
 #define FBO_WIDTH 1920
@@ -136,7 +136,7 @@ struct GodraysUniform sceneGodRaysUniform;
 GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
 
 
-int initializeScene_PlaceHolder(void)
+int initializeScene_PlaceHolderOutdoor(void)
 {
 	// Function Declarations
 
@@ -339,7 +339,7 @@ int initializeScene_PlaceHolder(void)
 	return 0;
 }
 
-void displayScene_PlaceHolder(void)
+void displayScene_PlaceHolderOutdoor(void)
 {
 	// Function Declarations
 	void displayPasses(int,bool,bool,bool);
@@ -915,7 +915,7 @@ void displayGaussianBlur(void)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void updateScene_PlaceHolder(void)
+void updateScene_PlaceHolderOutdoor(void)
 {
 	// Code
 #ifdef ENABLE_ADSLIGHT
@@ -953,7 +953,7 @@ void updateScene_PlaceHolder(void)
 	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
 }
 
-void uninitializeScene_PlaceHolder(void)
+void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
 #ifdef ENABLE_BILLBOARDING
