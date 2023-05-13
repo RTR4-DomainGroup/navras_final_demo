@@ -59,6 +59,8 @@ extern GLfloat materialShininess;
 //Model variables
 STATIC_MODEL rockModel_in;
 STATIC_MODEL streetLightModel_in;
+STATIC_MODEL deskModel;
+STATIC_MODEL schoolBagModel;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -88,6 +90,8 @@ int initializeScene_PlaceHolderIndoor(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel_in);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_in);
+	loadStaticModel("res/models/desk/desk.obj", &deskModel);
+	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
 #endif
 
 	return 0;
@@ -159,6 +163,7 @@ void displayScene_PlaceHolderIndoor(void)
 
 	drawStaticModel(rockModel_in);
 
+	// ------ Streetlight Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -167,7 +172,7 @@ void displayScene_PlaceHolderIndoor(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	// ------ Streetlight Model ------
+	
 	translationMatrix = vmath::translate(1.0f, -2.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
@@ -178,6 +183,48 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(streetLightModel_in);
+
+	// ------ SchoolBag Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+
+	translationMatrix = vmath::translate(1.0f, 2.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(schoolBagModel);
+
+
+	// ------ Desk Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(-1.0f, -2.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(deskModel);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
@@ -224,8 +271,10 @@ void uninitializeScene_PlaceHolderIndoor(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&rockModel_in);
+	unloadStaticModel(&schoolBagModel);
+	unloadStaticModel(&deskModel);
 	unloadStaticModel(&streetLightModel_in);
+	unloadStaticModel(&rockModel_in);
 #endif
 
 
