@@ -5,10 +5,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "../../ext/SOIL/include/SOIL.h"
 #include "../../inc/helper/stb_image.h"
 #include "../helper/assimp_glm_helpers.h"

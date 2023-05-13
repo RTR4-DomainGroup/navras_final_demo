@@ -22,8 +22,6 @@ struct ADSUniform
     GLuint ksUniform;
     GLuint materialShininessUniform;
 
-    GLuint lightingEnableUniform;
-
     GLuint densityUniform;
     GLuint gradientUniform;
     GLuint skyFogColorUniform;

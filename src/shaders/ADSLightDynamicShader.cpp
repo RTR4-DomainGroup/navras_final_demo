@@ -1,5 +1,6 @@
-
+#include <windows.h>
 #include "../../inc/shaders/ADSLightDynamicShader.h"
+
 
 // Variable Declarations
 GLuint adsDynamicShaderProgramObject;
@@ -30,6 +31,12 @@ int initializeADSDynamicShader(void)
 		"uniform mat4 u_projectionMatrix; \n" \
 
 		"uniform vec4 u_lightPosition; \n" \
+		
+		//fog
+		"uniform int u_fogEnable; \n" \
+		"uniform float u_density; \n"	\
+		"uniform float u_gradient; \n"	\
+		"out float visibility; \n"		\
 
 		/*skeletal anim*/
 		"const int MAX_BONES = 100; \n" \
@@ -72,6 +79,14 @@ int initializeADSDynamicShader(void)
 		"	} \n" \
 
 		"	gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * totalPosition; \n" \
+
+		"	if (u_fogEnable == 1) \n" \
+		"	{ \n" \
+		"		vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * a_position; \n"		\
+		"		float distance = length(positionRelativeToCamera.xyz); \n"							\
+		"		visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
+		"		visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
+		"	} \n" \
 
 		"	a_color_out = a_color;\n" \
 		"	a_texcoord_out = a_texcoord;\n" \
@@ -118,6 +133,7 @@ int initializeADSDynamicShader(void)
 		"in vec3 transformedNormals; \n" \
 		"in vec3 lightDirection; \n" \
 		"in vec3 viewerVector;\n" \
+		"in float visibility; \n"		\
 
 		"uniform vec4 u_la; \n" \
 		"uniform vec4 u_ld; \n" \
@@ -129,27 +145,48 @@ int initializeADSDynamicShader(void)
 		
 		"uniform sampler2D u_texturesampler;\n" \
 
+		"uniform int u_fogEnable; \n" \
+		"uniform vec4 u_skyFogColor; \n"	\
+		"uniform int enable_godRays; \n" \
+		"uniform int enable_sphere_color; \n" \
+
 		"out vec4 FragColor; \n" \
 
 		"void main(void) \n" \
 		"{ \n" \
-		"	vec4 phong_ads_light; \n" \
-		"	vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n" \
+		"	if (enable_godRays == 1) \n" \
+		"	{\n" \
+		"		vec4 phong_ads_light; \n" \
+		"		vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n" \
 		
-		"	vec4 ambient = u_la * u_ka; \n" \
+		"		vec4 ambient = u_la * u_ka; \n" \
 
-		"	vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
-		"	vec3 normalized_light_direction = normalize(lightDirection); \n" \
-		"	vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
+		"		vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
+		"		vec3 normalized_light_direction = normalize(lightDirection); \n" \
+		"		vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
 		
-		"	vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
-		"	vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-		"	vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+		"		vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
+		"		vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
+		"		vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
 		
-		"	phong_ads_light = ambient + diffuse + specular; \n" \
+		"		phong_ads_light = ambient + diffuse + specular; \n" \
 		
-		"	FragColor = phong_ads_light; \n" \
-			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
+		"		FragColor = phong_ads_light; \n" \
+
+		"		if (u_fogEnable == 1) \n" \
+		"		{ \n" \
+		"			FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
+		"		} \n" \
+		"	} \n" \
+
+		"	else if(enable_sphere_color == 1)\n" \
+		"	{\n" \
+		"		FragColor = a_color_out; \n" \
+		"	}\n" \
+		"	else\n" \
+		"	{\n" \
+		"		FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+		"	}\n" \
 		"} \n";
 
 	GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
@@ -228,6 +265,14 @@ int initializeADSDynamicShader(void)
 	adsDynamicUniform.materialShininessUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_materialShininess");
 	
 	adsDynamicUniform.textureSamplerUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_texturesampler");
+
+	adsDynamicUniform.gradientUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_gradient");
+	adsDynamicUniform.densityUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_density");
+	adsDynamicUniform.skyFogColorUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_skyFogColor");
+	adsDynamicUniform.fogEnableUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_fogEnable");
+	adsDynamicUniform.uniform_enable_godRays = glGetUniformLocation(adsDynamicShaderProgramObject, "enable_godRays");
+	adsDynamicUniform.godrays_blackpass_sphere = glGetUniformLocation(adsDynamicShaderProgramObject, "enable_sphere_color");
+
 
 	for (int i = 0; i < MAX_BONES; i++)
 	{

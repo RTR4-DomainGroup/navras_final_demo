@@ -23,6 +23,15 @@ struct ADSDynamicUniform
     GLuint ksUniform;
     GLuint materialShininessUniform;
 
+    GLuint densityUniform;
+    GLuint gradientUniform;
+    GLuint skyFogColorUniform;
+    GLuint fogEnableUniform;
+    GLuint uniform_enable_godRays;
+
+    GLuint godrays_blackpass_sphere;
+
+
     GLuint finalBonesMatricesUniform[MAX_BONES];
 
 };

@@ -48,6 +48,7 @@ HDC ghdc = NULL;
 HGLRC ghrc = NULL;
 
 mat4 perspectiveProjectionMatrix;
+glm::mat4 glm_perspectiveProjectionMatrix;
 
 // framebuffer related variables
 int windowWidth;
@@ -520,14 +521,17 @@ int initialize(void) {
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-
 	
 	// Enabling The Texture
 	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
+	glm_perspectiveProjectionMatrix = glm::mat4(1.0f);
 
 	ToggleFullScreen();
+
+	//set fps to system
+	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
 
 	return(0);
 
@@ -602,7 +606,7 @@ void ToggleFullScreen(void) {
 
 			}
 
-			ShowCursor(FALSE);
+			ShowCursor(TRUE);		//usually kept false
 			gbFullScreen = TRUE;
 		}
 	}
@@ -723,6 +727,7 @@ void resize(int width, int height) {
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+	glm_perspectiveProjectionMatrix = glm::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
 
 }

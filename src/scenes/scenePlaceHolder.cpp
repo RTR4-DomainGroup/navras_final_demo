@@ -11,6 +11,7 @@
 
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
 
 #include "../../inc/effects/videoEffect.h"
@@ -20,6 +21,7 @@
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/WaterEffect.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
 // #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
@@ -37,7 +39,8 @@
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 //#define ENABLE_FOG
-#define ENABLE_STATIC_MODELS	
+//#define ENABLE_STATIC_MODELS	
+#define ENABLE_DYNAMIC_MODELS	
 //#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
@@ -49,6 +52,7 @@ TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneADSUniform;
+struct ADSDynamicUniform sceneADSDynamicUniform;
 struct FSQuadUniform fsqUniform;
 
 struct TerrainUniform terrainUniform;
@@ -110,6 +114,7 @@ GLuint noise_texture;
 GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
+extern glm::mat4 glm_perspectiveProjectionMatrix;;
 
 float displacementmap_depth;
 
@@ -125,6 +130,8 @@ struct StarfieldUniform sceneStarfieldUniform;
 //Model variables
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
+
+DYNAMIC_MODEL dancingVampire;
 
 GLfloat density = 0.15;
 GLfloat gradient = 0.5;
@@ -282,6 +289,10 @@ int initializeScene_PlaceHolder(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+#endif
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	loadDynamicModel("res/models/dancingVampire/dancing_vampire.dae", &dancingVampire);
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
@@ -534,7 +545,6 @@ void displayScene(int width, int height, int godRays = 1)
     glUniform1i(sceneADSUniform.textureSamplerUniform, 0);
 
 	// Sending Light Related Uniforms
-	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
 	glUniform4fv(sceneADSUniform.laUniform, 1, lightAmbient);
 	glUniform4fv(sceneADSUniform.ldUniform, 1, lightDiffuse);
 	glUniform4fv(sceneADSUniform.lsUniform, 1, lightSpecular);
@@ -623,7 +633,6 @@ void displayScene(int width, int height, int godRays = 1)
 		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneADSUniform.lightingEnableUniform, 0);
 		glUniform1i(sceneADSUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneADSUniform.godrays_blackpass_sphere, 1);
 		
@@ -656,7 +665,6 @@ void displayScene(int width, int height, int godRays = 1)
 	sceneADSUniform = useADSShader();
 
 	// Sending Light Related Uniforms
-	glUniform1i(sceneADSUniform.lightingEnableUniform, 1);
 	glUniform4fv(sceneADSUniform.laUniform, 1, lightAmbient);
 	glUniform4fv(sceneADSUniform.ldUniform, 1, lightDiffuse);
 	glUniform4fv(sceneADSUniform.lsUniform, 1, lightSpecular);
@@ -707,6 +715,59 @@ void displayScene(int width, int height, int godRays = 1)
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
+#endif
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	glm::mat4 glm_modelMatrix;
+	glm::mat4 glm_viewMatrix;
+	glm::mat4 glm_projectionMatrix;
+	glm::mat4 glm_translateMatrix;
+	glm::mat4 glm_rotateMatrix;
+	glm::mat4 glm_scaleMatrix;
+
+	glm_modelMatrix = glm::mat4(1.0f);
+	glm_viewMatrix = glm::mat4(1.0f);
+	glm_projectionMatrix = glm::mat4(1.0f);
+	glm_translateMatrix = glm::mat4(1.0f);
+	glm_rotateMatrix = glm::mat4(1.0f);
+	glm_scaleMatrix = glm::mat4(1.0f);
+
+	sceneADSDynamicUniform = useADSDynamicShader();
+
+	// Sending Light Related Uniforms
+	glUniform4fv(sceneADSDynamicUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneADSDynamicUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneADSDynamicUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneADSDynamicUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneADSDynamicUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneADSDynamicUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneADSDynamicUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneADSDynamicUniform.materialShininessUniform, materialShininess);
+
+	glUniform1i(sceneADSDynamicUniform.fogEnableUniform, 1);
+	glUniform1f(sceneADSDynamicUniform.densityUniform, density);
+	glUniform1f(sceneADSDynamicUniform.gradientUniform, gradient);
+	glUniform4fv(sceneADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneADSDynamicUniform.uniform_enable_godRays, godRays);
+	glUniform1i(sceneADSDynamicUniform.godrays_blackpass_sphere, 0);
+	
+	// ------ Dancing Vampire Model ------
+
+	glm_translateMatrix = glm::translate(glm_translateMatrix, glm::vec3(-1.0f, -1.0f, -2.0f));
+	//glm_scaleMatrix = glm::scale(scaleMatrix, glm::vec3(0.008f, 0.008f, 0.008f));
+	//glm_rotateMatrix = glm::rotate(glm_rotateMatrix, 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm_modelMatrix = glm_translateMatrix;
+	glm_projectionMatrix = glm_perspectiveProjectionMatrix;
+
+	glUniformMatrix4fv(sceneADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawDynamicModel(dancingVampire, 0.01f);
+
+	glUseProgram(0);
+
 #endif
 
 #ifdef ENABLE_WATER
@@ -1240,6 +1301,10 @@ void uninitializeScene_PlaceHolder(void)
 	//UNINIT models
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&streetLightModel);
+#endif
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	unloadDynamicModel(&dancingVampire);
 #endif
 
 #ifdef ENABLE_GAUSSIAN_BLUR

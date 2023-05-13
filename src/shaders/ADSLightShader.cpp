@@ -42,14 +42,13 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-			"if (u_lightingEnable == 1) \n" \
-			"{ \n" \
-				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
-				"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
-				"transformedNormals = normalMatrix * a_normal; \n" \
-				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
-				"viewerVector = vec3(-eyeCoordinates); \n" \
-			"} \n" \
+		
+			"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
+			"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
+			"transformedNormals = normalMatrix * a_normal; \n" \
+			"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
+			"viewerVector = vec3(-eyeCoordinates); \n" \
+			
 			"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position; \n" \
 			"a_color_out = a_color;\n" \
 			"a_texcoord_out = a_texcoord;\n" \
@@ -113,7 +112,6 @@ int initializeADSShader(void)
 		"uniform vec4 u_kd; \n" \
 		"uniform vec4 u_ks; \n" \
 		"uniform float u_materialShininess; \n" \
-		"uniform int u_lightingEnable; \n" \
 		"uniform int u_fogEnable; \n" \
 		"uniform sampler2D u_texturesampler;\n" \
 		"uniform vec4 u_skyFogColor; \n"	\
@@ -218,7 +216,6 @@ int initializeADSShader(void)
 	adsUniform.ksUniform = glGetUniformLocation(adsShaderProgramObject, "u_ks");
 	adsUniform.lightPositionUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightPosition");
 	adsUniform.materialShininessUniform = glGetUniformLocation(adsShaderProgramObject, "u_materialShininess");
-	adsUniform.lightingEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightingEnable");
 	adsUniform.textureSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "u_texturesampler");
 
 	adsUniform.gradientUniform = glGetUniformLocation(adsShaderProgramObject, "u_gradient");
