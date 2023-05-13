@@ -1,5 +1,6 @@
 #pragma once
 
 // include all scene*.h files here
-#include "scenePlaceHolder.h"
+#include "scenePlaceHolderOutdoor.h"
+#include "scenePlaceHolderIndoor.h"
 
