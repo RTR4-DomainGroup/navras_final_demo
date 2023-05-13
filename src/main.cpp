@@ -10,7 +10,8 @@
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
 #include "../inc/scenes/scenes.h"
-#include "../inc/scenes/scenePlaceHolder.h"
+#include "../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../inc/scenes/scenePlaceHolderIndoor.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
@@ -74,7 +75,7 @@ struct FSQuadUniform sceneFSQuadUniform;
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
 
-static scene_t currentScene = SCENE_INVALID;
+static scene_t currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 bool sceneFadeOut = false;
 
@@ -493,10 +494,16 @@ int initialize(void) {
     scenePush(SCENE_1);
     scenePush(SCENE_0);
 
-	if(initializeScene_PlaceHolder() != 0)
+	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
-		LOG("initializeScene_PlaceHolder() FAILED !!!\n");
+		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
         return (-8);
+	}
+
+	if (initializeScene_PlaceHolderIndoor() != 0)
+	{
+		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
+		return (-8);
 	}
 
 	// if(initializeScene_Scene0() != 0)
@@ -655,9 +662,17 @@ void display(void)
 	{
 		// displayScene_Scene1();
 	}
+	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
+	{
+		displayScene_PlaceHolderOutdoor();
+	}
+	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	{
+		displayScene_PlaceHolderIndoor();
+	}
 	else
 	{
-		displayScene_PlaceHolder();
+		currentScene = SCENE_INVALID;
 	}
 
 	SwapBuffers(ghdc);
@@ -687,10 +702,15 @@ void update(void)
 	{
 		// updateScene_Scene1();
 	}
-	else
+	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
 	{
-		updateScene_PlaceHolder();
+		updateScene_PlaceHolderOutdoor();
 	}
+	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	{
+		updateScene_PlaceHolderIndoor();
+	}
+
 	// camera movement related updates
 	updateMouseMovement();
 }
@@ -706,7 +726,8 @@ void uninitialize(void) {
 	uninitializeAudio();
 
 	//uninitialize all scenes
-	uninitializeScene_PlaceHolder();
+	uninitializeScene_PlaceHolderOutdoor();
+	uninitializeScene_PlaceHolderIndoor();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
