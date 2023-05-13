@@ -133,7 +133,7 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 // Varaiables for God Rays
 struct GodraysUniform sceneGodRaysUniform;
-GLfloat lightPosition_gr[] = {0.0f, 10.0f, -35.0f, 1.0f};
+GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
 
 
 int initializeScene_PlaceHolder(void)
@@ -412,7 +412,7 @@ void displayScene_PlaceHolder(void)
 		sceneADSUniform = useADSShader();
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
-		translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
+		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
 		modelMatrix = translationMatrix;
 		
 		glUniformMatrix4fv(sceneADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -451,7 +451,7 @@ void displayScene_PlaceHolder(void)
 
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
-		translationMatrix = vmath::translate(0.0f, 10.0f, -35.0f);
+		//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix;
 
 		glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
