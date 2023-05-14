@@ -370,10 +370,10 @@ void displayScene_PlaceHolderOutdoor(void)
 
 	// set cameraa
 
-	//setCamera();
+	setCamera();
 	//setCamera(&camera);
 
-	rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
+	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
