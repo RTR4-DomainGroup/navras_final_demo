@@ -35,6 +35,7 @@ GLuint vbo_triangle;
 
 // sphere
 static sphere::Mesh objSphere;
+static sphere::Mesh objSphereAtmos;
 
 void initializeCube(void)
 {
@@ -501,6 +502,12 @@ void initializeSphere(float radius, int slices, int stacks)
     sphere::makeSphere(objSphere, radius, slices, stacks);
 }
 
+void initializeSphereAtmos(float radius, int slices, int stacks)
+{
+	// code
+	sphere::makeSphere(objSphereAtmos, radius, slices, stacks);
+}
+
 void displayCube(void)
 {
     // Code
@@ -594,7 +601,13 @@ void displayPyramid(void)
 void displaySphere(GLfloat* color)
 {
     // code
-    objSphere.draw(color);
+	objSphere.draw(color);
+}
+
+void displaySphereAtmos(GLfloat* color)
+{
+	// code
+	objSphereAtmos.draw(color);
 }
 
 void uninitializeCube(void)
@@ -716,3 +729,10 @@ void uninitializeSphere(void)
     objSphere.cleanupMeshData();
     objSphere.deallocate();
 }
+
+void uninitializeSphereAtmos(void)
+{
+	objSphereAtmos.cleanupMeshData();
+	objSphereAtmos.deallocate();
+}
+
