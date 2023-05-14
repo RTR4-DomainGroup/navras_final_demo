@@ -641,6 +641,37 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 			}
 	}
 
+#ifdef ENABLE_STARFIELD
+
+	sceneStarfieldUniform = useStarfieldShader();
+
+	float time = (float)deltaTime;
+
+	time = time * 0.05f;
+	time = time - floor(time);
+
+	// Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+	glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
+	glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+	displayStarfield(texture_star);
+	glUseProgram(0);
+
+#endif // ENABLE_STARFIELD
+
 if(godRays == 1){
 
 #ifdef ENABLE_ATMOSPHERE
@@ -649,7 +680,7 @@ if(godRays == 1){
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
 
-	glBlendFunc(GL_ONE, GL_ONE);
+	//glBlendFunc(GL_ONE, GL_ONE);
 
 	atmosphereUniform = useAtmosphereShader();
 
@@ -683,37 +714,6 @@ if(godRays == 1){
 #endif
 
 }
-
-#ifdef ENABLE_STARFIELD
-
-	sceneStarfieldUniform = useStarfieldShader();
-
-	float time = (float)deltaTime;
-
-	time = time * 0.05f;
-	time = time - floor(time);
-
-	// Transformations
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-
-	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
-	glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
-	glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
-	displayStarfield(texture_star);
-	glUseProgram(0);
-
-#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_CLOUD_NOISE
 
