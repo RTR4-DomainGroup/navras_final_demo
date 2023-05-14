@@ -12,6 +12,7 @@
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
+#include "../../inc/shaders/AtmosphereShader.h"
 
 #include "../../inc/effects/videoEffect.h"
 #include "../../inc/effects/TerrainEffect.h"
@@ -23,6 +24,7 @@
 #include "../../inc/effects/GodraysEffect.h"
 // #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
+#include "../../inc/effects/AtmosphereEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 
@@ -32,13 +34,14 @@
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_TERRIAN
+#define ENABLE_ATMOSPHERE
 #define ENABLE_WATER
 #define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
-//#define ENABLE_FOG
-//#define ENABLE_STATIC_MODELS	
-//#define ENABLE_BILLBOARDING
+#define ENABLE_STARFIELD
+#define ENABLE_FOG
+#define ENABLE_STATIC_MODELS	
+#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
 #define ENABLE_GODRAYS
@@ -73,6 +76,10 @@ struct HorrizontalBlurUniform horizontalBlurUniform;
 struct VerticalBlurUniform verticalBlurUniform;
 struct FrameBufferDetails fullSceneFbo;
 struct FSQuadUniform fsGaussBlurQuadUniform;
+
+// Atmosphere Scattering
+AtmosphereUniform atmosphereUniform;
+AtmosphericVariables atmosVariables;
 
 GLfloat waterHeight = 0.0f;
 GLfloat moveFactor = 0.0f;
@@ -204,6 +211,41 @@ int initializeScene_PlaceHolderOutdoor(void)
 		LOG("initializeTerrain() Successfull!!!\n");
 	}
 	
+#endif
+
+#ifdef ENABLE_ATMOSPHERE
+
+	//
+	atmosVariables.m_nSamples = 3;		// Number of sample rays to use in integral equation
+	atmosVariables.m_Kr = 0.0035f;		// Rayleigh scattering constant
+	atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
+	atmosVariables.m_Km = 0.0015f;		// Mie scattering constant
+	atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
+	atmosVariables.m_ESun = 20.0f;		// Sun brightness constant
+	atmosVariables.m_g = -0.990f;		// The Mie phase asymmetry factor
+	atmosVariables.m_fExposure = 2.0f;
+
+	atmosVariables.m_fInnerRadius = 10.0f;
+	atmosVariables.m_fOuterRadius = 50.0f;
+	//atmosVariables.m_fOuterRadius = atmosVariables.m_fInnerRadius + (atmosVariables.m_fInnerRadius * 2.5f);
+	atmosVariables.m_fScale = 1 / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius);
+
+	atmosVariables.m_fWavelength[0] = 0.650f;		// 650 nm for red
+	atmosVariables.m_fWavelength[1] = 0.570f;		// 570 nm for green
+	atmosVariables.m_fWavelength[2] = 0.475f;		// 475 nm for blue
+	atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
+	atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
+	atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
+
+	atmosVariables.m_fRayleighScaleDepth = 0.25f;
+	atmosVariables.m_fMieScaleDepth = 0.1f;
+
+	atmosVariables.m_vLight = vec3(0, 0, -350);
+	atmosVariables.m_vLightDirection = atmosVariables.m_vLight / sqrtf(atmosVariables.m_vLight[0] * atmosVariables.m_vLight[0] + atmosVariables.m_vLight[1] * atmosVariables.m_vLight[1] + atmosVariables.m_vLight[2] * atmosVariables.m_vLight[2]);
+
+	//
+	initializeAtmosphere(atmosVariables);
+
 #endif
 
 #ifdef ENABLE_GODRAYS
@@ -406,8 +448,6 @@ void displayScene_PlaceHolderOutdoor(void)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_CLIP_DISTANCE0);
 	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
-		//2 framebuffers for water effect
-		displayWaterFramebuffers(1);
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
@@ -466,8 +506,8 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniform1i(sceneOutdoorADSUniform.lightingEnableUniform, 0);
 		glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
-		
-		displaySphere(NULL);
+		float color[3] = {1.0f, 1.0f, 1.0f};
+		displaySphere(color);
 		glUseProgram(0);
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -586,6 +626,49 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 				glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 			}
 	}
+
+if(godRays == 1){
+
+#ifdef ENABLE_ATMOSPHERE
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	glBlendFunc(GL_ONE, GL_ONE);
+
+	atmosphereUniform = useAtmosphereShader();
+
+	glUniform3f(atmosphereUniform.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+	glUniform3f(atmosphereUniform.lightPosUniform, atmosVariables.m_vLightDirection[0], atmosVariables.m_vLightDirection[1], atmosVariables.m_vLightDirection[2]);
+	glUniform3f(atmosphereUniform.invWavelengthUniform, 1 / atmosVariables.m_fWavelength4[0], 1 / atmosVariables.m_fWavelength4[1], 1 / atmosVariables.m_fWavelength4[2]);
+	glUniform1f(atmosphereUniform.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+	glUniform1f(atmosphereUniform.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+	glUniform1f(atmosphereUniform.innerRadiusUniform, atmosVariables.m_fInnerRadius);
+	glUniform1f(atmosphereUniform.innerRadius2Uniform, atmosVariables.m_fInnerRadius * atmosVariables.m_fInnerRadius);
+	glUniform1f(atmosphereUniform.outerRadiusUniform, atmosVariables.m_fOuterRadius);
+	glUniform1f(atmosphereUniform.outerRadius2Uniform, atmosVariables.m_fOuterRadius * atmosVariables.m_fOuterRadius);
+	glUniform1f(atmosphereUniform.KrESunUniform, atmosVariables.m_Kr * atmosVariables.m_ESun);
+	glUniform1f(atmosphereUniform.KmESunUniform, atmosVariables.m_Km * atmosVariables.m_ESun);
+	glUniform1f(atmosphereUniform.Kr4PIUniform, atmosVariables.m_Kr4PI);
+	glUniform1f(atmosphereUniform.Km4PIUniform, atmosVariables.m_Km4PI);
+	glUniform1f(atmosphereUniform.scaleUniform, 1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius));
+	glUniform1f(atmosphereUniform.scaleDepthUniform, atmosVariables.m_fRayleighScaleDepth);
+	glUniform1f(atmosphereUniform.scaleOverScaleDepthUniform, (1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius)) / atmosVariables.m_fRayleighScaleDepth);
+	glUniform1f(atmosphereUniform.gUniform, atmosVariables.m_g);
+	glUniform1f(atmosphereUniform.g2Uniform, atmosVariables.m_g * atmosVariables.m_g);
+
+	glUniformMatrix4fv(atmosphereUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(atmosphereUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(atmosphereUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	displayAtmosphere();
+
+	glUseProgram(0);
+
+#endif
+
+}
 
 #ifdef ENABLE_STARFIELD
 
@@ -1026,6 +1109,10 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);
+#endif
+
+#ifdef ENABLE_ATMOSPHERE
+	uninitializeAtmosphere();
 #endif
 
 #ifdef ENABLE_CLOUD_NOISE
