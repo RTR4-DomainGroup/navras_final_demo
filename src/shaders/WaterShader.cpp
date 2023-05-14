@@ -222,6 +222,7 @@ int initializeWaterShader(void)
     waterShaderUniform.planeUniform = glGetUniformLocation(shaderProgramObj_water, "u_plane");
     waterShaderUniform.cameraPositionUniform = glGetUniformLocation(shaderProgramObj_water, "u_cameraPosition");
     waterShaderUniform.uniform_enable_godRays = glGetUniformLocation(shaderProgramObj_water, "enable_godRays");
+
     glUseProgram(shaderProgramObj_water);
     glUniform1i(waterShaderUniform.reflectionTextureSamplerUniform, 0);
     glUniform1i(waterShaderUniform.refractionTextureSamplerUniform, 1);
