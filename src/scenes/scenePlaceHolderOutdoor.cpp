@@ -137,6 +137,10 @@ GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
 
 // Camera angle for rotation
 GLfloat cameraAngle = 0.0f;
+GLfloat dispersal = 0.1875f;
+GLfloat haloWidth = 0.45f;
+GLfloat intensity = 1.5f;
+GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
 Camera camera;
 
@@ -503,6 +507,12 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+
+		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
+		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
+		glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
+		glUniform3fv(sceneGodRaysUniform.distortionUniform, 1, distortion);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
