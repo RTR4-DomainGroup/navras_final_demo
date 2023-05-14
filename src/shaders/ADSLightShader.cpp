@@ -4,8 +4,6 @@
 // Variable Declarations
 GLuint adsShaderProgramObject;
 
-extern FILE* gpFile;
-
 ADSUniform adsUniform;
 
 int initializeADSShader(void)
@@ -30,11 +28,18 @@ int initializeADSShader(void)
 		"uniform mat4 u_projectionMatrix; \n" \
 		"uniform vec4 u_lightPosition; \n" \
 		"uniform int u_lightingEnable; \n" \
+		"uniform int u_fogEnable; \n" \
+
+		"uniform float u_density; \n"	\
+		"uniform float u_gradient; \n"	\
+
 		"out vec3 transformedNormals; \n" \
 		"out vec3 lightDirection; \n" \
 		"out vec3 viewerVector;\n" \
 		"out vec4 a_color_out;\n" \
 		"out vec2 a_texcoord_out;\n" \
+		"out float visibility; \n"		\
+
 		"void main(void) \n" \
 		"{ \n" \
 			"if (u_lightingEnable == 1) \n" \
@@ -48,6 +53,14 @@ int initializeADSShader(void)
 			"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position; \n" \
 			"a_color_out = a_color;\n" \
 			"a_texcoord_out = a_texcoord;\n" \
+
+			"if (u_fogEnable == 1) \n" \
+			"{ \n" \
+				"vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * a_position; \n"		\
+				"float distance = length(positionRelativeToCamera.xyz); \n"							\
+				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
+				"visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
+			"} \n" \
 		"} \n";
 
 	GLuint vertexShadderObject = glCreateShader(GL_VERTEX_SHADER);
@@ -71,7 +84,7 @@ int initializeADSShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(vertexShadderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS Vertex Shader Compilation Log: %s\n", log);
+				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
 
@@ -91,6 +104,8 @@ int initializeADSShader(void)
 		"in vec3 transformedNormals; \n" \
 		"in vec3 lightDirection; \n" \
 		"in vec3 viewerVector;\n" \
+		"in float visibility; \n"		\
+
 		"uniform vec4 u_la; \n" \
 		"uniform vec4 u_ld; \n" \
 		"uniform vec4 u_ls; \n" \
@@ -99,14 +114,18 @@ int initializeADSShader(void)
 		"uniform vec4 u_ks; \n" \
 		"uniform float u_materialShininess; \n" \
 		"uniform int u_lightingEnable; \n" \
+		"uniform int u_fogEnable; \n" \
 		"uniform sampler2D u_texturesampler;\n" \
+		"uniform vec4 u_skyFogColor; \n"	\
+		"uniform int enable_godRays; \n" \
+		"uniform int enable_sphere_color; \n" \
 		"out vec4 FragColor; \n" \
 		"void main(void) \n" \
 		"{ \n" \
-			"vec4 phong_ads_light; \n" \
-			"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
-			"if(u_lightingEnable == 1) \n" \
-			"{ \n" \
+			"if (enable_godRays == 1) \n" \
+			"{\n" \
+				"vec4 phong_ads_light; \n" \
+				"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
 				"vec4 ambient = u_la * u_ka; \n" \
 				"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
 				"vec3 normalized_light_direction = normalize(lightDirection); \n" \
@@ -114,14 +133,21 @@ int initializeADSShader(void)
 				"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
 				"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
 				"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
-				"phong_ads_light = phong_ads_light + ambient + diffuse + specular; \n" \
-			"} \n" \
-			"else \n" \
-			"{ \n" \
-				"phong_ads_light = vec4(1.0, 1.0, 1.0, 1.0); \n" \
-			"} \n" \
-			"FragColor = phong_ads_light * a_color_out; \n" \
-			/*"FragColor = vec4(phong_ads_light * vec3(a_color_out), 1.0); \n" \*/
+				"phong_ads_light = ambient + diffuse + specular; \n" \
+				"FragColor = phong_ads_light; \n" \
+				"if (u_fogEnable == 1) \n" \
+				"{ \n" \
+					"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
+				"} \n" \
+			"}\n" \
+			"else if(enable_sphere_color == 1)\n" \
+			"{\n" \
+				"FragColor = a_color_out; \n" \
+			"}\n" \
+			"else\n" \
+			"{\n" \
+				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+			"}\n" \
 		"} \n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);
@@ -141,7 +167,7 @@ int initializeADSShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(fragmentShadderObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS Fragment Shader Compilation Log: %s\n", log);
+				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
 
@@ -173,16 +199,13 @@ int initializeADSShader(void)
 
 				GLsizei written;
 				glGetShaderInfoLog(adsShaderProgramObject, infoLogLength, &written, log);
-				fprintf(gpFile, "ADS ShaderProgram Linking Log: %s\n", log);
+				LOG("ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
 
 			}
-
 		}
-
 	}
-
 	//
 	adsUniform.modelMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_modelMatrix");
 	adsUniform.viewMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_viewMatrix");
@@ -198,7 +221,13 @@ int initializeADSShader(void)
 	adsUniform.lightingEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightingEnable");
 	adsUniform.textureSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "u_texturesampler");
 
-    
+	adsUniform.gradientUniform = glGetUniformLocation(adsShaderProgramObject, "u_gradient");
+	adsUniform.densityUniform = glGetUniformLocation(adsShaderProgramObject, "u_density");
+	adsUniform.skyFogColorUniform = glGetUniformLocation(adsShaderProgramObject, "u_skyFogColor");
+	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
+	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
+	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
+
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform, 0);
 	glUseProgram(0);

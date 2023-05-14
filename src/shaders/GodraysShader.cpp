@@ -63,7 +63,7 @@ int initializeGodraysShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(vertexShaderObj, infoLogLength, &written, log);
-                fprintf(gpFile, "God Rays Shader Vertex Shader Compilation Log: %s\n", log);
+                LOG("God Rays Shader Vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
@@ -76,7 +76,16 @@ int initializeGodraysShader(void)
     const GLchar* fragmentShaderSrcCode = 
         "#version 460 core" \
         "\n" \
-        "const int NUM_SAMPLES = 100;" \
+
+        // LensFlare related variables =============================================================
+        "uniform float u_dispersal; \n"																								\
+        "uniform float u_haloWidth; \n"																								\
+        "uniform float u_intensity; \n"																								\
+        "uniform vec3 u_Distortion; \n" \
+        "uniform int u_lensflareEnabled; \n" \
+
+        //==========================================================================================
+        "const int NUM_SAMPLES = 128;" \
         "\n" \
         "in vec2 texcoord;" \
         "\n" \
@@ -101,42 +110,71 @@ int initializeGodraysShader(void)
         "out vec4 FragColor;" \
         "\n" \
         "vec4 lightPosition;" \
+        
+        "uniform int u_godRays_lf_Enabled; \n" \
         "\n" \
+        "vec3 texture2DDistorted(sampler2D Texture, vec2 TexCoord, vec2 Offset) \n"													\
+        "{ \n "																														\
+            "return vec3(texture2D(Texture, TexCoord + Offset * u_Distortion.r).r, texture2D(Texture, TexCoord + Offset * u_Distortion.g).g," \
+            "texture2D(Texture, TexCoord + Offset * u_Distortion.b).b); \n" \
+        "} \n"
         "void main(void)" \
         "{\n" \
             "vec2 textCoo = texcoord;" \
             "\n" \
             "float illuminationDecay = 1.0;" \
             "\n" \
-            
-            "lightPosition =  u_projectionMatrix * u_viewMatrix * u_modelMatrix * u_lightPositionOnScreen;"
-            "lightPosition /= lightPosition.w;" \
-            "\n" \
-            "lightPosition += vec4(1.0);" \
-            "\n" \
-            "lightPosition *= 0.5;" \
-            "vec2 deltaTextCoord = vec2(texcoord.st - lightPosition.xy);" \
-            "\n" \
-            "deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * u_density;" \
-            "\n"
-            "vec4 myLightSample;" \
-            "\n" \
-            "for(int i=0; i < NUM_SAMPLES ; i++)" \
+            "vec4 RadialBlur = vec4(0.0); \n" \
+            "vec3 LensFlareHalo = vec3(0.0); \n" \
+            "vec4 lightPosition3D = u_projectionMatrix * u_viewMatrix  * u_lightPositionOnScreen; \n"	\
+			"lightPosition3D = lightPosition3D / lightPosition3D.w; \n"									\
+			"lightPosition3D = lightPosition3D + vec4(1.0); \n"											\
+			"lightPosition3D = lightPosition3D * 0.5; \n"												\
+			"lightPosition = lightPosition3D; \n"														\
+
+            "if(u_godRays_lf_Enabled == 1)" \
             "{\n" \
-                "textCoo -= deltaTextCoord;" \
+                "vec2 deltaTextCoord = vec2(texcoord.st - lightPosition.xy);" \
                 "\n" \
-                "myLightSample = texture(u_godraysampler, textCoo);" \
+                "deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * u_density;" \
+                "\n"
+                "vec4 myLightSample;" \
                 "\n" \
-                "myLightSample *= illuminationDecay * u_weight;" \
+                "for(int i=0; i < NUM_SAMPLES ; i++)" \
+                "{\n" \
+                    "textCoo -= deltaTextCoord;" \
+                    "\n" \
+                    "myLightSample = texture(u_godraysampler, textCoo);" \
+                    "\n" \
+                    "myLightSample *= illuminationDecay * u_weight;" \
+                    "\n" \
+                    "FragColor += myLightSample;" \
+                    "\n" \
+                    "illuminationDecay *= u_decay;" \
+                    "\n" \
+                "}"
+                "FragColor *= u_exposure;" \
                 "\n" \
-                "FragColor += myLightSample;" \
-                "\n" \
-                "illuminationDecay *= u_decay;" \
-                "\n" \
-            "}"
-            "FragColor *= u_exposure;" \
-            //"FragColor = vec4(FragColor.rgb, 1.0);"
-            "\n" \
+            "}\n" \
+                																										                        \
+			"vec2 TexCoordinates = texcoord; \n"																								\
+            "vec2 u_SunPosProj = lightPosition.xy;\n"                                                                                           \
+			"vec2 RadialBlurVector = (u_SunPosProj - TexCoordinates) / NUM_SAMPLES; \n"															\
+			    
+			"TexCoordinates = 1.0 - texcoord; \n"																							    \
+			"vec2 LensFlareVector = (vec2(0.5) - TexCoordinates) * u_dispersal; \n"																\
+			"vec2 LensFlareOffset = vec2(0.0); \n"																								\
+
+			"for(int i = 0; i < 5; i++) \n"																										\
+			"{ \n"																																\
+				"LensFlareHalo = LensFlareHalo + texture2DDistorted(u_godraysampler, TexCoordinates, LensFlareOffset).rgb; \n"					\
+				"LensFlareOffset = LensFlareOffset + LensFlareVector; \n"																		\
+			"} \n"																																\
+
+			"LensFlareHalo = LensFlareHalo + texture2DDistorted(u_godraysampler, TexCoordinates, normalize(LensFlareVector) * u_haloWidth); \n"	\
+			"LensFlareHalo = LensFlareHalo / 6.0; \n"																							\
+
+            "FragColor += vec4((texture2D(u_godraysampler, TexCoordinates).rgb + (LensFlareHalo)) * u_intensity, 1.0); \n"			            \
         "}";
     
      // Create the Fragment Shader object.
@@ -167,7 +205,7 @@ int initializeGodraysShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(fragementShaderObj, infoLogLength, &written, log);
-                fprintf(gpFile, "Fragment Shader Compilation Log: %s\n", log);
+                LOG("Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
@@ -208,7 +246,7 @@ int initializeGodraysShader(void)
                 GLsizei written;
 
                 glGetProgramInfoLog(shaderProgramObj_godrays, infoLogLength, &written, log);
-                fprintf(gpFile, "Shader Program Link Log: %s\n", log);
+                LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeGodraysShader();
             }
@@ -224,6 +262,13 @@ int initializeGodraysShader(void)
     godRaysUniform.exposure = glGetUniformLocation(shaderProgramObj_godrays, "u_exposure");
     godRaysUniform.godraysampler = glGetUniformLocation(shaderProgramObj_godrays, "u_godraysampler");
     godRaysUniform.lightPositionOnScreen = glGetUniformLocation(shaderProgramObj_godrays, "u_lightPositionOnScreen");
+    godRaysUniform.godrays_lfEnabled = glGetUniformLocation(shaderProgramObj_godrays, "u_godRays_lf_Enabled");
+
+    // Lensflare integration
+    godRaysUniform.distortionUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_Distortion");
+    godRaysUniform.dispersalUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_dispersal");
+    godRaysUniform.haloWidthUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_haloWidth");
+    godRaysUniform.intensityUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_intensity");
 
     return (0);
 }

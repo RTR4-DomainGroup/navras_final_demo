@@ -1,5 +1,5 @@
 #pragma once
-#include "../common.h"
+#include "../helper/common.h"
 
 
 struct ADSUniform
@@ -23,6 +23,14 @@ struct ADSUniform
     GLuint materialShininessUniform;
 
     GLuint lightingEnableUniform;
+
+    GLuint densityUniform;
+    GLuint gradientUniform;
+    GLuint skyFogColorUniform;
+    GLuint fogEnableUniform;
+    GLuint uniform_enable_godRays;
+
+    GLuint godrays_blackpass_sphere;
 
 };
 
