@@ -75,7 +75,7 @@ struct FSQuadUniform sceneFSQuadUniform;
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
 
-static scene_t currentScene = SCENE_PLACEHOLDER_INDOOR;
+static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 bool sceneFadeOut = false;
 
@@ -517,7 +517,7 @@ int initialize(void) {
 	// currentScene = scenePop();
 
 	// initialize camera
-	resetCamera();
+	//resetCamera();
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
