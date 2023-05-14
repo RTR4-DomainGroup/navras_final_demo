@@ -46,6 +46,31 @@ void updateCloud(bool noiseScaleIncrement, float noiseScale, float iterator)
 	}
 }
 
+void updateErode(bool offsetIncrement, GLfloat offset[3], float iterator)
+{
+	// code
+	if (offsetIncrement == true)
+	{
+		offset[0] = offset[0] + iterator;
+		offset[1] = offset[1] + iterator;
+		offset[2] = offset[2] + iterator;
+		if (offset[2] > 0.48f)
+		{
+			offsetIncrement = false;
+		}
+	}
+	else
+	{
+		offset[0] = offset[0] - iterator;
+		offset[1] = offset[1] - iterator;
+		offset[2] = offset[2] - iterator;
+		if (offset[2] < 0.17f)
+		{
+			offsetIncrement = true;
+		}
+	}
+}
+
 void uninitializeCloud(void)
 {
 	// code

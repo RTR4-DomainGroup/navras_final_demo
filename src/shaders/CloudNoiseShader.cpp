@@ -5,6 +5,8 @@ GLuint cloudNoiseShaderProgramObject;
 
 CloudNoiseUniform cloudNoiseUniform;
 
+extern bool cloudErodeToggle;
+
 int intializeCloudNoiseShader(void)
 {
 	// Function Declarations
@@ -19,6 +21,7 @@ int intializeCloudNoiseShader(void)
 	 	"\n" \
 	 	"in vec4 a_position;\n" \
 	 	"in vec3 a_normal;\n" \
+		"in vec2 a_texcoord;\n" \
 	 	"uniform mat4 u_modelMatrix;\n" \
 	 	"uniform mat4 u_viewMatrix;\n" \
 	 	"uniform mat4 u_projectionMatrix;\n" \
@@ -29,6 +32,7 @@ int intializeCloudNoiseShader(void)
 	 	"out vec3 transformedNormals;\n" \
 	 	"out vec3 lightDirection;\n" \
 	 	"out vec3 viewerVector;\n" \
+		"out vec2 a_texcoord_out;\n" \
 	 	"void main(void)\n" \
 	 	"{\n" \
 	 		"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position;\n" \
@@ -44,6 +48,7 @@ int intializeCloudNoiseShader(void)
 	 		"light_intensity *= 1.5;\n" \
 	 
 	 		"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position;\n" \
+			"a_texcoord_out = a_texcoord;\n" \
 	 	"}\n";
 
 	GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
@@ -83,6 +88,7 @@ int intializeCloudNoiseShader(void)
 		"in vec3 transformedNormals;\n" \
 		"in vec3 lightDirection;\n" \
 		"in vec3 viewerVector;\n" \
+		"in vec2 a_texcoord_out;\n" \
 		"uniform vec3 u_la;\n" \
 		"uniform vec3 u_ld;\n" \
 		"uniform vec3 u_ls;\n" \
@@ -90,30 +96,51 @@ int intializeCloudNoiseShader(void)
 		"uniform vec3 u_kd;\n" \
 		"uniform vec3 u_ks;\n" \
 		"uniform float u_materialShininess;\n" \
+		"uniform sampler2D u_textureSampler;\n" \
 		"uniform sampler3D u_noiseSampler;\n" \
 		"uniform vec3 u_skyColor;\n" \
 		"uniform vec3 u_cloudColor;\n" \
 		"uniform float u_noiseScale;\n" \
 		"uniform bool enable_godRays = true; \n" \
+		"uniform int u_cloudErodeToggle; \n" \
 		"out vec4 fragColor;\n" \
 		"void main(void)\n" \
 		"{\n" \
 			"vec3 phong_ads_color;\n" \
 			"vec3 ambient = u_la * u_ka;\n" \
+			"vec3 color;\n" \
+			"vec3 diffuse;\n" \
 			"vec3 normalized_transformed_normals = normalize(transformedNormals);\n" \
 			"vec3 normalized_lightDirection = normalize(lightDirection);\n" \
-			"vec3 diffuse = u_ld * u_kd * max(dot(normalized_lightDirection, normalized_transformed_normals), 0.0);\n" \
+			"if (u_cloudErodeToggle == 1)\n" \
+			"{\n" \
+				"diffuse = u_ld * u_kd * max(dot(normalized_lightDirection, normalized_transformed_normals), 0.0);\n" \
+			"}\n" \
+			"else\n" \
+			"{\n" \
+				/*"diffuse = u_ld * texture(u_textureSampler, a_texcoord_out).rgb * max(dot(normalized_lightDirection, normalized_transformed_normals), 0.0);\n" \*/
+			"}\n" \
 			"vec3 reflectionVector = reflect(-normalized_lightDirection, normalized_transformed_normals);\n" \
 			"vec3 normalizedViewerVector = normalize(viewerVector);\n" \
-			"vec3 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalizedViewerVector), 0.0), u_materialShininess);   \n"\
+			"vec3 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalizedViewerVector), 0.0), u_materialShininess);\n" \
 			"phong_ads_color = ambient + diffuse + specular;\n" \
-
-			"vec4 noisevec = texture(u_noiseSampler, MCposition * u_noiseScale);\n" \
-			"float intensity = (noisevec[0] + noisevec[1] + noisevec[2] + noisevec[3] + 0.03125) * 1.5;\n" \
-			/*"vec3 color = mix(skyColor, cloudColor, intensity) * light_intensity;\n" \*/
-			"vec3 color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \
-			/*"vec3 color = u_cloudColor * intensity * phong_ads_color;\n" \*/
-			/*"vec3 color = vec3(1.0);\n" \*/
+			"if (u_cloudErodeToggle == 1)\n" \
+			"{\n" \
+				"vec4 noisevec = texture(u_noiseSampler, MCposition * u_noiseScale);\n" \
+				"float intensity = (noisevec[0] + noisevec[1] + noisevec[2] + noisevec[3] + 0.03125) * 1.5;\n" \
+				"color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \
+			"}\n" \
+			"else\n" \
+			"{\n" \
+				/*"vec4 noisevec = texture(u_noiseSampler, 1.2 * (vec3(0.5) + MCposition));\n" \
+				"float intensity = 0.75 * (noisevec.x + noisevec.y + noisevec.z + noisevec.w);\n" \
+				"intensity = 1.95 * abs(2.0 * intensity - 1.0);\n" \
+				"intensity = clamp(intensity, 0.0, 1.0);\n" \
+				"if (intensity < fract(0.5 - u_offset.x - u_offset.y - u_offset.z)) discard;\n" \
+				"vec3 tex = texture(u_textureSampler, a_texcoord_out).rgb;\n" \
+				"color = tex * phong_ads_color;\n" \
+				"color *= light_intensity;\n" \*/
+			"}\n" \
 			"if (enable_godRays) \n" \
 			"{\n" \
 				"fragColor = vec4(color, 1.0);\n" \
@@ -154,6 +181,8 @@ int intializeCloudNoiseShader(void)
 	glAttachShader(cloudNoiseShaderProgramObject, fragmentShaderObject);
 	glBindAttribLocation(cloudNoiseShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
 	glBindAttribLocation(cloudNoiseShaderProgramObject, DOMAIN_ATTRIBUTE_NORMAL, "a_normal");
+	glBindAttribLocation(cloudNoiseShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
+
 
 	glLinkProgram(cloudNoiseShaderProgramObject);
 
@@ -191,16 +220,28 @@ int intializeCloudNoiseShader(void)
 	cloudNoiseUniform.materialShininessUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_materialShininess");
 
 	cloudNoiseUniform.noiseSamplerUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_noiseSampler");
+	cloudNoiseUniform.textureSamplerUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_textureSampler");
 	cloudNoiseUniform.skyColorUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_skyColor");
 	cloudNoiseUniform.cloudColorUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_cloudColor");
+
+	cloudNoiseUniform.offsetUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_offset");
+	cloudNoiseUniform.cloudErodeToggleUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_cloudErodeToggle");
 
 	cloudNoiseUniform.scaleUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_scale");
 	cloudNoiseUniform.noiseScaleUniform = glGetUniformLocation(cloudNoiseShaderProgramObject, "u_noiseScale");
 	cloudNoiseUniform.uniform_enable_godRays = glGetUniformLocation(cloudNoiseShaderProgramObject, "enable_godRays");
 
 	glUseProgram(cloudNoiseShaderProgramObject);
-	// some code may come here
-	glUniform1i(cloudNoiseUniform.noiseSamplerUniform, 0);
+
+	if (cloudErodeToggle == true)
+	{
+		glUniform1i(cloudNoiseUniform.noiseSamplerUniform, 0);
+	}
+	else
+	{
+		glUniform1i(cloudNoiseUniform.textureSamplerUniform, 0);
+		glUniform1i(cloudNoiseUniform.noiseSamplerUniform, 1);
+	}
 
 	glUseProgram(0);
 

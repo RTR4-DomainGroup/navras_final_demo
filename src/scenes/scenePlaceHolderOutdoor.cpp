@@ -29,19 +29,19 @@
 
 #define FBO_WIDTH 1920
 #define FBO_HEIGHT 1080
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+#define ENABLE_ADSLIGHT		//##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_TERRIAN
-#define ENABLE_WATER
-#define ENABLE_CLOUD_NOISE
+//#define ENABLE_TERRIAN
+//#define ENABLE_WATER
+#define ENABLE_NOISE
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 //#define ENABLE_STATIC_MODELS	
 //#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
-#define ENABLE_GAUSSIAN_BLUR
-//#define ENABLE_GODRAYS
+//#define ENABLE_GAUSSIAN_BLUR
+#define ENABLE_GODRAYS
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -91,6 +91,7 @@ float myScale = 1.0f;
 
 float noiseScale = 2.0f;
 bool noiseScaleIncrement = true;
+bool noiseOffsetIncrement = true;
 
 GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -104,6 +105,10 @@ GLfloat materialShininess = 128.0f;
 
 GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
 GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+
+GLfloat offset[] = { 0.48f, 0.48f, 0.48f };
+
+bool cloudErodeToggle = true;
 
 GLuint noise_texture;
 
@@ -251,7 +256,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 #endif
 
-#ifdef ENABLE_CLOUD_NOISE
+#ifdef ENABLE_NOISE
 
 	noise_texture = initializeCloud();
 	if (noise_texture == 0)
@@ -581,7 +586,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
+#ifdef ENABLE_NOISE
 
 	glEnable(GL_TEXTURE_3D);
 	sceneCloudNoiseUniform = useCloudNoiseShader();
@@ -621,14 +626,38 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
 
 	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
+
+	if (cloudErodeToggle == false)
+	{
+		glUniform1i(sceneCloudNoiseUniform.cloudErodeToggleUniform, 0);
+	}
+	else
+	{
+		glUniform1i(sceneCloudNoiseUniform.cloudErodeToggleUniform, 1);
+	}
+
+	glUniform3fv(sceneCloudNoiseUniform.offsetUniform, 1, offset);
 	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
 	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
 	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
 	glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, noise_texture);
+	if (cloudErodeToggle == true)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_3D, noise_texture);
+	}
+	else
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_Marble);
+		//glUniform1i(textureSamplerUniform, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		//glUniform1i(noiseSamplerUniform, 1);
+	}
 
 	displayQuad();
 
@@ -931,9 +960,10 @@ void updateScene_PlaceHolderOutdoor(void)
 	deltaTime = updateStarfield(deltaTime);
 #endif
 
-#ifdef ENABLE_CLOUD_NOISE
+#ifdef ENABLE_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
+	updateErode(noiseOffsetIncrement, offset, 0.0001f);
 #endif
 
 #ifdef ENABLE_BILLBOARDING
@@ -988,7 +1018,7 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	uninitializeTerrain(&terrainTextureVariables);
 #endif
 
-#ifdef ENABLE_CLOUD_NOISE
+#ifdef ENABLE_NOISE
 	
 	uninitializeCloud();
 	if (noise_texture)
