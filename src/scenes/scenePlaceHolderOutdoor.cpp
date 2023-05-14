@@ -135,17 +135,36 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 struct GodraysUniform sceneGodRaysUniform;
 GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
 
+// Camera angle for rotation
+GLfloat cameraAngle = 0.0f;
 GLfloat dispersal = 0.1875f;
 GLfloat haloWidth = 0.45f;
 GLfloat intensity = 1.5f;
 GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
+
+Camera camera;
 
 
 int initializeScene_PlaceHolderOutdoor(void)
 {
 	// Function Declarations
 
+	// set Camera location
+	cameraEyeX = 0.0f;
+	cameraEyeY = 0.0f;
+	cameraEyeZ = 6.0f;
+
+	cameraCenterX = 0.0f;
+	cameraCenterY = 0.0f;
+	cameraCenterZ = 0.0f;
+
+	cameraUpX = 0.0f;
+	cameraUpY = 1.0f;
+	cameraUpZ = 0.0f;
+
     // Code.
+	//initializeCamera(&camera);
+
 #ifdef ENABLE_VIDEO_RENDER
 	initializeQuadForVideo();
     //initializeTriangle();
@@ -353,8 +372,12 @@ void displayScene_PlaceHolderOutdoor(void)
 	// Code
 	// Here The Game STarts
 
-	// set camera
+	// set cameraa
+
 	setCamera();
+	//setCamera(&camera);
+
+	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
@@ -539,6 +562,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	setCamera();
+	//setCamera(&camera);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -550,9 +574,11 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 				glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 				cameraEyeY -= distance;
 				setCamera();
+				//setCamera(&camera);
 				glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 				cameraEyeY += distance;
 				setCamera();
+				//setCamera(&camera);
 			}
 
 			if (isReflection == false) {
@@ -962,6 +988,9 @@ void updateScene_PlaceHolderOutdoor(void)
 	// update camera using lerp
 	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
+	cameraAngle = cameraAngle + 0.5f;
+	if (cameraAngle >= 360.0f)
+		cameraAngle -= 360.0f;
 }
 
 void uninitializeScene_PlaceHolderOutdoor(void)
@@ -1034,5 +1063,7 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 #ifdef ENABLE_GAUSSIAN_BLUR
 	uninitializeGaussianBlur(&gaussianBlurEffect);
 #endif
+
+	//uninitializeCamera(&camera);
 
 }

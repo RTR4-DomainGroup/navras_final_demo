@@ -517,7 +517,7 @@ int initialize(void) {
 	// currentScene = scenePop();
 
 	// initialize camera
-	resetCamera();
+	//resetCamera();
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
