@@ -363,6 +363,20 @@ int initializeScene_PlaceHolderOutdoor(void)
 		LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
     }
 
+	// sort z vertices
+    for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+		{
+			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
+			{
+				auto a = instance_positions[(i*4)+2];
+				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+				instance_positions[(j*4)+2] = a; 
+			}
+		}
+	}
+
     initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
 
 	char imagefile[64] = {};
