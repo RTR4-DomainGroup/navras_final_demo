@@ -12,6 +12,7 @@
 #include "../../inc/shaders/BillboardingShader.h"
 #include "../../inc/shaders/HorrizontalBlur.h"
 #include "../../inc/shaders/VerticalBlur.h"
+#include "../../inc/shaders/AtmosphereShader.h"
 
 BOOL initAllShaders(void)
 {
@@ -19,6 +20,11 @@ BOOL initAllShaders(void)
 
     // Code
     if (initializeFSQuadShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeAtmosphereShader() != 0)
     {
         return FALSE;
     }
@@ -92,5 +98,6 @@ void uninitializeAllShaders(void)
     uninitializeSkyboxShader();
     uninitializeADSShader();
     uninitializeCloudNoiseShader();
+    uninitializeAtmosphereShader();
 }
 

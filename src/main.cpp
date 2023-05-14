@@ -10,6 +10,7 @@
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
 #include "../inc/scenes/scenes.h"
+#include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 
@@ -70,14 +71,12 @@ float lastY = 600.0f / 2.0f;
 
 int winWidth;
 int winHeight;
-struct FSQuadUniform sceneFSQuadUniform;
-
-extern struct FrameBufferDetails fboColorPass;
-extern struct FrameBufferDetails fboGodRayPass;
 
 static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 bool sceneFadeOut = false;
+
+extern AtmosphericVariables atmosVariables;
 
 // extern
 // extern scene_t sceneStack[];
@@ -332,6 +331,76 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			if(songId < 0)
 				songId = NUM_AUDIO-1;
 			break;	
+
+		case '1':
+		case '!':
+			if (wParam == '!')
+				atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
+			else
+				atmosVariables.m_Kr += 0.0001f;
+			atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
+			break;
+
+		case '2':
+		case '@':
+			if (wParam == '@')
+				atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
+			else
+				atmosVariables.m_Km += 0.0001f;
+			atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
+			break;
+
+		case '3':
+		case '#':
+			if (wParam == '#')
+				atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
+			else
+				atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
+			break;
+
+		case '4':
+		case '$':
+			if (wParam == '$')
+				atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
+			else
+				atmosVariables.m_ESun += 0.1f;
+			break;
+
+		case '5':
+		case '%':
+			if (wParam == '%')
+				atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
+			else
+				atmosVariables.m_fWavelength[0] += 0.001f;
+			atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
+			break;
+
+		case '6':
+		case '^':
+			if (wParam == '^')
+				atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
+			else
+				atmosVariables.m_fWavelength[1] += 0.001f;
+			atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
+			break;
+
+		case '7':
+		case '&':
+			if (wParam == '&')
+				atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
+			else
+				atmosVariables.m_fWavelength[2] += 0.001f;
+			atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
+			break;
+
+		case '8':
+		case '*':
+			if (wParam == '*')
+				atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
+			else
+				atmosVariables.m_fExposure += 0.1f;
+			break;
+
 		default:
 			LOG("keypressed : %d\n", wParam);
 			break;
