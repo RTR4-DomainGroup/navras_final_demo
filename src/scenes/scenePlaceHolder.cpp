@@ -39,7 +39,7 @@
 //#define ENABLE_SKYBOX
 //#define ENABLE_STARFIELD
 //#define ENABLE_FOG
-//#define ENABLE_STATIC_MODELS	
+#define ENABLE_STATIC_MODELS	
 #define ENABLE_DYNAMIC_MODELS	
 //#define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
@@ -131,7 +131,7 @@ struct StarfieldUniform sceneStarfieldUniform;
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
 
-DYNAMIC_MODEL dancingVampire;
+DYNAMIC_MODEL skeletonModel;
 
 GLfloat density = 0.15;
 GLfloat gradient = 0.5;
@@ -292,7 +292,7 @@ int initializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	loadDynamicModel("res/models/dancingVampire/dancing_vampire.dae", &dancingVampire);
+	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
@@ -718,6 +718,7 @@ void displayScene(int width, int height, int godRays = 1)
 #endif
 
 #ifdef ENABLE_DYNAMIC_MODELS
+
 	glm::mat4 glm_modelMatrix;
 	glm::mat4 glm_viewMatrix;
 	glm::mat4 glm_projectionMatrix;
@@ -753,7 +754,7 @@ void displayScene(int width, int height, int godRays = 1)
 	
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm_translateMatrix, glm::vec3(-1.0f, -1.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm_translateMatrix, glm::vec3(-1.0f, -2.0f, -2.0f));
 	//glm_scaleMatrix = glm::scale(scaleMatrix, glm::vec3(0.008f, 0.008f, 0.008f));
 	//glm_rotateMatrix = glm::rotate(glm_rotateMatrix, 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -761,10 +762,10 @@ void displayScene(int width, int height, int godRays = 1)
 	glm_projectionMatrix = glm_perspectiveProjectionMatrix;
 
 	glUniformMatrix4fv(sceneADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_viewMatrix));
+	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_perspectiveProjectionMatrix));
 
-	drawDynamicModel(dancingVampire, 0.01f);
+	drawDynamicModel(skeletonModel, 0.01f);
 
 	glUseProgram(0);
 
@@ -1304,7 +1305,7 @@ void uninitializeScene_PlaceHolder(void)
 #endif
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&dancingVampire);
+	unloadDynamicModel(&skeletonModel);
 #endif
 
 #ifdef ENABLE_GAUSSIAN_BLUR

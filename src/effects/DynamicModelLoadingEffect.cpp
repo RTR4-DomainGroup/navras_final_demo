@@ -512,7 +512,7 @@ int& DynamicModel::GetBoneCount()
 void DynamicModel::loadModel(string const& path)
 {
     LOG("Entry to function = %s\n", __FUNCTION__);
-    LOG("obj file path = %s\n", path.c_str());
+    LOG("model file path = %s\n", path.c_str());
 
     // read file via ASSIMP
     Assimp::Importer importer;
