@@ -1,6 +1,7 @@
 #pragma once
 
 void initializeCube(void);
+void initializeInvertedNormalCube(void);
 void initializeCubemap(void);
 void initializeQuad(void);
 void initializeInstancedQuad(int numInstances, GLfloat* instancePositions);
@@ -15,6 +16,7 @@ void initializeTriangle(void );
 
 void displayGeometry(void);
 void displayCube(void);
+void displayInvertedNormalCube(void);
 void displayCubemap(void);
 void displaySphere(GLfloat*);
 void displaySphereAtmos(GLfloat*);
