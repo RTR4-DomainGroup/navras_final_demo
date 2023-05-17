@@ -35,7 +35,7 @@
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_TERRIAN
-#define ENABLE_ATMOSPHERE
+//#define ENABLE_ATMOSPHERE
 #define ENABLE_WATER
 #define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
@@ -479,6 +479,7 @@ void displayScene_PlaceHolderOutdoor(void)
 		glEnable(GL_CLIP_DISTANCE0);
 		glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
 		glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
 		displayPasses(1, true, true, false, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -486,6 +487,7 @@ void displayScene_PlaceHolderOutdoor(void)
 		// Refraction
 		glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
 		glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
 		displayPasses(1, true, false, false, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -494,12 +496,13 @@ void displayScene_PlaceHolderOutdoor(void)
 		// Shadow
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
+		glClear(GL_DEPTH_BUFFER_BIT);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 1000.0f);
 		displayPasses(1, true, true, false, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//////////////////////////////////////////////////////////////
-		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
 			0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -511,7 +514,7 @@ void displayScene_PlaceHolderOutdoor(void)
 
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
+		glUseProgram(0);*/
 
 	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
@@ -556,8 +559,6 @@ void displayScene_PlaceHolderOutdoor(void)
 			0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//2 framebuffers for water effect
-		//displayWaterFramebuffers(0);
 			displayPasses(0, false, false, true, 1);
 
 		sceneOutdoorADSUniform = useADSShader();
@@ -629,7 +630,7 @@ void displayScene_PlaceHolderOutdoor(void)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// Godrays Default Frame Buffer
-		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 
 			0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -644,15 +645,16 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);*/
+		glUseProgram(0);
+
 	#endif
 
 #endif
 }
 
-void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false ,bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
-	
-	
+void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
+
+
 	// Code
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -670,62 +672,26 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	setCamera();
 	//setCamera(&camera);
 
-	if(actualDepthQuadScene == 0){
-	
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE7);
-		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 7);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-	
-	}
-
-	
-
-	if(actualDepthQuadScene == 1){
-	
-		glClear(GL_DEPTH_BUFFER_BIT);
-
-		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
-
-		viewmatrixDepth = mat4::identity();
-		viewmatrixDepth = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), camera.eye, vec3(0.0f, 0.0f, 1.0f));
-		perspectiveProjectionDepth = mat4::identity();
-		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);
-		
-		lightSpaceMatrix = mat4::identity();
-		lightSpaceMatrix = perspectiveProjectionDepth * viewmatrixDepth;
-		glUniformMatrix4fv(sceneOutdoorADSUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
-
-
-	}
-
-	
 	if (recordWaterReflectionRefraction == true) {
 		waterUniform = useWaterShader();
 
-			float distance = 2.0f * (cameraEyeY - waterHeight);
-			if(isReflection == true){
-				glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-				cameraEyeY -= distance;
-				setCamera();
-				//setCamera(&camera);
-				glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-				cameraEyeY += distance;
-				setCamera();
-				//setCamera(&camera);
-			}
+		float distance = 2.0f * (cameraEyeY - waterHeight);
+		if (isReflection == true) {
+			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
+			cameraEyeY -= distance;
+			setCamera();
+			//setCamera(&camera);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+			cameraEyeY += distance;
+			setCamera();
+			//setCamera(&camera);
+		}
 
-			if (isReflection == false) {
-				glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-				glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-			}
+		if (isReflection == false) {
+			glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		}
 	}
 
 #ifdef ENABLE_STARFIELD
@@ -752,7 +718,8 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	if (actualDepthQuadScene == 1) {
 		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewmatrixDepth);
 		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionDepth);
-	}else {
+	}
+	else {
 		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 	}
@@ -765,105 +732,114 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 #endif // ENABLE_STARFIELD
 
-if(godRays == 1){
+	if (actualDepthQuadScene == 0) {
+
+		if (godRays == 1) {
 
 #ifdef ENABLE_ATMOSPHERE
 
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
+			translationMatrix = mat4::identity();
+			rotationMatrix = mat4::identity();
+			modelMatrix = mat4::identity();
 
-	//glBlendFunc(GL_ONE, GL_ONE);
+			//glBlendFunc(GL_ONE, GL_ONE);
 
-	atmosphereUniform = useAtmosphereShader();
+			atmosphereUniform = useAtmosphereShader();
 
-	glUniform3f(atmosphereUniform.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
-	glUniform3f(atmosphereUniform.lightPosUniform, atmosVariables.m_vLightDirection[0], atmosVariables.m_vLightDirection[1], atmosVariables.m_vLightDirection[2]);
-	glUniform3f(atmosphereUniform.invWavelengthUniform, 1 / atmosVariables.m_fWavelength4[0], 1 / atmosVariables.m_fWavelength4[1], 1 / atmosVariables.m_fWavelength4[2]);
-	glUniform1f(atmosphereUniform.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
-	glUniform1f(atmosphereUniform.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
-	glUniform1f(atmosphereUniform.innerRadiusUniform, atmosVariables.m_fInnerRadius);
-	glUniform1f(atmosphereUniform.innerRadius2Uniform, atmosVariables.m_fInnerRadius * atmosVariables.m_fInnerRadius);
-	glUniform1f(atmosphereUniform.outerRadiusUniform, atmosVariables.m_fOuterRadius);
-	glUniform1f(atmosphereUniform.outerRadius2Uniform, atmosVariables.m_fOuterRadius * atmosVariables.m_fOuterRadius);
-	glUniform1f(atmosphereUniform.KrESunUniform, atmosVariables.m_Kr * atmosVariables.m_ESun);
-	glUniform1f(atmosphereUniform.KmESunUniform, atmosVariables.m_Km * atmosVariables.m_ESun);
-	glUniform1f(atmosphereUniform.Kr4PIUniform, atmosVariables.m_Kr4PI);
-	glUniform1f(atmosphereUniform.Km4PIUniform, atmosVariables.m_Km4PI);
-	glUniform1f(atmosphereUniform.scaleUniform, 1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius));
-	glUniform1f(atmosphereUniform.scaleDepthUniform, atmosVariables.m_fRayleighScaleDepth);
-	glUniform1f(atmosphereUniform.scaleOverScaleDepthUniform, (1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius)) / atmosVariables.m_fRayleighScaleDepth);
-	glUniform1f(atmosphereUniform.gUniform, atmosVariables.m_g);
-	glUniform1f(atmosphereUniform.g2Uniform, atmosVariables.m_g * atmosVariables.m_g);
+			glUniform3f(atmosphereUniform.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+			glUniform3f(atmosphereUniform.lightPosUniform, atmosVariables.m_vLightDirection[0], atmosVariables.m_vLightDirection[1], atmosVariables.m_vLightDirection[2]);
+			glUniform3f(atmosphereUniform.invWavelengthUniform, 1 / atmosVariables.m_fWavelength4[0], 1 / atmosVariables.m_fWavelength4[1], 1 / atmosVariables.m_fWavelength4[2]);
+			glUniform1f(atmosphereUniform.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+			glUniform1f(atmosphereUniform.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+			glUniform1f(atmosphereUniform.innerRadiusUniform, atmosVariables.m_fInnerRadius);
+			glUniform1f(atmosphereUniform.innerRadius2Uniform, atmosVariables.m_fInnerRadius * atmosVariables.m_fInnerRadius);
+			glUniform1f(atmosphereUniform.outerRadiusUniform, atmosVariables.m_fOuterRadius);
+			glUniform1f(atmosphereUniform.outerRadius2Uniform, atmosVariables.m_fOuterRadius * atmosVariables.m_fOuterRadius);
+			glUniform1f(atmosphereUniform.KrESunUniform, atmosVariables.m_Kr * atmosVariables.m_ESun);
+			glUniform1f(atmosphereUniform.KmESunUniform, atmosVariables.m_Km * atmosVariables.m_ESun);
+			glUniform1f(atmosphereUniform.Kr4PIUniform, atmosVariables.m_Kr4PI);
+			glUniform1f(atmosphereUniform.Km4PIUniform, atmosVariables.m_Km4PI);
+			glUniform1f(atmosphereUniform.scaleUniform, 1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius));
+			glUniform1f(atmosphereUniform.scaleDepthUniform, atmosVariables.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform.scaleOverScaleDepthUniform, (1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius)) / atmosVariables.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform.gUniform, atmosVariables.m_g);
+			glUniform1f(atmosphereUniform.g2Uniform, atmosVariables.m_g * atmosVariables.m_g);
 
-	glUniformMatrix4fv(atmosphereUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(atmosphereUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(atmosphereUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniformMatrix4fv(atmosphereUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(atmosphereUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+			glUniformMatrix4fv(atmosphereUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	displayAtmosphere();
+			displayAtmosphere();
 
-	glUseProgram(0);
+			glUseProgram(0);
 
 #endif
 
-}
+		}
+
+	}
+
+	if (actualDepthQuadScene == 0) {
+
 
 #ifdef ENABLE_CLOUD_NOISE
 
-	glEnable(GL_TEXTURE_3D);
-	sceneCloudNoiseUniform = useCloudNoiseShader();
+		glEnable(GL_TEXTURE_3D);
+		sceneCloudNoiseUniform = useCloudNoiseShader();
 
-	translationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
+		translationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
 
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
 
-	rotateX = mat4::identity();
-	
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-	translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-	scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
-	//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotateX;
+		rotateX = mat4::identity();
 
-	//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
+		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
+		translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
+		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+		scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
+		//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotateX;
 
-	glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
-	glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-	glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-	glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-	glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-	glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-	glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-	glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-	glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-	//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
+		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
+		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
+		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
-	displayQuad();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_3D, noise_texture);
 
-	glUseProgram(0);
+		displayQuad();
 
-	glDisable(GL_TEXTURE_3D);
+		glUseProgram(0);
+
+		glDisable(GL_TEXTURE_3D);
 
 #endif
+
+	}
 
 #ifdef ENABLE_TERRIAN
 	// Terrain
@@ -878,7 +854,8 @@ if(godRays == 1){
 
 		proj_matrix = perspectiveProjectionDepth;
 
-	}else {
+	}
+	else {
 
 		mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 
@@ -914,22 +891,27 @@ if(godRays == 1){
 	glUseProgram(0);
 #endif
 
+	if (actualDepthQuadScene == 0) {
+
+
 #ifdef ENABLE_SKYBOX
 
-	sceneSkyBoxUniform = useSkyboxShader();
+		sceneSkyBoxUniform = useSkyboxShader();
 
-	// Transformations
-	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
-	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+		// Transformations
+		translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
-	glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	displaySkybox(texture_skybox);
-	glUseProgram(0);
+		displaySkybox(texture_skybox);
+		glUseProgram(0);
 #endif
+
+	}
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
@@ -964,12 +946,42 @@ if(godRays == 1){
 	if (actualDepthQuadScene == 1) {
 		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewmatrixDepth);
 		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionDepth);
+
+		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
+
+		viewmatrixDepth = mat4::identity();
+		viewmatrixDepth = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		perspectiveProjectionDepth = mat4::identity();
+		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);
+
+		lightSpaceMatrix = mat4::identity();
+		lightSpaceMatrix = perspectiveProjectionDepth * viewmatrixDepth;
+		glUniformMatrix4fv(sceneOutdoorADSUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+
 	}
 	else {
 		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 0);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
 	}
+
+
 	drawStaticModel(rockModel);
+
+	if (actualDepthQuadScene == 0) {
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -989,10 +1001,34 @@ if(godRays == 1){
 	if (actualDepthQuadScene == 1) {
 		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewmatrixDepth);
 		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionDepth);
+
+		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
+
+		viewmatrixDepth = mat4::identity();
+		viewmatrixDepth = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		perspectiveProjectionDepth = mat4::identity();
+		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);
+
+		lightSpaceMatrix = mat4::identity();
+		lightSpaceMatrix = perspectiveProjectionDepth * viewmatrixDepth;
+		glUniformMatrix4fv(sceneOutdoorADSUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+
 	}
 	else {
 		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 0);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
 	}
 	drawStaticModel(streetLightModel);
 
@@ -1042,6 +1078,9 @@ if(waterDraw == true){
 
 	#endif
 }
+
+if (actualDepthQuadScene == 0) {
+
 
 #ifdef ENABLE_BILLBOARDING	
 	// variable declaration
@@ -1108,6 +1147,8 @@ if(waterDraw == true){
 	glDisable(GL_BLEND);
 
 #endif // ENABLE_BILLBOARDING
+
+}
 	
 }
 
