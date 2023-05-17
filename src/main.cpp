@@ -12,6 +12,7 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/sceneEarthAndSpace.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
@@ -75,7 +76,7 @@ struct FSQuadUniform sceneFSQuadUniform;
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
 
-static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
+static scene_t currentScene = SCENE_EARTHANDSPACE;
 
 bool sceneFadeOut = false;
 
@@ -492,7 +493,7 @@ int initialize(void) {
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
-    scenePush(SCENE_0);
+    scenePush(SCENE_EARTHANDSPACE);
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -505,6 +506,13 @@ int initialize(void) {
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
 		return (-8);
 	}
+
+	if (initializeScene1_EarthAndSpace() != 0)
+	{
+		LOG("initializeScene_EarthAndSpace() FAILED !!!\n");
+		return (-8);
+	}
+
 
 	// if(initializeScene_Scene0() != 0)
 	// {
@@ -654,9 +662,10 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE_0)
+	if(currentScene == SCENE_EARTHANDSPACE)
 	{
 		// displayScene_Scene0();
+		displayScene1_EarthAndSpace();
 	}
 	else if(currentScene == SCENE_1)
 	{
@@ -694,9 +703,9 @@ void update(void)
 
 	
 	// Call Scenes Update Here
-	if(currentScene == SCENE_0)
+	if(currentScene == SCENE_EARTHANDSPACE)
 	{
-		// updateScene_Scene0();
+		updateScene1_EarthAndSpace();
 	}
 	else if(currentScene == SCENE_1)
 	{

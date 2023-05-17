@@ -31,11 +31,11 @@
 #define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_TERRIAN
-#define ENABLE_WATER
-#define ENABLE_CLOUD_NOISE
+//#define ENABLE_TERRIAN
+//#define ENABLE_WATER
+//#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
+#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 //#define ENABLE_STATIC_MODELS	
 //#define ENABLE_BILLBOARDING
@@ -441,8 +441,6 @@ void displayScene_PlaceHolderOutdoor(void)
     	glBindTexture(GL_TEXTURE_2D, 0);
 	#else
 
-		
-
 		// GodRay Black pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
@@ -467,7 +465,8 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
 		
-		displaySphere(NULL);
+		float color[3] = { 1.0f, 1.0f, 1.0f };
+		displaySphere(color);
 		glUseProgram(0);
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
