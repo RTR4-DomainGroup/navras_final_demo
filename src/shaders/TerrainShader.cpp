@@ -22,8 +22,38 @@ int initializeTerrainShader(void)
         "uniform mat4 mv_matrix; \n"    \
         "uniform int u_fogEnable; \n" \
         "out float visibility; \n"		\
+        
+        //Normal maaping structure
+        "in vec3 a_normal; \n"		\
+        "in vec2 a_texCoord; \n" \
+
+        "uniform vec3 u_lightPosition; \n" \
+        "uniform mat4 u_modelMatrix; \n" \
+        "uniform mat4 u_viewMatrix; \n" \
+        "uniform mat4 u_projectionMatrix; \n" \
+
+        "out VSNM_OUT"
+        "{ \n" \
+        "out vec4 worldPos; \n" \
+        "out vec3 Normals; \n" \
+        "out vec3 lightDirection; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "out vec3 viewerVector ; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "} vsnm_out; \n" \
+        
         "void main(void) \n" \
         "{ \n" \
+
+            //normal mapping
+            "vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
+            "WorldPos = u_modelMatrix * a_position; \n" \
+            "vsnm_out.Normals = vec3(u_modelMatrix) * a_normal; \n" \
+            "vsnm_out.lightDirection = normalize(vec3(u_lightPosition - eyeCoordinates.xyz)); \n" \
+            "vsnm_out.viewerVector = (-eyeCoordinates.xyz); \n" \
+            "vsnm_out.a_texCoord_out = a_texCoord; \n" \
+
+            //Terrain
             "vec4 vertices[] = vec4[](vec4(-0.5, 0.0, -0.5, 1.0), vec4(0.5, 0.0, -0.5, 1.0), vec4(-0.5, 0.0, 0.5, 1.0), vec4(0.5, 0.0, 0.5, 1.0)); \n" \
             "int x = gl_InstanceID & 63; \n" \
             "int y = gl_InstanceID >> 6; \n" \
@@ -94,6 +124,28 @@ int initializeTerrainShader(void)
         "uniform mat4 mvp_matrix; \n"   \
         "in float visibility[]; \n"     \
         "out float visibility_tc[]; \n"   \
+
+        //normal mapping
+        "in VSNM_OUT"
+        "{ \n" \
+        "out vec4 worldPos; \n" \
+        "out vec3 Normals; \n" \
+        "out vec3 lightDirection; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "out vec3 viewerVector ; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "} vsnm_in; \n" \
+
+        "out TCNM_OUT"
+        "{ \n" \
+        "out vec4 worldPos; \n" \
+        "out vec3 Normals; \n" \
+        "out vec3 lightDirection; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "out vec3 viewerVector ; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "} tcnm_out; \n" \
+
         "void main(void) \n" \
         "{ \n" \
             "if (gl_InvocationID == 0) \n" \
@@ -191,6 +243,28 @@ int initializeTerrainShader(void)
             "vec3 world_coord; \n" \
             "vec3 eye_coord; \n" \
         "} tes_out; \n" \
+
+        //normal mapping
+        "in TCNM_OUT"
+        "{ \n" \
+        "out vec4 worldPos; \n" \
+        "out vec3 Normals; \n" \
+        "out vec3 lightDirection; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "out vec3 viewerVector ; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "} tcnm_out; \n" \
+
+        "out TENM_OUT"
+        "{ \n" \
+        "out vec4 worldPos; \n" \
+        "out vec3 Normals; \n" \
+        "out vec3 lightDirection; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "out vec3 viewerVector ; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "} tenm_out; \n" \
+
         "void main(void) \n" \
         "{ \n" \
             "vec2 tc1 = mix(tes_in[0].tc, tes_in[1].tc, gl_TessCoord.x); \n" \
@@ -274,20 +348,84 @@ int initializeTerrainShader(void)
             "return c * extinction + fog_color * (1.0 - inscattering); \n" \
         "} \n" \
         "out vec4 FragColor; \n" \
+
+        //normal mapping
+        "in TENM_OUT"
+        "{ \n" \
+        "out vec4 worldPos; \n" \
+        "out vec3 Normals; \n" \
+        "out vec3 lightDirection; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "out vec3 viewerVector ; \n" \
+        "out vec2 a_texCoord_out; \n" \
+        "} tenm_out; \n" \
+
+        "vec3 T ; \n" \
+        "vec3 B ; \n" \
+        "vec3 normalizedNormals ; \n" \
+
+        "uniform vec3 u_la; \n" \
+        "uniform vec3 u_ld; \n" \
+        "uniform vec3 u_ls; \n" \
+
+        "uniform float u_materialShininess; \n" \
+        "uniform sampler2D u_textureSampler_diffuseMap; \n" \
+        "uniform sampler2D u_textureSampler_normalMap; \n" \
+
+        //GET NORMAP FROM NORMAL MAP
+        "vec3 getNormalFromMap() \n" \
+        "{ \n" \
+        "normalizedNormals = normalize(texture(u_textureSampler_normalMap, tenm_out.a_texCoord_out).xyz * 2.0 - vec3(1.0)); \n" \
+
+        "vec3 Q1 = dFdx(WorldPos.xyz); \n" \
+        "vec3 Q2 = dFdy(WorldPos.xyz); \n" \
+        "vec2 st1 = dFdx(a_texCoord_out); \n" \
+        "vec2 st2 = dFdy(a_texCoord_out); \n" \
+
+        "vec3 N = normalize(tenm_out.Normals); \n" \
+        "T = normalize(Q1 * st2.t - Q2 * st1.t); \n" \
+        "B = -normalize(cross(N, T)); \n" \
+        "mat3 TBN = mat3(T, B, N); \n" \
+
+        "return normalize(TBN * normalizedNormals); \n" \
+        "} \n" \
+
         "void main(void) \n" \
         "{ \n" \
+
+            "vec3 phong_ads_light; \n" \
+
+            //normal mapping
+            "vec3 N = getNormalFromMap(); \n" \
+            
+            "vec3 norm_lightDirection = normalize(tenm_out.lightDirection); \n" \
+            "vec3 a_lightDirection_out = normalize(vec3(dot(norm_lightDirection,T), dot(norm_lightDirection,B), dot(norm_lightDirection,normalizedNormals))); \n" \
+            
+            "vec3 norm_viewerVector = normalize(tenm_out.viewerVector); \n" \
+            "vec3 a_eyeDirection_out = normalize(vec3(dot(norm_viewerVector,T), dot(norm_viewerVector,B), dot(norm_viewerVector,normalizedNormals))); \n" \
+         
+            "vec3 ambient = 0.8 * (texture(tex_color,tenm_out.a_texCoord_out).rgb); \n" \
+            "vec3 normalized_viewerVector = a_eyeDirection_out; \n" \
+            "vec3 normalized_lightDirection =a_lightDirection_out; \n" \
+
+            "vec3 reflectionVector = reflect(-normalized_lightDirection,normalizedNormals); \n" \
+            "vec3 diffuse_light_color =u_ld * max(dot(normalizedNormals,normalized_lightDirection),0.0) * texture(tex_color,a_texCoord_out).rgb; \n" \
+            "vec3 specular = (max(pow(dot(reflectionVector,normalized_viewerVector),u_materialShininess),0.0)) * u_ls; \n" \
+            "phong_ads_light = phong_ads_light +ambient + diffuse_light_color + specular; \n" \
+            
+            /********************************************/
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
             "if (enable_godRays) \n" \
             "{ \n" \
-                "FragColor = landscape; \n" \
+                "FragColor = landscape * vec4(phong_ads_light,1.0); \n" \
                 "if (u_fogEnable == 1) \n" \
                 "{ \n" \
-                    "FragColor = mix(u_skyFogColor, landscape, visibility_tes); \n" \
+                    "FragColor = mix(u_skyFogColor, landscape, visibility_tes) * vec4(phong_ads_light,1.0); \n" \
                 "} \n" \
             "}" \
             "else \n" \
             "{\n" \
-                "FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+                "FragColor = vec4(phong_ads_light,1.0); \n" \
             "}\n" \
         "} \n";
     
@@ -338,7 +476,8 @@ int initializeTerrainShader(void)
 
     // Pre-linked binding of Shader program object
     glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_POSITION, "a_position");
-    //glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
+    glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
+    glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_NORMAL, "a_normal");
 
     // Link the program
     glLinkProgram(shaderProgramObj_terrain);
@@ -383,9 +522,26 @@ int initializeTerrainShader(void)
     terrainShaderUniform.skyFogColorUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_skyFogColor");
     terrainShaderUniform.fogEnableUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_fogEnable");
 
+    //normal mapping
+    //terrainShaderUniform.textureSamplerUniform_diffuse = glGetUniformLocation(shaderProgramObj_terrain, "u_textureSampler_diffuseMap");
+    terrainShaderUniform.textureSamplerUniform_normal = glGetUniformLocation(shaderProgramObj_terrain, "u_textureSampler_normalMap");
+    
+    terrainShaderUniform.modelMatrixUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_modelMatrix");
+    terrainShaderUniform.viewMatrixUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_viewMatrix");
+    terrainShaderUniform.projectionMatrixUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_projectionMatrix");
+
+    terrainShaderUniform.laUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_la");
+    terrainShaderUniform.ldUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_ld");
+    terrainShaderUniform.lsUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_ls");
+    terrainShaderUniform.lightPositionUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_lightPosition");
+
+    terrainShaderUniform.materialShininessUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_materialShininess");
+    //------------------------------------------------------------------------------------
+
     glUseProgram(shaderProgramObj_terrain);
     glUniform1i(terrainShaderUniform.textureSamplerUniform1, 0);
     glUniform1i(terrainShaderUniform.textureSamplerUniform2, 1);
+    glUniform1i(terrainShaderUniform.textureSamplerUniform_normal, 2);
     glUseProgram(0);
 
     return (0);

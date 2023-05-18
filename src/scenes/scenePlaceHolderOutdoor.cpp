@@ -200,6 +200,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/NormalMapTerrain.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
@@ -780,6 +781,23 @@ if(godRays == 1){
 
 	vmath::mat4 proj_matrix = perspectiveProjectionMatrix;
 
+	//normal mapping
+	vmath::mat4 m_matrix = (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 v_matrix = viewMatrix ;
+
+	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, m_matrix);
+	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, v_matrix);
+	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, proj_matrix);
+
+	glUniform3fv(terrainUniform.laUniform, 1, lightAmbient);
+	glUniform3fv(terrainUniform.ldUniform, 1, lightDiffuse);
+	glUniform3fv(terrainUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(terrainUniform.lightPositionUniform, 1, lightPosition);
+
+	glUniform3fv(terrainUniform.kaUniform, 1, materialAmbient);
+	glUniform3fv(terrainUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(terrainUniform.materialShininessUniform, materialShininess);
+
 	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
@@ -801,6 +819,9 @@ if(godRays == 1){
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.normal);
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
