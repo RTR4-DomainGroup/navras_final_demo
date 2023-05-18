@@ -31,7 +31,7 @@
 #define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_STATIC_MODELS	
+#define ENABLE_STATIC_MODELS
 
 extern int windowWidth;
 extern int windowHeight;
@@ -68,8 +68,6 @@ int initializeScene_PlaceHolderIndoor(void)
 
     // Code.
 
-	
-
 #ifdef ENABLE_ADSLIGHT
     // Texture
 	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
@@ -84,7 +82,6 @@ int initializeScene_PlaceHolderIndoor(void)
 	}
 
 #endif // ENABLE_ADSLIGHT
-
 	
 #ifdef ENABLE_STATIC_MODELS
 	//load models

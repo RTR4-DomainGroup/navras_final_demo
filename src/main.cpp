@@ -13,6 +13,7 @@
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene7_Raudra.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
