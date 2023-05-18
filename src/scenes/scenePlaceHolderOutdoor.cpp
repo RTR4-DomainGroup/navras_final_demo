@@ -497,8 +497,8 @@ void displayScene_PlaceHolderOutdoor(void)
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 1000.0f);
-		displayPasses(1, true, true, false, 1);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+		displayPasses(1, true, true, true, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//////////////////////////////////////////////////////////////
@@ -672,6 +672,26 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	setCamera();
 	//setCamera(&camera);
 
+	mat4 finalViewMatrix = mat4::identity();
+
+	if (actualDepthQuadScene == 0) {
+	
+		finalViewMatrix = viewMatrix;
+
+	}else if(actualDepthQuadScene == 1){
+	
+		finalViewMatrix = viewMatrix;
+
+		finalViewMatrix = mat4::identity();
+		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		/*perspectiveProjectionDepth = mat4::identity();
+		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);*/
+
+		lightSpaceMatrix = mat4::identity();
+		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
+	
+	}
+
 
 	if (recordWaterReflectionRefraction == true) {
 		waterUniform = useWaterShader();
@@ -693,44 +713,6 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		}
 	}
-
-#ifdef ENABLE_STARFIELD
-
-	sceneStarfieldUniform = useStarfieldShader();
-
-	float time = (float)deltaTime;
-
-	time = time * 0.05f;
-	time = time - floor(time);
-
-	// Transformations
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-
-	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-
-	if (actualDepthQuadScene == 1) {
-		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewmatrixDepth);
-		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionDepth);
-	}
-	else {
-		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-	}
-	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
-	glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
-	glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
-	displayStarfield(texture_star);
-	glUseProgram(0);
-
-#endif // ENABLE_STARFIELD
 
 	if (actualDepthQuadScene == 0) {
 
@@ -777,9 +759,6 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 		}
 
-	}
-
-	if (actualDepthQuadScene == 0) {
 
 
 #ifdef ENABLE_CLOUD_NOISE
@@ -839,6 +818,55 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 #endif
 
+#ifdef ENABLE_STARFIELD
+
+		sceneStarfieldUniform = useStarfieldShader();
+
+		float time = (float)deltaTime;
+
+		time = time * 0.05f;
+		time = time - floor(time);
+
+		// Transformations
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
+		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
+		glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+		displayStarfield(texture_star);
+		glUseProgram(0);
+
+#endif // ENABLE_STARFIELD
+
+#ifdef ENABLE_SKYBOX
+
+		sceneSkyBoxUniform = useSkyboxShader();
+
+		// Transformations
+		translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		displaySkybox(texture_skybox);
+		glUseProgram(0);
+#endif
+
 	}
 
 #ifdef ENABLE_TERRIAN
@@ -848,20 +876,11 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	vmath::mat4 mv_matrix = mat4::identity();
 	vmath::mat4 proj_matrix = mat4::identity();
 
-	if (actualDepthQuadScene == 1) {
 
-		mv_matrix = viewmatrixDepth * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	mv_matrix = finalViewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 
-		proj_matrix = perspectiveProjectionDepth;
+	proj_matrix = perspectiveProjectionMatrix;
 
-	}
-	else {
-
-		mv_matrix = viewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
-
-		proj_matrix = perspectiveProjectionMatrix;
-
-	}
 
 	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
@@ -891,27 +910,6 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	glUseProgram(0);
 #endif
 
-	if (actualDepthQuadScene == 0) {
-
-
-#ifdef ENABLE_SKYBOX
-
-		sceneSkyBoxUniform = useSkyboxShader();
-
-		// Transformations
-		translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		displaySkybox(texture_skybox);
-		glUseProgram(0);
-#endif
-
-	}
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
@@ -944,44 +942,30 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1) {
-		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewmatrixDepth);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionDepth);
 
 		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 1);
 		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
-
-		viewmatrixDepth = mat4::identity();
-		viewmatrixDepth = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
-		perspectiveProjectionDepth = mat4::identity();
-		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);
-
-		lightSpaceMatrix = mat4::identity();
-		lightSpaceMatrix = perspectiveProjectionDepth * viewmatrixDepth;
 		glUniformMatrix4fv(sceneOutdoorADSUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
 
 	}
 	else {
-		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 1);
 		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE0);
-		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 0);
+		glActiveTexture(GL_TEXTURE6);
+		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 6);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
 	}
 
+	glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
 
 	drawStaticModel(rockModel);
-
-	if (actualDepthQuadScene == 0) {
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -998,38 +982,10 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	if (actualDepthQuadScene == 1) {
-		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewmatrixDepth);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionDepth);
-
-		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
-
-		viewmatrixDepth = mat4::identity();
-		viewmatrixDepth = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
-		perspectiveProjectionDepth = mat4::identity();
-		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);
-
-		lightSpaceMatrix = mat4::identity();
-		lightSpaceMatrix = perspectiveProjectionDepth * viewmatrixDepth;
-		glUniformMatrix4fv(sceneOutdoorADSUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 
-	}
-	else {
-		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glUniform1i(sceneOutdoorADSUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
-
-		glActiveTexture(GL_TEXTURE0);
-		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 0);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
-	}
 	drawStaticModel(streetLightModel);
 
 	if (actualDepthQuadScene == 0) {
@@ -1055,7 +1011,7 @@ if(waterDraw == true){
 		modelMatrix = translationMatrix * scaleMatrix;
 
 		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glActiveTexture(GL_TEXTURE0);
