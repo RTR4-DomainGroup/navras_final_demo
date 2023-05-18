@@ -557,9 +557,9 @@ void displayScene_PlaceHolderOutdoor(void)
 		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
 			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
 			0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			displayPasses(0, false, false, true, 1);
+			displayPasses(0, false, false, true, 0);
 
 		sceneOutdoorADSUniform = useADSShader();
 		translationMatrix = mat4::identity();
@@ -570,10 +570,10 @@ void displayScene_PlaceHolderOutdoor(void)
 		glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneOutdoorADSUniform.lightingEnableUniform, 0);
 		glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
 		float color[3] = {1.0f, 1.0f, 1.0f};
+		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);
 		glUseProgram(0);
 		
