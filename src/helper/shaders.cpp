@@ -1,6 +1,7 @@
 #include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
@@ -29,6 +30,11 @@ BOOL initAllShaders(void)
     }
 
     if (initializeADSShader() != 0)
+    {
+        return FALSE;
+    }
+
+    if (initializeADSDynamicShader() != 0)
     {
         return FALSE;
     }
@@ -102,6 +108,7 @@ void uninitializeAllShaders(void)
     uninitializeGodraysShader();
     uninitializeSkyboxShader();
     uninitializeADSShader();
+    uninitializeADSDynamicShader();
     uninitializeCloudNoiseShader();
     uninitializeAtmosphereShader();
 }
