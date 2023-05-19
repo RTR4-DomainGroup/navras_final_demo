@@ -350,7 +350,7 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	glBindTexture(GL_TEXTURE_2D, texture_Marble);
 	glUniform1i(adsUniform.textureSamplerUniform, 0);
 	
-	float color[3] = { 0.0f, 0.0f, 1.0f };
+	float color[3] = { 0.0f, 0.0f, 0.0f };
 	if (godRays == 1)
 	{
 		color[0] = 1.0f;
