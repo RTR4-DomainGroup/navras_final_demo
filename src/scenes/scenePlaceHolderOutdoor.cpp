@@ -1,5 +1,3 @@
-#pragma once
-
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/helper/texture_loader.h"
