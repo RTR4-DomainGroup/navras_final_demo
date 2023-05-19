@@ -37,7 +37,6 @@ int initializeTerrainShader(void)
         "out vec4 worldPos; \n" \
         "out vec3 Normals; \n" \
         "out vec3 lightDirection; \n" \
-        "out vec2 a_texCoord_out; \n" \
         "out vec3 viewerVector ; \n" \
         "out vec2 a_texCoord_out; \n" \
         "} vsnm_out; \n" \
@@ -131,7 +130,6 @@ int initializeTerrainShader(void)
         "out vec4 worldPos; \n" \
         "out vec3 Normals; \n" \
         "out vec3 lightDirection; \n" \
-        "out vec2 a_texCoord_out; \n" \
         "out vec3 viewerVector ; \n" \
         "out vec2 a_texCoord_out; \n" \
         "} vsnm_in; \n" \
@@ -141,13 +139,20 @@ int initializeTerrainShader(void)
         "out vec4 worldPos; \n" \
         "out vec3 Normals; \n" \
         "out vec3 lightDirection; \n" \
-        "out vec2 a_texCoord_out; \n" \
         "out vec3 viewerVector ; \n" \
         "out vec2 a_texCoord_out; \n" \
         "} tcnm_out; \n" \
 
         "void main(void) \n" \
         "{ \n" \
+
+            //normal mapping
+            "tcnm_out.worldPos       = vsnm_in.worldPos; \n" \
+            "tcnm_out.Normals        = vsnm_in.Normals; \n" \
+            "tcnm_out.lightDirection = vsnm_in.lightDirection; \n" \
+            "tcnm_out.viewerVector   = vsnm_in.viewerVector; \n" \
+            "tcnm_out.a_texCoord_out = vsnm_in.a_texCoord_out; \n" \
+
             "if (gl_InvocationID == 0) \n" \
             "{ \n"
                 "vec4 p0 = mvp_matrix * gl_in[0].gl_Position; \n" \
@@ -260,13 +265,20 @@ int initializeTerrainShader(void)
         "out vec4 worldPos; \n" \
         "out vec3 Normals; \n" \
         "out vec3 lightDirection; \n" \
-        "out vec2 a_texCoord_out; \n" \
         "out vec3 viewerVector ; \n" \
         "out vec2 a_texCoord_out; \n" \
         "} tenm_out; \n" \
 
         "void main(void) \n" \
         "{ \n" \
+
+            //normal mapping
+            "tenm_out.worldPos       = tcnm_out.worldPos; \n" \
+            "tenm_out.Normals        = tcnm_out.Normals; \n" \
+            "tenm_out.lightDirection = tcnm_out.lightDirection; \n" \
+            "tenm_out.viewerVector   = tcnm_out.viewerVector; \n" \
+            "tenm_out.a_texCoord_out = tcnm_out.a_texCoord_out; \n" \
+
             "vec2 tc1 = mix(tes_in[0].tc, tes_in[1].tc, gl_TessCoord.x); \n" \
             "vec2 tc2 = mix(tes_in[2].tc, tes_in[3].tc, gl_TessCoord.x); \n" \
             "vec2 tc = mix(tc2, tc1, gl_TessCoord.y); \n" \
@@ -355,7 +367,6 @@ int initializeTerrainShader(void)
         "out vec4 worldPos; \n" \
         "out vec3 Normals; \n" \
         "out vec3 lightDirection; \n" \
-        "out vec2 a_texCoord_out; \n" \
         "out vec3 viewerVector ; \n" \
         "out vec2 a_texCoord_out; \n" \
         "} tenm_out; \n" \
