@@ -11,12 +11,14 @@
 #include "../inc/helper/audioplayer.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/effects/AtmosphereEffect.h"
+#include "../inc/effects/ParticelEffect.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
 #include "../inc/shaders/FSQuadShader.h"
+#include "../inc/shaders/ParticleShader.h"
 
 // OpenGL Libraries
 #pragma comment(lib, "glew32.lib")
@@ -72,7 +74,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
+static scene_t currentScene = SCENE_PARTICLE;
 
 bool sceneFadeOut = false;
 
@@ -575,6 +577,12 @@ int initialize(void) {
 		return (-8);
 	}
 
+	if (initializeParticle() != 0)
+	{
+		LOG("initializeParticle() FAILED !!!\n");
+		return (-8);
+	}
+
 	// if(initializeScene_Scene0() != 0)
 	// {
 	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
@@ -739,6 +747,10 @@ void display(void)
 	{
 		displayScene_PlaceHolderIndoor();
 	}
+	else if (currentScene == SCENE_PARTICLE)
+	{
+		displayParticle();
+	}
 	else
 	{
 		currentScene = SCENE_INVALID;
@@ -782,6 +794,7 @@ void update(void)
 
 	// camera movement related updates
 	updateMouseMovement();
+
 }
 
 void uninitialize(void) {
@@ -795,6 +808,7 @@ void uninitialize(void) {
 	uninitializeAudio();
 
 	//uninitialize all scenes
+	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	// uninitializeScene_Scene0();
