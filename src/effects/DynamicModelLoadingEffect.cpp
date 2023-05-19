@@ -855,7 +855,7 @@ void drawDynamicModel(DYNAMIC_MODEL dynamicModel, float deltaTime)
         glUniformMatrix4fv(finalBonesMatricesUniform[i], 1, GL_FALSE, glm::value_ptr(transforms[i]));
     }
 
-    dynamicModel.pModel->Draw();
+    dynamicModel.pModel->Draw(dynamicShaderProgObj);
 }
 
 void unloadDynamicModel(DYNAMIC_MODEL* dynamicModel)
