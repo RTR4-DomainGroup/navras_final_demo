@@ -293,6 +293,7 @@ int initializeScene_PlaceHolder(void)
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/dancingVampire/dancing_vampire.dae", &skeletonModel);
 #endif
 
 #ifdef ENABLE_BILLBOARDING	
@@ -720,15 +721,11 @@ void displayScene(int width, int height, int godRays = 1)
 #ifdef ENABLE_DYNAMIC_MODELS
 
 	glm::mat4 glm_modelMatrix;
-	glm::mat4 glm_viewMatrix;
-	glm::mat4 glm_projectionMatrix;
 	glm::mat4 glm_translateMatrix;
 	glm::mat4 glm_rotateMatrix;
 	glm::mat4 glm_scaleMatrix;
 
 	glm_modelMatrix = glm::mat4(1.0f);
-	glm_viewMatrix = glm::mat4(1.0f);
-	glm_projectionMatrix = glm::mat4(1.0f);
 	glm_translateMatrix = glm::mat4(1.0f);
 	glm_rotateMatrix = glm::mat4(1.0f);
 	glm_scaleMatrix = glm::mat4(1.0f);
@@ -750,22 +747,21 @@ void displayScene(int width, int height, int godRays = 1)
 	glUniform1f(sceneADSDynamicUniform.gradientUniform, gradient);
 	glUniform4fv(sceneADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
 	glUniform1i(sceneADSDynamicUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneADSDynamicUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneADSDynamicUniform.godrays_blackpass_sphere, 1);
 	
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm_translateMatrix, glm::vec3(-1.0f, -2.0f, -2.0f));
-	//glm_scaleMatrix = glm::scale(scaleMatrix, glm::vec3(0.008f, 0.008f, 0.008f));
-	//glm_rotateMatrix = glm::rotate(glm_rotateMatrix, 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glm_modelMatrix = glm_translateMatrix;
-	glm_projectionMatrix = glm_perspectiveProjectionMatrix;
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
 	glUniformMatrix4fv(sceneADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	glUniformMatrix4fv(sceneADSUniform.viewMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_viewMatrix));
-	glUniformMatrix4fv(sceneADSUniform.projectionMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_perspectiveProjectionMatrix));
-
-	drawDynamicModel(skeletonModel, 0.01f);
+	glUniformMatrix4fv(sceneADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	
+	drawDynamicModel(sceneADSDynamicUniform, skeletonModel, 1.0f);
 
 	glUseProgram(0);
 

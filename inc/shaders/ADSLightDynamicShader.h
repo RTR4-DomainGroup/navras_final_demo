@@ -38,5 +38,6 @@ struct ADSDynamicUniform
 
 int initializeADSDynamicShader(void);
 struct ADSDynamicUniform useADSDynamicShader(void);
+GLuint getDynamicShaderProgramObject(void);
 void uninitializeADSDynamicShader(void);
 

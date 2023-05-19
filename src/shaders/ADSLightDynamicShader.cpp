@@ -78,7 +78,7 @@ int initializeADSDynamicShader(void)
 
 		"	} \n" \
 
-		"	gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * totalPosition; \n" \
+		"	gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * totalPosition; \n" \
 
 		"	if (u_fogEnable == 1) \n" \
 		"	{ \n" \
@@ -185,7 +185,7 @@ int initializeADSDynamicShader(void)
 		"	}\n" \
 		"	else\n" \
 		"	{\n" \
-		"		FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
+		"		FragColor = vec4(1.0, 0.0, 0.0, 1.0); \n" \
 		"	}\n" \
 		"} \n";
 
@@ -295,6 +295,11 @@ struct ADSDynamicUniform useADSDynamicShader(void)
     // Code
     glUseProgram(adsDynamicShaderProgramObject);
     return adsDynamicUniform;
+}
+
+GLuint getDynamicShaderProgramObject(void) 
+{
+	return adsDynamicShaderProgramObject;
 }
 
 void uninitializeADSDynamicShader(void)

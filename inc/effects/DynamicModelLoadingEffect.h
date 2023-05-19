@@ -1,6 +1,7 @@
 #pragma once
 #include<stdio.h>
 #include "../../inc/helper/common.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -252,7 +253,7 @@ typedef struct _DYNAMIC_MODEL
 }DYNAMIC_MODEL;
 
 
-void drawDynamicModel(DYNAMIC_MODEL dynamicModel, float deltaTime);
+void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime);
 void loadDynamicModel(const char* path, DYNAMIC_MODEL* dynamicModel);
 void unloadDynamicModel(DYNAMIC_MODEL* dynamicModel);
 

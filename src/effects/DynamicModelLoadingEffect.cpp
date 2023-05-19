@@ -3,8 +3,9 @@
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 
 #define MAX_BONES 100
-GLuint dynamicShaderProgObj;
-GLuint finalBonesMatricesUniform[MAX_BONES];
+
+float m_deltaTime = 0.0f;
+float m_lastFrame = 0.0f;
 
 /*############################################################# BONE #############################################################*/
 
@@ -398,7 +399,7 @@ void DynamicMesh::Draw()
             number = std::to_string(heightNr++); // transfer unsigned int to stream
 
         // now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(dynamicShaderProgObj, (name + number).c_str()), i);
+        glUniform1i(glGetUniformLocation(getDynamicShaderProgramObject(), (name + number).c_str()), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
@@ -845,17 +846,21 @@ void loadDynamicModel(const char* path, DYNAMIC_MODEL* dynamicModel)
     }
 }
 
-void drawDynamicModel(DYNAMIC_MODEL dynamicModel, float deltaTime)
+void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime)
 {
-    dynamicModel.pAnimator->UpdateAnimation(deltaTime);
+    float currentFrame = GetTickCount();
+    m_deltaTime = (currentFrame - m_lastFrame) * deltaTime;
+    m_lastFrame = currentFrame;
+
+    dynamicModel.pAnimator->UpdateAnimation(m_deltaTime/1000.0f);
 
     std::vector<glm::mat4> transforms = dynamicModel.pAnimator->GetFinalBoneMatrices();
     for (int i = 0; i < transforms.size(); i++)
     {
-        glUniformMatrix4fv(finalBonesMatricesUniform[i], 1, GL_FALSE, glm::value_ptr(transforms[i]));
+        glUniformMatrix4fv(adsDynamicUniform.finalBonesMatricesUniform[i], 1, GL_FALSE, glm::value_ptr(transforms[i]));
     }
 
-    dynamicModel.pModel->Draw(dynamicShaderProgObj);
+    dynamicModel.pModel->Draw();
 }
 
 void unloadDynamicModel(DYNAMIC_MODEL* dynamicModel)
