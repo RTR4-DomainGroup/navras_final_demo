@@ -27,6 +27,16 @@ int initializeTerrain(TextureVariables *terrainTexture) {
 		LOG("LoadGLTexture Successfull for terrain = %u!!!\n", terrainTexture->albedo);
 	}
 
+	if (LoadGLTexture_UsingSOIL(&terrainTexture->normal, terrainTexture->normalPath) == FALSE) {
+		//uninitialize();
+		LOG("LoadGLTexture texture_Diffuse For Terrain FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture Successfull for terrain = %u!!!\n", terrainTexture->normal);
+	}
+
 	return 0;
 }
 
