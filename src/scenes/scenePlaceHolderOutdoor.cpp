@@ -57,7 +57,7 @@ TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneOutdoorADSUniform;
-struct ADSDynamicUniform sceneADSDynamicUniform;
+struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 struct FSQuadUniform fsqUniform;
 
 struct TerrainUniform terrainUniform;
@@ -1018,24 +1018,24 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	glm_rotateMatrix = glm::mat4(1.0f);
 	glm_scaleMatrix = glm::mat4(1.0f);
 
-	sceneADSDynamicUniform = useADSDynamicShader();
+	sceneOutdoorADSDynamicUniform = useADSDynamicShader();
 
 	// Sending Light Related Uniforms
-	glUniform4fv(sceneADSDynamicUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneADSDynamicUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneADSDynamicUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneADSDynamicUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneADSDynamicUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneADSDynamicUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneADSDynamicUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneADSDynamicUniform.materialShininessUniform, materialShininess);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess);
 
-	glUniform1i(sceneADSDynamicUniform.fogEnableUniform, 1);
-	glUniform1f(sceneADSDynamicUniform.densityUniform, density);
-	glUniform1f(sceneADSDynamicUniform.gradientUniform, gradient);
-	glUniform4fv(sceneADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneADSDynamicUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneADSDynamicUniform.godrays_blackpass_sphere, 1);
+	glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 1);
+	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
+	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 1);
 
 	// ------ Dancing Vampire Model ------
 
@@ -1045,11 +1045,11 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
-	glUniformMatrix4fv(sceneADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	glUniformMatrix4fv(sceneADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneADSDynamicUniform, skeletonModel, 1.0f);
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
 
 	glUseProgram(0);
 
