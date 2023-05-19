@@ -45,7 +45,7 @@
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
-#define ENABLE_GODRAYS
+//#define ENABLE_GODRAYS
 #define ENABLE_SHADOW
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
@@ -522,7 +522,7 @@ void displayScene_PlaceHolderOutdoor(void)
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(1, false, false, true, 1);
+		displayPasses(1, false, false, true, 0);
 	
 	#elif defined(ENABLE_GAUSSIAN_BLUR)
 		displayPasses(1, false, false, true, 1);
