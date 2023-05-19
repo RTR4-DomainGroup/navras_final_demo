@@ -13,6 +13,7 @@
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../inc/scenes/scene10_Shrungar.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 
 #define _USE_MATH_DEFINES 1
@@ -74,7 +75,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_PARTICLE;
+static scene_t currentScene = SCENE_SHRUNGAR;
 
 bool sceneFadeOut = false;
 
@@ -571,6 +572,13 @@ int initialize(void) {
         return (-8);
 	}
 
+	if (initializeScene10_Shrungar() != 0)
+	{
+		LOG("initializeScene10_Shrungar() FAILED !!!\n");
+		return (-8);
+	}
+
+
 	if (initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
@@ -743,6 +751,10 @@ void display(void)
 	{
 		displayScene_PlaceHolderOutdoor();
 	}
+	else if (currentScene == SCENE_SHRUNGAR)
+	{
+		displayScene10_Shrungar();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		displayScene_PlaceHolderIndoor();
@@ -783,6 +795,10 @@ void update(void)
 	{
 		// updateScene_Scene1();
 	}
+	else if (currentScene == SCENE_SHRUNGAR)
+	{
+		updateScene10_Shrungar();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
 	{
 		updateScene_PlaceHolderOutdoor();
@@ -809,6 +825,7 @@ void uninitialize(void) {
 
 	//uninitialize all scenes
 	uninitializeParticle();
+	uninitializeScene10_Shrungar();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	// uninitializeScene_Scene0();
