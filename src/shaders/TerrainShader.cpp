@@ -4,6 +4,7 @@ GLuint shaderProgramObj_terrain;
 extern FILE* gpFile;
 
 struct TerrainUniform terrainShaderUniform;
+extern HWND ghwnd;
 
 int initializeTerrainShader(void)
 {
@@ -314,6 +315,7 @@ int initializeTerrainShader(void)
                 free(log);
                 log = NULL;
                 uninitializeTerrainShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -457,6 +459,7 @@ int initializeTerrainShader(void)
                 free(log);
                 log = NULL;
                 uninitializeTerrainShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -498,6 +501,7 @@ int initializeTerrainShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeTerrainShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -571,5 +575,4 @@ void uninitializeTerrainShader(void)
 		glDeleteProgram(shaderProgramObj_terrain);
 		shaderProgramObj_terrain = 0;
     }
-    
 }
