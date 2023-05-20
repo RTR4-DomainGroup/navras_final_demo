@@ -11,7 +11,7 @@
 // #define ENABLE_STARFIELD
 // #define ENABLE_FOG
 // #define ENABLE_STATIC_MODELS	
-// #define ENABLE_BILLBOARDING
+#define ENABLE_BILLBOARDING
 // #define ENABLE_VIDEO_RENDER
 // #define ENABLE_GAUSSIAN_BLUR
 // #define ENABLE_GODRAYS
@@ -109,8 +109,6 @@ static struct FSQuadUniform fsqUniform;
 #ifdef ENABLE_TERRIAN
 static struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
-
-
 
 #ifdef ENABLE_CLOUD_NOISE
 static struct CloudNoiseUniform sceneCloudNoiseUniform;
@@ -261,7 +259,7 @@ int initializeScene9_AdbhutRas(void)
     //initializeSphere();
 	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
 
-#else // ENABLE_VIDEO_RENDER
+#else // ! ENABLE_VIDEO_RENDER
 
 	#ifdef ENABLE_ADSLIGHT
 		// Texture
@@ -455,8 +453,12 @@ int initializeScene9_AdbhutRas(void)
 		loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 	#endif // ENABLE_STATIC_MODELS
 
-	#ifdef ENABLE_BILLBOARDING	
+	#ifdef ENABLE_DYNAMIC_MODELS
+		loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+	#endif // ENABLE_DYNAMIC_MODELS
 
+
+	#ifdef ENABLE_BILLBOARDING
 		GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
 		// generate positions per instance
 		for(int i = 0; i < NO_OF_INSTANCES; i++)
@@ -521,8 +523,6 @@ int initializeScene9_AdbhutRas(void)
 	#endif // ENABLE_GAUSSIAN_BLUR
 
 #endif // ENABLE_VIDEO_RENDER
-
-
 	return 0;
 }
 
@@ -553,53 +553,52 @@ void displayScene9_AdbhutRas(void)
 	glUseProgram(0);
 #else
 
+	#ifdef ENABLE_WATER
+		// Water Frame Buffers
+		// Reflection
+		glEnable(GL_CLIP_DISTANCE0);
+		glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
+		glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+		displayScene9_Passes(1, true, true, false, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-#ifdef ENABLE_WATER
-	// Water Frame Buffers
-	// Reflection
-	glEnable(GL_CLIP_DISTANCE0);
-	glBindFramebuffer(GL_FRAMEBUFFER, waterReflectionFrameBufferDetails.frameBuffer);
-	glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
-	displayScene9_Passes(1, true, true, false, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// Refraction
+		glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
+		glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+		displayScene9_Passes(1, true, false, false, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_CLIP_DISTANCE0);
+	#endif // ENABLE_WATER
 
-	// Refraction
-	glBindFramebuffer(GL_FRAMEBUFFER, waterRefractionFrameBufferDetails.frameBuffer);
-	glViewport(0, 0, (GLsizei)waterRefractionFrameBufferDetails.textureWidth, (GLsizei)waterRefractionFrameBufferDetails.textureHeight);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterRefractionFrameBufferDetails.textureWidth / waterRefractionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
-	displayScene9_Passes(1, true, false, false, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDisable(GL_CLIP_DISTANCE0);
-#endif // ENABLE_WATER
+	#ifdef ENABLE_SHADOW
 
-#ifdef ENABLE_SHADOW
+		// Shadow
+		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
+		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+		displayScene9_Passes(1, true, true, true, 1);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	#endif // ENABLE_SHADOW
 
-	// Shadow
-	glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
-	glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
-	glClear(GL_DEPTH_BUFFER_BIT);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
-	displayScene9_Passes(1, true, true, true, 1);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif // ENABLE_SHADOW
+		//////////////////////////////////////////////////////////////
+		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
+			0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsqUniform = useFSQuadShader();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
 
-	//////////////////////////////////////////////////////////////
-	/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
-		0.1f, 1000.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	fsqUniform = useFSQuadShader();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-	glUniform1i(fsqUniform.textureSamplerUniform1, 0);
-
-	displayQuad();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);*/
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glUseProgram(0);*/
 
 	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
@@ -730,9 +729,9 @@ void displayScene9_AdbhutRas(void)
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
 
-	#endif
+	#endif // !(!defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS))  && !(defined(ENABLE_GAUSSIAN_BLUR))
 
-#endif
+#endif // ENABLE_VIDEO_RENDER
 }
 
 void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
@@ -1105,6 +1104,55 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 	glUseProgram(0);
 #endif // ENABLE_STATIC_MODELS
 
+#ifdef ENABLE_DYNAMIC_MODELS
+
+	glm::mat4 glm_modelMatrix;
+	glm::mat4 glm_translateMatrix;
+	glm::mat4 glm_rotateMatrix;
+	glm::mat4 glm_scaleMatrix;
+
+	glm_modelMatrix = glm::mat4(1.0f);
+	glm_translateMatrix = glm::mat4(1.0f);
+	glm_rotateMatrix = glm::mat4(1.0f);
+	glm_scaleMatrix = glm::mat4(1.0f);
+
+	sceneOutdoorADSDynamicUniform = useADSDynamicShader();
+
+	// Sending Light Related Uniforms
+	glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess);
+
+	glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
+	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
+	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
+
+	// ------ Dancing Vampire Model ------
+
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+
+	glUseProgram(0);
+
+#endif
+
 #ifdef ENABLE_WATER
 	if(waterDraw == true){
 		waterUniform = useWaterShader();
@@ -1146,15 +1194,14 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
-		void displayScene9_Billboarding(int godRays = 1);
+		void displayScene9_Billboarding(int);
+
 		displayScene9_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
-
 }
 
-#ifdef ENABLE_BILLBOARDING	
-
+#ifdef ENABLE_BILLBOARDING
 void displayScene9_Billboarding(int godRays = 1)
 {
 	// variable declaration
@@ -1396,6 +1443,11 @@ void uninitializeScene9_AdbhutRas(void)
 	unloadStaticModel(&streetLightModel);
 #endif // ENABLE_STATIC_MODELS
 
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	unloadDynamicModel(&skeletonModel);
+#endif
+
 #ifdef ENABLE_GAUSSIAN_BLUR
 	uninitializeGaussianBlur(&gaussianBlurEffect);
 #endif // ENABLE_GAUSSIAN_BLUR
@@ -1403,3 +1455,4 @@ void uninitializeScene9_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
+
