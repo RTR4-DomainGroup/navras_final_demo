@@ -266,11 +266,11 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform4fv(sceneIndoorADSDynamicUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneIndoorADSDynamicUniform.materialShininessUniform, materialShininess);
 
-	glUniform1i(sceneIndoorADSDynamicUniform.fogEnableUniform, 1);
+	glUniform1i(sceneIndoorADSDynamicUniform.fogEnableUniform, 0);
 	glUniform1f(sceneIndoorADSDynamicUniform.densityUniform, density);
 	glUniform1f(sceneIndoorADSDynamicUniform.gradientUniform, gradient);
 	glUniform4fv(sceneIndoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneIndoorADSDynamicUniform.uniform_enable_godRays, 1);
+	glUniform1i(sceneIndoorADSDynamicUniform.uniform_enable_godRays, godrays);
 	glUniform1i(sceneIndoorADSDynamicUniform.godrays_blackpass_sphere, 1);
 
 	// ------ Dancing Vampire Model ------
