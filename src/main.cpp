@@ -74,7 +74,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_PLACEHOLDER_INDOOR;
+static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 bool sceneFadeOut = false;
 
@@ -546,7 +546,7 @@ int initialize(void) {
 		return(-5);
 
 	// Print OpenGLInfo
-	printGLInfo();
+	//printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())

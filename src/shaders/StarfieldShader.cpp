@@ -3,7 +3,7 @@
 GLuint shaderProgramObj_starfield;
 
 struct StarfieldUniform starfieldUniform;
-
+extern HWND ghwnd;
 
 int initializeStarfieldShader(void)
 {
@@ -76,6 +76,7 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			DestroyWindow(ghwnd);
 			}
 		}
 	}
@@ -96,7 +97,7 @@ int initializeStarfieldShader(void)
 		"{ \n"																			\
 			"if (enable_godRays) \n" \
 			"{" \
-				"FragColor = a_color_out * texture(u_textureSampler, gl_PointCoord); \n"	\
+				"FragColor = texture(u_textureSampler, gl_PointCoord); \n"	\
 			"}" \
 			"else" \
 			"{\n" \
@@ -140,6 +141,7 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			DestroyWindow(ghwnd);
 			}
 		}
 	}
@@ -183,6 +185,8 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			DestroyWindow(ghwnd);
+
 			}
 		}
 	}
@@ -226,5 +230,4 @@ void uninitializeStarfieldShader(void)
 		glDeleteProgram(shaderProgramObj_starfield);
 		shaderProgramObj_starfield = 0;
     }
-    
 }

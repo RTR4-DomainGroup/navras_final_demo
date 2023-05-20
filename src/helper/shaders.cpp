@@ -13,6 +13,7 @@
 #include "../../inc/shaders/AtmosphereShader.h"
 #include "../../inc/shaders/ParticleShader.h"
 
+
 BOOL initAllShaders(void)
 {
     // Variable Declarations

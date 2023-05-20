@@ -229,6 +229,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/NormalMapTerrain.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
 	{
@@ -389,7 +390,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
 		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
 		instance_positions[(i*4)+3] = 1.0f;
-		LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
     }
 
 	// sort z vertices
@@ -778,9 +779,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		rotateX = mat4::identity();
 
 		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-		translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
+		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
 		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-		scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
+		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
 		//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotateX;
 
@@ -810,7 +811,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_3D, noise_texture);
 
-		displayQuad();
+		float color[3] = {1.0f, 1.0f, 1.0f};
+		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+		displaySphere(color);
 
 		glUseProgram(0);
 
@@ -882,6 +885,23 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	proj_matrix = perspectiveProjectionMatrix;
 
 
+	//normal mapping
+	vmath::mat4 m_matrix = (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 v_matrix = viewMatrix ;
+
+	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, m_matrix);
+	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, v_matrix);
+	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, proj_matrix);
+
+	glUniform3fv(terrainUniform.laUniform, 1, lightAmbient);
+	glUniform3fv(terrainUniform.ldUniform, 1, lightDiffuse);
+	glUniform3fv(terrainUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(terrainUniform.lightPositionUniform, 1, lightPosition);
+
+	glUniform3fv(terrainUniform.kaUniform, 1, materialAmbient);
+	glUniform3fv(terrainUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(terrainUniform.materialShininessUniform, materialShininess);
+
 	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
@@ -903,6 +923,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.albedo);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.normal);
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
