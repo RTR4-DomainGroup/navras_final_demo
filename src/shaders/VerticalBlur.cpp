@@ -2,6 +2,7 @@
 
 GLuint shaderProgram_verticalBlur;
 struct VerticalBlurUniform vBlurUniform;
+extern HWND ghwnd;
 
 int initialize_verticalBlur()
 {
@@ -71,6 +72,8 @@ int initialize_verticalBlur()
                 LOG("Vertical Blur vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
+                uninitialize_verticalBlurShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -142,6 +145,8 @@ int initialize_verticalBlur()
                 LOG("Vertical blur Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
+                uninitialize_verticalBlurShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -180,6 +185,9 @@ int initialize_verticalBlur()
                 glGetProgramInfoLog(shaderProgram_verticalBlur, infoLogLength, &written, log);
                 LOG("Horrizontal Blur Shader Program Link Log: %s\n", log);
                 free(log);
+                log = NULL;
+                uninitialize_verticalBlurShader();
+                DestroyWindow(ghwnd);
             }
         }
     }    

@@ -151,6 +151,10 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform1i(sceneIndoorADSUniform.uniform_enable_godRays, 1);
 	glUniform1i(sceneIndoorADSUniform.godrays_blackpass_sphere, 0);
 
+	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
+	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);

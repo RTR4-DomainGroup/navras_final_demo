@@ -1,10 +1,8 @@
 #include "../../inc/helper/shaders.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
-#include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
-#include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
@@ -13,6 +11,8 @@
 #include "../../inc/shaders/HorrizontalBlur.h"
 #include "../../inc/shaders/VerticalBlur.h"
 #include "../../inc/shaders/AtmosphereShader.h"
+#include "../../inc/shaders/ParticleShader.h"
+
 
 BOOL initAllShaders(void)
 {
@@ -84,12 +84,18 @@ BOOL initAllShaders(void)
         return FALSE;
     }
 
+    if (initializeParticleShader() != 0)
+    {
+        return FALSE;
+    }
+
     return TRUE;
 }
 
 void uninitializeAllShaders(void)
 {
     // Code
+    uninitializeParticleShader();
     uninitializeBillboardingShader();
     uninitializeWaterShader();
     uninitializeStarfieldShader();
