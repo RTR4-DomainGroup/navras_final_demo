@@ -3,19 +3,19 @@
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_TERRIAN
-//#define ENABLE_ATMOSPHERE
-#define ENABLE_WATER
-#define ENABLE_CLOUD_NOISE
-//#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
-//#define ENABLE_FOG
-#define ENABLE_STATIC_MODELS	
-#define ENABLE_BILLBOARDING
-//#define ENABLE_VIDEO_RENDER
-//#define ENABLE_GAUSSIAN_BLUR
-//#define ENABLE_GODRAYS
-#define ENABLE_SHADOW
+// #define ENABLE_TERRIAN
+// #define ENABLE_ATMOSPHERE
+// #define ENABLE_WATER
+// #define ENABLE_CLOUD_NOISE
+// #define ENABLE_SKYBOX
+// #define ENABLE_STARFIELD
+// #define ENABLE_FOG
+// #define ENABLE_STATIC_MODELS	
+// #define ENABLE_BILLBOARDING
+// #define ENABLE_VIDEO_RENDER
+// #define ENABLE_GAUSSIAN_BLUR
+// #define ENABLE_GODRAYS
+// #define ENABLE_SHADOW
 
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
@@ -106,21 +106,31 @@ static struct ADSUniform sceneOutdoorADSUniform;
 
 static struct FSQuadUniform fsqUniform;
 
+#ifdef ENABLE_TERRIAN
 static struct TerrainUniform terrainUniform;
+#endif // ENABLE_TERRIAN
 
+
+
+#ifdef ENABLE_CLOUD_NOISE
 static struct CloudNoiseUniform sceneCloudNoiseUniform;
+#endif // ENABLE_CLOUD_NOISE
 
 static struct TextureVariables terrainTextureVariables;
 
+#ifdef ENABLE_BILLBOARDING
 // variables for billboarding
 static struct BillboardingUniform billboardingEffectUniform;
 static GLuint frameTime = 0;
+#endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_WATER
 // Water Related Variables
 static struct WaterUniform waterUniform;
 static struct TextureVariables waterTextureVariables;
 static struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
 static struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+#endif // ENABLE_WATER
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables
@@ -138,11 +148,13 @@ static AtmosphereUniform atmosphereUniform;
 static AtmosphericVariables atmosVariables;
 #endif // ENABLE_ATMOSPHERE
 
+#ifdef ENABLE_SHADOW
 // Shadow
 static ShadowFrameBufferDetails shadowFramebuffer;
 static mat4 viewmatrixDepth;
 static mat4 lightSpaceMatrix;
 static mat4 perspectiveProjectionDepth;
+#endif // ENABLE_SHADOW
 
 static GLfloat waterHeight = 0.0f;
 static GLfloat moveFactor = 0.0f;
@@ -191,14 +203,18 @@ static GLuint texture_skybox;
 static struct SkyboxUniform sceneSkyBoxUniform;
 #endif // ENABLE_SKYBOX
 
+#ifdef ENABLE_STARFIELD
 // Variables For Starfieldx
 static GLuint texture_star; 
 static double deltaTime;
 static struct StarfieldUniform sceneStarfieldUniform;
+#endif // ENABLE_STARFIELD
 
+#ifdef ENABLE_STATIC_MODELS
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL streetLightModel;
+#endif // ENABLE_STATIC_MODELS
 
 static GLfloat density = 0.15;
 static GLfloat gradient = 0.5;
@@ -536,6 +552,9 @@ void displayScene9_AdbhutRas(void)
 	displayVideoEffect(&fsqUniform);
 	glUseProgram(0);
 #else
+
+
+#ifdef ENABLE_WATER
 	// Water Frame Buffers
 	// Reflection
 	glEnable(GL_CLIP_DISTANCE0);
@@ -554,6 +573,9 @@ void displayScene9_AdbhutRas(void)
 	displayScene9_Passes(1, true, false, false, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_CLIP_DISTANCE0);
+#endif // ENABLE_WATER
+
+#ifdef ENABLE_SHADOW
 
 	// Shadow
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
@@ -562,6 +584,7 @@ void displayScene9_AdbhutRas(void)
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
 	displayScene9_Passes(1, true, true, true, 1);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif // ENABLE_SHADOW
 
 	//////////////////////////////////////////////////////////////
 	/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
@@ -746,13 +769,17 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 		/*perspectiveProjectionDepth = mat4::identity();
 		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);*/
 
+#ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
 		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
+#endif // ENABLE_SHADOW
 	
 	}
 
 
 	if (recordWaterReflectionRefraction == true) {
+
+#ifdef ENABLE_WATER
 		waterUniform = useWaterShader();
 
 		float distance = 2.0f * (cameraEyeY - waterHeight);
@@ -771,6 +798,7 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 			glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
 			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		}
+#endif // ENABLE_WATER
 	}
 
 	if (actualDepthQuadScene == 0) {
@@ -1125,6 +1153,8 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 
 }
 
+#ifdef ENABLE_BILLBOARDING	
+
 void displayScene9_Billboarding(int godRays = 1)
 {
 	// variable declaration
@@ -1191,6 +1221,7 @@ void displayScene9_Billboarding(int godRays = 1)
 	glDisable(GL_BLEND);
 
 }
+#endif // ENABLE_BILLBOARDING	
 
 int initializeScene9_GodRays(void)
 {
