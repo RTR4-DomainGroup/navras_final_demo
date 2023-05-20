@@ -779,9 +779,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		rotateX = mat4::identity();
 
 		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-		translationMatrix = vmath::translate(0.0f, 0.0f, -500.0f); // glTranslatef() is replaced by this line.
+		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
 		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-		scaleMatrix = vmath::scale(800.0f, 450.0f, 1.0f);
+		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
 		//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotateX;
 
@@ -811,7 +811,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_3D, noise_texture);
 
-		displayQuad();
+		float color[3] = {1.0f, 1.0f, 1.0f};
+		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+		displaySphere(color);
 
 		glUseProgram(0);
 
