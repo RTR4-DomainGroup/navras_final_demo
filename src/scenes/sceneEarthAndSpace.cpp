@@ -265,8 +265,8 @@ void displayScene1_EarthAndSpace(void)
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
-		glUniform1i(sceneEarthAndSpaceGodRaysUniform.godraysampler, 0);
-		displayQuad();
+			glUniform1i(sceneEarthAndSpaceGodRaysUniform.godraysampler, 0);
+			displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -278,14 +278,15 @@ void displayScene1_EarthAndSpace(void)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqEarthAndSpaceUniform = useFSQuadShader();
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
 		glUniform1i(fsqEarthAndSpaceUniform.textureSamplerUniform1, 0);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
-		glUniform1i(fsqEarthAndSpaceUniform.textureSamplerUniform2, 1);
-		displayQuad();
+			glUniform1i(fsqEarthAndSpaceUniform.textureSamplerUniform2, 1);
+			displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
 

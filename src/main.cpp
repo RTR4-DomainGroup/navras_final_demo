@@ -803,6 +803,7 @@ void uninitialize(void) {
 	uninitializeAudio();
 
 	//uninitialize all scenes
+	uninitializeScene1_EarthAndSpace();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	// uninitializeScene_Scene0();
