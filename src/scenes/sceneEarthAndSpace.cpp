@@ -29,11 +29,13 @@
 
 #define ENABLE_STARFIELD
 #define ENABLE_GODRAYS
+//#define ENABLE_SKYBOX
+
 
 extern GLfloat whiteSphere[3];
-extern GLuint texture_Marble;
+GLuint texture_earth;
 
-extern struct ADSUniform sceneOutdoorADSUniform;
+struct ADSUniform sceneEarthAndSpaceADSUniform;
 
 extern mat4 viewMatrix;
 
@@ -47,13 +49,17 @@ extern float displacementmap_depth;
 extern GLuint texture_star; 
 extern double deltaTime;
 extern struct StarfieldUniform sceneStarfieldUniform;
-extern struct ADSUniform adsUniform;
+struct ADSUniform adsEarthAndSpaceUniform;
 
 // Varaiables for God Rays
-extern struct GodraysUniform sceneGodRaysUniform;
+struct GodraysUniform sceneEarthAndSpaceGodRaysUniform;
 extern GLfloat lightPosition_gr[];
 
-//struct FSQuadUniform fsqUniform;
+//struct FSQuadUniform fsqEarthAndSpaceUniform;
+
+// Variables For Skybox
+extern GLuint texture_skybox;
+extern struct SkyboxUniform sceneSkyBoxUniform;
 
 // Camera angle for rotation
 extern GLfloat cameraAngle;
@@ -61,7 +67,8 @@ extern GLfloat cameraAngle;
 extern struct FrameBufferDetails fboBlackPass;
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
-extern struct FSQuadUniform fsqUniform;
+
+struct FSQuadUniform fsqEarthAndSpaceUniform;
 
 extern int windowWidth;
 extern int windowHeight;
@@ -123,6 +130,20 @@ int initializeScene1_EarthAndSpace(void)
 	initializeQuad();
 #endif // ENABLE_GODRAYS
 
+#ifdef ENABLE_SKYBOX
+	if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox\\") != 0)
+	{
+
+		LOG("initializeSkybox() FAILED!!!\n");
+		return(-1);
+
+	}
+	else
+	{
+		LOG("initializeSkybox() Successfull!!!\n");
+	}
+#endif
+
 #ifdef ENABLE_STARFIELD
 	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
@@ -134,7 +155,7 @@ int initializeScene1_EarthAndSpace(void)
 		LOG("initializeStarfield() Successfull!!!\n");
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"Fog/smiley.bmp") == FALSE) 
+	if (LoadGLTexture_UsingSOIL(&texture_earth, TEXTURE_DIR"marble.bmp") == FALSE) 
 	{
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
@@ -142,7 +163,7 @@ int initializeScene1_EarthAndSpace(void)
 	}
 	else
 	{
-		LOG("LoadGLTexture for marble is Successful = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture for Atul is Successful = %u!!!\n", texture_earth);
 	}
 
 #endif // ENABLE_STARFIELD
@@ -180,20 +201,20 @@ void displayScene1_EarthAndSpace(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//2 framebuffers for water effect
 		//displayWaterFramebuffers(0);
-		displayPasses_EarthAndSpace(0, false, false, true);
+		displayPasses_EarthAndSpace(0, false, false, false);
 
-		sceneOutdoorADSUniform = useADSShader();
+		sceneEarthAndSpaceADSUniform = useADSShader();
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
 		modelMatrix = translationMatrix;
 		
-		glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneOutdoorADSUniform.lightingEnableUniform, 0);
-		glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
-		glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
+		glUniformMatrix4fv(sceneEarthAndSpaceADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneEarthAndSpaceADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneEarthAndSpaceADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneEarthAndSpaceADSUniform.lightingEnableUniform, 0);
+		glUniform1i(sceneEarthAndSpaceADSUniform.uniform_enable_godRays, 0);
+		glUniform1i(sceneEarthAndSpaceADSUniform.godrays_blackpass_sphere, 1);
 		float color[3] = { 1.0f, 1.0f, 1.0f };
 		displaySphere(color);
 		glUseProgram(0);
@@ -208,7 +229,7 @@ void displayScene1_EarthAndSpace(void)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//displayWaterFramebuffers(1);
-			displayPasses_EarthAndSpace(1, false, false, true);
+			displayPasses_EarthAndSpace(1, false, false, false);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// God Rays Pass
@@ -219,32 +240,32 @@ void displayScene1_EarthAndSpace(void)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		sceneGodRaysUniform = useGodRaysShader();
+		sceneEarthAndSpaceGodRaysUniform = useGodRaysShader();
 
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix;
 
-		glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
-		glUniform1f(sceneGodRaysUniform.decay, 1.0f);
-		glUniform1f(sceneGodRaysUniform.density, 0.92f);
-		glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
-		glUniform1f(sceneGodRaysUniform.weight, 0.04f);
+		glUniform4fv(sceneEarthAndSpaceGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.decay, 1.0f);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.density, 0.92f);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.exposure, 0.25f);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.weight, 0.04f);
 
-		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneEarthAndSpaceGodRaysUniform.godrays_lfEnabled, 1);
 
-		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
-		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
-		glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
-		glUniform3fv(sceneGodRaysUniform.distortionUniform, 1, distortion);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.dispersalUniform, dispersal);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.haloWidthUniform, haloWidth);
+		glUniform1f(sceneEarthAndSpaceGodRaysUniform.intensityUniform, intensity);
+		glUniform3fv(sceneEarthAndSpaceGodRaysUniform.distortionUniform, 1, distortion);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
-		glUniform1i(sceneGodRaysUniform.godraysampler, 0);
+		glUniform1i(sceneEarthAndSpaceGodRaysUniform.godraysampler, 0);
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
@@ -256,21 +277,21 @@ void displayScene1_EarthAndSpace(void)
 			0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		fsqUniform = useFSQuadShader();
+		fsqEarthAndSpaceUniform = useFSQuadShader();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+		glUniform1i(fsqEarthAndSpaceUniform.textureSamplerUniform1, 0);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
+		glUniform1i(fsqEarthAndSpaceUniform.textureSamplerUniform2, 1);
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);
 
 }
 
-void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefraction = false ,bool isReflection = false, bool waterDraw = false) 
+void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false) 
 {	
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -290,6 +311,23 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	setCamera();
 	//setCamera(&camera);
+
+#ifdef ENABLE_SKYBOX
+
+	sceneSkyBoxUniform = useSkyboxShader();
+
+	// Transformations
+	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	displaySkybox(texture_skybox);
+	glUseProgram(0);
+#endif
 
 #ifdef ENABLE_STARFIELD
 
@@ -320,7 +358,7 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	displayStarfield(texture_star);
 	glUseProgram(0);
 
-	adsUniform = useADSShader();
+	adsEarthAndSpaceUniform = useADSShader();
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -331,24 +369,24 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	//scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
-	glUniformMatrix4fv(adsUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(adsUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(adsUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	glUniform1i(adsUniform.uniform_enable_godRays, godRays);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniform1i(adsEarthAndSpaceUniform.uniform_enable_godRays, godRays);
 
-	glUniformMatrix4fv(adsUniform.laUniform, 1, GL_FALSE, lightAmbient);
-	glUniformMatrix4fv(adsUniform.ldUniform, 1, GL_FALSE, lightDiffuse);
-	glUniformMatrix4fv(adsUniform.lsUniform, 1, GL_FALSE, lightSpecular);
-	glUniformMatrix4fv(adsUniform.lightPositionUniform, 1, GL_FALSE, lightPosition);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.laUniform, 1, GL_FALSE, lightAmbient);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.ldUniform, 1, GL_FALSE, lightDiffuse);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.lsUniform, 1, GL_FALSE, lightSpecular);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.lightPositionUniform, 1, GL_FALSE, lightPosition);
 
-	glUniformMatrix4fv(adsUniform.kaUniform, 1, GL_FALSE, materialAmbient);
-	glUniformMatrix4fv(adsUniform.kdUniform, 1, GL_FALSE, materialDiffuse);
-	glUniformMatrix4fv(adsUniform.ksUniform, 1, GL_FALSE, materialSpecular);
-	glUniform1f(adsUniform.materialShininessUniform, materialShininess);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.kaUniform, 1, GL_FALSE, materialAmbient);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.kdUniform, 1, GL_FALSE, materialDiffuse);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.ksUniform, 1, GL_FALSE, materialSpecular);
+	glUniform1f(adsEarthAndSpaceUniform.materialShininessUniform, materialShininess);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_Marble);
-	glUniform1i(adsUniform.textureSamplerUniform, 0);
+	glBindTexture(GL_TEXTURE_2D, texture_earth);
+	glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform, 0);
 	
 	float color[3] = { 0.0f, 0.0f, 0.0f };
 	if (godRays == 1)

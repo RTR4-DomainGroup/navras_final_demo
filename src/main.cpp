@@ -6,6 +6,7 @@
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
+#include "../inc/helper/geometry.h"
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
@@ -13,6 +14,10 @@
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/sceneEarthAndSpace.h"
+#include "../inc/effects/SkyboxEffect.h"
+//#include "../inc/helper/texture_loader.h"
+//
+//#include "../inc/shaders/ADSLightShader.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
@@ -80,8 +85,24 @@ static scene_t currentScene = SCENE_EARTHANDSPACE;
 
 bool sceneFadeOut = false;
 
+//GLuint* texture;
+
 // extern
 // extern scene_t sceneStack[];
+
+//struct ADSUniform adsEarthAndSpaceUniform;
+//struct ADSUniform earthADSUniform;
+//GLuint texture_earthSun;
+//
+//GLfloat ligAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat ligDiffuse[] = { 1.0f, 1.0f, 0.0f, 1.0f };
+//GLfloat ligSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat ligPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
+//
+//GLfloat matAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+//GLfloat matDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat matSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//GLfloat matShininess = 128.0f;
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
@@ -206,7 +227,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	return((int)msg.wParam);
 
 }
-
 
 // CAllBack Function
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
@@ -513,19 +533,30 @@ int initialize(void) {
 		return (-8);
 	}
 
-
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
+	//if(initializeScene_Scene0() != 0)
+	//{
+	//	LOG("initializeScene_Scene0() FAILED !!!\n");
+	//  return (-8);
+	//}
 
 
 	// currentScene = scenePop();
 
 	// initialize camera
 	//resetCamera();
+
+	//if (LoadGLTexture_UsingSOIL(&texture_earthSun, TEXTURE_DIR"marble.bmp") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture for Inside Main is Successful = %u!!!\n", texture_earthSun);
+	//}
+
+	glEnable(GL_TEXTURE_2D);
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
@@ -661,6 +692,43 @@ void display(void)
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//mat4 translationMatrix = mat4::identity();
+	//mat4 modelMatrix = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
+
+	//glDisable(GL_BLEND);
+
+	//earthADSUniform = useADSShader();
+	//translationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+	//translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	//modelMatrix = translationMatrix;
+
+	//glUniformMatrix4fv(earthADSUniform.laUniform, 1, GL_FALSE, ligAmbient);
+	//glUniformMatrix4fv(earthADSUniform.ldUniform, 1, GL_FALSE, ligDiffuse);
+	//glUniformMatrix4fv(earthADSUniform.lsUniform, 1, GL_FALSE, ligSpecular);
+	//glUniformMatrix4fv(earthADSUniform.lightPositionUniform, 1, GL_FALSE, ligPosition);
+
+	//glUniformMatrix4fv(earthADSUniform.kaUniform, 1, GL_FALSE, matAmbient);
+	//glUniformMatrix4fv(earthADSUniform.kdUniform, 1, GL_FALSE, matDiffuse);
+	//glUniformMatrix4fv(earthADSUniform.ksUniform, 1, GL_FALSE, matSpecular);
+	//glUniform1f(earthADSUniform.materialShininessUniform, matShininess);
+
+	//glUniformMatrix4fv(earthADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(earthADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(earthADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//glUniform1i(earthADSUniform.lightingEnableUniform, 0);
+	//glUniform1i(earthADSUniform.uniform_enable_godRays, 1);
+	//glUniform1i(earthADSUniform.godrays_blackpass_sphere, 0);
+	//float color[3] = { 1.0f, 1.0f, 0.0f };
+	//displaySphere(color);
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture_earthSun);
+	//glUniform1i(earthADSUniform.textureSamplerUniform, 0);
+
+	//glUseProgram(0);
+
 	// Call Scenes Display Here
 	if(currentScene == SCENE_EARTHANDSPACE)
 	{
@@ -693,35 +761,35 @@ void update(void)
 	// local function declarations
 	void updateMouseMovement(void);
 
-	// Code
-	// switch scene
-	if(sceneFadeOut == true)
-	{
-		currentScene = scenePop();
-		sceneFadeOut = false;
-	} 
+	//// Code
+	//// switch scene
+	//if(sceneFadeOut == true)
+	//{
+	//	currentScene = scenePop();
+	//	sceneFadeOut = false;
+	//} 
 
-	
-	// Call Scenes Update Here
-	if(currentScene == SCENE_EARTHANDSPACE)
-	{
-		updateScene1_EarthAndSpace();
-	}
-	else if(currentScene == SCENE_1)
-	{
-		// updateScene_Scene1();
-	}
-	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
-	{
-		updateScene_PlaceHolderOutdoor();
-	}
-	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
-	{
-		updateScene_PlaceHolderIndoor();
-	}
+	//
+	//// Call Scenes Update Here
+	//if(currentScene == SCENE_EARTHANDSPACE)
+	//{
+	//	updateScene1_EarthAndSpace();
+	//}
+	//else if(currentScene == SCENE_1)
+	//{
+	//	// updateScene_Scene1();
+	//}
+	//else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
+	//{
+	//	updateScene_PlaceHolderOutdoor();
+	//}
+	//else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	//{
+	//	updateScene_PlaceHolderIndoor();
+	//}
 
-	// camera movement related updates
-	updateMouseMovement();
+	//// camera movement related updates
+	//updateMouseMovement();
 }
 
 void uninitialize(void) {
