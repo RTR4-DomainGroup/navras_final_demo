@@ -526,7 +526,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	return 0;
 }
 
-void displayScene_PlaceHolderOutdoor(void)
+void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses)
 {
 	// Function Declarations
 	void displayPasses(int,bool,bool,bool, int);
