@@ -1057,8 +1057,8 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, 0);
-	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 1);
+	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
 	// ------ Dancing Vampire Model ------
 

@@ -274,7 +274,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform1f(sceneIndoorADSDynamicUniform.densityUniform, density);
 	glUniform1f(sceneIndoorADSDynamicUniform.gradientUniform, gradient);
 	glUniform4fv(sceneIndoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneIndoorADSDynamicUniform.uniform_enable_godRays, godrays);
+	glUniform1i(sceneIndoorADSDynamicUniform.uniform_enable_godRays, 1);
 	glUniform1i(sceneIndoorADSDynamicUniform.godrays_blackpass_sphere, 1);
 
 	// ------ Dancing Vampire Model ------
