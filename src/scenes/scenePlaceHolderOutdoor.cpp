@@ -157,7 +157,7 @@ GLfloat haloWidth = 0.45f;
 GLfloat intensity = 1.5f;
 GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
-Camera camera;
+extern Camera camera;
 
 
 int initializeScene_PlaceHolderOutdoor(void)

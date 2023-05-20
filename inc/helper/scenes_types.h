@@ -9,4 +9,5 @@ typedef enum {
     SCENE_3,
     SCENE_INVALID,
     SCENE_PARTICLE,
+    SCENE_9_VEER_RAS
 } scene_t;

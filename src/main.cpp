@@ -12,6 +12,7 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
+#include "../inc/scenes/scene9_VeerRas.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 
@@ -74,6 +75,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
+//static scene_t currentScene = SCENE_9_VEER_RAS;
 static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 bool sceneFadeOut = false;
@@ -563,7 +565,13 @@ int initialize(void) {
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
-    scenePush(SCENE_0);
+	scenePush(SCENE_0);
+
+	if (initializeScene9_VeerRas() != 0)
+	{
+		LOG("initializeScene9_VeerRas() FAILED !!!\n");
+		return (-8);
+	}
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -739,6 +747,10 @@ void display(void)
 	{
 		// displayScene_Scene1();
 	}
+	else if (currentScene == SCENE_9_VEER_RAS)
+	{
+		displayScene9_VeerRas();
+	}
 	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
 	{
 		displayScene_PlaceHolderOutdoor();
@@ -783,6 +795,10 @@ void update(void)
 	{
 		// updateScene_Scene1();
 	}
+	else if (currentScene == SCENE_9_VEER_RAS)
+	{
+		updateScene9_VeerRas();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
 	{
 		updateScene_PlaceHolderOutdoor();
@@ -809,6 +825,7 @@ void uninitialize(void) {
 
 	//uninitialize all scenes
 	uninitializeParticle();
+	uninitializeScene9_VeerRas();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	// uninitializeScene_Scene0();
