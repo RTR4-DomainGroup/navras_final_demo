@@ -597,7 +597,7 @@ void displayScene9_AdbhutRas(void)
 		displayScene9_Passes(1, false, false, true, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		displayGaussianBlur();
+		displayScene9_GaussianBlur();
 
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
@@ -929,7 +929,6 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 #endif // ENABLE_SKYBOX
 	}
 
-
 #ifdef ENABLE_TERRIAN
 	// Terrain
 	terrainUniform = useTerrainShader();
@@ -1006,6 +1005,9 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 	glUniform4fv(sceneOutdoorADSUniform.kdUniform, 1, materialDiffuse);
 	glUniform4fv(sceneOutdoorADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneOutdoorADSUniform.materialShininessUniform, materialShininess);
+
+	//normal mapping
+	glUniform4fv(sceneOutdoorADSUniform.viewpositionUniform, 1, camera.eye);
 
 	glUniform1i(sceneOutdoorADSUniform.fogEnableUniform, 1);
 	glUniform1f(sceneOutdoorADSUniform.densityUniform, density);

@@ -1,39 +1,6 @@
 #pragma once
-
 // This File Will Be Replaced by Scene*.cpp
 
-#include "../../inc/helper/texture_loader.h"
-#include "../../inc/helper/waterframebuffer.h"
-#include "../../inc/helper/camera.h"
-#include "../../inc/helper/common.h"
-#include "../../inc/helper/framebuffer.h"
-#include "../../inc/helper/texture_loader.h"
-#include "../../inc/helper/shadowframebuffer.h"
-
-#include "../../inc/shaders/FSQuadShader.h"
-#include "../../inc/shaders/ADSLightShader.h"
-#include "../../inc/shaders/BillboardingShader.h"
-#include "../../inc/shaders/ADSLightDynamicShader.h"
-#include "../../inc/shaders/AtmosphereShader.h"
-
-#include "../../inc/effects/videoEffect.h"
-#include "../../inc/effects/TerrainEffect.h"
-#include "../../inc/effects/StarfieldEffect.h"
-#include "../../inc/effects/SkyboxEffect.h"
-#include "../../inc/effects/CloudEffect.h"
-#include "../../inc/effects/WaterEffect.h"
-#include "../../inc/effects/StaticModelLoadingEffect.h"
-#include "../../inc/effects/DynamicModelLoadingEffect.h"
-#include "../../inc/effects/GodraysEffect.h"
-// #include "../../inc/effects/Billboarding.h"
-#include "../../inc/effects/GaussianBlurEffect.h"
-#include "../../inc/effects/AtmosphereEffect.h"
-
-#include "../../inc/scenes/scenePlaceHolderOutdoor.h"
-
-
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_TERRIAN
@@ -41,126 +8,215 @@
 #define ENABLE_WATER
 #define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
+#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 #define ENABLE_STATIC_MODELS	
-#define ENABLE_DYNAMIC_MODELS
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
 //#define ENABLE_GODRAYS
 #define ENABLE_SHADOW
 
-GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
-GLuint texture_Marble;
-TEXTURE texture_grass;
-TEXTURE texture_flower;
+#include "../../inc/helper/texture_loader.h"
+#include "../../inc/helper/camera.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/framebuffer.h"
+#include "../../inc/helper/geometry.h"
+#include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/FSQuadShader.h"
 
-struct ADSUniform sceneOutdoorADSUniform;
-struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
-struct FSQuadUniform fsqUniform;
 
-struct TerrainUniform terrainUniform;
 
-struct CloudNoiseUniform sceneCloudNoiseUniform;
 
-struct TextureVariables terrainTextureVariables;
+#ifdef ENABLE_WATER
+#include "../../inc/helper/waterframebuffer.h"
+#endif // ENABLE_WATER
+
+#ifdef ENABLE_GODRAYS
+#endif // ENABLE_GODRAYS
+
+#ifdef ENABLE_SHADOW
+#include "../../inc/helper/shadowframebuffer.h"
+#endif // ENABLE_SHADOW
+
+#ifdef ENABLE_BILLBOARDING
+#include "../../inc/shaders/BillboardingShader.h"
+#endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_ATMOSPHERE
+#include "../../inc/shaders/AtmosphereShader.h"
+#include "../../inc/effects/AtmosphereEffect.h"
+#endif // ENABLE_ATMOSPHERE
+
+#ifdef ENABLE_VIDEO_RENDER
+#include "../../inc/effects/videoEffect.h"
+#endif // ENABLE_VIDEO_RENDER
+
+#ifdef ENABLE_TERRIAN
+#include "../../inc/effects/TerrainEffect.h"
+#endif // ENABLE_TERRIAN
+
+#ifdef ENABLE_STARFIELD
+#include "../../inc/effects/StarfieldEffect.h"
+#endif // ENABLE_STARFIELD
+
+#ifdef ENABLE_CLOUD_NOISE
+#endif // ENABLE_CLOUD_NOISE
+
+#ifdef ENABLE_SKYBOX
+#include "../../inc/effects/SkyboxEffect.h"
+#endif // ENABLE_SKYBOX
+
+#ifdef ENABLE_CLOUD_NOISE
+#include "../../inc/effects/CloudEffect.h"
+#endif // ENABLE_CLOUD_NOISE
+
+#ifdef ENABLE_WATER
+#include "../../inc/effects/WaterEffect.h"
+#endif // ENABLE_WATER
+
+#ifdef ENABLE_STATIC_MODELS
+#include "../../inc/effects/StaticModelLoadingEffect.h"
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_GODRAYS
+#include "../../inc/effects/GodraysEffect.h"
+#endif // ENABLE_GODRAYS
+
+#ifdef ENABLE_GAUSSIAN_BLUR
+#include "../../inc/effects/GaussianBlurEffect.h"
+#endif // ENABLE_GAUSSIAN_BLUR
+
+
+#include "../../inc/scenes/scene9_AdbhutRas.h"
+
+
+
+#define FBO_WIDTH 1920
+#define FBO_HEIGHT 1080
+
+
+
+static GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
+static GLuint texture_Marble;
+static TEXTURE texture_grass;
+static TEXTURE texture_flower;
+
+static struct ADSUniform sceneOutdoorADSUniform;
+
+static struct FSQuadUniform fsqUniform;
+
+static struct TerrainUniform terrainUniform;
+
+static struct CloudNoiseUniform sceneCloudNoiseUniform;
+
+static struct TextureVariables terrainTextureVariables;
 
 // variables for billboarding
-struct BillboardingUniform billboardingEffectUniform;
-GLuint frameTime = 0;
+static struct BillboardingUniform billboardingEffectUniform;
+static GLuint frameTime = 0;
 
 // Water Related Variables
-struct WaterUniform waterUniform;
-struct TextureVariables waterTextureVariables;
-struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
-struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+static struct WaterUniform waterUniform;
+static struct TextureVariables waterTextureVariables;
+static struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
+static struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
 
+#ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables
-struct GaussianBlurEffect gaussianBlurEffect;
-struct HorrizontalBlurUniform horizontalBlurUniform;
-struct VerticalBlurUniform verticalBlurUniform;
-struct FrameBufferDetails fullSceneFbo;
-struct FSQuadUniform fsGaussBlurQuadUniform;
+static struct GaussianBlurEffect gaussianBlurEffect;
+static struct HorrizontalBlurUniform horizontalBlurUniform;
+static struct VerticalBlurUniform verticalBlurUniform;
+static struct FrameBufferDetails fullSceneFbo;
+static struct FSQuadUniform fsGaussBlurQuadUniform;
+#endif // ENABLE_GAUSSIAN_BLUR
 
+
+#ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
-AtmosphereUniform atmosphereUniform;
-
+static AtmosphereUniform atmosphereUniform;
+static AtmosphericVariables atmosVariables;
+#endif // ENABLE_ATMOSPHERE
 
 // Shadow
-ShadowFrameBufferDetails shadowFramebuffer;
-mat4 viewmatrixDepth;
-mat4 lightSpaceMatrix;
-mat4 perspectiveProjectionDepth;
+static ShadowFrameBufferDetails shadowFramebuffer;
+static mat4 viewmatrixDepth;
+static mat4 lightSpaceMatrix;
+static mat4 perspectiveProjectionDepth;
 
-GLfloat waterHeight = 0.0f;
-GLfloat moveFactor = 0.0f;
-GLfloat planeReflection[] = { 0.0f, 1.0f, 0.0f, -waterHeight };
-GLfloat planeRefration[] = { 0.0f, -1.0f, 0.0f, waterHeight };
-struct FrameBufferDetails fboBlackPass;
-struct FrameBufferDetails fboColorPass;
-struct FrameBufferDetails fboGodRayPass;
+static GLfloat waterHeight = 0.0f;
+static GLfloat moveFactor = 0.0f;
+static GLfloat planeReflection[] = { 0.0f, 1.0f, 0.0f, -waterHeight };
+static GLfloat planeRefration[] = { 0.0f, -1.0f, 0.0f, waterHeight };
+static struct FrameBufferDetails fboBlackPass;
+static struct FrameBufferDetails fboColorPass;
+static struct FrameBufferDetails fboGodRayPass;
 
 extern int windowWidth;
 extern int windowHeight;
 
-mat4 viewMatrix;
 
-float myScale = 1.0f;
+static float myScale = 1.0f;
 
-float noiseScale = 2.0f;
-bool noiseScaleIncrement = true;
+static float noiseScale = 2.0f;
+static bool noiseScaleIncrement = true;
 
-GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
+static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat materialShininess = 128.0f;
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
-GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+static mat4 viewMatrix;
 
-GLuint noise_texture;
 
-GLfloat angleCube;
+static GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+static GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+
+static GLuint noise_texture;
+
+static GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-float displacementmap_depth;
+static float displacementmap_depth;
 
+#ifdef ENABLE_SKYBOX
 // Variables For Skybox
-GLuint texture_skybox;
-struct SkyboxUniform sceneSkyBoxUniform;
+static GLuint texture_skybox;
+static struct SkyboxUniform sceneSkyBoxUniform;
+#endif // ENABLE_SKYBOX
 
 // Variables For Starfieldx
-GLuint texture_star; 
-double deltaTime;
-struct StarfieldUniform sceneStarfieldUniform;
+static GLuint texture_star; 
+static double deltaTime;
+static struct StarfieldUniform sceneStarfieldUniform;
 
 //Model variables
-STATIC_MODEL rockModel;
-STATIC_MODEL streetLightModel;
-DYNAMIC_MODEL skeletonModel;
+static STATIC_MODEL rockModel;
+static STATIC_MODEL streetLightModel;
 
-GLfloat density = 0.15;
-GLfloat gradient = 0.5;
-GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+static GLfloat density = 0.15;
+static GLfloat gradient = 0.5;
+static GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
+#ifdef ENABLE_GODRAYS
 // Varaiables for God Rays
-struct GodraysUniform sceneGodRaysUniform;
-GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
+static struct GodraysUniform sceneGodRaysUniform;
+static GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
+#endif // ENABLE_GODRAYS
 
 // Camera angle for rotation
-GLfloat cameraAngle = 0.0f;
-GLfloat dispersal = 0.1875f;
-GLfloat haloWidth = 0.45f;
-GLfloat intensity = 1.5f;
-GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
+static GLfloat cameraAngle = 0.0f;
+static GLfloat dispersal = 0.1875f;
+static GLfloat haloWidth = 0.45f;
+static GLfloat intensity = 1.5f;
+static GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
 
 
@@ -558,18 +614,16 @@ void displayScene_PlaceHolderOutdoor(void)
 		displayQuad();
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
-	#else
 
-		
-
+	#else // !(!defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS))  && !(defined(ENABLE_GAUSSIAN_BLUR))
 		// GodRay Black pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
-			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
 			0.1f, 1000.0f);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			displayPasses(0, false, false, true, 0);
+		displayPasses(0, false, false, true, 0);
 
 		sceneOutdoorADSUniform = useADSShader();
 		translationMatrix = mat4::identity();
@@ -688,7 +742,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	
 		finalViewMatrix = viewMatrix;
 
-	}else if(actualDepthQuadScene == 1){
+	} else if(actualDepthQuadScene == 1) {
 	
 		finalViewMatrix = viewMatrix;
 
@@ -765,9 +819,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 			glUseProgram(0);
 
-#endif
+#endif // ENABLE_ATMOSPHERE
 
-		}
+		} // if(godRays == 1)
 
 
 
@@ -828,7 +882,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 		glDisable(GL_TEXTURE_3D);
 
-#endif
+#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_STARFIELD
 
@@ -877,8 +931,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 		displaySkybox(texture_skybox);
 		glUseProgram(0);
-#endif
-
+#endif // ENABLE_SKYBOX
 	}
 
 #ifdef ENABLE_TERRIAN
@@ -998,7 +1051,6 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 
 	drawStaticModel(rockModel);
 
@@ -1222,6 +1274,7 @@ void resize_godRayPasses(int fboWidh, int fboHeight)
 	glViewport(0, 0, (GLsizei)fboWidh, (GLsizei)fboHeight);
 }
 
+#ifdef ENABLE_GAUSSIAN_BLUR
 void displayGaussianBlur(void)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurEffect.horrizontalFBDetails.frameBuffer);
@@ -1257,6 +1310,7 @@ void displayGaussianBlur(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+#endif // ENABLE_GAUSSIAN_BLUR
 
 void updateScene_PlaceHolderOutdoor(void)
 {
@@ -1272,24 +1326,24 @@ void updateScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_STARFIELD
 	deltaTime = updateStarfield(deltaTime);
-#endif
+#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
-#endif
+#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
 
-#endif
+#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 
 	moveFactor += 0.0003f;
 	if (moveFactor >= 360.0f)
 		moveFactor -= 360.0f;
-#endif
+#endif // ENABLE_WATER
 
 	// update camera using lerp
 	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
@@ -1316,11 +1370,11 @@ void uninitializeScene_PlaceHolderOutdoor(void)
         glDeleteTextures(1, &texture_grass.id);
         texture_grass.id = 0;
     }
-#endif
+#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 	uninitializeWater(&waterTextureVariables);
-#endif
+#endif // ENABLE_WATER
 
 #ifdef ENABLE_STARFIELD
 	uninitializeStarfield(texture_star);
@@ -1332,11 +1386,11 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);
-#endif
+#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_ATMOSPHERE
 	uninitializeAtmosphere();
-#endif
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_CLOUD_NOISE
 	
@@ -1346,7 +1400,7 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 		glDeleteTextures(1, &noise_texture);
 		noise_texture = 0;
 	}
-#endif
+#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)
@@ -1368,7 +1422,7 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	//UNINIT models
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&streetLightModel);
-#endif
+#endif // ENABLE_STATIC_MODELS
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -1377,8 +1431,9 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 	uninitializeGaussianBlur(&gaussianBlurEffect);
-#endif
+#endif // ENABLE_GAUSSIAN_BLUR
 
 	//uninitializeCamera(&camera);
 
 }
+
