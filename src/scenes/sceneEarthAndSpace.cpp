@@ -88,6 +88,11 @@ extern GLfloat materialDiffuse[];
 extern GLfloat materialSpecular[];
 extern GLfloat materialShininess;
 
+extern GLfloat skyFogColor[];
+extern GLfloat density;
+extern GLfloat gradient;
+
+
 int initializeScene1_EarthAndSpace(void)
 {
 	// Function Declarations
@@ -195,8 +200,7 @@ void displayScene1_EarthAndSpace(void)
 		// GodRay Black pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
-			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
-			0.1f, 1000.0f);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//2 framebuffers for water effect
@@ -212,7 +216,6 @@ void displayScene1_EarthAndSpace(void)
 		glUniformMatrix4fv(sceneEarthAndSpaceADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneEarthAndSpaceADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneEarthAndSpaceADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneEarthAndSpaceADSUniform.lightingEnableUniform, 0);
 		glUniform1i(sceneEarthAndSpaceADSUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneEarthAndSpaceADSUniform.godrays_blackpass_sphere, 1);
 		float color[3] = { 1.0f, 1.0f, 1.0f };
@@ -224,8 +227,7 @@ void displayScene1_EarthAndSpace(void)
 		// GodRay Color Pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboColorPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboColorPass.textureWidth, (GLsizei)fboColorPass.textureHeight);
-			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 
-			0.1f, 1000.0f);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//displayWaterFramebuffers(1);
@@ -235,8 +237,7 @@ void displayScene1_EarthAndSpace(void)
 		// God Rays Pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboGodRayPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboGodRayPass.textureWidth, (GLsizei)fboGodRayPass.textureHeight);
-			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 
-			0.1f, 1000.0f);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -247,16 +248,16 @@ void displayScene1_EarthAndSpace(void)
 		//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix;
 
+		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneEarthAndSpaceGodRaysUniform.godrays_lfEnabled, 0);
+
 		glUniform4fv(sceneEarthAndSpaceGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
 		glUniform1f(sceneEarthAndSpaceGodRaysUniform.decay, 1.0f);
 		glUniform1f(sceneEarthAndSpaceGodRaysUniform.density, 0.92f);
 		glUniform1f(sceneEarthAndSpaceGodRaysUniform.exposure, 0.25f);
 		glUniform1f(sceneEarthAndSpaceGodRaysUniform.weight, 0.04f);
-
-		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneEarthAndSpaceGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneEarthAndSpaceGodRaysUniform.godrays_lfEnabled, 1);
 
 		glUniform1f(sceneEarthAndSpaceGodRaysUniform.dispersalUniform, dispersal);
 		glUniform1f(sceneEarthAndSpaceGodRaysUniform.haloWidthUniform, haloWidth);
@@ -273,8 +274,7 @@ void displayScene1_EarthAndSpace(void)
 
 		// Godrays Default Frame Buffer
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 
-			0.1f, 1000.0f);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqEarthAndSpaceUniform = useFSQuadShader();
@@ -373,7 +373,6 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	glUniform1i(adsEarthAndSpaceUniform.uniform_enable_godRays, godRays);
 
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.laUniform, 1, GL_FALSE, lightAmbient);
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.ldUniform, 1, GL_FALSE, lightDiffuse);
@@ -384,6 +383,15 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.kdUniform, 1, GL_FALSE, materialDiffuse);
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.ksUniform, 1, GL_FALSE, materialSpecular);
 	glUniform1f(adsEarthAndSpaceUniform.materialShininessUniform, materialShininess);
+
+	glUniform1i(adsEarthAndSpaceUniform.uniform_enable_godRays, godRays);
+
+	glUniform1f(adsEarthAndSpaceUniform.gradientUniform, gradient);
+	glUniform1f(adsEarthAndSpaceUniform.densityUniform, density);
+
+	glUniform1i(adsEarthAndSpaceUniform.fogEnableUniform, 0);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.skyFogColorUniform, 1, GL_FALSE, skyFogColor);
+	glUniform1i(adsEarthAndSpaceUniform.godrays_blackpass_sphere, 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_earth);

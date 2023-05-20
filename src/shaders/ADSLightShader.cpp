@@ -27,7 +27,6 @@ int initializeADSShader(void)
 		"uniform mat4 u_viewMatrix; \n" \
 		"uniform mat4 u_projectionMatrix; \n" \
 		"uniform vec4 u_lightPosition; \n" \
-		"uniform int u_lightingEnable; \n" \
 		"uniform int u_fogEnable; \n" \
 
 		"uniform float u_density; \n"	\
@@ -42,14 +41,13 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-			"if (u_lightingEnable == 1) \n" \
-			"{ \n" \
-				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
-				"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
-				"transformedNormals = normalMatrix * a_normal; \n" \
-				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
-				"viewerVector = vec3(-eyeCoordinates); \n" \
-			"} \n" \
+			"visibility = 0.0f; \n"	\
+			"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
+			"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
+			"transformedNormals = normalMatrix * a_normal; \n" \
+			"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
+			"viewerVector = vec3(-eyeCoordinates); \n" \
+
 			"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position; \n" \
 			"a_color_out = a_color;\n" \
 			"a_texcoord_out = a_texcoord;\n" \
@@ -113,7 +111,6 @@ int initializeADSShader(void)
 		"uniform vec4 u_kd; \n" \
 		"uniform vec4 u_ks; \n" \
 		"uniform float u_materialShininess; \n" \
-		"uniform int u_lightingEnable; \n" \
 		"uniform int u_fogEnable; \n" \
 		"uniform sampler2D u_texturesampler;\n" \
 		"uniform vec4 u_skyFogColor; \n"	\
@@ -211,15 +208,17 @@ int initializeADSShader(void)
 	adsUniform.modelMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_modelMatrix");
 	adsUniform.viewMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_viewMatrix");
 	adsUniform.projectionMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "u_projectionMatrix");
+
 	adsUniform.laUniform = glGetUniformLocation(adsShaderProgramObject, "u_la");
 	adsUniform.ldUniform = glGetUniformLocation(adsShaderProgramObject, "u_ld");
 	adsUniform.lsUniform = glGetUniformLocation(adsShaderProgramObject, "u_ls");
+	adsUniform.lightPositionUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightPosition");
+
 	adsUniform.kaUniform = glGetUniformLocation(adsShaderProgramObject, "u_ka");
 	adsUniform.kdUniform = glGetUniformLocation(adsShaderProgramObject, "u_kd");
 	adsUniform.ksUniform = glGetUniformLocation(adsShaderProgramObject, "u_ks");
-	adsUniform.lightPositionUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightPosition");
 	adsUniform.materialShininessUniform = glGetUniformLocation(adsShaderProgramObject, "u_materialShininess");
-	adsUniform.lightingEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightingEnable");
+
 	adsUniform.textureSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "u_texturesampler");
 
 	adsUniform.gradientUniform = glGetUniformLocation(adsShaderProgramObject, "u_gradient");
@@ -232,7 +231,6 @@ int initializeADSShader(void)
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform, 0);
 	glUseProgram(0);
-
 
 	return(0);
 
