@@ -91,7 +91,7 @@ int initializeScene_PlaceHolderIndoor(void)
 	loadStaticModel("res/models/rock/rock.obj", &rockModel_in);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_in);
 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
-	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
+	loadStaticModel("res/models/bag/backpack.obj", &schoolBagModel);
 #endif
 
 	return 0;
@@ -155,6 +155,9 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 
+	//For Normal Mapping
+	glUniform4fv(sceneIndoorADSUniform.viewpositionUniform, 1, camera.eye);
+
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -198,7 +201,7 @@ void displayScene_PlaceHolderIndoor(void)
 	rotationMatrix_z = mat4::identity();
 
 
-	translationMatrix = vmath::translate(1.0f, 2.0f, -6.0f);
+	translationMatrix = vmath::translate(1.0f, 0.0f, -1.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
