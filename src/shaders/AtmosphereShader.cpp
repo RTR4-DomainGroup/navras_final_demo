@@ -3,7 +3,7 @@
 GLuint shaderProgramObj_atmos;
 
 struct AtmosphereUniform atmosUniform;
-
+extern HWND ghwnd;
 
 int initializeAtmosphereShader(void)
 {
@@ -122,6 +122,7 @@ int initializeAtmosphereShader(void)
                 free(log);
                 log = NULL;
                 uninitializeAtmosphereShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -179,6 +180,7 @@ int initializeAtmosphereShader(void)
                 free(log);
                 log = NULL;
                 uninitializeAtmosphereShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -218,7 +220,9 @@ int initializeAtmosphereShader(void)
                 glGetProgramInfoLog(shaderProgramObj_atmos, infoLogLength, &written, log);
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
+                log = NULL;
                 uninitializeAtmosphereShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -279,5 +283,4 @@ void uninitializeAtmosphereShader(void)
 		glDeleteProgram(shaderProgramObj_atmos);
 		shaderProgramObj_atmos = 0;
     }
-    
 }

@@ -4,6 +4,7 @@
 GLuint cloudNoiseShaderProgramObject;
 
 CloudNoiseUniform cloudNoiseUniform;
+extern HWND ghwnd;
 
 int intializeCloudNoiseShader(void)
 {
@@ -69,7 +70,9 @@ int intializeCloudNoiseShader(void)
 				glGetShaderInfoLog(vertexShaderObject, infoLogLength, &written, log);
 				LOG("Cloud Noise Vertex Shader Compilation Log: %s\n", log);
 				free(log);
+				log = NULL;
 				uninitializeCloudNoiseShader();
+				DestroyWindow(ghwnd);
 			}
 		}
 	}
@@ -144,6 +147,8 @@ int intializeCloudNoiseShader(void)
 				LOG("Cloud Noise Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeCloudNoiseShader();
+				log = NULL;
+				DestroyWindow(ghwnd);
 			}
 		}
 	}
@@ -171,6 +176,7 @@ int intializeCloudNoiseShader(void)
 				LOG("Cloud Noise ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeCloudNoiseShader();
+				DestroyWindow(ghwnd);
 			}
 		}
 	}

@@ -546,7 +546,7 @@ int initialize(void) {
 		return(-5);
 
 	// Print OpenGLInfo
-	printGLInfo();
+	//printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())

@@ -4,6 +4,7 @@
 // Variable Declarations
 GLuint billboardingShaderProgramObject;
 static BillboardingUniform billboardingUniform;
+extern HWND ghwnd;
 
 int initializeBillboardingShader(void)
 {
@@ -69,7 +70,9 @@ int initializeBillboardingShader(void)
 				glGetShaderInfoLog(vertexShadderObject, infoLogLength, &written, log);
 				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
+				log = NULL;
 				uninitializeBillboardingShader();
+				DestroyWindow(ghwnd);
 			}
 		}
 	}
@@ -117,6 +120,7 @@ int initializeBillboardingShader(void)
 				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
+				DestroyWindow(ghwnd);
 			}
 		}
 	}
@@ -144,6 +148,7 @@ int initializeBillboardingShader(void)
 				LOG("ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
+				DestroyWindow(ghwnd);
 			}
 		}
 	}
