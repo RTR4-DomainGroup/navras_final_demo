@@ -13,6 +13,7 @@
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/AtmosphereShader.h"
 
 #include "../../inc/effects/videoEffect.h"
@@ -22,6 +23,7 @@
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/WaterEffect.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
 // #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
@@ -39,9 +41,10 @@
 #define ENABLE_WATER
 #define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
+//#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 #define ENABLE_STATIC_MODELS	
+#define ENABLE_DYNAMIC_MODELS
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 //#define ENABLE_GAUSSIAN_BLUR
@@ -54,6 +57,7 @@ TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneOutdoorADSUniform;
+struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 struct FSQuadUniform fsqUniform;
 
 struct TerrainUniform terrainUniform;
@@ -140,6 +144,7 @@ struct StarfieldUniform sceneStarfieldUniform;
 //Model variables
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
+DYNAMIC_MODEL skeletonModel;
 
 GLfloat density = 0.15;
 GLfloat gradient = 0.5;
@@ -379,6 +384,11 @@ int initializeScene_PlaceHolderOutdoor(void)
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 #endif
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+#endif
+
 
 #ifdef ENABLE_BILLBOARDING	
 
@@ -1022,6 +1032,56 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	glUseProgram(0);
 #endif
 
+#ifdef ENABLE_DYNAMIC_MODELS
+
+	glm::mat4 glm_modelMatrix;
+	glm::mat4 glm_translateMatrix;
+	glm::mat4 glm_rotateMatrix;
+	glm::mat4 glm_scaleMatrix;
+
+	glm_modelMatrix = glm::mat4(1.0f);
+	glm_translateMatrix = glm::mat4(1.0f);
+	glm_rotateMatrix = glm::mat4(1.0f);
+	glm_scaleMatrix = glm::mat4(1.0f);
+
+	sceneOutdoorADSDynamicUniform = useADSDynamicShader();
+
+	// Sending Light Related Uniforms
+	glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess);
+
+	glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
+	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
+	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
+
+	// ------ Dancing Vampire Model ------
+
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+
+	glUseProgram(0);
+
+#endif
+
+
 if(waterDraw == true){
 	#ifdef ENABLE_WATER
 		waterUniform = useWaterShader();
@@ -1303,6 +1363,11 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	//UNINIT models
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&streetLightModel);
+#endif
+
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	unloadDynamicModel(&skeletonModel);
 #endif
 
 #ifdef ENABLE_GAUSSIAN_BLUR
