@@ -24,6 +24,23 @@ struct ADSUniform
 
     GLuint lightingEnableUniform;
 
+    GLuint lightSpaceMatrixUniform;
+    GLuint shadowMapSamplerUniform;
+    GLuint depthTextureSamplerUniform;
+    GLuint actualSceneUniform;
+    GLuint depthSceneUniform;
+    GLuint depthQuadSceneUniform;
+    GLuint nearUniform;
+    GLuint farUniform;
+
+    GLuint densityUniform;
+    GLuint gradientUniform;
+    GLuint skyFogColorUniform;
+    GLuint fogEnableUniform;
+    GLuint uniform_enable_godRays;
+
+    GLuint godrays_blackpass_sphere;
+
 };
 
 int initializeADSShader(void);

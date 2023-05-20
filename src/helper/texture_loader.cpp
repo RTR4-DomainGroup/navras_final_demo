@@ -18,7 +18,7 @@ GLboolean LoadGLTexture(GLuint* a, TCHAR b[])
 #elif _WIN32
 
 
-#pragma comment(lib, "SOIL\\lib\\SOIL.lib")
+// #pragma comment(lib, "SOIL\\lib\\SOIL.lib")
 
 // windows code goes here
 
@@ -126,8 +126,6 @@ GLboolean LoadGLTexture_UsingSOIL(GLuint* texture, const char* path)
     glGenerateMipmap(GL_TEXTURE_2D);
 
     SOIL_free_image_data(imageData);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     return (GL_TRUE);
 }
@@ -194,10 +192,6 @@ GLboolean LoadGLTextureData_UsingSOIL(TEXTURE* texture, const char* path)
     
     
     SOIL_free_image_data(imageData);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA);
-
     return (GL_TRUE);
 }
 
@@ -208,7 +202,8 @@ GLboolean LoadGLTexture_Cubemap(GLuint* texture, const char* path)
     
     const char* szCubeFaces[6] = { "px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png" };
 
-    GLenum cube[6] = { 
+    GLenum cube[6] = 
+    { 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X,
         GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
         GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
@@ -230,13 +225,11 @@ GLboolean LoadGLTexture_Cubemap(GLuint* texture, const char* path)
     glGenTextures(1, texture);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, *texture);
-    // // magnification - user chya saglyat jawal
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // // Jawal asatana Linear, door jatana mipmap, parat jawal yetana linear
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 
     // Load Cube Map images
@@ -247,7 +240,6 @@ GLboolean LoadGLTexture_Cubemap(GLuint* texture, const char* path)
         char imagepath[64] = {0};
         snprintf(imagepath, sizeof(imagepath), "%s%s", path, szCubeFaces[i]);
 
-		LOG("SOIL_load_image() failed for file: %s\n", path);
 
         LOG("loading image %s for texture\n", imagepath);
 
@@ -258,8 +250,10 @@ GLboolean LoadGLTexture_Cubemap(GLuint* texture, const char* path)
             NULL, //
             SOIL_LOAD_RGBA // load 3 channel RGB 
         );
+
         if(imageData == NULL)
         {
+            LOG("SOIL_load_image() failed for file: %s\n", imagepath);
             return (GL_FALSE);
         }
 
@@ -268,13 +262,14 @@ GLboolean LoadGLTexture_Cubemap(GLuint* texture, const char* path)
             0, 
             GL_RGBA, 
             width, 
-            width, 
+            height, 
             0, 
             GL_RGBA, 
             GL_UNSIGNED_BYTE, 
             imageData
         );
-        glGenerateMipmap(GL_TEXTURE_2D);
+
+        //glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
         SOIL_free_image_data(imageData);
     }

@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Open GL headers
+#include <GL/glew.h>
+#include<gl\wglew.h>
+#include <GL/gl.h>
+
 #include "resources.h"
 #include "vmath.h"
 #include "constants.h"
@@ -13,9 +18,29 @@ using namespace vmath;
 enum {
 
 	DOMAIN_ATTRIBUTE_POSITION = 0,
+	DOMAIN_ATTRIBUTE_INSTANCE_POSITION,
 	DOMAIN_ATTRIBUTE_COLOR,
 	DOMAIN_ATTRIBUTE_NORMAL,
-	DOMAIN_ATTRIBUTE_TEXTURE0
+	DOMAIN_ATTRIBUTE_TEXTURE0,
+	DOMAIN_ATTRIBUTE_TANGENT,
+	DOMAIN_ATTRIBUTE_BITANGENT,
+};
+
+struct TextureVariables {
+
+	GLuint albedo;				// Albedo is Diffuse
+	GLuint normal;
+	GLuint ao;
+	GLuint metallic;
+	GLuint roughness;
+	GLuint displacement;
+
+	char* albedoPath;
+	char* normalPath;
+	char* aoPath;
+	char* metallicPath;
+	char* roughnessPath;
+	char* displacementPath;
 
 };
 
@@ -66,10 +91,6 @@ enum {
 // windows header
 #include <Windows.h>
 #include <strsafe.h>
-
-// Open GL headers
-#include <GL/glew.h>
-#include <GL/gl.h>
 
 #define TEXTURE_DIR "res\\textures\\"
 #define AUDIO_DIR "res\\audios\\"

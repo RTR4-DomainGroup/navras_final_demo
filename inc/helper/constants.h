@@ -3,20 +3,16 @@
 #define _USE_MATH_DEFINES 1
 #include <math.h> 
 
-// #include "types.h"
-
-// Macro definition
+// Macro definitions
 
 // // maximized
 // #define WIN_WIDTH 1280
 // #define WIN_HEIGHT 720
 
 // regular
-#define WIN_WIDTH 800
-#define WIN_HEIGHT 600
+#define WIN_WIDTH 1920
+#define WIN_HEIGHT 1080
 
-// #define PIE 3.14f
-// #define DEG2RADN(x) (x * (PIE / 180)) // (deg * 2 * PIE) / 360
 #define DEG2RADN(x) (x * (M_PI / 180)) 
 
 // #define X_MIN (0.0f)
@@ -35,7 +31,7 @@
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
-#define NO_OF_INSTANCES 500
+#define NO_OF_INSTANCES 50
 
 #define X_INCREMENT 2.0f
 #define Y_INCREMENT 0.8f
