@@ -83,26 +83,28 @@ int initializeStarfieldShader(void)
 	// ***** Fragment Shader ***** //	
 	// ***** Writing Shader Code ***** //
 	const GLchar* fragmentShaderSourceCode =
-		"#version 460 core \n"															\
-		"\n"																			\
+		"#version 460 core \n"												\
+		"\n"																\
 
-		"flat in vec4 a_color_out; \n"													\
-		"uniform sampler2D u_textureSampler; \n"										\
-		"in vec2 a_texcoord_out; \n"													\
-		"uniform bool enable_godRays = true; \n" \
-		"out vec4 FragColor; \n"														\
+		"flat in vec4 a_color_out; \n"										\
+		"uniform sampler2D u_textureSampler; \n"							\
+		"in vec2 a_texcoord_out; \n"										\
+		"uniform bool enable_godRays = true; \n"							\
+		"out vec4 FragColor; \n"											\
 
-		"void main(void) \n"															\
-		"{ \n"																			\
-			"if (enable_godRays) \n" \
-			"{" \
-				"FragColor = a_color_out * texture(u_textureSampler, gl_PointCoord); \n"	\
-			"}" \
-			"else" \
-			"{\n" \
-				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n"	\
-			"}\n" \
-			
+		"void main(void) \n"												\
+		"{ \n"																\
+			"if (enable_godRays) \n"										\
+			"{"																\
+				"vec4 tex = texture(u_textureSampler, gl_PointCoord); \n"	\
+				"if(tex.a < 0.1)"											\
+					"discard; \n"											\
+				"FragColor = a_color_out * tex; \n"							\
+			"}"																\
+			"else"															\
+			"{\n"															\
+				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n"					\
+			"}\n"															\
 		"}";
 
 	// ***** Creating Shader Object ***** //

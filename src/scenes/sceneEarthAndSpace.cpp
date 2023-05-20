@@ -386,7 +386,7 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 	scaleMatrix = mat4::identity();
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f);					// glTranslatef() is replaced by this line.
-	scaleMatrix = vmath::scale(500.0f, 500.0f, 500.0f);
+	scaleMatrix = vmath::scale(700.0f, 300.0f, 500.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 	glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
