@@ -11,5 +11,6 @@ typedef enum {
     SCENE_5,
     SCENE_6,
     SCENE_7,
-    SCENE_INVALID
+    SCENE_INVALID,
+    SCENE_PARTICLE,
 } scene_t;
