@@ -110,7 +110,7 @@ bool noiseScaleIncrement = true;
 GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+GLfloat lightPosition[] = { 10.0f, 40.0f, 0.0f, 1.0f };
 
 GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -503,9 +503,9 @@ void displayScene_PlaceHolderOutdoor(void)
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//////////////////////////////////////////////////////////////
-		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
-			0.1f, 1000.0f);
+			0.1f, 100.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqUniform = useFSQuadShader();
@@ -515,15 +515,15 @@ void displayScene_PlaceHolderOutdoor(void)
 
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);*/
+		glUseProgram(0);
 
 	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
-		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(1, false, false, true, 0);
+		displayPasses(1, false, false, true, 0);*/
 	
 	#elif defined(ENABLE_GAUSSIAN_BLUR)
 		displayPasses(1, false, false, true, 1);
@@ -877,15 +877,13 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	vmath::mat4 mv_matrix = mat4::identity();
 	vmath::mat4 proj_matrix = mat4::identity();
 
-
-	mv_matrix = finalViewMatrix * (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
-
-	proj_matrix = perspectiveProjectionMatrix;
-
-
 	//normal mapping
 	vmath::mat4 m_matrix = (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
-	vmath::mat4 v_matrix = viewMatrix ;
+	vmath::mat4 v_matrix = finalViewMatrix;
+
+	mv_matrix = finalViewMatrix * m_matrix;
+
+	proj_matrix = perspectiveProjectionMatrix;
 
 	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, m_matrix);
 	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, v_matrix);
@@ -909,6 +907,22 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
 
+	if (actualDepthQuadScene == 1) {
+
+		glUniform1i(terrainUniform.actualSceneUniform, 0);
+		glUniform1i(terrainUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(terrainUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+	}
+	else {
+
+		glUniform1i(terrainUniform.actualSceneUniform, 1);
+		glUniform1i(terrainUniform.depthSceneUniform, 0);
+		glActiveTexture(GL_TEXTURE8);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
+	}
+
 #ifdef ENABLE_FOG
 	glUniform1i(terrainUniform.fogEnableUniform, 1);
 	glUniform1f(terrainUniform.densityUniform, density);
@@ -924,6 +938,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.normal);
+
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -956,7 +971,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 	//glUniform1i(sceneOutdoorADSUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
+	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
@@ -976,8 +991,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE6);
-		glUniform1i(sceneOutdoorADSUniform.shadowMapSamplerUniform, 6);
+		glActiveTexture(GL_TEXTURE8);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
 	}
@@ -997,7 +1011,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(1.0f, -2.0f, -6.0f);
+	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;

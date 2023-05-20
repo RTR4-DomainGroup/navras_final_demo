@@ -27,7 +27,7 @@ int initializeTerrainShader(void)
         //Normal maaping structure        
         "in vec2 a_texCoord; \n" \
 
-        "uniform vec3 u_lightPosition; \n" \
+        "uniform vec4 u_lightPosition; \n" \
         "uniform mat4 u_modelMatrix; \n" \
         "uniform mat4 u_viewMatrix; \n" \
         "uniform mat4 u_projectionMatrix; \n" \
@@ -44,7 +44,7 @@ int initializeTerrainShader(void)
 
             //normal mapping
             "vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
-            "vsnm_out.lightDirection = normalize(vec3(u_lightPosition - eyeCoordinates.xyz)); \n" \
+            "vsnm_out.lightDirection = normalize(vec3(u_lightPosition) - vec3(eyeCoordinates.xyz)); \n" \
             "vsnm_out.viewerVector = (-eyeCoordinates.xyz); \n" \
 
             //Terrain
@@ -242,7 +242,7 @@ int initializeTerrainShader(void)
         "} tes_out; \n" \
 
         //normal mapping
-        "uniform vec3 u_lightPosition; \n" \
+        "uniform vec4 u_lightPosition; \n" \
 
         "in TCNM_OUT"
         "{ \n" \
@@ -257,6 +257,17 @@ int initializeTerrainShader(void)
         "out vec3 viewerVector ; \n" \
         "out vec2 a_texCoord_out; \n" \
         "} tenm_out; \n" \
+
+        // Shadow
+        "uniform mat4 u_modelMatrix; \n" \
+        "uniform mat4 lightSpaceMatrix; \n" \
+        "out TESM_OUT{ \n" \
+            "vec4 FragPos; \n" \
+            "vec4 FragPosLightSpace; \n" \
+        "} tesm_out; \n" \
+
+        "uniform int u_actualScene; \n" \
+        "uniform int u_depthScene; \n" \
 
         "void main(void) \n" \
         "{ \n" \
@@ -276,9 +287,19 @@ int initializeTerrainShader(void)
             "visibility_tes = visibility_tc[0]; \n"   \
 
             //normal mapping
-            "tenm_out.lightDirection = normalize(vec3(u_lightPosition - P_eye.xyz)); \n" \
+            "tenm_out.lightDirection = normalize(vec3(u_lightPosition) - vec3(P_eye.xyz)); \n" \
             "tenm_out.viewerVector   = (-P_eye.xyz); \n" \
             "tenm_out.a_texCoord_out = tc; \n" \
+
+            // shadow
+            "tesm_out.FragPos = u_modelMatrix * p; \n" \
+            "tesm_out.FragPosLightSpace = lightSpaceMatrix * tesm_out.FragPos; \n" \
+            "if(u_depthScene == 1) { \n" \
+
+                "gl_Position = lightSpaceMatrix * u_modelMatrix * p; \n" \
+
+            "} \n" \
+
 
         "} \n";
 
@@ -388,6 +409,50 @@ int initializeTerrainShader(void)
         "return normalize(TBN * normalizedNormals); \n" \
         "} \n" \
 
+        // Shadow
+        "uniform mat4 u_modelMatrix; \n" \
+        "uniform mat4 lightSpaceMatrix; \n" \
+        "in TESM_OUT{ \n" \
+            "vec4 FragPos; \n" \
+            "vec4 FragPosLightSpace; \n" \
+        "} fsm_in; \n" \
+
+        "vec3 Normal; \n" \
+        "uniform sampler2D shadowMap; \n" \
+        "uniform vec4 u_lightPosition; \n" \
+
+        "uniform int u_actualScene; \n" \
+        "uniform int u_depthScene; \n" \
+
+        "float ShadowCalculation(vec4 fragPosLightSpace) \n" \
+        "{ \n" \
+            // Shadow
+            "Normal = mat3(transpose(inverse(u_modelMatrix))) * normalizedNormals; \n" \
+            "vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w; \n" \
+            "projCoords = projCoords * 0.5 + 0.5; \n" \
+            "float closestDepth = texture(shadowMap, projCoords.xy).r; \n" \
+            "float currentDepth = projCoords.z; \n" \
+            "vec3 normal = normalize(Normal); \n" \
+            "vec3 lightDir = normalize(u_lightPosition - fsm_in.FragPos).xyz; \n" \
+            "float bias = max(0.025 * (1.0 - dot(normal, lightDir)), 0.005); \n" \
+            "float shadow = 0.0; \n" \
+            "vec2 texelSize = 1.0 / textureSize(shadowMap, 0); \n" \
+            "for (int x = -1; x <= 1; ++x) \n" \
+            "{ \n" \
+                "for (int y = -1; y <= 1; ++y) \n" \
+                "{ \n" \
+                    "float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; \n" \
+                    "shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; \n" \
+                "} \n" \
+            "} \n" \
+            "shadow /= 9.0; \n" \
+
+            "if (projCoords.z > 1.0) \n" \
+                "shadow = 0.0; \n" \
+
+            "return shadow; \n" \
+        "} \n" \
+
         "void main(void) \n" \
         "{ \n" \
 
@@ -409,16 +474,25 @@ int initializeTerrainShader(void)
             "vec3 reflectionVector = reflect(-normalized_lightDirection,normalizedNormals); \n" \
             "vec3 diffuse_light_color =u_ld * max(dot(normalizedNormals,normalized_lightDirection),0.0) * texture(tex_color, tenm_out.a_texCoord_out).rgb; \n" \
             "vec3 specular = (max(pow(dot(reflectionVector,normalized_viewerVector),u_materialShininess),0.0)) * u_ls; \n" \
-            "phong_ads_light = phong_ads_light +ambient + diffuse_light_color + specular; \n" \
+            
+            // Shadow
+            "float shadow = ShadowCalculation(fsm_in.FragPosLightSpace); \n" \
+
+            "phong_ads_light = phong_ads_light +ambient + (1.0 - shadow) + diffuse_light_color + specular; \n" \
             
             /********************************************/
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
             "if (enable_godRays) \n" \
             "{ \n" \
-                "FragColor = landscape * vec4(phong_ads_light, 1.0); \n" \
-                "if (u_fogEnable == 1) \n" \
-                "{ \n" \
-                    "FragColor = mix(u_skyFogColor, FragColor, visibility_tes); \n" \
+                "if(u_actualScene == 1) { \n" \
+                    "FragColor = landscape * vec4(phong_ads_light, 1.0); \n" \
+                    "if (u_fogEnable == 1) \n" \
+                    "{ \n" \
+                        "FragColor = mix(u_skyFogColor, FragColor, visibility_tes); \n" \
+                    "} \n" \
+                "} \n" \
+                "if(u_depthScene == 1) { \n" \
+                    "FragColor = vec4(1.0); \n" \
                 "} \n" \
             "}" \
             "else \n" \
@@ -533,12 +607,20 @@ int initializeTerrainShader(void)
     terrainShaderUniform.lightPositionUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_lightPosition");
 
     terrainShaderUniform.materialShininessUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_materialShininess");
+
+    //shadow
+    terrainShaderUniform.shadowMapSamplerUniform = glGetUniformLocation(shaderProgramObj_terrain, "shadowMap");
+    terrainShaderUniform.actualSceneUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_actualScene");
+    terrainShaderUniform.depthSceneUniform = glGetUniformLocation(shaderProgramObj_terrain, "u_depthScene");
+    terrainShaderUniform.lightSpaceMatrixUniform = glGetUniformLocation(shaderProgramObj_terrain, "lightSpaceMatrix");
+
     //------------------------------------------------------------------------------------
 
     glUseProgram(shaderProgramObj_terrain);
     glUniform1i(terrainShaderUniform.textureSamplerUniform1, 0);
     glUniform1i(terrainShaderUniform.textureSamplerUniform2, 1);
     glUniform1i(terrainShaderUniform.textureSamplerUniform_normal, 2);
+    glUniform1i(terrainShaderUniform.shadowMapSamplerUniform, 8);
     glUseProgram(0);
 
     return (0);
