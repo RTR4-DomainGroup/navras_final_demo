@@ -110,7 +110,7 @@ bool noiseScaleIncrement = true;
 GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 10.0f, 40.0f, 0.0f, 1.0f };
+GLfloat lightPosition[] = { 10.0f, 20.0f, 0.0f, 1.0f };
 
 GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -498,12 +498,12 @@ void displayScene_PlaceHolderOutdoor(void)
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 10.0f);
 		displayPasses(1, true, true, true, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		//////////////////////////////////////////////////////////////
-		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
 			0.1f, 100.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -515,15 +515,15 @@ void displayScene_PlaceHolderOutdoor(void)
 
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
+		glUseProgram(0);*/
 
 	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
-		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(1, false, false, true, 0);*/
+		displayPasses(1, false, false, true, 0);
 	
 	#elif defined(ENABLE_GAUSSIAN_BLUR)
 		displayPasses(1, false, false, true, 1);
@@ -689,7 +689,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);*/
 
 		lightSpaceMatrix = mat4::identity();
-		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
+		//lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
+		lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -50.0f, 50.0f);
+		lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
 	
 	}
 
@@ -918,7 +920,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 
 		glUniform1i(terrainUniform.actualSceneUniform, 1);
 		glUniform1i(terrainUniform.depthSceneUniform, 0);
-		glActiveTexture(GL_TEXTURE8);
+		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
 	}
@@ -991,7 +993,7 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 		glUniform1i(sceneOutdoorADSUniform.depthSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSUniform.depthQuadSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE8);
+		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
 	}

@@ -344,7 +344,7 @@ int initializeADSShader(void)
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform, 0);
-	glUniform1i(adsUniform.shadowMapSamplerUniform, 8);
+	glUniform1i(adsUniform.shadowMapSamplerUniform, 1);
 	glUseProgram(0);
 
 

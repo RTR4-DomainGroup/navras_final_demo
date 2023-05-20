@@ -620,7 +620,7 @@ int initializeTerrainShader(void)
     glUniform1i(terrainShaderUniform.textureSamplerUniform1, 0);
     glUniform1i(terrainShaderUniform.textureSamplerUniform2, 1);
     glUniform1i(terrainShaderUniform.textureSamplerUniform_normal, 2);
-    glUniform1i(terrainShaderUniform.shadowMapSamplerUniform, 8);
+    glUniform1i(terrainShaderUniform.shadowMapSamplerUniform, 3);
     glUseProgram(0);
 
     return (0);
