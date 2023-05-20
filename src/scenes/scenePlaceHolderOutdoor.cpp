@@ -110,7 +110,7 @@ bool noiseScaleIncrement = true;
 GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+GLfloat lightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
 
 GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -925,6 +925,9 @@ void displayPasses(int godRays = 1, bool recordWaterReflectionRefraction = false
 	glUniform4fv(sceneOutdoorADSUniform.kdUniform, 1, materialDiffuse);
 	glUniform4fv(sceneOutdoorADSUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneOutdoorADSUniform.materialShininessUniform, materialShininess);
+
+	//normal mapping
+	glUniform4fv(sceneOutdoorADSUniform.viewpositionUniform, 1, camera.eye);
 
 	glUniform1i(sceneOutdoorADSUniform.fogEnableUniform, 1);
 	glUniform1f(sceneOutdoorADSUniform.densityUniform, density);
