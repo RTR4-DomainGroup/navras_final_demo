@@ -93,7 +93,7 @@ int initializeScene_PlaceHolderIndoor(void)
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_in);
 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
 	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
-#endif
+#endif // ENABLE_STATIC_MODELS
 
 	return 0;
 }

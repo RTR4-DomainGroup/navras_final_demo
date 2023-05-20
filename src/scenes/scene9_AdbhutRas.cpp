@@ -1,37 +1,6 @@
 #pragma once
-
 // This File Will Be Replaced by Scene*.cpp
 
-#include "../../inc/helper/texture_loader.h"
-#include "../../inc/helper/waterframebuffer.h"
-#include "../../inc/helper/camera.h"
-#include "../../inc/helper/common.h"
-#include "../../inc/helper/framebuffer.h"
-#include "../../inc/helper/texture_loader.h"
-#include "../../inc/helper/shadowframebuffer.h"
-
-#include "../../inc/shaders/FSQuadShader.h"
-#include "../../inc/shaders/ADSLightShader.h"
-#include "../../inc/shaders/BillboardingShader.h"
-#include "../../inc/shaders/AtmosphereShader.h"
-
-#include "../../inc/effects/videoEffect.h"
-#include "../../inc/effects/TerrainEffect.h"
-#include "../../inc/effects/StarfieldEffect.h"
-#include "../../inc/effects/SkyboxEffect.h"
-#include "../../inc/effects/CloudEffect.h"
-#include "../../inc/effects/WaterEffect.h"
-#include "../../inc/effects/StaticModelLoadingEffect.h"
-#include "../../inc/effects/GodraysEffect.h"
-// #include "../../inc/effects/Billboarding.h"
-#include "../../inc/effects/GaussianBlurEffect.h"
-#include "../../inc/effects/AtmosphereEffect.h"
-
-#include "../../inc/scenes/scenePlaceHolderOutdoor.h"
-
-
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
 #define ENABLE_TERRIAN
@@ -48,6 +17,85 @@
 //#define ENABLE_GODRAYS
 #define ENABLE_SHADOW
 
+#include "../../inc/helper/texture_loader.h"
+#include "../../inc/helper/camera.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/helper/framebuffer.h"
+#include "../../inc/helper/geometry.h"
+#include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/FSQuadShader.h"
+
+
+
+
+#ifdef ENABLE_WATER
+#include "../../inc/helper/waterframebuffer.h"
+#endif // ENABLE_WATER
+
+#ifdef ENABLE_GODRAYS
+#endif // ENABLE_GODRAYS
+
+#ifdef ENABLE_SHADOW
+#include "../../inc/helper/shadowframebuffer.h"
+#endif // ENABLE_SHADOW
+
+#ifdef ENABLE_BILLBOARDING
+#include "../../inc/shaders/BillboardingShader.h"
+#endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_ATMOSPHERE
+#include "../../inc/shaders/AtmosphereShader.h"
+#include "../../inc/effects/AtmosphereEffect.h"
+#endif // ENABLE_ATMOSPHERE
+
+#ifdef ENABLE_VIDEO_RENDER
+#include "../../inc/effects/videoEffect.h"
+#endif // ENABLE_VIDEO_RENDER
+
+#ifdef ENABLE_TERRIAN
+#include "../../inc/effects/TerrainEffect.h"
+#endif // ENABLE_TERRIAN
+
+#ifdef ENABLE_STARFIELD
+#include "../../inc/effects/StarfieldEffect.h"
+#endif // ENABLE_STARFIELD
+
+#ifdef ENABLE_CLOUD_NOISE
+#endif // ENABLE_CLOUD_NOISE
+
+#ifdef ENABLE_SKYBOX
+#include "../../inc/effects/SkyboxEffect.h"
+#endif // ENABLE_SKYBOX
+
+#ifdef ENABLE_CLOUD_NOISE
+#include "../../inc/effects/CloudEffect.h"
+#endif // ENABLE_CLOUD_NOISE
+
+#ifdef ENABLE_WATER
+#include "../../inc/effects/WaterEffect.h"
+#endif // ENABLE_WATER
+
+#ifdef ENABLE_STATIC_MODELS
+#include "../../inc/effects/StaticModelLoadingEffect.h"
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_GODRAYS
+#include "../../inc/effects/GodraysEffect.h"
+#endif // ENABLE_GODRAYS
+
+#ifdef ENABLE_GAUSSIAN_BLUR
+#include "../../inc/effects/GaussianBlurEffect.h"
+#endif // ENABLE_GAUSSIAN_BLUR
+
+
+#include "../../inc/scenes/scene9_AdbhutRas.h"
+
+
+
+#define FBO_WIDTH 1920
+#define FBO_HEIGHT 1080
+
+
 
 static GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 static GLuint texture_Marble;
@@ -55,6 +103,7 @@ static TEXTURE texture_grass;
 static TEXTURE texture_flower;
 
 static struct ADSUniform sceneOutdoorADSUniform;
+
 static struct FSQuadUniform fsqUniform;
 
 static struct TerrainUniform terrainUniform;
@@ -73,16 +122,21 @@ static struct TextureVariables waterTextureVariables;
 static struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
 static struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
 
+#ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables
 static struct GaussianBlurEffect gaussianBlurEffect;
 static struct HorrizontalBlurUniform horizontalBlurUniform;
 static struct VerticalBlurUniform verticalBlurUniform;
 static struct FrameBufferDetails fullSceneFbo;
 static struct FSQuadUniform fsGaussBlurQuadUniform;
+#endif // ENABLE_GAUSSIAN_BLUR
 
+
+#ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
 static AtmosphereUniform atmosphereUniform;
 static AtmosphericVariables atmosVariables;
+#endif // ENABLE_ATMOSPHERE
 
 // Shadow
 static ShadowFrameBufferDetails shadowFramebuffer;
@@ -131,9 +185,11 @@ extern mat4 perspectiveProjectionMatrix;
 
 static float displacementmap_depth;
 
+#ifdef ENABLE_SKYBOX
 // Variables For Skybox
 static GLuint texture_skybox;
 static struct SkyboxUniform sceneSkyBoxUniform;
+#endif // ENABLE_SKYBOX
 
 // Variables For Starfieldx
 static GLuint texture_star; 
@@ -149,9 +205,11 @@ static GLfloat gradient = 0.5;
 static GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
+#ifdef ENABLE_GODRAYS
 // Varaiables for God Rays
 static struct GodraysUniform sceneGodRaysUniform;
 static GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
+#endif // ENABLE_GODRAYS
 
 // Camera angle for rotation
 static GLfloat cameraAngle = 0.0f;
@@ -1155,6 +1213,7 @@ void resizeScene9_godRayPasses(int fboWidh, int fboHeight)
 	glViewport(0, 0, (GLsizei)fboWidh, (GLsizei)fboHeight);
 }
 
+#ifdef ENABLE_GAUSSIAN_BLUR
 void displayScene9_GaussianBlur(void)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurEffect.horrizontalFBDetails.frameBuffer);
@@ -1190,6 +1249,7 @@ void displayScene9_GaussianBlur(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+#endif // ENABLE_GAUSSIAN_BLUR
 
 void updateScene9_AdbhutRas(void)
 {

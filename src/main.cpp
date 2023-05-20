@@ -598,9 +598,9 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE_9;
+	currentScene = SCENE_9;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
-	currentScene = SCENE_PLACEHOLDER_OUTDOOR;
+	// currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 	// initialize camera
 	//resetCamera();
