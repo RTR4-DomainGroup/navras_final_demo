@@ -96,7 +96,7 @@ int initializeStarfieldShader(void)
 		"{ \n"																			\
 			"if (enable_godRays) \n" \
 			"{" \
-				"FragColor = a_color_out * texture(u_textureSampler, gl_PointCoord); \n"	\
+				"FragColor = texture(u_textureSampler, gl_PointCoord); \n"	\
 			"}" \
 			"else" \
 			"{\n" \

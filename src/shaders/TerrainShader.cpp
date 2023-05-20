@@ -241,6 +241,8 @@ int initializeTerrainShader(void)
         "} tes_out; \n" \
 
         //normal mapping
+        "uniform vec3 u_lightPosition; \n" \
+
         "in TCNM_OUT"
         "{ \n" \
             "vec3 lightDirection; \n" \
@@ -258,11 +260,6 @@ int initializeTerrainShader(void)
         "void main(void) \n" \
         "{ \n" \
 
-            //normal mapping
-            "tenm_out.lightDirection = tcnm_out[0].lightDirection; \n" \
-            "tenm_out.viewerVector   = tcnm_out[0].viewerVector; \n" \
-            "tenm_out.a_texCoord_out = tcnm_out[0].a_texCoord_out; \n" \
-
             "vec2 tc1 = mix(tes_in[0].tc, tes_in[1].tc, gl_TessCoord.x); \n" \
             "vec2 tc2 = mix(tes_in[2].tc, tes_in[3].tc, gl_TessCoord.x); \n" \
             "vec2 tc = mix(tc2, tc1, gl_TessCoord.y); \n" \
@@ -278,7 +275,10 @@ int initializeTerrainShader(void)
             "visibility_tes = visibility_tc[0]; \n"   \
 
             //normal mapping
+            "tenm_out.lightDirection = normalize(vec3(u_lightPosition - P_eye.xyz)); \n" \
+            "tenm_out.viewerVector   = (-P_eye.xyz); \n" \
             "tenm_out.a_texCoord_out = tc; \n" \
+
         "} \n";
 
     // Create the Vertex Shader object.
@@ -471,7 +471,7 @@ int initializeTerrainShader(void)
     glAttachShader(shaderProgramObj_terrain, fragementShaderObj);
 
     // Pre-linked binding of Shader program object
-    glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_POSITION, "a_position");
+    //glBindAttribLocation(shaderProgramObj_terrain, DOMAIN_ATTRIBUTE_POSITION, "a_position");
 
     // Link the program
     glLinkProgram(shaderProgramObj_terrain);
