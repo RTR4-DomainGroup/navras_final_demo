@@ -1,4 +1,4 @@
-
+#include "../../inc/helper/common.h"
 #include "../../inc/shaders/ADSLightShader.h"
 
 // Variable Declarations
@@ -24,6 +24,9 @@ int initializeADSShader(void)
 		"in vec4 a_color; \n" \
 		"in vec2 a_texcoord; \n" \
 		"in vec3 a_normal; \n"	\
+		"in vec3 a_tangent; \n" \
+		"in vec3 a_bitangent; \n" \
+
 		"uniform mat4 u_modelMatrix; \n" \
 		"uniform mat4 u_viewMatrix; \n" \
 		"uniform mat4 u_projectionMatrix; \n" \
@@ -53,8 +56,16 @@ int initializeADSShader(void)
 		"out vec2 a_texcoord_out;\n" \
 		"out float visibility; \n"		\
 
+		//normal mapping
+		"out vec3 a_eyeDirection_out; \n" \
+		"out vec3 a_lightDirection_out; \n" \
+		"out vec3 a_fragPosNM_out; \n" \
+		"uniform vec3 viewPosition; \n"	\
+
 		"void main(void) \n" \
 		"{ \n" \
+			
+			"mat3 TBN; \n" \
 			"if (u_actualScene == 1) \n" \
 			"{ \n" \
 				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
@@ -62,8 +73,20 @@ int initializeADSShader(void)
 				"transformedNormals = normalMatrix * a_normal; \n" \
 				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
 				"viewerVector = vec3(-eyeCoordinates); \n" \
-
 				"vs_out.FragPos = u_modelMatrix * a_position; \n" \
+				
+				//Normal Mapping
+				"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
+		        "vec3 N = normalize(normalMatrix_nm * a_normal); \n" \
+		        "vec3 T = normalize(normalMatrix_nm * a_tangent); \n" \
+		        "T = normalize(T- dot(T,N) * N); \n" \
+		        "vec3 B = cross(N,T); \n" \
+		        "mat3 TBN = transpose(mat3(T,B,N)); \n" \
+		        "a_lightDirection_out = TBN * vec3(u_lightPosition) ; \n" \
+		        "a_eyeDirection_out =  TBN *  viewPosition; \n" \
+				"a_fragPosNM_out =TBN *  vs_out.FragPos.xyz; \n" \
+			
+			
 				"vs_out.Normal = mat3(transpose(inverse(u_modelMatrix))) * a_normal; \n" \
 				"vs_out.FragPosLightSpace = lightSpaceMatrix * vs_out.FragPos; \n" \
 
@@ -137,6 +160,12 @@ int initializeADSShader(void)
 		"in vec3 viewerVector;\n" \
 		"in float visibility; \n"		\
 
+		//normal mapping
+		"in vec3 a_eyeDirection_out; \n" \
+		"in vec3 a_lightDirection_out; \n" \
+		"in vec3 a_fragPosNM_out; \n" \
+		"uniform sampler2D texture_normal; \n" \
+
 		"uniform vec4 u_la; \n" \
 		"uniform vec4 u_ld; \n" \
 		"uniform vec4 u_ls; \n" \
@@ -146,7 +175,7 @@ int initializeADSShader(void)
 		"uniform float u_materialShininess; \n" \
 		"uniform int u_lightingEnable; \n" \
 		"uniform int u_fogEnable; \n" \
-		"uniform sampler2D u_texturesampler;\n" \
+		"uniform sampler2D texture_diffuse;\n" \
 		"uniform vec4 u_skyFogColor; \n"	\
 		"uniform int enable_godRays; \n" \
 		"uniform int enable_sphere_color; \n" \
@@ -209,14 +238,23 @@ int initializeADSShader(void)
 			"{\n" \
 				"if(u_actualScene == 1) { \n" \
 					"vec4 phong_ads_light; \n" \
-					"vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n"		\
-					"vec4 ambient = u_la * u_ka; \n" \
-					"vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
-					"vec3 normalized_light_direction = normalize(lightDirection); \n" \
-					"vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
-					"vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
-					"vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-					"vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+					"vec4 texColor = texture(texture_diffuse, a_texcoord_out); \n"		\
+					
+					//read normals from normal map and normalize it
+					"vec3 normalizedNormals = normalize(texture(texture_normal,a_texcoord_out).rgb*2.0 - vec3(1.0)); \n" \
+
+					//ambient
+					"vec4 ambient = 0.0 * texColor; \n" \
+					//diffuse
+					"vec3 normalized_lightDirection = normalize(a_lightDirection_out - a_fragPosNM_out ); \n" \
+					"vec4 diffuse = u_ld * texColor * max(dot( normalized_lightDirection,normalizedNormals), 0.0); \n" \
+
+					//specular
+					"vec3 normalized_viewerVector = normalize(a_eyeDirection_out - a_fragPosNM_out); \n" \
+					"vec3 reflectionVector = reflect(-normalized_lightDirection, normalizedNormals); \n" \
+					"vec3 halfwayDir = normalize(normalized_lightDirection + normalized_viewerVector); \n" \
+					
+			        "vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
 					
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
 					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
@@ -288,6 +326,8 @@ int initializeADSShader(void)
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_NORMAL, "a_normal");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_COLOR, "a_color");
+	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_TANGENT,"a_tangent");
+	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_BITANGENT,"a_bitangent");
 
 	glLinkProgram(adsShaderProgramObject);
 	
@@ -324,7 +364,10 @@ int initializeADSShader(void)
 	adsUniform.lightPositionUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightPosition");
 	adsUniform.materialShininessUniform = glGetUniformLocation(adsShaderProgramObject, "u_materialShininess");
 	adsUniform.lightingEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_lightingEnable");
-	adsUniform.textureSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "u_texturesampler");
+	adsUniform.textureSamplerUniform_diffuse = glGetUniformLocation(adsShaderProgramObject, "texture_diffuse");
+	//For Normal Mapping
+	adsUniform.viewpositionUniform = glGetUniformLocation(adsShaderProgramObject, "viewPosition");
+	adsUniform.textureSamplerUniform_normal = glGetUniformLocation(adsShaderProgramObject, "texture_normal");
 
 	adsUniform.lightSpaceMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "lightSpaceMatrix");
 	adsUniform.shadowMapSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "shadowMap");
@@ -343,7 +386,8 @@ int initializeADSShader(void)
 	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
 
 	glUseProgram(adsShaderProgramObject);
-    glUniform1i(adsUniform.textureSamplerUniform, 0);
+    glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);
+    glUniform1i(adsUniform.textureSamplerUniform_normal, 2);   //don't change
 	glUseProgram(0);
 
 
@@ -358,6 +402,11 @@ struct ADSUniform useADSShader(void)
     glUseProgram(adsShaderProgramObject);
     return adsUniform;
 
+}
+
+GLuint getADSShaderProgramObject(void)
+{
+	return adsShaderProgramObject;
 }
 
 void uninitializeADSShader(void)
