@@ -2,6 +2,9 @@
 
 #include <WindowsX.h>	// for mouse move x and y coordinates
 
+#define _USE_MATH_DEFINES 1
+#include <math.h>		// for PI
+
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
@@ -9,14 +12,15 @@
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
-#include "../inc/scenes/scenes.h"
+
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
+
+#include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene9_AdbhutRas.h"
 
-#define _USE_MATH_DEFINES 1
-#include <math.h>		// for PI
 #include "../inc/shaders/FSQuadShader.h"
 #include "../inc/shaders/ParticleShader.h"
 
@@ -560,10 +564,17 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE_9);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
     scenePush(SCENE_0);
+
+	if(initializeScene9_AdbhutRas() != 0)
+	{
+		LOG("initializeScene9_AdbhutRas() FAILED !!!\n");
+        return (-8);
+	}
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -583,15 +594,13 @@ int initialize(void) {
 		return (-8);
 	}
 
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
 
 
 	// currentScene = scenePop();
+	// Debug
+	currentScene = SCENE_9;
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
+	// currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -739,6 +748,10 @@ void display(void)
 	{
 		// displayScene_Scene1();
 	}
+	else if(currentScene == SCENE_9)
+	{
+		displayScene9_AdbhutRas();
+	}
 	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
 	{
 		displayScene_PlaceHolderOutdoor();
@@ -757,7 +770,6 @@ void display(void)
 	}
 
 	SwapBuffers(ghdc);
-
 }
 
 void update(void)
@@ -782,6 +794,10 @@ void update(void)
 	else if(currentScene == SCENE_1)
 	{
 		// updateScene_Scene1();
+	}
+	else if(currentScene == SCENE_9)
+	{
+		updateScene9_AdbhutRas();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
 	{
@@ -811,6 +827,7 @@ void uninitialize(void) {
 	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
+	uninitializeScene9_AdbhutRas();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
@@ -851,15 +868,6 @@ void uninitialize(void) {
 		ghwnd = NULL;
 
 	}
-
-	//if (gpFile) {
-
-	//	fprintf(gpFile, "Log File Close!!!\n");
-	//	fclose(gpFile);
-	//	gpFile = NULL;
-
-	//}
-
 }
 
 void updateMouseMovement(void)
@@ -896,3 +904,4 @@ void updateMouseMovement(void)
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
+

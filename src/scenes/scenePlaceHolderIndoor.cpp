@@ -23,7 +23,6 @@
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
-// #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
@@ -46,26 +45,28 @@ extern mat4 perspectiveProjectionMatrix;
 struct ADSUniform sceneIndoorADSUniform;
 struct ADSDynamicUniform sceneIndoorADSDynamicUniform;
 
-extern GLfloat density;
-extern GLfloat gradient;
-extern GLfloat skyFogColor[];
+static GLfloat density = 0.15;
+static GLfloat gradient = 0.5;
+static GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
-extern GLfloat lightAmbient[];
-extern GLfloat lightDiffuse[];
-extern GLfloat lightSpecular[];
-extern GLfloat lightPosition[];
-						  
-extern GLfloat materialAmbient[];
-extern GLfloat materialDiffuse[];
-extern GLfloat materialSpecular[];
-extern GLfloat materialShininess;
+static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
+
+static mat4 viewMatrix;
 
 //Model variables
-STATIC_MODEL rockModel_in;
-STATIC_MODEL streetLightModel_in;
-STATIC_MODEL deskModel;
-STATIC_MODEL schoolBagModel;
-DYNAMIC_MODEL skeletonModel_in;
+static STATIC_MODEL rockModel_in;
+static STATIC_MODEL streetLightModel_in;
+static STATIC_MODEL deskModel;
+static STATIC_MODEL schoolBagModel;
+static DYNAMIC_MODEL skeletonModel_in;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -96,13 +97,13 @@ int initializeScene_PlaceHolderIndoor(void)
 	loadStaticModel("res/models/rock/rock.obj", &rockModel_in);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_in);
 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
-	loadStaticModel("res/models/bag/backpack.obj", &schoolBagModel);
-#endif
+	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
+#endif // ENABLE_STATIC_MODELS
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
-#endif
+#endif // ENABLE_DYNAMIC_MODELS
 
 
 	return 0;
@@ -127,7 +128,7 @@ void displayScene_PlaceHolderIndoor(void)
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	viewMatrix = mat4::identity();
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
