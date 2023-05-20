@@ -560,7 +560,7 @@ int initialize(void) {
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 	//Depth Related Changes
 	glClearDepth(1.0f);
@@ -770,11 +770,11 @@ void update(void)
 	//} 
 
 	//
-	//// Call Scenes Update Here
-	//if(currentScene == SCENE_EARTHANDSPACE)
-	//{
-	//	updateScene1_EarthAndSpace();
-	//}
+	// Call Scenes Update Here
+	if(currentScene == SCENE_EARTHANDSPACE)
+	{
+		updateScene1_EarthAndSpace();
+	}
 	//else if(currentScene == SCENE_1)
 	//{
 	//	// updateScene_Scene1();
