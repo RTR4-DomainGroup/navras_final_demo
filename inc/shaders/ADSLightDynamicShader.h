@@ -34,6 +34,10 @@ struct ADSDynamicUniform
 
     GLuint finalBonesMatricesUniform[MAX_BONES];
 
+    //normal mapping
+    GLuint viewpositionUniform;
+    GLuint textureSamplerUniform_normal;
+
 };
 
 int initializeADSDynamicShader(void);

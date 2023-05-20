@@ -101,7 +101,9 @@ int initializeScene_PlaceHolderIndoor(void)
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
+	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_in);
+	loadDynamicModel("res/models/exo1/Exo.fbx", &skeletonModel_in);
 #endif
 
 
