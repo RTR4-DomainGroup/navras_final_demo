@@ -923,12 +923,22 @@ if(waterDraw == true){
 }
 
 #ifdef ENABLE_BILLBOARDING	
-	// variable declaration
-	translationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
+	void displayBillboarding(int);
 
+	displayBillboarding(godRays);
+
+#endif // ENABLE_BILLBOARDING
+	
+}
+
+void displayBillboarding(int godRays = 1)
+{
+	// variable declaration
+	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	
 	// code
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -986,8 +996,6 @@ if(waterDraw == true){
 	glUseProgram(0);
 	glDisable(GL_BLEND);
 
-#endif // ENABLE_BILLBOARDING
-	
 }
 
 int initializeGodRays(void)
