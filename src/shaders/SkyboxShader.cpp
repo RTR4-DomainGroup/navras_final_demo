@@ -4,7 +4,7 @@ GLuint shaderProgramObj_skybox;
 extern FILE* gpFile;
 
 struct SkyboxUniform skyboxUniform;
-
+extern HWND ghwnd;
 
 int initializeSkyboxShader(void)
 {
@@ -61,6 +61,7 @@ int initializeSkyboxShader(void)
                 free(log);
                 log = NULL;
                 uninitializeSkyboxShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -112,6 +113,7 @@ int initializeSkyboxShader(void)
                 free(log);
                 log = NULL;
                 uninitializeSkyboxShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -152,6 +154,7 @@ int initializeSkyboxShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeSkyboxShader();
+                DestroyWindow(ghwnd);
             }
         }
     }
@@ -198,5 +201,4 @@ void uninitializeSkyboxShader(void)
 		glDeleteProgram(shaderProgramObj_skybox);
 		shaderProgramObj_skybox = 0;
     }
-    
 }

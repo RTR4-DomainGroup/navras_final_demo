@@ -5,6 +5,7 @@
 GLuint adsShaderProgramObject;
 
 ADSUniform adsUniform;
+extern HWND ghwnd;
 
 int initializeADSShader(void)
 {
@@ -119,13 +120,11 @@ int initializeADSShader(void)
 				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
-
+				DestroyWindow(ghwnd);
 			}
 
 		}
-
 	}
-
 
 	// Fragment Shader
 	const GLchar* fragmentShaderSourcecode =
@@ -274,7 +273,7 @@ int initializeADSShader(void)
 				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
-
+				DestroyWindow(ghwnd);
 			}
 
 		}
@@ -305,7 +304,9 @@ int initializeADSShader(void)
 				glGetShaderInfoLog(adsShaderProgramObject, infoLogLength, &written, log);
 				LOG("ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
+				log = NULL;
 				uninitializeADSShader();
+				DestroyWindow(ghwnd);
 
 			}
 		}
@@ -388,7 +389,6 @@ void uninitializeADSShader(void)
 		adsShaderProgramObject = 0;
 
 	}
-
 }
 
 
