@@ -75,7 +75,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
+static scene_t currentScene = SCENE_7;
 
 bool sceneFadeOut = false;
 
@@ -207,7 +207,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	return((int)msg.wParam);
 
 }
-
 
 // CAllBack Function
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
@@ -561,6 +560,7 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
+	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
@@ -569,6 +569,12 @@ int initialize(void) {
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
+        return (-8);
+	}
+
+	if(initializeScene7_Raudra() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
         return (-8);
 	}
 
@@ -589,8 +595,6 @@ int initialize(void) {
 	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
     //     return (-8);
 	// }
-
-
 
 	// currentScene = scenePop();
 
@@ -720,7 +724,6 @@ void resize(int width, int height) {
 
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
-
 }
 
 void display(void)
@@ -739,6 +742,10 @@ void display(void)
 	else if(currentScene == SCENE_1)
 	{
 		// displayScene_Scene1();
+	}
+	else if(currentScene == SCENE_7)
+	{
+		displayScene7_Raudra();
 	}
 	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
 	{
