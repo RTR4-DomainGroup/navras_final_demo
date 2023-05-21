@@ -94,12 +94,53 @@ int initializeScene7_Raudra(void)
 #endif
 	initializeInvertedNormalCube();
 
+	// initializeDeskInstancePositions();
+
+
 	textures[0] = (GLuint)texture_ceiling;
 	textures[1] = (GLuint)texture_floor;
 	textures[2] = (GLuint)texture_back;
 	textures[3] = (GLuint)texture_side;
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
+}
+
+void initializeDeskInstancePosition()
+{
+
+	GLfloat instance_positions[NO_OF_INSTANCES_DESK * 4] = {};
+	for(int i = 0; i < NO_OF_INSTANCES_DESK; i++)
+    {
+        static GLfloat xPos = X_MIN;
+        static GLfloat xMinLast = X_MIN;
+        static GLfloat xMaxLast = X_MAX;
+
+        static GLfloat yPos = Y_MIN;
+        static GLfloat zPos = Z_MIN;
+
+		instance_positions[(i*3)+0] = xPos;
+		instance_positions[(i*3)+1] = yPos;
+		instance_positions[(i*3)+2] = 0.0f;
+
+		LOG("Instance %d Position: [%f %f %f]\n", i, 
+            instance_positions[(i*3)+0], instance_positions[(i*3)+1], instance_positions[(i*3)+2]);
+
+        xPos += X_INCREMENT + X_SEPARTION_OFFSET;    
+        zPos += Z_INCREMENT + Z_SEPARTION_OFFSET;    
+        if(xPos >= xMaxLast)
+        {    
+            yPos += Y_INCREMENT;    
+            if(yPos >= Y_MAX)
+            {
+                break;
+            }    
+            xMinLast = xMinLast + (X_INCREMENT/2);
+            xMaxLast = xMaxLast - (X_INCREMENT/2);
+            xPos = xMinLast;
+        }
+    }
+
+	// initializeInstancedDesks(NO_OF_INSTANCES_DESK, instance_positions);
 }
 
 void displayScene7_Raudra(void)
@@ -211,3 +252,4 @@ void uninitializeScene7_Raudra(void)
 	}
 	
 }
+

@@ -32,6 +32,7 @@
 #define COLR_MAX (255)
 
 #define NO_OF_INSTANCES 50
+#define NO_OF_INSTANCES_DESK 10
 
 #define X_INCREMENT 2.0f
 #define Y_INCREMENT 0.8f
