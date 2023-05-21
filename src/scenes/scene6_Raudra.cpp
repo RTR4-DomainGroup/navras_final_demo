@@ -10,7 +10,7 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../../inc/scenes/scene7_Raudra.h"
+#include "../../inc/scenes/scene6_Raudra.h"
 
 
 #define FBO_WIDTH 1920

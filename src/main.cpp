@@ -14,7 +14,7 @@
 #include "../inc/effects/ParticelEffect.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../inc/scenes/scene7_Raudra.h"
+#include "../inc/scenes/scene6_Raudra.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
