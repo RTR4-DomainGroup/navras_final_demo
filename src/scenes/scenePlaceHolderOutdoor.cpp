@@ -424,6 +424,18 @@ int initializeScene_PlaceHolderOutdoor(void)
 		}
 	#endif // ENABLE_STARFIELD
 
+	#ifdef ENABLE_STATIC_MODELS
+		//load models
+		loadStaticModel("res/models/rock/rock.obj", &rockModel);
+		loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	#endif // ENABLE_STATIC_MODELS
+
+	#ifdef ENABLE_DYNAMIC_MODELS
+		//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+		//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
+		loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	#endif // ENABLE_DYNAMIC_MODELS
+
 
 	#ifdef ENABLE_BILLBOARDING
 		GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
