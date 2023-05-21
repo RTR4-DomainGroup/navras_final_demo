@@ -15,6 +15,7 @@
 #include "../inc/scenes/scene9_VeerRas.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene7_Raudra.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
@@ -208,7 +209,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	return((int)msg.wParam);
 
 }
-
 
 // CAllBack Function
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
@@ -562,6 +562,7 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
+	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
@@ -576,6 +577,12 @@ int initialize(void) {
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
+        return (-8);
+	}
+
+	if(initializeScene7_Raudra() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
         return (-8);
 	}
 
@@ -596,8 +603,6 @@ int initialize(void) {
 	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
     //     return (-8);
 	// }
-
-
 
 	// currentScene = scenePop();
 
@@ -726,7 +731,6 @@ void resize(int width, int height) {
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
-
 
 }
 
