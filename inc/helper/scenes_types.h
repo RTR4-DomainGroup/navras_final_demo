@@ -10,7 +10,8 @@ typedef enum {
     SCENE_5,
     SCENE_6,
     SCENE_7,
-    SCENE_9, /// Adbhut Ras
+    SCENE_9, 
+    SCENE_10, /// Adbhut Ras
     SCENE_INVALID,
     SCENE_PARTICLE,
 } scene_t;
