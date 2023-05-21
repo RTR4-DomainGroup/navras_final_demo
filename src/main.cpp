@@ -744,6 +744,10 @@ void resize(int width, int height) {
 
 void display(void)
 {
+	bool isGodRequired = false;
+	bool isWaterRequired = false;
+	bool isGaussianBlurRequired = false;
+
 	// Function declarations
 	void resize(int, int);
 
@@ -761,8 +765,10 @@ void display(void)
 	}
 	else if(currentScene == SCENE_9)
 	{
-		// displayScene9_AdbhutRas();
-		displayScene_PlaceHolderOutdoor(displayScene9_Passes);
+		isGodRequired = true;
+		isWaterRequired = true;
+		isGaussianBlurRequired = true;
+		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if(currentScene == SCENE_7)
 	{
@@ -770,7 +776,10 @@ void display(void)
 	}
 	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
 	{
-		displayScene_PlaceHolderOutdoor(displayScene9_Passes);
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = true;
+		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{

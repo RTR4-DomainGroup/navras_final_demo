@@ -30,10 +30,7 @@
 
 #define FBO_WIDTH 1920
 #define FBO_HEIGHT 1080
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_STATIC_MODELS	
-#define ENABLE_DYNAMIC_MODELS
 
 extern int windowWidth;
 extern int windowHeight;
@@ -62,11 +59,11 @@ static GLfloat materialShininess = 128.0f;
 static mat4 viewMatrix;
 
 //Model variables
-static STATIC_MODEL rockModel_in;
-static STATIC_MODEL streetLightModel_in;
-static STATIC_MODEL deskModel;
-static STATIC_MODEL schoolBagModel;
-static DYNAMIC_MODEL skeletonModel_in;
+STATIC_MODEL rockModel_in;
+STATIC_MODEL streetLightModel_in;
+STATIC_MODEL deskModel;
+STATIC_MODEL schoolBagModel;
+DYNAMIC_MODEL skeletonModel_in;
 
 int initializeScene_PlaceHolderIndoor(void)
 {

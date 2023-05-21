@@ -1,21 +1,7 @@
 #pragma once
 // This File Will Be Replaced by Scene*.cpp
 
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_TERRIAN
-//#define ENABLE_ATMOSPHERE
-#define ENABLE_WATER
-#define ENABLE_CLOUD_NOISE
-//#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
-//#define ENABLE_FOG
-#define ENABLE_STATIC_MODELS	
-#define ENABLE_BILLBOARDING
-//#define ENABLE_VIDEO_RENDER
-//#define ENABLE_GAUSSIAN_BLUR
-//#define ENABLE_GODRAYS
-#define ENABLE_SHADOW
 
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
@@ -24,6 +10,7 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 
 
 
@@ -75,10 +62,6 @@
 #include "../../inc/effects/WaterEffect.h"
 #endif // ENABLE_WATER
 
-#ifdef ENABLE_STATIC_MODELS
-#include "../../inc/effects/StaticModelLoadingEffect.h"
-#endif // ENABLE_STATIC_MODELS
-
 #ifdef ENABLE_GODRAYS
 #include "../../inc/effects/GodraysEffect.h"
 #endif // ENABLE_GODRAYS
@@ -88,13 +71,11 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-#include "../../inc/scenes/scene9_AdbhutRas.h"
 
 
 
 #define FBO_WIDTH 1920
 #define FBO_HEIGHT 1080
-
 
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
@@ -207,12 +188,6 @@ GLuint texture_star;
 double deltaTime;
 struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_STATIC_MODELS
-//Model variables
-STATIC_MODEL rockModel;
-STATIC_MODEL streetLightModel;
-#endif // ENABLE_STATIC_MODELS
 
 GLfloat density = 0.15;
 GLfloat gradient = 0.5;
@@ -448,16 +423,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 			LOG("initializeStarfield() Successfull!!!\n");
 		}
 	#endif // ENABLE_STARFIELD
-		
-	#ifdef ENABLE_STATIC_MODELS
-		//load models
-		loadStaticModel("res/models/rock/rock.obj", &rockModel);
-		loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
-	#endif // ENABLE_STATIC_MODELS
-
-	#ifdef ENABLE_DYNAMIC_MODELS
-		loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
-	#endif // ENABLE_DYNAMIC_MODELS
 
 
 	#ifdef ENABLE_BILLBOARDING
@@ -528,7 +493,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	return 0;
 }
 
-void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses)
+void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodRequired, bool isWaterRequired, bool isGaussianBlurRequired)
 {
 	// Function Declarations
 	void displayGodRays(int, int);
@@ -555,6 +520,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses)
 #else
 
 	#ifdef ENABLE_WATER
+	if(isWaterRequired) {
 		// Water Frame Buffers
 		// Reflection
 		glEnable(GL_CLIP_DISTANCE0);
@@ -573,6 +539,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses)
 		displayPasses(1, true, false, false, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_CLIP_DISTANCE0);
+	}
 	#endif // ENABLE_WATER
 
 	#ifdef ENABLE_SHADOW
@@ -601,23 +568,26 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses)
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);*/
 
-	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS)
+	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS) // 
+	if(isGaussianBlurRequired && isGodRequired) {
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		displayPasses(1, false, false, true, 0);
-	
+	}
 	#elif defined(ENABLE_GAUSSIAN_BLUR)
-		displayPasses(1, false, false, true, 1);
+	if(isGaussianBlurRequired) {
+
+		displayPasses(1, false, false, true, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight, 
 		0.1f, 1000.0f);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(1, false, false, true, 1);
+		displayPasses(1, false, false, true, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		displayGaussianBlur();
@@ -633,103 +603,105 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses)
 		displayQuad();
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
-
+	}
 	#else // !(!defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS))  && !(defined(ENABLE_GAUSSIAN_BLUR))
 		// GodRay Black pass
-		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
-		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
-			0.1f, 1000.0f);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(0, false, false, true, 0);
+		if(isGodRequired)
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
+			glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
+				0.1f, 1000.0f);
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			displayPasses(0, false, false, true, 0);
 
-		sceneOutdoorADSUniform = useADSShader();
-		translationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
-		modelMatrix = translationMatrix;
-		
-		glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
-		glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
-		float color[3] = {1.0f, 1.0f, 1.0f};
-		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
-		displaySphere(color);
-		glUseProgram(0);
-		
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			sceneOutdoorADSUniform = useADSShader();
+			translationMatrix = mat4::identity();
+			modelMatrix = mat4::identity();
+			translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
+			modelMatrix = translationMatrix;
+			
+			glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+			glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
+			glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
+			float color[3] = {1.0f, 1.0f, 1.0f};
+			glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+			displaySphere(color);
+			glUseProgram(0);
+			
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// GodRay Color Pass
-		glBindFramebuffer(GL_FRAMEBUFFER, fboColorPass.frameBuffer);
-		glViewport(0, 0, (GLsizei)fboColorPass.textureWidth, (GLsizei)fboColorPass.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 
-			0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//displayWaterFramebuffers(1);
-		displayPasses(1, false, false, true, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			// GodRay Color Pass
+			glBindFramebuffer(GL_FRAMEBUFFER, fboColorPass.frameBuffer);
+			glViewport(0, 0, (GLsizei)fboColorPass.textureWidth, (GLsizei)fboColorPass.textureHeight);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 
+				0.1f, 1000.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			//displayWaterFramebuffers(1);
+			displayPasses(1, false, false, true, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// God Rays Pass
-		glBindFramebuffer(GL_FRAMEBUFFER, fboGodRayPass.frameBuffer);
-		glViewport(0, 0, (GLsizei)fboGodRayPass.textureWidth, (GLsizei)fboGodRayPass.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 
-			0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			// God Rays Pass
+			glBindFramebuffer(GL_FRAMEBUFFER, fboGodRayPass.frameBuffer);
+			glViewport(0, 0, (GLsizei)fboGodRayPass.textureWidth, (GLsizei)fboGodRayPass.textureHeight);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 
+				0.1f, 1000.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		sceneGodRaysUniform = useGodRaysShader();
+			sceneGodRaysUniform = useGodRaysShader();
 
-		translationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
-		modelMatrix = translationMatrix;
+			translationMatrix = mat4::identity();
+			modelMatrix = mat4::identity();
+			//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
+			modelMatrix = translationMatrix;
 
-		glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
-		glUniform1f(sceneGodRaysUniform.decay, 1.0f);
-		glUniform1f(sceneGodRaysUniform.density, 0.92f);
-		glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
-		glUniform1f(sceneGodRaysUniform.weight, 0.04f);
+			glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
+			glUniform1f(sceneGodRaysUniform.decay, 1.0f);
+			glUniform1f(sceneGodRaysUniform.density, 0.92f);
+			glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
+			glUniform1f(sceneGodRaysUniform.weight, 0.04f);
 
-		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+			glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+			glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
 
-		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
-		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
-		glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
-		glUniform3fv(sceneGodRaysUniform.distortionUniform, 1, distortion);
+			glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
+			glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
+			glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
+			glUniform3fv(sceneGodRaysUniform.distortionUniform, 1, distortion);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
-		glUniform1i(sceneGodRaysUniform.godraysampler, 0);
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
+			glUniform1i(sceneGodRaysUniform.godraysampler, 0);
+			displayQuad();
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glUseProgram(0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// Godrays Default Frame Buffer
-		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 
-			0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		fsqUniform = useFSQuadShader();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+			// Godrays Default Frame Buffer
+			glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 
+				0.1f, 1000.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			fsqUniform = useFSQuadShader();
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
+			glUniform1i(fsqUniform.textureSamplerUniform1, 0);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
-
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
+			glUniform1i(fsqUniform.textureSamplerUniform2, 1);
+			displayQuad();
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glUseProgram(0);
+		}
 	#endif // !(!defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS))  && !(defined(ENABLE_GAUSSIAN_BLUR))
 
 #endif // ENABLE_VIDEO_RENDER
@@ -972,16 +944,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_ADSLIGHT
 
-#ifdef ENABLE_STATIC_MODELS
-	//UNINIT models
-	unloadStaticModel(&rockModel);
-	unloadStaticModel(&streetLightModel);
-#endif // ENABLE_STATIC_MODELS
-
-
-#ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&skeletonModel);
-#endif
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 	uninitializeGaussianBlur(&gaussianBlurEffect);
