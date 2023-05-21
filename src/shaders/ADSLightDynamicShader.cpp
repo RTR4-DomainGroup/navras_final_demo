@@ -226,7 +226,7 @@ int initializeADSDynamicShader(void)
 		"	}\n" \
 		"	else\n" \
 		"	{\n" \
-		"		FragColor = vec4(1.0, 0.0, 0.0, 1.0); \n" \
+		"		FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
 		"	}\n" \
 		"} \n";
 
