@@ -7,7 +7,6 @@
 
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
-#include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
@@ -15,12 +14,13 @@
 
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
+#include "../inc/effects/videoEffect.h"
 
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scene9_VeerRas.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../inc/scenes/scene9_AdbhutRas.h"
+#include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/shaders/FSQuadShader.h"
@@ -565,16 +565,30 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
-    scenePush(SCENE_9);
+    scenePush(SCENE_10);
 	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
 	scenePush(SCENE_0);
 
-	if(initializeScene9_AdbhutRas() != 0)
+
+    //initializeTriangle();
+    //initializeSphere();
+
+	// Scene0 - Astromedicomp video
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo(); 
+	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
+	) {
+		LOG("initializeVideoEffect() FAILED !!!\n");
+        return (-8);
+	}
+#endif // ENABLE_VIDEO_RENDER
+
+	if(initializeScene10_AdbhutRas() != 0)
 	{
-		LOG("initializeScene9_AdbhutRas() FAILED !!!\n");
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
         return (-8);
 	}
 
@@ -617,6 +631,9 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
+	// currentScene = SCENE_7;
+	// currentScene = SCENE_10;
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 	// currentScene = SCENE_9;
 	currentScene = SCENE_9_VEER_RAS;
 
@@ -763,18 +780,24 @@ void display(void)
 	// Call Scenes Display Here
 	if(currentScene == SCENE_0)
 	{
-		// displayScene_Scene0();
+#ifdef ENABLE_VIDEO_RENDER
+		extern struct FSQuadUniform fsqUniform;
+
+		fsqUniform = useFSQuadShader();
+		displayVideoEffect(&fsqUniform);
+		glUseProgram(0);
+#endif	
 	}
 	else if(currentScene == SCENE_1)
 	{
 		// displayScene_Scene1();
 	}
-	else if(currentScene == SCENE_9)
+	else if(currentScene == SCENE_10)
 	{
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if (currentScene == SCENE_7)
 	{
@@ -827,9 +850,10 @@ void update(void)
 	{
 		updateScene9_VeerRas();
 	}
-	else if(currentScene == SCENE_9)
+	else if (currentScene == SCENE_10)
 	{
 		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -856,7 +880,7 @@ void uninitialize(void) {
 	uninitializeScene9_VeerRas();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
-	uninitializeScene9_AdbhutRas();
+	uninitializeScene10_AdbhutRas();
 	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
