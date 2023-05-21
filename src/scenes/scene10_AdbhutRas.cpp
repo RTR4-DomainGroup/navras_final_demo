@@ -272,18 +272,17 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	} else if(actualDepthQuadScene == 1) {
 	
-		finalViewMatrix = viewMatrix;
+		
 
 		finalViewMatrix = mat4::identity();
 		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
-		/*perspectiveProjectionDepth = mat4::identity();
-		perspectiveProjectionDepth = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 100.0f);*/
+		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
-		//lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
-		lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -50.0f, 50.0f);
-		lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
+		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
+		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -50.0f, 50.0f);
+		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
 #endif // ENABLE_SHADOW
 	
 	}
@@ -663,14 +662,14 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, -2.0f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
