@@ -97,7 +97,10 @@ int initializeStarfieldShader(void)
 		"{ \n"																			\
 			"if (enable_godRays) \n" \
 			"{" \
-				"FragColor = texture(u_textureSampler, gl_PointCoord); \n"	\
+				"vec4 tex = texture(u_textureSampler, gl_PointCoord); \n" \
+				"if(tex.a<0.1) \n" \
+					"discard; \n" \
+				"FragColor = tex; \n"	\
 			"}" \
 			"else" \
 			"{\n" \

@@ -230,7 +230,6 @@ int initializeScene9_AdbhutRas(void)
     // Code.
 	// initializeCamera(&camera);
 
-
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
@@ -238,7 +237,9 @@ int initializeScene9_AdbhutRas(void)
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
+	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
 	return 0;

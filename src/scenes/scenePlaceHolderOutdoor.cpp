@@ -424,18 +424,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 		}
 	#endif // ENABLE_STARFIELD
 
-	#ifdef ENABLE_STATIC_MODELS
-		//load models
-		loadStaticModel("res/models/rock/rock.obj", &rockModel);
-		loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
-	#endif // ENABLE_STATIC_MODELS
-
-	#ifdef ENABLE_DYNAMIC_MODELS
-		//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
-		//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-		loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
-	#endif // ENABLE_DYNAMIC_MODELS
-
 
 	#ifdef ENABLE_BILLBOARDING
 		GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
@@ -530,8 +518,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 	displayVideoEffect(&fsqUniform);
 	glUseProgram(0);
 #else
-
-	#ifdef ENABLE_WATER
 	if(isWaterRequired) {
 		// Water Frame Buffers
 		// Reflection
@@ -552,7 +538,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glDisable(GL_CLIP_DISTANCE0);
 	}
-	#endif // ENABLE_WATER
 
 	#ifdef ENABLE_SHADOW
 
@@ -561,7 +546,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
-		displayPasses(1, true, true, true, 1);
+		displayPasses(1, true, true, isWaterRequired, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	#endif // ENABLE_SHADOW
 
@@ -580,33 +565,32 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);*/
 
-	#if !defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS) // 
-	if(isGaussianBlurRequired && isGodRequired) {
+	if(!isGaussianBlurRequired && !isGodRequired) {
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(1, false, false, true, 0);
+		displayPasses(1, false, false, isWaterRequired, 0);
 	}
-	#elif defined(ENABLE_GAUSSIAN_BLUR)
-	if(isGaussianBlurRequired) {
+	
+	else if(isGaussianBlurRequired) {
 
-		displayPasses(1, false, false, true, 0);
+		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight, 
 		0.1f, 1000.0f);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		displayPasses(1, false, false, true, 0);
+		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		displayGaussianBlur();
 
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurQuadUniform = useFSQuadShader();
 		glActiveTexture(GL_TEXTURE0);
@@ -616,7 +600,8 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	#else // !(!defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS))  && !(defined(ENABLE_GAUSSIAN_BLUR))
+	else
+	{
 		// GodRay Black pass
 		if(isGodRequired)
 		{
@@ -624,9 +609,9 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
 			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
 				0.1f, 1000.0f);
-			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			displayPasses(0, false, false, true, 0);
+			displayPasses(0, false, false, isWaterRequired, 0);
 
 			sceneOutdoorADSUniform = useADSShader();
 			translationMatrix = mat4::identity();
@@ -654,7 +639,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			//displayWaterFramebuffers(1);
-			displayPasses(1, false, false, true, 0);
+			displayPasses(1, false, false, isWaterRequired, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 			// God Rays Pass
@@ -714,7 +699,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glUseProgram(0);
 		}
-	#endif // !(!defined(ENABLE_GAUSSIAN_BLUR) && !defined(ENABLE_GODRAYS))  && !(defined(ENABLE_GAUSSIAN_BLUR))
+	}
 
 #endif // ENABLE_VIDEO_RENDER
 }

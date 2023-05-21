@@ -765,9 +765,9 @@ void display(void)
 	}
 	else if(currentScene == SCENE_9)
 	{
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = true;
-		isGaussianBlurRequired = true;
+		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if(currentScene == SCENE_7)
@@ -778,7 +778,7 @@ void display(void)
 	{
 		isGodRequired = true;
 		isWaterRequired = false;
-		isGaussianBlurRequired = true;
+		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
