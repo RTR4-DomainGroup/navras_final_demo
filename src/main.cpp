@@ -20,6 +20,7 @@
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
+#include "../inc/scenes/scene09_BibhatsaRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/shaders/FSQuadShader.h"
