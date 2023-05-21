@@ -750,11 +750,12 @@ void display(void)
 	}
 	else if(currentScene == SCENE_9)
 	{
-		displayScene9_AdbhutRas();
+		// displayScene9_AdbhutRas();
+		displayScene_PlaceHolderOutdoor(displayScene9_Passes);
 	}
 	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
 	{
-		displayScene_PlaceHolderOutdoor();
+		displayScene_PlaceHolderOutdoor(displayScene9_Passes);
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
