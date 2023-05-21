@@ -65,6 +65,7 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
+	    "    vec4 pos = (a_position + a_instancePosition); \n" \
 			
 			"mat3 TBN; \n" \
 			"if (u_actualScene == 1) \n" \
@@ -91,7 +92,7 @@ int initializeADSShader(void)
 				"vs_out.Normal = mat3(transpose(inverse(u_modelMatrix))) * a_normal; \n" \
 				"vs_out.FragPosLightSpace = lightSpaceMatrix * vs_out.FragPos; \n" \
 
-				"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position; \n" \
+				"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * pos; \n" \
 				"a_color_out = a_color;\n" \
 				"a_texcoord_out = a_texcoord;\n" \
 
@@ -100,20 +101,20 @@ int initializeADSShader(void)
 
 			"if(u_depthScene == 1) { \n" \
 
-				"gl_Position = lightSpaceMatrix * u_modelMatrix * a_position; \n" \
+				"gl_Position = lightSpaceMatrix * u_modelMatrix * pos; \n" \
 
 			"} \n" \
 
 			"if(u_depthQuadScene == 1) { \n" \
 
 				"a_texcoord_out = a_texcoord;\n" \
-				"gl_Position = a_position; \n" \
+				"gl_Position = pos; \n" \
 
 			"} \n" \
 
 			"if (u_fogEnable == 1) \n" \
 			"{ \n" \
-				"vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * a_position; \n"		\
+				"vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * pos; \n"		\
 				"float distance = length(positionRelativeToCamera.xyz); \n"							\
 				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
 				"visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
