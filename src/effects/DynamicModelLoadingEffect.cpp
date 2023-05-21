@@ -80,7 +80,7 @@ int Bone::GetPositionIndex(float animationTime)
         if (animationTime < m_Positions[index + 1].timeStamp)
             return index;
     }
-    assert(0);
+    //assert(0);
 
     return (0);
 }
@@ -92,7 +92,7 @@ int Bone::GetRotationIndex(float animationTime)
         if (animationTime < m_Rotations[index + 1].timeStamp)
             return index;
     }
-    assert(0);
+    //assert(0);
 
     return (0);
 }
@@ -104,7 +104,7 @@ int Bone::GetScaleIndex(float animationTime)
         if (animationTime < m_Scales[index + 1].timeStamp)
             return index;
     }
-    assert(0);
+    //assert(0);
 
     return (0);
 }
@@ -682,7 +682,7 @@ DynamicMesh* DynamicModel::processMesh(aiMesh* mesh, const aiScene* scene)
         vector<DynamicModelTexture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
         // 3. normal maps
-        std::vector<DynamicModelTexture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+        std::vector<DynamicModelTexture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal");
         textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
         // 4. height maps
         std::vector<DynamicModelTexture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");

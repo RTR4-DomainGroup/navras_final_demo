@@ -10,14 +10,11 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../../inc/scenes/scene6_Raudra.h"
+#include "../../inc/scenes/scene7_Raudra.h"
 
 
 #define FBO_WIDTH 1920
 #define FBO_HEIGHT 1080
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
-
-#define ENABLE_STATIC_MODELS	
 
 extern int windowWidth;
 extern int windowHeight;

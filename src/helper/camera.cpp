@@ -14,6 +14,8 @@ GLfloat cameraUpX;
 GLfloat cameraUpY;
 GLfloat cameraUpZ;
 
+Camera camera;
+
 void initializeCamera(Camera* camera)
 {
 	camera = (Camera*)malloc(sizeof(Camera));

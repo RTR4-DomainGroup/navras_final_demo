@@ -52,3 +52,26 @@ static const char *szAudios[] = {
     "audio2.wav", 
     "audio3.wav", 
 };
+
+// Feature enable / disable
+ 
+//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+
+// always ON
+#define ENABLE_WATER
+#define ENABLE_GAUSSIAN_BLUR
+#define ENABLE_GODRAYS
+
+// configurable
+#define ENABLE_TERRIAN
+//#define ENABLE_ATMOSPHERE
+#define ENABLE_CLOUD_NOISE
+//#define ENABLE_SKYBOX
+#define ENABLE_STARFIELD
+//#define ENABLE_FOG
+#define ENABLE_BILLBOARDING
+//#define ENABLE_VIDEO_RENDER
+#define ENABLE_SHADOW
+#define ENABLE_STATIC_MODELS	
+#define ENABLE_DYNAMIC_MODELS
+

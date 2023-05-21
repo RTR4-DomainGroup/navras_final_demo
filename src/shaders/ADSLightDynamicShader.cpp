@@ -23,6 +23,8 @@ int initializeADSDynamicShader(void)
 		"in vec4 a_color; \n" \
 		"in vec2 a_texcoord; \n" \
 		"in vec3 a_normal; \n"	\
+		"in vec3 a_tangent; \n" \
+		"in vec3 a_bitangent; \n" \
 		"in ivec4 a_BoneIds; \n" \
 		"in vec4 a_BoneWeight; \n" \
 
@@ -49,15 +51,34 @@ int initializeADSDynamicShader(void)
 		"out vec4 a_color_out;\n" \
 		"out vec2 a_texcoord_out;\n" \
 
+		//normal mapping
+		"vec4 FragPos; \n" \
+		"out vec3 a_eyeDirection_out; \n" \
+		"out vec3 a_lightDirection_out; \n" \
+		"out vec3 a_fragPosNM_out; \n" \
+		"uniform vec3 viewPosition; \n"	\
+
 		"void main(void) \n" \
 		"{ \n" \
-			
+
 		"	vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
 		"	mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
 		"	transformedNormals = normalMatrix * a_normal; \n" \
 		"	lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
 		"	viewerVector = vec3(-eyeCoordinates); \n" \
-			
+
+		//Normal Mapping
+		"FragPos = u_modelMatrix * a_position; \n" \
+		"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
+		"vec3 N = normalize(normalMatrix_nm * a_normal); \n" \
+		"vec3 T = normalize(normalMatrix_nm * a_tangent); \n" \
+		"T = normalize(T- dot(T,N) * N); \n" \
+		"vec3 B = cross(N,T); \n" \
+		"mat3 TBN = transpose(mat3(T,B,N)); \n" \
+		"a_lightDirection_out = TBN * vec3(u_lightPosition) ; \n" \
+		"a_eyeDirection_out =  TBN *  viewPosition; \n" \
+		"a_fragPosNM_out =TBN *  FragPos.xyz; \n" \
+
 		/*skeletal anim*/
 		"	vec4 totalPosition = vec4(0.0); \n" \
 
@@ -150,6 +171,12 @@ int initializeADSDynamicShader(void)
 		"uniform int enable_godRays; \n" \
 		"uniform int enable_sphere_color; \n" \
 
+		//normal mapping
+		"in vec3 a_eyeDirection_out; \n" \
+		"in vec3 a_lightDirection_out; \n" \
+		"in vec3 a_fragPosNM_out; \n" \
+		"uniform sampler2D texture_normal; \n" \
+
 		"out vec4 FragColor; \n" \
 
 		"void main(void) \n" \
@@ -158,17 +185,31 @@ int initializeADSDynamicShader(void)
 		"	{\n" \
 		"		vec4 phong_ads_light; \n" \
 		"		vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n" \
-		
-		"		vec4 ambient = u_la * u_ka; \n" \
 
-		"		vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
-		"		vec3 normalized_light_direction = normalize(lightDirection); \n" \
-		"		vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
+		        //read normals from normal map and normalize it
+		"       vec3 normalizedNormals = normalize(texture(texture_normal,a_texcoord_out).rgb*2.0 - vec3(1.0)); \n" \
+				//ambient
+		"		vec4 ambient = 0.0 * texColor; \n" \
+				
+				//diffuse
+		"       vec3 normalized_lightDirection = normalize(a_lightDirection_out - a_fragPosNM_out ); \n" \
+		"       vec4 diffuse = u_ld * texColor * max(dot(normalized_lightDirection,normalizedNormals), 0.0); \n" \
+
+		//"		vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
+		//"		vec3 normalized_light_direction = normalize(lightDirection); \n" \
+		//"		vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
 		
-		"		vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
-		"		vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-		"		vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+		//"		vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
+		//"		vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
+		//"		vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
 		
+					//specular
+		"       vec3 normalized_viewerVector = normalize(a_eyeDirection_out - a_fragPosNM_out); \n" \
+		"       vec3 reflectionVector = reflect(-normalized_lightDirection, normalizedNormals); \n" \
+		"       vec3 halfwayDir = normalize(normalized_lightDirection + normalized_viewerVector); \n" \
+	
+		"       vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
+
 		"		phong_ads_light = ambient + diffuse + specular; \n" \
 		
 		"		FragColor = phong_ads_light; \n" \
@@ -185,7 +226,7 @@ int initializeADSDynamicShader(void)
 		"	}\n" \
 		"	else\n" \
 		"	{\n" \
-		"		FragColor = vec4(1.0, 0.0, 0.0, 1.0); \n" \
+		"		FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
 		"	}\n" \
 		"} \n";
 
@@ -226,6 +267,8 @@ int initializeADSDynamicShader(void)
 	glBindAttribLocation(adsDynamicShaderProgramObject, DOMAIN_ATTRIBUTE_COLOR, "a_color");
 	glBindAttribLocation(adsDynamicShaderProgramObject, DOMAIN_ATTRIBUTE_BONE_ID, "a_BoneIds");
 	glBindAttribLocation(adsDynamicShaderProgramObject, DOMAIN_ATTRIBUTE_BONE_WEIGHT, "a_BoneWeight");
+	glBindAttribLocation(adsDynamicShaderProgramObject, DOMAIN_ATTRIBUTE_TANGENT, "a_tangent");
+	glBindAttribLocation(adsDynamicShaderProgramObject, DOMAIN_ATTRIBUTE_BITANGENT, "a_bitangent");
 
 	glLinkProgram(adsDynamicShaderProgramObject);
 	
@@ -266,6 +309,11 @@ int initializeADSDynamicShader(void)
 	
 	adsDynamicUniform.textureSamplerUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_texturesampler");
 
+	//For Normal Mapping
+	adsDynamicUniform.viewpositionUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "viewPosition");
+	adsDynamicUniform.textureSamplerUniform_normal = glGetUniformLocation(adsDynamicShaderProgramObject, "texture_normal");
+
+
 	adsDynamicUniform.gradientUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_gradient");
 	adsDynamicUniform.densityUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_density");
 	adsDynamicUniform.skyFogColorUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_skyFogColor");
@@ -283,6 +331,7 @@ int initializeADSDynamicShader(void)
 
 	glUseProgram(adsDynamicShaderProgramObject);
     glUniform1i(adsDynamicUniform.textureSamplerUniform, 0);
+	glUniform1i(adsDynamicUniform.textureSamplerUniform_normal, 2);   //don't change
 	glUseProgram(0);
 
 
