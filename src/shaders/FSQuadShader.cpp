@@ -85,10 +85,10 @@ int initializeFSQuadShader(void)
 
         "void main(void)" \
         "{" \
-            //"FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \/
-          "float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
+            "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
+          //"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \/
             //"FragColor = vec4(vec3(LinearizeDepth(depthValue) / 10.0), 1.0); \n" \/
-            "FragColor = vec4(vec3(depthValue), 1.0); \n" \
+            //"FragColor = vec4(vec3(depthValue), 1.0); \n" \/
             "\n" \
         "}";
     

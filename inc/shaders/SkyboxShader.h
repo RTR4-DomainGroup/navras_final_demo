@@ -14,3 +14,4 @@ struct SkyboxUniform
 int initializeSkyboxShader(void);
 struct SkyboxUniform useSkyboxShader(void);
 void uninitializeSkyboxShader(void);
+

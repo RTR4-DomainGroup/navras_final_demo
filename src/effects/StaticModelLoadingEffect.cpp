@@ -1,7 +1,7 @@
 #pragma once
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/shaders/ADSLightShader.h"
 
-GLuint shaderProgObj;
 
 /*############### MESH ###############*/
 
@@ -80,7 +80,7 @@ void Mesh::Draw()
             number = std::to_string(heightNr++); // transfer unsigned int to stream
 
         // now set the sampler to the correct texture unit
-        glUniform1i(glGetUniformLocation(shaderProgObj, (name + number).c_str()), i);
+        glUniform1i(glGetUniformLocation(getADSShaderProgramObject(), (name + number).c_str()), i);
         // and finally bind the texture
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
