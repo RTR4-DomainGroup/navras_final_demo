@@ -7,6 +7,8 @@
 // cube
 GLuint vao_Cube;
 GLuint vbo_Cube;
+GLuint vao_invertedNormalCube;
+
 
 // Cubemap
 GLuint vao_cubemap;
@@ -86,6 +88,77 @@ void initializeCube(void)
 	// vao_Cube
 	glGenVertexArrays(1, &vao_Cube);
 	glBindVertexArray(vao_Cube);
+
+	glGenBuffers(1, &vbo_Cube);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_Cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePNT), cubePNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	
+	// Position
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
+
+	// Normal
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+
+	// TexCoord
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+
+	glBindVertexArray(0);
+    
+}
+
+void initializeInvertedNormalCube(void)
+{
+    const GLfloat cubePNT[] = 
+    {
+                                            //PNT
+        // positions                       //normals                   //texture
+
+        // Top face                          // Top face              // Top face
+        1.0f, 1.0f, -1.0f,               0.0f, -1.0f, 0.0f,            1.0f,1.0f,
+        -1.0f, 1.0f, -1.0f,              0.0f, -1.0f, 0.0f,            0.0f,1.0f,
+        -1.0f, 1.0f, 1.0f,               0.0f, -1.0f, 0.0f,            0.0f,0.0f,
+        1.0f, 1.0f, 1.0f,                0.0f, -1.0f, 0.0f,            1.0f,0.0f,
+
+        // Bottom face                      // Bottom face            // Bottom face
+        1.0f, -1.0f, -1.0f,             0.0f, 1.0f, 0.0f,            1.0f,1.0f,
+        -1.0f, -1.0f, -1.0f,            0.0f, 1.0f, 0.0f,            0.0f,1.0f,
+        -1.0f, -1.0f, 1.0f,             0.0f, 1.0f, 0.0f,            0.0f,0.0f,
+        1.0f, -1.0f, 1.0f,              0.0f, 1.0f, 0.0f,            1.0f,0.0f,
+
+        // Front face                       // Front face             // Front face
+        1.0f, 1.0f, 1.0f,               0.0f, 0.0f, -1.0f,             1.0f,1.0f,
+        -1.0f, 1.0f, 1.0f,              0.0f, 0.0f, -1.0f,             0.0f,1.0f,
+        -1.0f, -1.0f, 1.0f,             0.0f, 0.0f, -1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, 1.0f,              0.0f, 0.0f, -1.0f,             1.0f,0.0f,
+
+        // Back face                       // Back face              // Back face
+        1.0f, 1.0f, -1.0f,              0.0f, 0.0f, 1.0f,             1.0f,1.0f,
+        -1.0f, 1.0f, -1.0f,             0.0f, 0.0f, 1.0f,             0.0f,1.0f,
+        -1.0f, -1.0f, -1.0f,            0.0f, 0.0f, 1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, -1.0f,             0.0f, 0.0f, 1.0f,             1.0f,0.0f,
+
+        // Right face                    	// Right face              // Right face
+        1.0f, 1.0f, -1.0f,             -1.0f, 0.0f, 0.0f,               1.0f,1.0f,
+        1.0f, 1.0f, 1.0f,              -1.0f, 0.0f, 0.0f,               0.0f,1.0f,
+        1.0f, -1.0f, 1.0f,             -1.0f, 0.0f, 0.0f,               0.0f,0.0f,
+        1.0f, -1.0f, -1.0f,            -1.0f, 0.0f, 0.0f,               1.0f,0.0f,
+
+        // Left face                      // Left face                // Left face
+        -1.0f, 1.0f, 1.0f,             1.0f, 0.0f, 0.0f,              1.0f,1.0f,
+        -1.0f, 1.0f, -1.0f,            1.0f, 0.0f, 0.0f,              0.0f,1.0f,
+        -1.0f, -1.0f, -1.0f,           1.0f, 0.0f, 0.0f,              0.0f,0.0f,
+        -1.0f, -1.0f, 1.0f,            1.0f, 0.0f, 0.0f,              1.0f,0.0f
+        
+    };
+
+        // VAO AND VBO RELATED CODE
+	// vao_Cube
+	glGenVertexArrays(1, &vao_invertedNormalCube);
+	glBindVertexArray(vao_invertedNormalCube);
 
 	glGenBuffers(1, &vbo_Cube);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_Cube);
@@ -518,6 +591,33 @@ void displayCube(void)
 	glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
 	glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
 	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
+
+	glBindVertexArray(0);
+}
+
+void displayRoom(GLuint* roomWalls)
+{
+    // Code
+    glBindVertexArray(vao_invertedNormalCube);
+
+	glBindTextureUnit(0, roomWalls[0]);
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+	glBindTextureUnit(0, roomWalls[1]);
+	glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+
+	glBindTextureUnit(0, roomWalls[0]);
+	glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+
+	glBindTextureUnit(0, roomWalls[2]);
+	glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+
+	glBindTextureUnit(0, roomWalls[3]);
+	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+
+	glBindTextureUnit(0, roomWalls[4]);
+
 	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
 
 	glBindVertexArray(0);

@@ -23,3 +23,4 @@ struct GodraysUniform
 int initializeGodraysShader(void);
 struct GodraysUniform useGodRaysShader(void);
 void uninitializeGodraysShader(void);
+

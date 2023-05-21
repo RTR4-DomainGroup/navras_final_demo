@@ -30,10 +30,7 @@
 
 #define FBO_WIDTH 1920
 #define FBO_HEIGHT 1080
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define ENABLE_STATIC_MODELS	
-#define ENABLE_DYNAMIC_MODELS
 
 extern int windowWidth;
 extern int windowHeight;
@@ -62,19 +59,17 @@ static GLfloat materialShininess = 128.0f;
 static mat4 viewMatrix;
 
 //Model variables
-static STATIC_MODEL rockModel_in;
-static STATIC_MODEL streetLightModel_in;
-static STATIC_MODEL deskModel;
-static STATIC_MODEL schoolBagModel;
-static DYNAMIC_MODEL skeletonModel_in;
+STATIC_MODEL rockModel_in;
+STATIC_MODEL streetLightModel_in;
+STATIC_MODEL deskModel;
+STATIC_MODEL schoolBagModel;
+DYNAMIC_MODEL skeletonModel_in;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
 	// Function Declarations
 
     // Code.
-
-	
 
 #ifdef ENABLE_ADSLIGHT
     // Texture
@@ -90,7 +85,6 @@ int initializeScene_PlaceHolderIndoor(void)
 	}
 
 #endif // ENABLE_ADSLIGHT
-
 	
 #ifdef ENABLE_STATIC_MODELS
 	//load models
@@ -102,8 +96,10 @@ int initializeScene_PlaceHolderIndoor(void)
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
-#endif // ENABLE_DYNAMIC_MODELS
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
+	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_in);
+	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_in);
+#endif
 
 
 	return 0;
@@ -284,7 +280,7 @@ void displayScene_PlaceHolderIndoor(void)
 	// ------ Dancing Vampire Model ------
 
 	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
@@ -293,7 +289,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel_in, 1.0f);
+	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel_in, 0.2f);
 
 	glUseProgram(0);
 
