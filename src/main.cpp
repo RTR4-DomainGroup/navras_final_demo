@@ -20,6 +20,7 @@
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene9_AdbhutRas.h"
+#include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/shaders/FSQuadShader.h"
 #include "../inc/shaders/ParticleShader.h"
@@ -78,7 +79,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_PLACEHOLDER_INDOOR;
+static scene_t currentScene = SCENE_7;
 
 bool sceneFadeOut = false;
 
@@ -210,7 +211,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	return((int)msg.wParam);
 
 }
-
 
 // CAllBack Function
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
@@ -565,6 +565,7 @@ int initialize(void) {
 
 	// Initialize Scenes
     scenePush(SCENE_9);
+	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
@@ -582,6 +583,12 @@ int initialize(void) {
         return (-8);
 	}
 
+	if(initializeScene7_Raudra() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
+        return (-8);
+	}
+
 	if (initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
@@ -594,6 +601,11 @@ int initialize(void) {
 		return (-8);
 	}
 
+	// if(initializeScene_Scene0() != 0)
+	// {
+	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
+    //     return (-8);
+	// }
 
 
 	// currentScene = scenePop();
@@ -728,7 +740,6 @@ void resize(int width, int height) {
 
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
-
 }
 
 void display(void)
@@ -752,6 +763,10 @@ void display(void)
 	{
 		// displayScene9_AdbhutRas();
 		displayScene_PlaceHolderOutdoor(displayScene9_Passes);
+	}
+	else if(currentScene == SCENE_7)
+	{
+		displayScene7_Raudra();
 	}
 	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
 	{
@@ -829,6 +844,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene9_AdbhutRas();
+	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 

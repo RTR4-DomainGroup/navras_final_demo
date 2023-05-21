@@ -21,6 +21,7 @@ int initializeADSShader(void)
 		"#version 460 core \n" \
 		"\n" \
 		"in vec4 a_position; \n" \
+		"in vec4 a_instancePosition; \n" \
 		"in vec4 a_color; \n" \
 		"in vec2 a_texcoord; \n" \
 		"in vec3 a_normal; \n"	\
@@ -259,7 +260,7 @@ int initializeADSShader(void)
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
 					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
 					
-					"FragColor = phong_ads_light; \n" \
+					"FragColor = texColor + phong_ads_light; \n" \
 					"if (u_fogEnable == 1) \n" \
 					"{ \n" \
 						"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
@@ -322,6 +323,7 @@ int initializeADSShader(void)
 	adsShaderProgramObject = glCreateProgram();
 	glAttachShader(adsShaderProgramObject, vertexShadderObject);
 	glAttachShader(adsShaderProgramObject, fragmentShadderObject);
+	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_INSTANCE_POSITION, "a_instancePosition");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_NORMAL, "a_normal");
