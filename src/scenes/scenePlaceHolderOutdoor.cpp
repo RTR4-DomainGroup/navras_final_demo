@@ -230,266 +230,257 @@ int initializeScene_PlaceHolderOutdoor(void)
     // Code.
 	// initializeCamera(&camera);
 
-#ifdef ENABLE_VIDEO_RENDER
-	initializeQuadForVideo();
-    //initializeTriangle();
-    //initializeSphere();
-	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
+#ifdef ENABLE_ADSLIGHT
+	// Texture
+	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
+		//uninitialize();
+		LOG("LoadGLTexture FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+	}
 
-#else // ! ENABLE_VIDEO_RENDER
+#endif // ENABLE_ADSLIGHT
 
-	#ifdef ENABLE_ADSLIGHT
-		// Texture
-		// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
-		if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
-			//uninitialize();
-			LOG("LoadGLTexture FAILED!!!\n");
-			return(-1);
-		}
-		else
-		{
-			LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
-		}
+#ifdef ENABLE_SHADOW
 
-	#endif // ENABLE_ADSLIGHT
+	shadowFramebuffer.textureWidth = 1024;
+	shadowFramebuffer.textureHeight = 1024;
 
-	#ifdef ENABLE_SHADOW
+	if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
 
-		shadowFramebuffer.textureWidth = 1024;
-		shadowFramebuffer.textureHeight = 1024;
-
-		if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
-
-			LOG("shadowCreateFBO() For Shadow FAILED!!!\n");
-				return(-1);
-
-		}
-		else {
-
-			LOG("shadowCreateFBO() Successfull for Shadow!!!\n");
-
-		}
-
-		initializeQuad();
-
-	#endif // ENABLE_SHADOW
-
-	#ifdef ENABLE_TERRIAN
-		displacementmap_depth = 15.0f;
-
-		terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
-		terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
-		terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/NormalMapTerrain.jpg";
-
-		if (initializeTerrain(&terrainTextureVariables) != 0) 
-		{
-			LOG("initializeTerrain() FAILED!!!\n");
-			return(-1);
-		}
-		else
-		{
-			LOG("initializeTerrain() Successfull!!!\n");
-		}
-		
-	#endif // ENABLE_TERRIAN
-
-	#ifdef ENABLE_ATMOSPHERE
-
-		//
-		atmosVariables.m_nSamples = 3;		// Number of sample rays to use in integral equation
-		atmosVariables.m_Kr = 0.0035f;		// Rayleigh scattering constant
-		atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
-		atmosVariables.m_Km = 0.0015f;		// Mie scattering constant
-		atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
-		atmosVariables.m_ESun = 20.0f;		// Sun brightness constant
-		atmosVariables.m_g = -0.990f;		// The Mie phase asymmetry factor
-		atmosVariables.m_fExposure = 2.0f;
-
-		atmosVariables.m_fInnerRadius = 10.0f;
-		atmosVariables.m_fOuterRadius = 50.0f;
-		//atmosVariables.m_fOuterRadius = atmosVariables.m_fInnerRadius + (atmosVariables.m_fInnerRadius * 2.5f);
-		atmosVariables.m_fScale = 1 / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius);
-
-		atmosVariables.m_fWavelength[0] = 0.650f;		// 650 nm for red
-		atmosVariables.m_fWavelength[1] = 0.570f;		// 570 nm for green
-		atmosVariables.m_fWavelength[2] = 0.475f;		// 475 nm for blue
-		atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
-		atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
-		atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
-
-		atmosVariables.m_fRayleighScaleDepth = 0.25f;
-		atmosVariables.m_fMieScaleDepth = 0.1f;
-
-		atmosVariables.m_vLight = vec3(0, 0, -350);
-		atmosVariables.m_vLightDirection = atmosVariables.m_vLight / sqrtf(atmosVariables.m_vLight[0] * atmosVariables.m_vLight[0] + atmosVariables.m_vLight[1] * atmosVariables.m_vLight[1] + atmosVariables.m_vLight[2] * atmosVariables.m_vLight[2]);
-
-		//
-		initializeAtmosphere(atmosVariables);
-
-	#endif // ENABLE_ATMOSPHERE
-
-	#ifdef ENABLE_GODRAYS
-		int initializeGodRays(void);
-		initializeSphere(1.0f, 60, 60);
-		initializeGodRays();
-		initializeQuad();
-	#endif // ENABLE_GODRAYS
-
-	#ifdef ENABLE_WATER
-
-		waterTextureVariables.displacementPath = "res/textures/water/waterDUDV.bmp";
-
-		if (initializeWater(&waterTextureVariables) != 0) {
-
-			LOG("initializeWater() FAILED!!!\n");
+		LOG("shadowCreateFBO() For Shadow FAILED!!!\n");
 			return(-1);
 
-		}
-		else
+	}
+	else {
+
+		LOG("shadowCreateFBO() Successfull for Shadow!!!\n");
+
+	}
+
+	initializeQuad();
+
+#endif // ENABLE_SHADOW
+
+#ifdef ENABLE_TERRIAN
+	displacementmap_depth = 15.0f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/NormalMapTerrain.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0) 
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+	
+#endif // ENABLE_TERRIAN
+
+#ifdef ENABLE_ATMOSPHERE
+
+	//
+	atmosVariables.m_nSamples = 3;		// Number of sample rays to use in integral equation
+	atmosVariables.m_Kr = 0.0035f;		// Rayleigh scattering constant
+	atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
+	atmosVariables.m_Km = 0.0015f;		// Mie scattering constant
+	atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
+	atmosVariables.m_ESun = 20.0f;		// Sun brightness constant
+	atmosVariables.m_g = -0.990f;		// The Mie phase asymmetry factor
+	atmosVariables.m_fExposure = 2.0f;
+
+	atmosVariables.m_fInnerRadius = 10.0f;
+	atmosVariables.m_fOuterRadius = 50.0f;
+	//atmosVariables.m_fOuterRadius = atmosVariables.m_fInnerRadius + (atmosVariables.m_fInnerRadius * 2.5f);
+	atmosVariables.m_fScale = 1 / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius);
+
+	atmosVariables.m_fWavelength[0] = 0.650f;		// 650 nm for red
+	atmosVariables.m_fWavelength[1] = 0.570f;		// 570 nm for green
+	atmosVariables.m_fWavelength[2] = 0.475f;		// 475 nm for blue
+	atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
+	atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
+	atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
+
+	atmosVariables.m_fRayleighScaleDepth = 0.25f;
+	atmosVariables.m_fMieScaleDepth = 0.1f;
+
+	atmosVariables.m_vLight = vec3(0, 0, -350);
+	atmosVariables.m_vLightDirection = atmosVariables.m_vLight / sqrtf(atmosVariables.m_vLight[0] * atmosVariables.m_vLight[0] + atmosVariables.m_vLight[1] * atmosVariables.m_vLight[1] + atmosVariables.m_vLight[2] * atmosVariables.m_vLight[2]);
+
+	//
+	initializeAtmosphere(atmosVariables);
+
+#endif // ENABLE_ATMOSPHERE
+
+#ifdef ENABLE_GODRAYS
+	int initializeGodRays(void);
+	initializeSphere(1.0f, 60, 60);
+	initializeGodRays();
+	initializeQuad();
+#endif // ENABLE_GODRAYS
+
+#ifdef ENABLE_WATER
+
+	waterTextureVariables.displacementPath = "res/textures/water/waterDUDV.bmp";
+
+	if (initializeWater(&waterTextureVariables) != 0) {
+
+		LOG("initializeWater() FAILED!!!\n");
+		return(-1);
+
+	}
+	else
+	{
+		LOG("initializeWater() Successfull!!!\n");
+	}
+
+	//
+	waterReflectionFrameBufferDetails.textureWidth = 1280;
+	waterReflectionFrameBufferDetails.textureHeight = 720;
+
+	if (waterCreateFBO(&waterReflectionFrameBufferDetails) == FALSE) {
+
+		LOG("waterCreateFBO() For WaterReflection FAILED!!!\n");
+		return(-1);
+
+	}
+	else {
+
+		LOG("waterCreateFBO() Successfull for WaterReflection!!!\n");
+
+	}
+
+	waterRefractionFrameBufferDetails.textureWidth = 1280;
+	waterRefractionFrameBufferDetails.textureHeight = 720;
+
+	if (waterCreateFBO(&waterRefractionFrameBufferDetails) == FALSE) {
+
+		LOG("waterCreateFBO() For WaterRefraction FAILED!!!\n");
+		return(-1);
+
+	}
+	else {
+
+		LOG("waterCreateFBO() Successfull for Water Refraction!!!\n");
+
+	}
+
+#endif // ENABLE_WATER
+
+#ifdef ENABLE_SKYBOX
+	if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox\\") != 0)
+	{
+
+		LOG("initializeSkybox() FAILED!!!\n");
+		return(-1);
+
+	}
+	else
+	{
+		LOG("initializeSkybox() Successfull!!!\n");
+	}
+#endif // ENABLE_SKYBOX
+
+#ifdef ENABLE_CLOUD_NOISE
+
+	noise_texture = initializeCloud();
+	if (noise_texture == 0)
+	{
+		LOG("initializeCloud() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() Successfull!!!\n");
+	}
+
+#endif // ENABLE_CLOUD_NOISE
+
+#ifdef ENABLE_STARFIELD
+	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
+	{
+		LOG("initializeStarfield() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeStarfield() Successfull!!!\n");
+	}
+#endif // ENABLE_STARFIELD
+
+
+#ifdef ENABLE_BILLBOARDING
+	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+	// generate positions per instance
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+3] = 1.0f;
+		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	}
+
+	// sort z vertices
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
 		{
-			LOG("initializeWater() Successfull!!!\n");
-		}
-
-		//
-		waterReflectionFrameBufferDetails.textureWidth = 1280;
-		waterReflectionFrameBufferDetails.textureHeight = 720;
-
-		if (waterCreateFBO(&waterReflectionFrameBufferDetails) == FALSE) {
-
-			LOG("waterCreateFBO() For WaterReflection FAILED!!!\n");
-			return(-1);
-
-		}
-		else {
-
-			LOG("waterCreateFBO() Successfull for WaterReflection!!!\n");
-
-		}
-
-		waterRefractionFrameBufferDetails.textureWidth = 1280;
-		waterRefractionFrameBufferDetails.textureHeight = 720;
-
-		if (waterCreateFBO(&waterRefractionFrameBufferDetails) == FALSE) {
-
-			LOG("waterCreateFBO() For WaterRefraction FAILED!!!\n");
-			return(-1);
-
-		}
-		else {
-
-			LOG("waterCreateFBO() Successfull for Water Refraction!!!\n");
-
-		}
-
-	#endif // ENABLE_WATER
-
-	#ifdef ENABLE_SKYBOX
-		if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox\\") != 0)
-		{
-
-			LOG("initializeSkybox() FAILED!!!\n");
-			return(-1);
-
-		}
-		else
-		{
-			LOG("initializeSkybox() Successfull!!!\n");
-		}
-	#endif // ENABLE_SKYBOX
-
-	#ifdef ENABLE_CLOUD_NOISE
-
-		noise_texture = initializeCloud();
-		if (noise_texture == 0)
-		{
-			LOG("initializeCloud() FAILED!!!\n");
-			return(-1);
-		}
-		else
-		{
-			LOG("initializeCloud() Successfull!!!\n");
-		}
-
-	#endif // ENABLE_CLOUD_NOISE
-
-	#ifdef ENABLE_STARFIELD
-		if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
-		{
-			LOG("initializeStarfield() FAILED!!!\n");
-			return(-1);
-		}
-		else
-		{
-			LOG("initializeStarfield() Successfull!!!\n");
-		}
-	#endif // ENABLE_STARFIELD
-
-
-	#ifdef ENABLE_BILLBOARDING
-		GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
-		// generate positions per instance
-		for(int i = 0; i < NO_OF_INSTANCES; i++)
-		{
-			instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
-			instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
-			instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
-			instance_positions[(i*4)+3] = 1.0f;
-			// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
-		}
-
-		// sort z vertices
-		for(int i = 0; i < NO_OF_INSTANCES; i++)
-		{
-			for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
 			{
-				if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
-				{
-					auto a = instance_positions[(i*4)+2];
-					instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
-					instance_positions[(j*4)+2] = a; 
-				}
+				auto a = instance_positions[(i*4)+2];
+				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+				instance_positions[(j*4)+2] = a; 
 			}
 		}
+	}
 
-		initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
+	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
 
-		char imagefile[64] = {};
-		sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
-		if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-		{
-			LOG("Texture loading failed for image %s\n", imagefile);
-			return (-6);
-		}
+	char imagefile[64] = {};
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	{
+		LOG("Texture loading failed for image %s\n", imagefile);
+		return (-6);
+	}
 
-		sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
-		if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
-		{
-			LOG("Texture loading failed for image %s\n", imagefile);
-			return (-6);
-		}
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
+	{
+		LOG("Texture loading failed for image %s\n", imagefile);
+		return (-6);
+	}
 
-	#endif // ENABLE_BILLBOARDING
+#endif // ENABLE_BILLBOARDING
 
-	#ifdef ENABLE_GAUSSIAN_BLUR
-		initializeQuad();
-		if(initializeGaussianBlur(&gaussianBlurEffect) == false)
-		{
-			LOG("Initialize Gaussian Blur Effect FAILED!!");
-			return (-7);
-		}
+#ifdef ENABLE_GAUSSIAN_BLUR
+	initializeQuad();
+	if(initializeGaussianBlur(&gaussianBlurEffect) == false)
+	{
+		LOG("Initialize Gaussian Blur Effect FAILED!!");
+		return (-7);
+	}
 
-		fullSceneFbo.textureWidth = 1920;
-		fullSceneFbo.textureHeight = 1080;
+	fullSceneFbo.textureWidth = 1920;
+	fullSceneFbo.textureHeight = 1080;
 
-		if (createFBO(&fullSceneFbo) == false)
-		{
-			LOG("Unable to create FBO for entire scene");
-			return (-8);
-		}
-		
-	#endif // ENABLE_GAUSSIAN_BLUR
+	if (createFBO(&fullSceneFbo) == false)
+	{
+		LOG("Unable to create FBO for entire scene");
+		return (-8);
+	}
+	
+#endif // ENABLE_GAUSSIAN_BLUR
 
-#endif // ENABLE_VIDEO_RENDER
 	return 0;
 }
 
@@ -513,11 +504,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 	viewMatrix = mat4::identity();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
-#ifdef ENABLE_VIDEO_RENDER
-	fsqUniform = useFSQuadShader();
-	displayVideoEffect(&fsqUniform);
-	glUseProgram(0);
-#else
 	if(isWaterRequired) {
 		// Water Frame Buffers
 		// Reflection
@@ -700,8 +686,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glUseProgram(0);
 		}
 	}
-
-#endif // ENABLE_VIDEO_RENDER
 }
 
 
