@@ -388,7 +388,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/malcolm/malcolmWalk.fbx", &skeletonModel);
+	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
 #endif
 
 
