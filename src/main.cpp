@@ -815,6 +815,7 @@ void update(void)
 	else if(currentScene == SCENE_9)
 	{
 		updateScene_PlaceHolderOutdoor();
+		updateScene9_AdbhutRas();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
