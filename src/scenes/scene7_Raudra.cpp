@@ -15,9 +15,6 @@
 
 #define FBO_WIDTH 1920
 #define FBO_HEIGHT 1080
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
-
-#define ENABLE_STATIC_MODELS	
 
 extern int windowWidth;
 extern int windowHeight;

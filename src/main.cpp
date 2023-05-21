@@ -2,6 +2,9 @@
 
 #include <WindowsX.h>	// for mouse move x and y coordinates
 
+#define _USE_MATH_DEFINES 1
+#include <math.h>		// for PI
+
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/scenes/scenes.h"
@@ -9,16 +12,17 @@
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
-#include "../inc/scenes/scenes.h"
+
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
+
+#include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scene9_VeerRas.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene9_AdbhutRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
-#define _USE_MATH_DEFINES 1
-#include <math.h>		// for PI
 #include "../inc/shaders/FSQuadShader.h"
 #include "../inc/shaders/ParticleShader.h"
 
@@ -76,8 +80,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_9_VEER_RAS;
-//static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
+static scene_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
@@ -562,11 +565,18 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE_9);
 	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
 	scenePush(SCENE_0);
+
+	if(initializeScene9_AdbhutRas() != 0)
+	{
+		LOG("initializeScene9_AdbhutRas() FAILED !!!\n");
+        return (-8);
+	}
 
 	if (initializeScene9_VeerRas() != 0)
 	{
@@ -604,7 +614,11 @@ int initialize(void) {
     //     return (-8);
 	// }
 
+
 	// currentScene = scenePop();
+	// Debug
+	// currentScene = SCENE_9;
+	currentScene = SCENE_9_VEER_RAS;
 
 	// initialize camera
 	//resetCamera();
@@ -736,6 +750,10 @@ void resize(int width, int height) {
 
 void display(void)
 {
+	bool isGodRequired = false;
+	bool isWaterRequired = false;
+	bool isGaussianBlurRequired = false;
+
 	// Function declarations
 	void resize(int, int);
 
@@ -751,13 +769,20 @@ void display(void)
 	{
 		// displayScene_Scene1();
 	}
+	else if(currentScene == SCENE_9)
+	{
+		isGodRequired = true;
+		isWaterRequired = true;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
+	else if (currentScene == SCENE_7)
+	{
+		displayScene7_Raudra();
+	}
 	else if (currentScene == SCENE_9_VEER_RAS)
 	{
 		displayScene9_VeerRas();
-	}
-	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
-	{
-		displayScene_PlaceHolderOutdoor();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -773,7 +798,6 @@ void display(void)
 	}
 
 	SwapBuffers(ghdc);
-
 }
 
 void update(void)
@@ -803,7 +827,7 @@ void update(void)
 	{
 		updateScene9_VeerRas();
 	}
-	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
+	else if(currentScene == SCENE_9)
 	{
 		updateScene_PlaceHolderOutdoor();
 	}
@@ -832,6 +856,8 @@ void uninitialize(void) {
 	uninitializeScene9_VeerRas();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
+	uninitializeScene9_AdbhutRas();
+	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
@@ -872,15 +898,6 @@ void uninitialize(void) {
 		ghwnd = NULL;
 
 	}
-
-	//if (gpFile) {
-
-	//	fprintf(gpFile, "Log File Close!!!\n");
-	//	fclose(gpFile);
-	//	gpFile = NULL;
-
-	//}
-
 }
 
 void updateMouseMovement(void)
@@ -917,3 +934,4 @@ void updateMouseMovement(void)
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
+

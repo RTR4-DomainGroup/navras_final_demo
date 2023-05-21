@@ -23,13 +23,13 @@
 #define FBO_HEIGHT 1080
 
 #define ENABLE_TERRIAN
-#define ENABLE_ATMOSPHERE
-#define ENABLE_CLOUD_NOISE
-#define ENABLE_FOG
-#define ENABLE_STATIC_MODELS	
-#define ENABLE_GAUSSIAN_BLUR
-#define ENABLE_GODRAYS
-#define ENABLE_SHADOW
+//#define ENABLE_ATMOSPHERE
+//#define ENABLE_CLOUD_NOISE
+//#define ENABLE_FOG
+//#define ENABLE_STATIC_MODELS	
+//#define ENABLE_GAUSSIAN_BLUR
+//#define ENABLE_GODRAYS
+//#define ENABLE_SHADOW
 
 struct TextureVariables terrainTextureVariables_veer;
 
@@ -109,7 +109,7 @@ struct VerticalBlurUniform verticalBlurUniform_veer;
 struct FrameBufferDetails fullSceneFbo_veer;
 struct FSQuadUniform fsGaussBlurQuadUniform_veer;
 
-Camera camera;
+extern Camera camera;
 
 int initializeScene9_VeerRas(void)
 {
