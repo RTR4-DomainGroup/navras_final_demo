@@ -19,7 +19,7 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../inc/scenes/scene9_AdbhutRas.h"
+#include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/shaders/FSQuadShader.h"
@@ -564,16 +564,16 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
-    scenePush(SCENE_9);
+    scenePush(SCENE_10);
 	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
     scenePush(SCENE_0);
 
-	if(initializeScene9_AdbhutRas() != 0)
+	if(initializeScene10_AdbhutRas() != 0)
 	{
-		LOG("initializeScene9_AdbhutRas() FAILED !!!\n");
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
         return (-8);
 	}
 
@@ -610,8 +610,9 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE_9;
-	currentScene = SCENE_PLACEHOLDER_INDOOR;
+	// currentScene = SCENE_7;
+	currentScene = SCENE_10;
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -762,12 +763,12 @@ void display(void)
 	{
 		// displayScene_Scene1();
 	}
-	else if(currentScene == SCENE_9)
+	else if(currentScene == SCENE_10)
 	{
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if(currentScene == SCENE_7)
 	{
@@ -812,9 +813,10 @@ void update(void)
 	{
 		// updateScene_Scene1();
 	}
-	else if(currentScene == SCENE_9)
+	else if(currentScene == SCENE_10)
 	{
 		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -840,7 +842,7 @@ void uninitialize(void) {
 	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
-	uninitializeScene9_AdbhutRas();
+	uninitializeScene10_AdbhutRas();
 	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();

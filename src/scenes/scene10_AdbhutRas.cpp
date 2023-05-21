@@ -68,7 +68,7 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-#include "../../inc/scenes/scene9_AdbhutRas.h"
+#include "../../inc/scenes/scene10_AdbhutRas.h"
 
 
 
@@ -210,7 +210,7 @@ extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
 
-int initializeScene9_AdbhutRas(void)
+int initializeScene10_AdbhutRas(void)
 {
 	// Function Declarations
 
@@ -245,7 +245,7 @@ int initializeScene9_AdbhutRas(void)
 	return 0;
 }
 
-void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
+void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
 
 	// Code
 	mat4 translationMatrix = mat4::identity();
@@ -705,15 +705,15 @@ void displayScene9_Passes(int godRays = 1, bool recordWaterReflectionRefraction 
 
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
-		void displayScene9_Billboarding(int);
+		void displayScene10_Billboarding(int);
 
-		displayScene9_Billboarding(godRays);	
+		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
 }
 
 #ifdef ENABLE_BILLBOARDING
-void displayScene9_Billboarding(int godRays = 1)
+void displayScene10_Billboarding(int godRays = 1)
 {
 	// variable declaration
 	mat4 translationMatrix = mat4::identity();
@@ -781,48 +781,13 @@ void displayScene9_Billboarding(int godRays = 1)
 }
 #endif // ENABLE_BILLBOARDING	
 
-void updateScene9_AdbhutRas(void)
+void updateScene10_AdbhutRas(void)
 {
 	// Code
-#ifdef ENABLE_ADSLIGHT
-    angleCube = angleCube + 1.0f;
-	if (angleCube >= 360.0f)
-	{
-		angleCube -= 360.0f;
-	}
 
-#endif // ENABLE_ADSLIGHT
-
-#ifdef ENABLE_STARFIELD
-	deltaTime = updateStarfield(deltaTime);
-#endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_BILLBOARDING
-	frameTime += 1;
-
-#endif // ENABLE_BILLBOARDING
-
-#ifdef ENABLE_WATER
-
-	moveFactor += 0.0003f;
-	if (moveFactor >= 360.0f)
-		moveFactor -= 360.0f;
-#endif // ENABLE_WATER
-
-	// update camera using lerp
-	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
-	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
-	cameraAngle = cameraAngle + 0.5f;
-	if (cameraAngle >= 360.0f)
-		cameraAngle -= 360.0f;
 }
 
-void uninitializeScene9_AdbhutRas(void)
+void uninitializeScene10_AdbhutRas(void)
 {
 	// Code
 #ifdef ENABLE_STATIC_MODELS
