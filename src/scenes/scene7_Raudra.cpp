@@ -50,7 +50,7 @@ GLuint texture_back;
 //Model variables
 extern STATIC_MODEL deskModel;
 
-GLuint textures[];
+GLuint textures[4];
 int initializeScene7_Raudra(void)
 {
 #ifdef ENABLE_STATIC_MODELS
@@ -97,10 +97,10 @@ int initializeScene7_Raudra(void)
 #endif
 	initializeInvertedNormalCube();
 
-	textures[0] = texture_ceiling;
-	textures[1] = texture_floor;
-	textures[2] = texture_back;
-	textures[3] = texture_side;
+	textures[0] = (GLuint)texture_ceiling;
+	textures[1] = (GLuint)texture_floor;
+	textures[2] = (GLuint)texture_back;
+	textures[3] = (GLuint)texture_side;
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
@@ -149,7 +149,7 @@ void displayScene7_Raudra(void)
 	
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
-	scaleMatrix = vmath::scale(4.0f, 2.0f, 8.0f);
+	scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
