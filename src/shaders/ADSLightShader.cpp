@@ -246,11 +246,11 @@ int initializeADSShader(void)
 					//ambient
 					"vec4 ambient = 0.0 * texColor; \n" \
 					//diffuse
-					"vec3 normalized_lightDirection = normalize(a_lightDirection_out - fs_in.FragPos.xyz ); \n" \
+					"vec3 normalized_lightDirection = normalize(a_lightDirection_out - a_fragPosNM_out ); \n" \
 					"vec4 diffuse = u_ld * texColor * max(dot( normalized_lightDirection,normalizedNormals), 0.0); \n" \
 
 					//specular
-					"vec3 normalized_viewerVector = normalize(a_eyeDirection_out - fs_in.FragPos.xyz); \n" \
+					"vec3 normalized_viewerVector = normalize(a_eyeDirection_out - a_fragPosNM_out); \n" \
 					"vec3 reflectionVector = reflect(-normalized_lightDirection, normalizedNormals); \n" \
 					"vec3 halfwayDir = normalize(normalized_lightDirection + normalized_viewerVector); \n" \
 					

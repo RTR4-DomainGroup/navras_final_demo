@@ -101,7 +101,9 @@ int initializeScene_PlaceHolderIndoor(void)
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
+	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_in);
+	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_in);
 #endif
 
 
@@ -283,7 +285,7 @@ void displayScene_PlaceHolderIndoor(void)
 	// ------ Dancing Vampire Model ------
 
 	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
@@ -292,7 +294,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel_in, 1.0f);
+	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel_in, 0.2f);
 
 	glUseProgram(0);
 
