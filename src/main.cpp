@@ -610,8 +610,8 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE_7;
-	currentScene = SCENE_10;
+	currentScene = SCENE_7;
+	// currentScene = SCENE_10;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
@@ -757,11 +757,15 @@ void display(void)
 	// Call Scenes Display Here
 	if(currentScene == SCENE_0)
 	{
-		// displayScene_Scene0();
+		// displayScene0_Scene0();
 	}
 	else if(currentScene == SCENE_1)
 	{
-		// displayScene_Scene1();
+		// displayScene0_Scene1();
+	}
+	else if(currentScene == SCENE_7)
+	{
+		displayScene7_Raudra();
 	}
 	else if(currentScene == SCENE_10)
 	{
@@ -769,10 +773,6 @@ void display(void)
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
-	}
-	else if(currentScene == SCENE_7)
-	{
-		displayScene7_Raudra();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -817,6 +817,10 @@ void update(void)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
+	}
+	else if (currentScene == SCENE_7)
+	{
+		// updateScene7_();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{

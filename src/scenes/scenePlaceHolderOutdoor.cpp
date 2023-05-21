@@ -84,7 +84,6 @@ TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneOutdoorADSUniform;
-
 struct FSQuadUniform fsqUniform;
 
 #ifdef ENABLE_TERRIAN

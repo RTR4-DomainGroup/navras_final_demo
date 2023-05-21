@@ -39,10 +39,10 @@ extern GLfloat materialDiffuse[];
 extern GLfloat materialSpecular[];
 extern GLfloat materialShininess;
 
-GLuint texture_ceiling;
-GLuint texture_floor;
-GLuint texture_side;
-GLuint texture_back;
+static GLuint texture_ceiling;
+static GLuint texture_floor;
+static GLuint texture_side;
+static GLuint texture_back;
 
 //Model variables
 extern STATIC_MODEL deskModel;
