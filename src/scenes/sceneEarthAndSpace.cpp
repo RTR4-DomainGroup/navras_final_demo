@@ -33,6 +33,7 @@
 
 extern GLfloat whiteSphere[3];
 GLuint texture_earth;
+GLuint texture_sun;
 
 struct ADSUniform sceneEarthAndSpaceADSUniform;
 struct ADSUniform cubeADSUniform;
@@ -161,6 +162,17 @@ int initializeScene1_EarthAndSpace(void)
 	else
 	{
 		LOG("LoadGLTexture is Successful = %u!!!\n", texture_earth);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_sun, TEXTURE_DIR"Starfield/Sun.png") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture is Successful = %u!!!\n", texture_sun);
 	}
 #endif // ENABLE_STARFIELD
 	
@@ -382,6 +394,7 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	// Cube
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 
@@ -395,6 +408,25 @@ void displayPasses_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefr
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fboEarthAndSpace.frameBufferTexture);
+	glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform, 0);
+
+	displayCube();
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// Sun
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 20.0f, -100.0f);					// glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_sun);
 	glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform, 0);
 
 	displayCube();
@@ -459,6 +491,18 @@ void uninitializeScene1_EarthAndSpace(void)
 {
 	// Code
 #ifdef ENABLE_STARFIELD
+	if (texture_sun)
+	{
+		glDeleteTextures(1, &texture_sun);
+		texture_sun = NULL;
+	}
+
+	if (texture_earth)
+	{
+		glDeleteTextures(1, &texture_earth);
+		texture_earth = NULL;
+	}
+
 	uninitializeStarfield(texture_star);
 #endif // ENABLE_STARFIELD
 

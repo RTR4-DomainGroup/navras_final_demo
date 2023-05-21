@@ -105,7 +105,6 @@ float updateStarfield(float time)
 
 void uninitializeStarfield(GLuint texture)
 {
-
 	if (texture)
 	{
 		glDeleteTextures(1, &texture);
