@@ -75,8 +75,8 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-//static scene_t currentScene = SCENE_9_VEER_RAS;
-static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
+static scene_t currentScene = SCENE_9_VEER_RAS;
+//static scene_t currentScene = SCENE_PLACEHOLDER_OUTDOOR;
 
 bool sceneFadeOut = false;
 
