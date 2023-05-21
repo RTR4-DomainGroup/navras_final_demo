@@ -16,7 +16,7 @@ void initializeTriangle(void );
 
 void displayGeometry(void);
 void displayCube(void);
-void displayInvertedNormalCube(void);
+void displayRoom(GLuint*);
 void displayCubemap(void);
 void displaySphere(GLfloat*);
 void displaySphereAtmos(GLfloat*);

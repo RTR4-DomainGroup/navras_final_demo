@@ -596,16 +596,28 @@ void displayCube(void)
 	glBindVertexArray(0);
 }
 
-void displayInvertedNormalCube(void)
+void displayRoom(GLuint* roomWalls)
 {
     // Code
     glBindVertexArray(vao_invertedNormalCube);
 
+	glBindTextureUnit(0, roomWalls[0]);
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+	glBindTextureUnit(0, roomWalls[1]);
 	glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+
+	glBindTextureUnit(0, roomWalls[0]);
 	glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+
+	glBindTextureUnit(0, roomWalls[2]);
 	glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+
+	glBindTextureUnit(0, roomWalls[3]);
 	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+
+	glBindTextureUnit(0, roomWalls[4]);
+
 	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
 
 	glBindVertexArray(0);
