@@ -12,6 +12,8 @@
 // regular
 #define WIN_WIDTH 1920
 #define WIN_HEIGHT 1080
+// #define WIN_WIDTH 800
+// #define WIN_HEIGHT 600
 
 #define DEG2RADN(x) (x * (M_PI / 180)) 
 

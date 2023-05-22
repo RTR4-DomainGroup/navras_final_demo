@@ -7,7 +7,6 @@
 
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
-#include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
@@ -15,6 +14,7 @@
 
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
+#include "../inc/effects/videoEffect.h"
 
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
@@ -37,9 +37,6 @@
 #pragma comment(lib, "ffmpeg/lib/swscale.lib")
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
-
-//#define WIN_WIDTH  1920
-//#define WIN_HEIGHT  1080
 
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -571,6 +568,20 @@ int initialize(void) {
     scenePush(SCENE_1);
     scenePush(SCENE_0);
 
+
+    //initializeTriangle();
+    //initializeSphere();
+
+	// Scene0 - Astromedicomp video
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo(); 
+	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
+	) {
+		LOG("initializeVideoEffect() FAILED !!!\n");
+        return (-8);
+	}
+#endif // ENABLE_VIDEO_RENDER
+
 	if(initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
@@ -757,11 +768,17 @@ void display(void)
 	// Call Scenes Display Here
 	if(currentScene == SCENE_0)
 	{
-		// displayScene0_Scene0();
+#ifdef ENABLE_VIDEO_RENDER
+		extern struct FSQuadUniform fsqUniform;
+
+		fsqUniform = useFSQuadShader();
+		displayVideoEffect(&fsqUniform);
+		glUseProgram(0);
+#endif
 	}
 	else if(currentScene == SCENE_1)
 	{
-		// displayScene0_Scene1();
+		// displayScene1_Name();
 	}
 	else if(currentScene == SCENE_7)
 	{
