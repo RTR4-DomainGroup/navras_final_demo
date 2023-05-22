@@ -12,17 +12,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../inc/resources.h"
+#include <windowsx.h>	// for mouse move x and y coordinates
 
-#include "../../inc/template_ogl.h"
+// #include "../../inc/template_ogl.h"
 
 // OpenGL header files
+#include <GL/glew.h>
 #include <GL/gl.h>
+
+#include "../../inc/helper/constants.h"
+#include "../../inc/helper/resources.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/Navras.h"
 
 
 // OpenGL libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
-#pragma comment(lib,"GLEW32.lib") // By law it not mandatory that is should before OpenGL
+// By law it not mandatory that is should before OpenGL
+#pragma comment(lib,"GLEW32.lib") 
 #pragma comment(lib,"OpenGL32.lib")
 
 // include drawing headers
@@ -46,7 +53,7 @@ GLbyte charPressed;
 GLuint keyPressed;
 
 // mouse Interaction 
-BOOL gbLMouseDown = FALSE;
+bool mouseLeftClickActive = false;
 
 // mouse position
 float mouseX;
@@ -87,17 +94,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     int iPosX = (iScrWdth - WIN_WIDTH) / 2;
     int iPosY = (iScrHght - WIN_HEIGHT) / 2;
 
-	// FileIO
-	if(log_open("log.txt", "w") != 0)
-	{
-		MessageBox(NULL, TEXT("Cannot Open The Desired File\n"), TEXT("Error"), MB_OK);
-		exit(0);
-	}
-	else
-	{
-		log_printf("Log File Successfully Created, Program Started Successfully!\n");
-	}
-
+\
 	// initialization of WNDCLASSEX structure
 	wndclass.cbSize = sizeof(WNDCLASSEX);
 	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -106,11 +103,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	wndclass.lpfnWndProc = WndProc;
 	wndclass.hInstance = hInstance;
 	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(PAA_ICON));
+	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
 	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wndclass.lpszClassName = szAppName;
 	wndclass.lpszMenuName = NULL;
-	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(PAA_ICON));
+	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
 
 	// register above wndclass
 	RegisterClassEx(&wndclass);
@@ -136,27 +133,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	if(iRetVal == -1)
 	{
-		log_printf("ChoosePixelFormat() Failed.\n");
+		LOG("ChoosePixelFormat() Failed.\n");
 		uninitialize();
 	}
 	else if(iRetVal == -2)
 	{
-		log_printf("SetPixelFormat() Failed.\n");
+		LOG("SetPixelFormat() Failed.\n");
 		uninitialize();
 	}
 	else if(iRetVal == -3)
 	{
-		log_printf("wglCreateContext() Failed.\n");
+		LOG("wglCreateContext() Failed.\n");
 		uninitialize();
 	}
 	else if(iRetVal == -4)
 	{
-		log_printf("wglMakeCurrent() Failed.\n");
+		LOG("wglMakeCurrent() Failed.\n");
 		uninitialize();
 	}
 	else
 	{
-		log_printf("initialize() Successful.\n");
+		LOG("initialize() Successful.\n");
 	}
 
 	// show window
@@ -214,6 +211,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	// code
 	switch(iMsg)
 	{
+
 	case WM_SETFOCUS:
 		gbActiveWindow = TRUE;
 		break;
@@ -233,16 +231,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		switch(wParam)
 		{
-			// escape key
-		case 27:
+		// escape key
+		case VK_ESCAPE: // 27
 			DestroyWindow(hwnd);
 			break;
-
-			// enter key
-		case 13:
-			break;
-
 		default:
+			eventHandlerNavras(iMsg, wParam);
 			break;
 		}
 		keyPressed = wParam;
@@ -260,6 +254,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hwnd);
 			break;
 		default:
+			eventHandlerNavras(iMsg, wParam);
 			break;
 		}
 		charPressed = wParam;
@@ -274,19 +269,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_LBUTTONDOWN:
-		gbLMouseDown = TRUE;
+		mouseLeftClickActive = true;
 		break;
 	case WM_LBUTTONUP:
-		gbLMouseDown = FALSE;
+		mouseLeftClickActive = false;
 		break;
 	case WM_MOUSEMOVE:
 		// variables
-		// POINT pt;
-		// if(gbLMouseDown == TRUE)
-		// {
-		// 	mouseX = GET_X_LPARAM(lParam);
-		// 	mouseY = GET_Y_LPARAM(lParam);
-		// }
+		if(mouseLeftClickActive == true)
+		{
+			mouseX = GET_X_LPARAM(lParam);
+			mouseY = GET_Y_LPARAM(lParam);
+		}
 		break;
 	default:
 		break;
@@ -327,7 +321,7 @@ void ToggleFullscreen(void)
 			gbFullscreen = TRUE;
 		}
 
-		log_printf("fullscreen Successful.\n");
+		LOG("fullscreen Successful.\n");
 	}
 	else
 	{
@@ -337,7 +331,7 @@ void ToggleFullscreen(void)
 
 		ShowCursor(TRUE);
 		gbFullscreen = FALSE;
-		log_printf("fullscreen false.\n");
+		LOG("fullscreen false.\n");
 	}
 }
 
@@ -346,6 +340,7 @@ int initialize(void)
 	// function declarations
 	void uninitialize(void);
 	void resize(int, int);
+	void ToggleFullscreen(void);
 
 	// variable declarations
 	PIXELFORMATDESCRIPTOR pfd;
@@ -398,7 +393,7 @@ int initialize(void)
 
 
 	// here starts OpenGL code
-	initializeReturnValue = initialize_ogl();
+	initializeReturnValue = initializeNavras();
 	if(initializeReturnValue < 0)
 	{
 		uninitialize();
@@ -406,6 +401,8 @@ int initialize(void)
 
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
+
+	ToggleFullscreen();
 
 	return(0);
 }
@@ -420,7 +417,7 @@ void set_title(char* title)
 	size_t convertedChars = 0;
 	mbstowcs_s(&convertedChars, wcstring, newsize, title, _TRUNCATE);
 
-    wsprintf(str, TEXT("PAA: %s"), wcstring);
+    wsprintf(str, TEXT("Domain: %s"), wcstring);
     SetWindowText(ghwnd, str);
 
 	delete[] wcstring;
@@ -429,9 +426,9 @@ void set_title(char* title)
 void resize(int width, int height)
 {
 	// code
-	log_printf("resize called\n");
+	LOG("resize called\n");
 
-	resize_ogl(width, height);
+	resizeNavras(width, height);
 }
 
 void display(void)
@@ -439,7 +436,7 @@ void display(void)
 	// function declarations
 
 	// code
-	display_ogl();
+	displayNavras();
 
 	SwapBuffers(ghdc);
 }
@@ -449,7 +446,7 @@ void update(void)
 	// function declarations
 
 	// code
-	update_ogl();
+	updateNavras();
 }
 
 void uninitialize(void)
@@ -463,7 +460,7 @@ void uninitialize(void)
 		ToggleFullscreen();
 	}
 
-	uninitialize_ogl();
+	uninitializeNavras();
 	if(wglGetCurrentContext() == ghrc)
 	{
 		wglMakeCurrent(NULL, NULL);
@@ -487,7 +484,7 @@ void uninitialize(void)
 		ghwnd = NULL;
 	}
 
-	log_printf("Log File closed successfully!");
+	LOG("Log File closed successfully!");
 	log_close();
 }
 
