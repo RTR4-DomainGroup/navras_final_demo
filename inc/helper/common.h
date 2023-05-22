@@ -6,7 +6,7 @@
 
 // Open GL headers
 #include <GL/glew.h>
-#include<gl\wglew.h>
+#include <GL/wglew.h>
 #include <GL/gl.h>
 
 #include <glm/glm.hpp>

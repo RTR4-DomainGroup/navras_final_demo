@@ -20,6 +20,7 @@
 #include <X11/XKBlib.h>
 
 // OpenGL header files
+#include <GL/glew.h>    // for OpenGL functionality
 #include <GL/gl.h>    // for OpenGL functionality
 #include <GL/glx.h>   // for Bridging APIs
 
