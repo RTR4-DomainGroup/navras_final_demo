@@ -320,7 +320,7 @@ int main(void)
                 }
                 break;
             case ButtonRelease:
-                switch (expression)
+                switch (event.xbutton.button)
                 {
                 case Button1:
                     mouseLeftClickActive = false;
@@ -345,7 +345,7 @@ int main(void)
                     bDone = True;
                     break;
                 default:
-                    eventHandlerNavras(iMsg, keySym);
+                    eventHandlerNavras(WM_KEYDOWN, keySym);
                     break;    
                 }
                 keyPressed = keySym;
@@ -368,8 +368,8 @@ int main(void)
                     }
                     break;
                 default:
-                    LOG("keypressed : %d\n", wParam);
-                    eventHandlerNavras(iMsg, keys[0]);
+                    LOG("keypressed : %c\n", keys[0]);
+                    eventHandlerNavras(WM_CHAR, keys[0]);
                     break;
                 }
                 charPressed = keys[0];
@@ -531,7 +531,21 @@ int initialize(void)
 
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
+
     toggleFullscreen();
+
+    // Get the drawable
+    GLXDrawable drawable = glXGetCurrentDrawable();
+
+    // Get the GLX extension function pointer
+    PFNGLXSWAPINTERVALEXTPROC glXSwapIntervalEXT = (PFNGLXSWAPINTERVALEXTPROC)glXGetProcAddress((const GLubyte*)"glXSwapIntervalEXT");
+
+    if (glXSwapIntervalEXT) {
+        // Set the swap interval to 1 (enable vertical sync)
+        glXSwapIntervalEXT(display, drawable, 1);
+    } 
+
+    glXSwapIntervalEXT(display, drawable, 1);
 
     return (retVal);
 }

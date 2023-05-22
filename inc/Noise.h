@@ -349,6 +349,6 @@ void uninitializeNoiseTexture(void)
 	if (noiseTextureID)
 	{
 		glDeleteTextures(1, &noiseTextureID);
-		noiseTextureID = NULL;
+		noiseTextureID = 0;
 	}
 }

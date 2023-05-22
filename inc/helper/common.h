@@ -6,14 +6,14 @@
 
 // Open GL headers
 #include <GL/glew.h>
-#include <GL/wglew.h>
+// #include <GL/wglew.h>
 #include <GL/gl.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include "../../inc/helper/assimp_glm_helpers.h"
+// #include <glm/glm.hpp>
+// #include <glm/gtc/matrix_transform.hpp>
+// #include <glm/gtc/type_ptr.hpp>
+// #include <glm/gtx/quaternion.hpp>
+// #include "../../inc/helper/assimp_glm_helpers.h"
 
 #include "resources.h"
 #include "vmath.h"
@@ -83,6 +83,7 @@ struct TextureVariables {
 #define VK_NUMPAD8 XK_KP_8
 #define VK_NUMPAD9 XK_KP_9
 
+#define VK_SPACE XK_space     
 #define VK_HOME  XK_Home     
 #define VK_END   XK_End      
 #define VK_LEFT  XK_Left     
@@ -91,6 +92,9 @@ struct TextureVariables {
 #define VK_DOWN  XK_Down     
 #define VK_PRIOR XK_Prior //XK_Page_Up
 #define VK_NEXT  XK_Next // XK_Page_Down
+
+#define WM_KEYDOWN 999
+#define WM_CHAR 998
 
 
 #elif _WIN32

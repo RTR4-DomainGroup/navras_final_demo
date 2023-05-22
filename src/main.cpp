@@ -400,8 +400,7 @@ int initializeNavras(void) {
 
 	perspectiveProjectionMatrix = mat4::identity();
 
-	//set fps to system
-	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
+
 
 	return(0);
 }
