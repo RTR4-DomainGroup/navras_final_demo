@@ -76,14 +76,14 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_7;
+static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
 
 bool sceneFadeOut = false;
 
 extern AtmosphericVariables atmosVariables;
 
 // extern
-// extern scene_t sceneStack[];
+// extern scene_types_t sceneStack[];
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
@@ -561,12 +561,8 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
-    scenePush(SCENE_10);
-	scenePush(SCENE_7);
-    scenePush(SCENE_3);
-    scenePush(SCENE_2);
-    scenePush(SCENE_1);
-    scenePush(SCENE_0);
+    scenePush(SCENE10_ADBHUT_RAS);
+	scenePush(SCENE7_RAUDRA_RAS);
 
 
     //initializeTriangle();
@@ -621,8 +617,8 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	currentScene = SCENE_7;
-	// currentScene = SCENE_10;
+	// currentScene = SCENE7_RAUDRA_RAS;
+	currentScene = SCENE10_ADBHUT_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
@@ -766,7 +762,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE_0)
+	if(currentScene == SCENE0_AMC_BANNER)
 	{
 #ifdef ENABLE_VIDEO_RENDER
 		extern struct FSQuadUniform fsqUniform;
@@ -776,26 +772,22 @@ void display(void)
 		glUseProgram(0);
 #endif
 	}
-	else if(currentScene == SCENE_1)
-	{
-		// displayScene1_Name();
-	}
-	else if(currentScene == SCENE_7)
-	{
-		displayScene7_Raudra();
-	}
-	else if(currentScene == SCENE_10)
+	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
+	else if(currentScene == SCENE7_RAUDRA_RAS)
+	{
+		displayScene7_Raudra();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		displayScene_PlaceHolderIndoor();
 	}
-	else if (currentScene == SCENE_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		displayParticle();
 	}
@@ -822,22 +814,10 @@ void update(void)
 
 	
 	// Call Scenes Update Here
-	if(currentScene == SCENE_0)
-	{
-		// updateScene_Scene0();
-	}
-	else if(currentScene == SCENE_1)
-	{
-		// updateScene_Scene1();
-	}
-	else if(currentScene == SCENE_10)
+	if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
-	}
-	else if (currentScene == SCENE_7)
-	{
-		// updateScene7_();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
