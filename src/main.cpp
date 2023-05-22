@@ -24,22 +24,6 @@
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
 
-// Third party Libraries
-// OpenGL libraries
-// is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
-// By law it not mandatory that is should before OpenGL
-#pragma comment(lib, "GLEW32.lib") 
-#pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "SOIL/lib/SOIL.lib")
-#pragma comment(lib, "AL/lib/OpenAL32.lib")
-#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
-#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#pragma comment(lib, "ffmpeg/lib/avutil.lib")
-#pragma comment(lib, "ffmpeg/lib/swscale.lib")
-#pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
-
-
 // audio
 bool gbPlayback = false;
 

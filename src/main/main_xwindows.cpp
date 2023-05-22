@@ -24,7 +24,8 @@
 #include <GL/glx.h>   // for Bridging APIs
 
 // internal headers
-#include "../../inc/template_ogl.h"
+#include "../../inc/helper/common.h"
+#include "../../inc/Navras.h"
 
 // macros
 
@@ -43,7 +44,7 @@ GLbyte charPressed;
 GLuint keyPressed;
 
 // mouse Interaction 
-Bool gbLMouseDown = False;
+Bool mouseLeftClickActive = False;
 // mouse position
 float mouseX;
 float mouseY;
@@ -107,21 +108,12 @@ int main(void)
 
 
     // code
-	if(log_open("log.txt", "w") != 0)
-    {
-        printf("Creation of log file failed. Exitting ...");
-        exit(0);
-    }
-    else
-    {
-        log_printf("log file successfully opened.\n");
-    }
 
     // first xlib call
     display = XOpenDisplay(NULL); // XServer cha display agent avaialble karun deto
     if(display == NULL)
     {
-        log_printf("Error: XOpenDisplay() failed");
+        LOG("Error: XOpenDisplay() failed");
         uninitialize();
         exit(1);
     }
@@ -142,11 +134,11 @@ int main(void)
     );
     if(glxFBConfigs == NULL)
     {
-        log_printf("glXChooseFBConfig() failed.\n");
+        LOG("glXChooseFBConfig() failed.\n");
         uninitialize();
         exit(1);
     }
-    log_printf("found numFBConfigs are %d\n", numFBConfigs);
+    LOG("found numFBConfigs are %d\n", numFBConfigs);
 
     // find the best FB config from the array
     int bestFrameBufferConfig = -1;
@@ -172,7 +164,7 @@ int main(void)
                 &samples
             );
 
-            log_printf("VisualInfo:0x%0lX found samplebuffers: %d samples: %d\n", tmpXVisualInfo->visualid, samplebuffers, samples);
+            LOG("VisualInfo:0x%0lX found samplebuffers: %d samples: %d\n", tmpXVisualInfo->visualid, samplebuffers, samples);
 
             if(bestFrameBufferConfig < 0 || samplebuffers && samples > bestNumberOfSamples)
             {
@@ -195,15 +187,15 @@ int main(void)
     glxFBConfigs = NULL;
 
     // retrive the visualinfo
-    log_printf("Visual id of best visualinfo\n");
+    LOG("Visual id of best visualinfo\n");
     visualInfo = glXGetVisualFromFBConfig(display, bestGLXFBConfigs);
     if(visualInfo == NULL)
     {
-        log_printf("Error: glXChooseVisual() failed \n");
+        LOG("Error: glXChooseVisual() failed \n");
         uninitialize();
         exit(1);
     }
-    log_printf("Visual id of best visualinfo is :0x%lu\n", visualInfo->visualid);
+    LOG("Visual id of best visualinfo is :0x%lu\n", visualInfo->visualid);
 
 
     memset(&windowAttributes, 0, sizeof(XSetWindowAttributes));
@@ -285,12 +277,12 @@ int main(void)
     retval = initialize();
     if(retval != 0)
     {
-        log_printf("Initialize OpenGL failed\n");
+        LOG("Initialize OpenGL failed\n");
         exit(1);
     }
     else
     {
-        log_printf("Initialize OpenGL successfull\n");
+        LOG("Initialize OpenGL successfull\n");
     }
 
     // message loop
@@ -310,6 +302,7 @@ int main(void)
                 {
                 case Button1: // XK_Pointer_Button1:
                     // left mouse button
+                    mouseLeftClickActive = true;
                     mouseX = (float)event.xbutton.x;
                     mouseY = (float)event.xbutton.y;
                     printf("ButtonPress: left mouse button clicked at (%.02f,%.02f)\n", 
@@ -325,27 +318,19 @@ int main(void)
                     break;
                 }
                 break;
-            // case Butt:
-            //     switch (event.xbutton.button)
-            //     {
-            //     case Button1: // XK_Pointer_Button1:
-            //         // left mouse button
-            //         mouseX = (float)event.xbutton.x;
-            //         mouseY = (float)event.xbutton.y;
-            //         printf("ButtonPress: left mouse button clicked at (%.02f,%.02f)\n", 
-            //         mouseX, mouseY);
-            //         break;
-            //     case Button2:
-            //         // middle mouse button clicked
-            //         printf("ButtonPress: middle mouse button clicked \n");
-            //         break;
-            //     case Button3:
-            //         // right mouse button clicked
-            //         printf("ButtonPress: right mouse button clicked \n");
-            //         break;
-            //     }
-            //     break;
-
+            case ButtonRelease:
+                switch (expression)
+                {
+                case Button1:
+                    mouseLeftClickActive = false;
+                    break;
+                
+                default:
+                    break;
+                }    
+                break;
+            case MotionNotify:
+                break;
             case KeyPress:
                 keySym = XkbKeycodeToKeysym(
                     display,
@@ -358,33 +343,8 @@ int main(void)
                 case XK_Escape:
                     bDone = True;
                     break;
-                case XK_space:
-                    // playSong(songId);
-                    togglePlayback();
-                    break;
-
-                case XK_Up:	// Up
-                    cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-                    cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-                    cameraCounterUpDownWays += 0.025f;
-                    break;
-                case XK_Down:	// down
-                    cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-                    cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-                    cameraCounterUpDownWays -= 0.025f;
-                    break;
-                case XK_Left:	// left
-                    //LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
-                    cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-                    cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-                    cameraCounterSideWays += 0.025f;
-                    break;
-                case XK_Right:	// right
-                    cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-                    cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-                    cameraCounterSideWays -= 0.025f;
-                    break;
                 default:
+                    eventHandlerNavras(iMsg, keySym);
                     break;    
                 }
                 keyPressed = keySym;
@@ -406,129 +366,9 @@ int main(void)
                         fullscreen = False;
                     }
                     break;
-
-                case 'W':
-                case 'w':
-                    cameraEyeZ = cameraEyeZ - 0.25f;
-                    cameraCenterZ = cameraCenterZ - 0.25f;
-                    break;
-                case 'S':
-                case 's':
-                    cameraEyeZ = cameraEyeZ + 0.25f;
-                    cameraCenterZ = cameraCenterZ + 0.25f;
-                    break;
-                case 'A':
-                case 'a':
-                    cameraEyeX = cameraEyeX - 0.25f;
-                    cameraCenterX = cameraCenterX - 0.25f;
-                    break;
-                case 'D':
-                case 'd':
-                    cameraEyeX = cameraEyeX + 0.25f;
-                    cameraCenterX = cameraCenterX + 0.25f;
-                    break;
-                case 'Q':
-                case 'q':
-                    cameraEyeY = cameraEyeY - 0.25f;
-                    cameraCenterY = cameraCenterY - 0.25f;
-                    break;
-                case 'E':
-                case 'e':
-                    cameraEyeY = cameraEyeY + 0.25f;
-                    cameraCenterY = cameraCenterY + 0.25f;
-                    break;
-                case 'R':
-                case 'r':
-                    resetCamera();
-                    break;
-                case 'P':
-                case 'p':
-                    LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f]", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
-                    break;
-                case 'n':
-                    playSong(songId);
-                    songId++;
-                    if(songId > NUM_AUDIO-1)
-                        songId = 0;
-                    break;	
-                case 'b':
-                    playSong(songId);
-                    songId--;
-                    if(songId < 0)
-                        songId = NUM_AUDIO-1;
-                    break;	
-
-                case '1':
-                case '!':
-                    if (wParam == '!')
-                        atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
-                    else
-                        atmosVariables.m_Kr += 0.0001f;
-                    atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
-                    break;
-
-                case '2':
-                case '@':
-                    if (wParam == '@')
-                        atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
-                    else
-                        atmosVariables.m_Km += 0.0001f;
-                    atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
-                    break;
-
-                case '3':
-                case '#':
-                    if (wParam == '#')
-                        atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
-                    else
-                        atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
-                    break;
-
-                case '4':
-                case '$':
-                    if (wParam == '$')
-                        atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
-                    else
-                        atmosVariables.m_ESun += 0.1f;
-                    break;
-
-                case '5':
-                case '%':
-                    if (wParam == '%')
-                        atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
-                    else
-                        atmosVariables.m_fWavelength[0] += 0.001f;
-                    atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
-                    break;
-
-                case '6':
-                case '^':
-                    if (wParam == '^')
-                        atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
-                    else
-                        atmosVariables.m_fWavelength[1] += 0.001f;
-                    atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
-                    break;
-
-                case '7':
-                case '&':
-                    if (wParam == '&')
-                        atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
-                    else
-                        atmosVariables.m_fWavelength[2] += 0.001f;
-                    atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
-                    break;
-
-                case '8':
-                case '*':
-                    if (wParam == '*')
-                        atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
-                    else
-                        atmosVariables.m_fExposure += 0.1f;
-                    break;
-
                 default:
                     LOG("keypressed : %d\n", wParam);
+                    eventHandlerNavras(iMsg, keys[0]);
                     break;
                 }
                 charPressed = keys[0];
@@ -620,7 +460,7 @@ int initialize(void)
     glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB((GLubyte*)"glXCreateContextAttribsARB");
     if(glXCreateContextAttribsARB == NULL)
     {
-        log_printf("glXGetProcAddressARB() failed\n");
+        LOG("glXGetProcAddressARB() failed\n");
         uninitialize();
         exit(-1);
     }
@@ -657,21 +497,21 @@ int initialize(void)
             True, // Hardware rendring support from native driver -(not SW renderer Vesa / novau) (WARP - Windows Advance Rasterization Platform 
             contextAttributes
     );
-        log_printf("cannot support 4.6, hence falling back to default version\n");
+        LOG("cannot support 4.6, hence falling back to default version\n");
     }
     else
     {
-        log_printf("found the support to 4.6 version\n");
+        LOG("found the support to 4.6 version\n");
     }
 
     // checking whether direct(hardware) rendering is supported
     if(!glXIsDirect(display, glxContext))
     {
-        log_printf("Direct(HW) rendering is not supported\n");
+        LOG("Direct(HW) rendering is not supported\n");
     }
     else
     {
-        log_printf("Direct(HW) rendering is supported\n");
+        LOG("Direct(HW) rendering is supported\n");
     }
 
     glXMakeCurrent(
@@ -681,7 +521,7 @@ int initialize(void)
     );
 
     // here starts OpenGL code
-    int retVal = initialize_ogl();
+    int retVal = initializeNavras();
     if(retVal < 0)
     {
         uninitialize();
@@ -690,6 +530,7 @@ int initialize(void)
 
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
+    toggleFullscreen();
 
     return (retVal);
 }
@@ -705,13 +546,13 @@ void set_title(char* title)
 void resize(int width, int height)
 {
     // code
-    resize_ogl(width, height);
+    resizeNavras(width, height);
 }
 
 void draw(void)
 {
     // code
-    display_ogl();
+    displayNavras();
 
     glXSwapBuffers(display, window);
 }
@@ -721,13 +562,13 @@ void update(void)
     // function declarations
 
     // code
-    update_ogl();
+    updateNavras();
 }
 
 void uninitialize(void)
 {
     // code
-    log_printf("%s(%d): %s: \n", __FILE__, __LINE__, __FUNCTION__);
+    LOG("%s(%d): %s: \n", __FILE__, __LINE__, __FUNCTION__);
     GLXContext currentContext;
     currentContext = glXGetCurrentContext();
     if(currentContext && currentContext == glxContext)
@@ -738,8 +579,9 @@ void uninitialize(void)
     {
         toggleFullscreen();
     }
-    // openGl
 
+    // openGl
+    uninitializeNavras();
     if(glxContext)
     {
         glXDestroyContext(display, glxContext);
@@ -768,9 +610,9 @@ void uninitialize(void)
         display = NULL;
     }
 
-    log_printf("%s(%d): %s: Successful\n", __FILE__, __LINE__, __FUNCTION__);
+    LOG("%s(%d): %s: Successful\n", __FILE__, __LINE__, __FUNCTION__);
 
-    log_printf("log file successfully closed.\n");
+    LOG("log file successfully closed.\n");
     log_close();
 }
 
