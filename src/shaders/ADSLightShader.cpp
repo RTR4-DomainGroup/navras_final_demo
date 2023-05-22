@@ -70,12 +70,12 @@ int initializeADSShader(void)
 			"mat3 TBN; \n" \
 			"if (u_actualScene == 1) \n" \
 			"{ \n" \
-				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
+				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * pos; \n" \
 				"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
 				"transformedNormals = normalMatrix * a_normal; \n" \
 				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
 				"viewerVector = vec3(-eyeCoordinates); \n" \
-				"vs_out.FragPos = u_modelMatrix * a_position; \n" \
+				"vs_out.FragPos = u_modelMatrix * pos; \n" \
 				
 				//Normal Mapping
 				"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \

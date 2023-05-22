@@ -51,8 +51,12 @@ GLuint textures[4];
 int initializeScene7_Raudra(void)
 {
 #ifdef ENABLE_STATIC_MODELS
+	// function declarations
+	void initializeDeskInstancePositions(void);
+
 	//load models
-	loadStaticModel("res/models/desk/desk.obj", &deskModel);
+	initializeDeskInstancePositions();
+
 
 	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room\\ceiling.jpg") == FALSE) {
 		//uninitialize();
@@ -92,10 +96,6 @@ int initializeScene7_Raudra(void)
 	}
 	//loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
 #endif
-	initializeInvertedNormalCube();
-
-	// initializeDeskInstancePositions();
-
 
 	textures[0] = (GLuint)texture_ceiling;
 	textures[1] = (GLuint)texture_floor;
@@ -105,10 +105,11 @@ int initializeScene7_Raudra(void)
 	return 0;
 }
 
-void initializeDeskInstancePosition()
+void initializeDeskInstancePositions(void)
 {
-
-	GLfloat instance_positions[NO_OF_INSTANCES_DESK * 4] = {};
+	LOG("Enter ==================== \n");
+	float instance_positions[NO_OF_INSTANCES_DESK * 3] = {};
+	
 	for(int i = 0; i < NO_OF_INSTANCES_DESK; i++)
     {
         static GLfloat xPos = X_MIN;
@@ -140,7 +141,8 @@ void initializeDeskInstancePosition()
         }
     }
 
-	// initializeInstancedDesks(NO_OF_INSTANCES_DESK, instance_positions);
+	vector<float> tmpPositions {instance_positions, instance_positions + (NO_OF_INSTANCES_DESK * 3)};
+	loadStaticModelInstanced("res/models/desk/desk.obj", &deskModel, NO_OF_INSTANCES_DESK, tmpPositions);
 }
 
 void displayScene7_Raudra(void)
@@ -208,7 +210,7 @@ void displayScene7_Raudra(void)
 	rotationMatrix_z = mat4::identity();
 
 
-	translationMatrix = vmath::translate(0.0f, -2.0f, -2.0f);
+	translationMatrix = vmath::translate(2.0f, -1.0f, -2.0f);
 	//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
@@ -218,7 +220,7 @@ void displayScene7_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(deskModel);
+	drawStaticModelInstanced(deskModel, NO_OF_INSTANCES_DESK);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
