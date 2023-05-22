@@ -5,15 +5,17 @@
 
 // Macro definitions
 
+// small window
+#define WIN_WIDTH 800
+#define WIN_HEIGHT 600
+
 // // maximized
 // #define WIN_WIDTH 1280
 // #define WIN_HEIGHT 720
 
-// regular
-#define WIN_WIDTH 1920
-#define WIN_HEIGHT 1080
-// #define WIN_WIDTH 800
-// #define WIN_HEIGHT 600
+// // regular FHD
+// #define WIN_WIDTH 1920
+// #define WIN_HEIGHT 1080
 
 #define DEG2RADN(x) (x * (M_PI / 180)) 
 
