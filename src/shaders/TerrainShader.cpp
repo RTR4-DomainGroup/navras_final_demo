@@ -478,7 +478,7 @@ int initializeTerrainShader(void)
             // Shadow
             "float shadow = ShadowCalculation(fsm_in.FragPosLightSpace); \n" \
 
-            "phong_ads_light = phong_ads_light +ambient + (1.0 - shadow) + diffuse_light_color + specular; \n" \
+            "phong_ads_light = ambient + (1.0 - shadow) + diffuse_light_color + specular; \n" \
             
             /********************************************/
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \

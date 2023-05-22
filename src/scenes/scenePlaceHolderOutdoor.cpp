@@ -155,7 +155,7 @@ bool noiseScaleIncrement = true;
 GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 10.0f, 20.0f, 0.0f, 1.0f };
+GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
 GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -247,8 +247,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_SHADOW
 
-	shadowFramebuffer.textureWidth = 1024;
-	shadowFramebuffer.textureHeight = 1024;
+	shadowFramebuffer.textureWidth = 1080;
+	shadowFramebuffer.textureHeight = 1080;
 
 	if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
 
@@ -531,15 +531,15 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
-		displayPasses(1, true, true, isWaterRequired, 1);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 1000.0f);
+		displayPasses(1, true, true, false, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	#endif // ENABLE_SHADOW
 
 		//////////////////////////////////////////////////////////////
 		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
-			0.1f, 100.0f);
+			0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqUniform = useFSQuadShader();
