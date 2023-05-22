@@ -38,9 +38,6 @@
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
 
-//#define WIN_WIDTH  1920
-//#define WIN_HEIGHT  1080
-
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
