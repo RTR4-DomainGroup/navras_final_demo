@@ -16,6 +16,7 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/Navras.h"
@@ -310,6 +311,15 @@ int initializeNavras(void) {
 	// Variable Declarations
 
 	// Code
+	// Here starts OpenGL code
+    // GLEW initialization
+    // codes related to PP requires Core profile
+    if(glewInit() != GLEW_OK)
+    {
+        LOG("Error: glewInit() failed\n");
+        return (-5);
+    }
+
 	// // Print OpenGLInfo
 	// printGLInfo();
 
@@ -325,11 +335,32 @@ int initializeNavras(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE_10);
 	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
     scenePush(SCENE_1);
     scenePush(SCENE_0);
+
+
+    //initializeTriangle();
+    //initializeSphere();
+
+	// Scene0 - Astromedicomp video
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo(); 
+	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
+	) {
+		LOG("initializeVideoEffect() FAILED !!!\n");
+        return (-8);
+	}
+#endif // ENABLE_VIDEO_RENDER
+
+	if(initializeScene10_AdbhutRas() != 0)
+	{
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+        return (-8);
+	}
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -361,7 +392,12 @@ int initializeNavras(void) {
     //     return (-8);
 	// }
 
+
 	// currentScene = scenePop();
+	// Debug
+	// currentScene = SCENE_7;
+	currentScene = SCENE_10;
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -449,6 +485,10 @@ void resizeNavras(int width, int height) {
 
 void displayNavras(void)
 {
+	bool isGodRequired = false;
+	bool isWaterRequired = false;
+	bool isGaussianBlurRequired = false;
+
 	// Function declarations
 	void resize(int, int);
 
@@ -458,19 +498,28 @@ void displayNavras(void)
 	// Call Scenes Display Here
 	if(currentScene == SCENE_0)
 	{
-		// displayScene_Scene0();
+#ifdef ENABLE_VIDEO_RENDER
+		extern struct FSQuadUniform fsqUniform;
+
+		fsqUniform = useFSQuadShader();
+		displayVideoEffect(&fsqUniform);
+		glUseProgram(0);
+#endif	
 	}
 	else if(currentScene == SCENE_1)
 	{
 		// displayScene_Scene1();
 	}
+	else if(currentScene == SCENE_10)
+	{
+		isGodRequired = true;
+		isWaterRequired = true;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if(currentScene == SCENE_7)
 	{
 		displayScene7_Raudra();
-	}
-	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
-	{
-		displayScene_PlaceHolderOutdoor();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -484,7 +533,6 @@ void displayNavras(void)
 	{
 		currentScene = SCENE_INVALID;
 	}
-
 
 }
 
@@ -511,9 +559,10 @@ void updateNavras(void)
 	{
 		// updateScene_Scene1();
 	}
-	else if (currentScene == SCENE_PLACEHOLDER_OUTDOOR)
+	else if(currentScene == SCENE_10)
 	{
 		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -538,6 +587,8 @@ void uninitializeNavras(void) {
 	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
+	uninitializeScene10_AdbhutRas();
+	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
@@ -581,3 +632,4 @@ void updateMouseMovement(void)
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
+

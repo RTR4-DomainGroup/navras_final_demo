@@ -1,7 +1,6 @@
 #pragma once
 
 typedef enum {
-    SCENE_PLACEHOLDER_OUTDOOR,
     SCENE_PLACEHOLDER_INDOOR,
     SCENE_0,
     SCENE_1,
@@ -11,6 +10,9 @@ typedef enum {
     SCENE_5,
     SCENE_6,
     SCENE_7,
+    SCENE_9, 
+    SCENE_10, /// Adbhut Ras
     SCENE_INVALID,
     SCENE_PARTICLE,
 } scene_t;
+
