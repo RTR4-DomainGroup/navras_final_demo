@@ -280,9 +280,9 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
-		//lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
-		lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -50.0f, 50.0f);
-		lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
+		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
+		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
+		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
 #endif // ENABLE_SHADOW
 	
 	}
@@ -664,7 +664,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
