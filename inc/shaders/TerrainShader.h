@@ -36,6 +36,12 @@ struct TerrainUniform
     GLuint ksUniform;
     GLuint materialShininessUniform;
 
+    // Shadow
+    GLuint shadowMapSamplerUniform;
+    GLuint actualSceneUniform;
+    GLuint depthSceneUniform;
+    GLuint lightSpaceMatrixUniform;
+
 };
 
 int initializeTerrainShader(void);

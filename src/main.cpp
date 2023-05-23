@@ -76,7 +76,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
+static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
@@ -617,8 +617,8 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE10_ADBHUT_RAS;
+	 currentScene = SCENE7_RAUDRA_RAS;
+	//currentScene = SCENE10_ADBHUT_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera

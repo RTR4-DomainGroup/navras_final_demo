@@ -152,10 +152,10 @@ float myScale = 1.0f;
 float noiseScale = 2.0f;
 bool noiseScaleIncrement = true;
 
-GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 10.0f, 10.0f, 10.0f, 1.0f };
+GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
 
 GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -247,8 +247,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_SHADOW
 
-	shadowFramebuffer.textureWidth = 1024;
-	shadowFramebuffer.textureHeight = 1024;
+	shadowFramebuffer.textureWidth = 1080;
+	shadowFramebuffer.textureHeight = 1080;
 
 	if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
 
@@ -531,8 +531,8 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
-		displayPasses(1, true, true, isWaterRequired, 1);
+		perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+		displayPasses(1, true, true, false, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	#endif // ENABLE_SHADOW
 
@@ -586,11 +586,9 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	else
+	else if(isGodRequired)
 	{
 		// GodRay Black pass
-		if(isGodRequired)
-		{
 			glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 			glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
 			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
@@ -611,7 +609,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
 			glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
 			float color[3] = {1.0f, 1.0f, 1.0f};
-			glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+			//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 			displaySphere(color);
 			glUseProgram(0);
 			
@@ -624,7 +622,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 				0.1f, 1000.0f);
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//displayWaterFramebuffers(1);
 			displayPasses(1, false, false, isWaterRequired, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -684,7 +681,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			displayQuad();
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glUseProgram(0);
-		}
+	
 	}
 }
 
