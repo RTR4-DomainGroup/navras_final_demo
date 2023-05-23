@@ -27,11 +27,9 @@
 #include "../../inc/Navras.h"
 
 
-// OpenGL libraries
+// OpenGL Libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
 // By law it not mandatory that is should before OpenGL
-#pragma comment(lib, "GLEW32.lib") 
-#pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "GLEW32.lib") 
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "SOIL/lib/SOIL.lib")
@@ -42,21 +40,17 @@
 #pragma comment(lib, "ffmpeg/lib/avutil.lib")
 #pragma comment(lib, "ffmpeg/lib/swscale.lib")
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
-// include drawing headers
 
 
-// global function declarations
+// Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-// global variable declarations
+// Global Variable Declarations
 HWND ghwnd = NULL;
-HDC ghdc = NULL;
-HGLRC ghrc = NULL;
 BOOL gbFullscreen = FALSE;
 BOOL gbActiveWindow = FALSE;
-
-// menu
-BOOL gbLight = FALSE;
+HDC ghdc = NULL;
+HGLRC ghrc = NULL;
 
 // keys
 GLbyte charPressed;
@@ -76,22 +70,25 @@ int iScrHght;
 // external variables
 
 // entry point function
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow)
-{
-	// function declaration
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
+
+	// Function Declarations
 	int initialize(void);
 	void display(void);
 	void update(void);
 	void uninitialize(void);
-	void ToggleFullscreen(void);
 
-	// variable declaration
+
+	// Variable Declarations
 	WNDCLASSEX wndclass;
 	HWND hwnd;
 	MSG msg;
-	TCHAR szAppName[] = TEXT("Prashant's Window");
+	TCHAR szAppName[] = TEXT("MyWindow!!!");
 	BOOL bDone = FALSE;
 	int iRetVal = 0;
+
+	int iDesktopWidth, iDesktopHeight;
+	int iWCoorx, iWCoory;
 
 	// code
 
@@ -119,16 +116,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	wndclass.lpszMenuName = NULL;
 	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
 
-	// register above wndclass
+	// Register WNDCLASSEX
 	RegisterClassEx(&wndclass);
 
-	// create the window
+	// Full Screen Code
+	iDesktopWidth = GetSystemMetrics(SM_CXSCREEN);
+	iDesktopHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	iWCoorx = ((iDesktopWidth / 2) - (WIN_WIDTH / 2));
+	iWCoory = ((iDesktopHeight / 2) - (WIN_HEIGHT / 2));
+
+	// Create The Window
 	hwnd = CreateWindowEx(WS_EX_APPWINDOW,
 		szAppName,
-		TEXT("Title: "),
+		TEXT("DOMAIN's NAVRAS!!!"),
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
-		iPosX,
-		iPosY,
+		iWCoorx,
+		iWCoory,
 		WIN_WIDTH,
 		WIN_HEIGHT,
 		NULL,
@@ -138,62 +142,43 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	ghwnd = hwnd;
 
+	// Show Window
+	ShowWindow(hwnd, iCmdShow);
+
 	// initialize()
 	iRetVal = initialize();
+	if(iRetVal < 0)
+	{
 
-	if(iRetVal == -1)
-	{
-		LOG("ChoosePixelFormat() Failed.\n");
+		LOG("Initialize() FAILED!!!\n");
 		uninitialize();
-	}
-	else if(iRetVal == -2)
-	{
-		LOG("SetPixelFormat() Failed.\n");
-		uninitialize();
-	}
-	else if(iRetVal == -3)
-	{
-		LOG("wglCreateContext() Failed.\n");
-		uninitialize();
-	}
-	else if(iRetVal == -4)
-	{
-		LOG("wglMakeCurrent() Failed.\n");
-		uninitialize();
-	}
-	else
-	{
-		LOG("initialize() Successful.\n");
+		return(-1);
+
 	}
 
-	// show window
-	ShowWindow(hwnd, iCmdShow);
-	// if(gbFullscreen == FALSE)
-	// {
-	// 	ToggleFullscreen();
-	// }
-
-	// foregrounding and focusing the window
+	// Foregrounding And Focusing the Window
 	SetForegroundWindow(hwnd);
 	SetFocus(hwnd);
 
-	// game loop
-	while(bDone == FALSE)
-	{
-		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if(msg.message == WM_QUIT)
+	// Game Loop
+	while (bDone == FALSE) {
+
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+
+			if (msg.message == WM_QUIT)
 				bDone = TRUE;
-			else
-			{
+			else {
+
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+
 			}
+
 		}
-		else
-		{
-			if(gbActiveWindow == TRUE)
-			{
+		else {
+
+			if (gbActiveWindow == TRUE) {
+
 				// Render the scene
 				display();
 
@@ -203,19 +188,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 	}
 
-	uninitialize();
-
 	return((int)msg.wParam);
 
 }
 
-// callback function
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
-{
-	// function prototype
+// CAllBack Function
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+
+	// Function Declarations
 	void ToggleFullscreen(void);
 	void resize(int, int);
-	void ProcessSelection(int, int);
 	void uninitialize(void);
 
 	// code
@@ -232,17 +214,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_ERASEBKGND:
 		return(0);
-		// break;
-
-	case WM_SIZE:
-		resize(LOWORD(lParam), HIWORD(lParam));
-		break;
 
 	case WM_KEYDOWN:
-		switch(wParam)
-		{
-		// escape key
-		case VK_ESCAPE: // 27
+		switch (wParam) {
+		case VK_ESCAPE:
 			DestroyWindow(hwnd);
 			break;
 		default:
@@ -253,8 +228,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_CHAR:
-		switch(wParam)
-		{
+		switch(wParam) {
 		case 'F':
 		case 'f':
 			ToggleFullscreen();
@@ -269,6 +243,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		}
 		charPressed = wParam;
 		break;
+	case WM_MOUSEMOVE:
+		// variables
+		if(mouseLeftClickActive == true)
+		{
+			mouseX = GET_X_LPARAM(lParam);
+			mouseY = GET_Y_LPARAM(lParam);
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		mouseLeftClickActive = true;
+		break;
+	case WM_LBUTTONUP:
+		mouseLeftClickActive = false;
+		break;
+	case WM_SIZE:
+		resize(LOWORD(lParam), HIWORD(lParam));
+		break;
 
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
@@ -278,71 +269,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 
-	case WM_LBUTTONDOWN:
-		mouseLeftClickActive = true;
-		break;
-	case WM_LBUTTONUP:
-		mouseLeftClickActive = false;
-		break;
-	case WM_MOUSEMOVE:
-		// variables
-		if(mouseLeftClickActive == true)
-		{
-			mouseX = GET_X_LPARAM(lParam);
-			mouseY = GET_Y_LPARAM(lParam);
-		}
-		break;
 	default:
 		break;
 	}
 
 	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
-}
-
-void ToggleFullscreen(void)
-{
-	// variable declarations
-	static DWORD dwStyle;
-	static WINDOWPLACEMENT wp;
-	MONITORINFO mi;
-
-	wp.length = sizeof(WINDOWPLACEMENT);
-
-	if(gbFullscreen == FALSE)
-	{
-		dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
-
-		if(dwStyle & WS_OVERLAPPEDWINDOW)
-		{
-			mi.cbSize = sizeof(MONITORINFO);
-
-			if(GetWindowPlacement(ghwnd, &wp) && GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &mi))
-			{
-				SetWindowLong(ghwnd, GWL_STYLE, (dwStyle & ~WS_OVERLAPPEDWINDOW));
-				SetWindowPos(ghwnd,
-					HWND_TOP,
-					mi.rcMonitor.left,
-					mi.rcMonitor.top,
-					mi.rcMonitor.right - mi.rcMonitor.left,
-					mi.rcMonitor.bottom - mi.rcMonitor.top,
-					SWP_NOZORDER | SWP_FRAMECHANGED);
-			}
-			ShowCursor(FALSE);
-			gbFullscreen = TRUE;
-		}
-
-		LOG("fullscreen Successful.\n");
-	}
-	else
-	{
-		SetWindowLong(ghwnd, GWL_STYLE, (dwStyle | WS_OVERLAPPEDWINDOW));
-		SetWindowPlacement(ghwnd, &wp);
-		SetWindowPos(ghwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-		ShowCursor(TRUE);
-		gbFullscreen = FALSE;
-		LOG("fullscreen false.\n");
-	}
 }
 
 int initialize(void)
@@ -420,6 +351,46 @@ int initialize(void)
 	return(0);
 }
 
+void ToggleFullscreen(void) {
+
+	// Variable Declarations
+	static DWORD dwStyle;
+	static WINDOWPLACEMENT wp;
+	MONITORINFO mi;
+
+	// Code
+	wp.length = sizeof(WINDOWPLACEMENT);
+
+	if (gbFullscreen == FALSE) {
+
+		dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
+		if (dwStyle & WS_OVERLAPPEDWINDOW) {
+
+			mi.cbSize = sizeof(MONITORINFO);
+			if (GetWindowPlacement(ghwnd, &wp) && GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &mi)) {
+
+				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+				SetWindowPos(ghwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_NOZORDER | SWP_FRAMECHANGED);
+
+			}
+
+			ShowCursor(TRUE);		//usually kept false
+			gbFullscreen = TRUE;
+		}
+	}
+	else {
+
+		SetWindowLong(ghwnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPlacement(ghwnd, &wp);
+		SetWindowPos(ghwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+		ShowCursor(TRUE);
+		gbFullscreen = FALSE;
+
+	}
+
+}
+
 void set_title(char* title)
 {
 	TCHAR str[255] = {};
@@ -430,8 +401,8 @@ void set_title(char* title)
 	size_t convertedChars = 0;
 	mbstowcs_s(&convertedChars, wcstring, newsize, title, _TRUNCATE);
 
-    wsprintf(str, TEXT("Domain: %s"), wcstring);
-    SetWindowText(ghwnd, str);
+	wsprintf(str, TEXT("Domain: %s"), wcstring);
+	SetWindowText(ghwnd, str);
 
 	delete[] wcstring;
 }
