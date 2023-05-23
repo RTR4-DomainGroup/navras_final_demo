@@ -38,6 +38,14 @@ struct ADSDynamicUniform
     GLuint viewpositionUniform;
     GLuint textureSamplerUniform_normal;
 
+    // Shadow
+    GLuint lightSpaceMatrixUniform;
+    GLuint shadowMapSamplerUniform;
+    GLuint actualSceneUniform;
+    GLuint depthSceneUniform;
+    GLuint depthQuadSceneUniform;
+    GLuint depthTextureSamplerUniform;
+
 };
 
 int initializeADSDynamicShader(void);

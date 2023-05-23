@@ -7,7 +7,6 @@
 
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
-#include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
@@ -15,11 +14,13 @@
 
 #include "../inc/effects/AtmosphereEffect.h"
 #include "../inc/effects/ParticelEffect.h"
+#include "../inc/effects/videoEffect.h"
 
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../inc/scenes/scene9_AdbhutRas.h"
+#include "../inc/scenes/scene10_AdbhutRas.h"
+#include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/shaders/FSQuadShader.h"
@@ -37,9 +38,6 @@
 #pragma comment(lib, "ffmpeg/lib/swscale.lib")
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
-
-//#define WIN_WIDTH  1920
-//#define WIN_HEIGHT  1080
 
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -79,14 +77,14 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_t currentScene = SCENE_7;
+static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
 extern AtmosphericVariables atmosVariables;
 
 // extern
-// extern scene_t sceneStack[];
+// extern scene_types_t sceneStack[];
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
@@ -564,17 +562,34 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
-    scenePush(SCENE_9);
-	scenePush(SCENE_7);
-    scenePush(SCENE_3);
-    scenePush(SCENE_2);
-    scenePush(SCENE_1);
-    scenePush(SCENE_0);
+    scenePush(SCENE11_SHRINGAR_RAS);
+    scenePush(SCENE10_ADBHUT_RAS);
+	scenePush(SCENE7_RAUDRA_RAS);
 
-	if(initializeScene9_AdbhutRas() != 0)
-	{
-		LOG("initializeScene9_AdbhutRas() FAILED !!!\n");
+
+    //initializeTriangle();
+    //initializeSphere();
+
+	// Scene0 - Astromedicomp video
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo(); 
+	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
+	) {
+		LOG("initializeVideoEffect() FAILED !!!\n");
         return (-8);
+	}
+#endif // ENABLE_VIDEO_RENDER
+
+	if(initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
+	}
+
+	if (initializeScene10_AdbhutRas() != 0)
+	{
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+		return (-8);
 	}
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
@@ -610,8 +625,10 @@ int initialize(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE_9;
-	currentScene = SCENE_PLACEHOLDER_INDOOR;
+	 //currentScene = SCENE7_RAUDRA_RAS;
+	currentScene = SCENE11_SHRINGAR_RAS;
+	//currentScene = SCENE10_ADBHUT_RAS;
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -754,22 +771,31 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE_0)
+	if(currentScene == SCENE0_AMC_BANNER)
 	{
-		// displayScene_Scene0();
+#ifdef ENABLE_VIDEO_RENDER
+		extern struct FSQuadUniform fsqUniform;
+
+		fsqUniform = useFSQuadShader();
+		displayVideoEffect(&fsqUniform);
+		glUseProgram(0);
+#endif	
 	}
-	else if(currentScene == SCENE_1)
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
-		// displayScene_Scene1();
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
-	else if(currentScene == SCENE_9)
+	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene9_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
-	else if(currentScene == SCENE_7)
+	else if(currentScene == SCENE7_RAUDRA_RAS)
 	{
 		displayScene7_Raudra();
 	}
@@ -777,7 +803,7 @@ void display(void)
 	{
 		displayScene_PlaceHolderIndoor();
 	}
-	else if (currentScene == SCENE_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		displayParticle();
 	}
@@ -804,17 +830,10 @@ void update(void)
 
 	
 	// Call Scenes Update Here
-	if(currentScene == SCENE_0)
-	{
-		// updateScene_Scene0();
-	}
-	else if(currentScene == SCENE_1)
-	{
-		// updateScene_Scene1();
-	}
-	else if(currentScene == SCENE_9)
+	if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -840,7 +859,8 @@ void uninitialize(void) {
 	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
-	uninitializeScene9_AdbhutRas();
+	uninitializeScene11_ShringarRas();
+	uninitializeScene10_AdbhutRas();
 	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
