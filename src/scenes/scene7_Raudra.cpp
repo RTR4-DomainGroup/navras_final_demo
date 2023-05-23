@@ -96,6 +96,7 @@ int initializeScene7_Raudra(void)
 	}
 	//loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
 #endif
+	initializeInvertedNormalCube();
 
 	textures[0] = (GLuint)texture_ceiling;
 	textures[1] = (GLuint)texture_floor;
