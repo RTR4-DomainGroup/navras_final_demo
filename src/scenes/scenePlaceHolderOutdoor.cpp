@@ -74,8 +74,8 @@
 
 
 
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
+#define FBO_WIDTH WIN_WIDTH
+#define FBO_HEIGHT WIN_HEIGHT
 
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
@@ -470,8 +470,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 		return (-7);
 	}
 
-	fullSceneFbo.textureWidth = 1920;
-	fullSceneFbo.textureHeight = 1080;
+	fullSceneFbo.textureWidth = WIN_WIDTH;
+	fullSceneFbo.textureHeight = WIN_HEIGHT;
 
 	if (createFBO(&fullSceneFbo) == false)
 	{

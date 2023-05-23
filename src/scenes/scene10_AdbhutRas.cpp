@@ -72,8 +72,8 @@
 
 
 
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
+#define FBO_WIDTH WIN_WIDTH
+#define FBO_HEIGHT WIN_HEIGHT
 
 
 
