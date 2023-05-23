@@ -28,8 +28,8 @@
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
 
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
+#define FBO_WIDTH WIN_WIDTH
+#define FBO_HEIGHT WIN_HEIGHT
 
 
 extern int windowWidth;
@@ -320,20 +320,20 @@ void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
 
-//#ifdef ENABLE_ADSLIGHT
-//	if (texture_Marble)
-//	{
-//		glDeleteTextures(1, &texture_Marble);
-//		texture_Marble = NULL;
-//	}
+#ifdef ENABLE_ADSLIGHT
+	if (texture_Marble)
+	{
+		glDeleteTextures(1, &texture_Marble);
+		texture_Marble = NULL;
+	}
 
-//	// uninitializeSphere();
-//	// uninitializeTriangle();
-//	// uninitializeQuad();
-//	// uninitializePyramid();
-//	uninitializeCube();
-//
-//#endif // ENABLE_ADSLIGHT
+	// uninitializeSphere();
+	// uninitializeTriangle();
+	// uninitializeQuad();
+	// uninitializePyramid();
+	uninitializeCube();
+
+#endif // ENABLE_ADSLIGHT
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models

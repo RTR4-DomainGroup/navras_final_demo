@@ -9,6 +9,7 @@
 #include "../../inc/helper/framebuffer.h"
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 
@@ -70,20 +71,17 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
 
-
-
-
-
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
-
+#define FBO_WIDTH WIN_WIDTH
+#define FBO_HEIGHT WIN_HEIGHT
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
 TEXTURE texture_grass;
 TEXTURE texture_flower;
 
-struct ADSUniform sceneOutdoorADSUniform;
+struct ADSUniform sceneOutdoorADSStaticUniform;
+struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
+
 
 struct FSQuadUniform fsqUniform;
 
@@ -146,16 +144,15 @@ struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 float myScale = 1.0f;
 
 float noiseScale = 2.0f;
 bool noiseScaleIncrement = true;
 
-GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition[] = { 10.0f, 10.0f, 10.0f, 1.0f };
+GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
 
 GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -247,8 +244,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_SHADOW
 
-	shadowFramebuffer.textureWidth = 1024;
-	shadowFramebuffer.textureHeight = 1024;
+	shadowFramebuffer.textureWidth = FBO_WIDTH;
+	shadowFramebuffer.textureHeight = FBO_HEIGHT;
 
 	if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
 
@@ -417,34 +414,27 @@ int initializeScene_PlaceHolderOutdoor(void)
 #endif // ENABLE_STARFIELD
 
 
+
+#ifdef ENABLE_GAUSSIAN_BLUR
+	initializeQuad();
+	if(initializeGaussianBlur(&gaussianBlurEffect) == false)
+	{
+		LOG("Initialize Gaussian Blur Effect FAILED!!");
+		return (-7);
+	}
+
+	fullSceneFbo.textureWidth = WIN_WIDTH;
+	fullSceneFbo.textureHeight = WIN_HEIGHT;
+
+	if (createFBO(&fullSceneFbo) == false)
+	{
+		LOG("Unable to create FBO for entire scene");
+		return (-8);
+	}
+	
+#endif // ENABLE_GAUSSIAN_BLUR
+
 #ifdef ENABLE_BILLBOARDING
-	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
-	// generate positions per instance
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
-	{
-		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
-		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
-		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
-		instance_positions[(i*4)+3] = 1.0f;
-		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
-	}
-
-	// sort z vertices
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
-	{
-		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
-		{
-			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
-			{
-				auto a = instance_positions[(i*4)+2];
-				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
-				instance_positions[(j*4)+2] = a; 
-			}
-		}
-	}
-
-	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
-
 	char imagefile[64] = {};
 	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
@@ -462,25 +452,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_BILLBOARDING
 
-#ifdef ENABLE_GAUSSIAN_BLUR
-	initializeQuad();
-	if(initializeGaussianBlur(&gaussianBlurEffect) == false)
-	{
-		LOG("Initialize Gaussian Blur Effect FAILED!!");
-		return (-7);
-	}
-
-	fullSceneFbo.textureWidth = 1920;
-	fullSceneFbo.textureHeight = 1080;
-
-	if (createFBO(&fullSceneFbo) == false)
-	{
-		LOG("Unable to create FBO for entire scene");
-		return (-8);
-	}
-	
-#endif // ENABLE_GAUSSIAN_BLUR
-
 	return 0;
 }
 
@@ -491,7 +462,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 
 	// Code
 	// Here The Game STarts
-
 	// set cameraa
 
 	setCamera();
@@ -531,8 +501,8 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 		glClear(GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
-		displayPasses(1, true, true, isWaterRequired, 1);
+		perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+		displayPasses(1, true, true, false, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	#endif // ENABLE_SHADOW
 
@@ -586,11 +556,9 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	else
+	else if(isGodRequired)
 	{
 		// GodRay Black pass
-		if(isGodRequired)
-		{
 			glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
 			glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
 			perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight, 
@@ -599,19 +567,19 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			displayPasses(0, false, false, isWaterRequired, 0);
 
-			sceneOutdoorADSUniform = useADSShader();
+			sceneOutdoorADSStaticUniform = useADSShader();
 			translationMatrix = mat4::identity();
 			modelMatrix = mat4::identity();
 			translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
 			modelMatrix = translationMatrix;
 			
-			glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-			glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-			glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-			glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
-			glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
+			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
+			glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
 			float color[3] = {1.0f, 1.0f, 1.0f};
-			glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+			//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 			displaySphere(color);
 			glUseProgram(0);
 			
@@ -624,7 +592,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 				0.1f, 1000.0f);
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			//displayWaterFramebuffers(1);
 			displayPasses(1, false, false, isWaterRequired, 0);
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -684,79 +651,9 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			displayQuad();
 			glBindTexture(GL_TEXTURE_2D, 0);
 			glUseProgram(0);
-		}
+	
 	}
 }
-
-
-#ifdef ENABLE_BILLBOARDING
-void displayBillboarding(int godRays = 1)
-{
-	// variable declaration
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	
-	// code
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	billboardingEffectUniform = useBillboardingShader();
-
-	// instanced quads with grass texture
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	/// Grass
-	if (texture_grass.height > texture_grass.width)
-		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-	glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
-	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	/// Flower
-	if (texture_flower.height > texture_flower.width)
-		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
-
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
-	glDisable(GL_BLEND);
-
-}
-#endif // ENABLE_BILLBOARDING	
 
 int initializeGodRays(void)
 {
@@ -840,10 +737,7 @@ void updateScene_PlaceHolderOutdoor(void)
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif // ENABLE_CLOUD_NOISE
 
-#ifdef ENABLE_BILLBOARDING
-	frameTime += 1;
 
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 
@@ -864,7 +758,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
 #ifdef ENABLE_BILLBOARDING
-    uninitializeInstancedQuads();
 
 	// texture
     if(texture_flower.id)
