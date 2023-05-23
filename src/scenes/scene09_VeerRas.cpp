@@ -1,7 +1,4 @@
-#pragma once
-// This File Will Be Replaced by Scene*.cpp
 
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
 #include "../../inc/helper/common.h"
@@ -10,50 +7,22 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 
-
-#ifdef ENABLE_WATER
-#include "../../inc/helper/waterframebuffer.h"
-#endif // ENABLE_WATER
-
 #ifdef ENABLE_SHADOW
 #include "../../inc/helper/shadowframebuffer.h"
 #endif // ENABLE_SHADOW
-
-#ifdef ENABLE_BILLBOARDING
-#include "../../inc/shaders/BillboardingShader.h"
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_ATMOSPHERE
 #include "../../inc/shaders/AtmosphereShader.h"
 #include "../../inc/effects/AtmosphereEffect.h"
 #endif // ENABLE_ATMOSPHERE
 
-#ifdef ENABLE_VIDEO_RENDER
-#include "../../inc/effects/videoEffect.h"
-#endif // ENABLE_VIDEO_RENDER
-
 #ifdef ENABLE_TERRIAN
 #include "../../inc/effects/TerrainEffect.h"
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_STARFIELD
-#include "../../inc/effects/StarfieldEffect.h"
-#endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_SKYBOX
-#include "../../inc/effects/SkyboxEffect.h"
-#endif // ENABLE_SKYBOX
-
 #ifdef ENABLE_CLOUD_NOISE
 #include "../../inc/effects/CloudEffect.h"
 #endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_WATER
-#include "../../inc/effects/WaterEffect.h"
-#endif // ENABLE_WATER
 
 #ifdef ENABLE_STATIC_MODELS
 #include "../../inc/effects/StaticModelLoadingEffect.h"
@@ -67,15 +36,10 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
 
-
-#include "../../inc/scenes/scene10_AdbhutRas.h"
-
-
+#include "../../inc/scenes/scene09_VeerRas.h"
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
-
-
 
 extern GLfloat whiteSphere[]; // = {1.0f, 1.0f, 1.0f};
 extern GLuint texture_Marble;
@@ -97,20 +61,6 @@ extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 
 extern struct TextureVariables terrainTextureVariables;
 
-#ifdef ENABLE_BILLBOARDING
-// variables for billboarding
-extern struct BillboardingUniform billboardingEffectUniform;
-extern GLuint frameTime; // = 0;
-#endif // ENABLE_BILLBOARDING
-
-#ifdef ENABLE_WATER
-// Water Related Variables
-extern struct WaterUniform waterUniform;
-extern struct TextureVariables waterTextureVariables;
-extern struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
-extern struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
-#endif // ENABLE_WATER
-
 #ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables
 extern struct GaussianBlurEffect gaussianBlurEffect;
@@ -119,7 +69,6 @@ extern struct VerticalBlurUniform verticalBlurUniform;
 extern struct FrameBufferDetails fullSceneFbo;
 extern struct FSQuadUniform fsGaussBlurQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
-
 
 #ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
@@ -135,10 +84,6 @@ extern mat4 lightSpaceMatrix;
 extern mat4 perspectiveProjectionDepth;
 #endif // ENABLE_SHADOW
 
-extern GLfloat waterHeight; // = 0.0f;
-extern GLfloat moveFactor; // = 0.0f;
-extern GLfloat planeReflection[]; // = { 0.0f, 1.0f, 0.0f, -waterHeight };
-extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight };
 extern struct FrameBufferDetails fboBlackPass;
 extern struct FrameBufferDetails fboColorPass;
 extern struct FrameBufferDetails fboGodRayPass;
@@ -152,14 +97,14 @@ extern float myScale; // = 1.0f;
 extern float noiseScale; // = 2.0f;
 extern bool noiseScaleIncrement; // = true;
 
-extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] ; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] ; //= { 10.0f, 10.0f, 0.0f, 1.0f };
+extern GLfloat lightAmbient[]; // = { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat lightDiffuse[]; //= { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat lightSpecular[]; //= { 0.0f, 0.0f, 0.0f, 1.0f };
+extern GLfloat lightPosition[]; //= { 10.0f, 10.0f, 0.0f, 1.0f };
 
 extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat materialDiffuse[]; //= { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat materialSpecular[]; //= { 1.0f, 1.0f, 1.0f, 1.0f };
 extern GLfloat materialShininess; // = 128.0f;
 
 extern mat4 viewMatrix;
@@ -176,24 +121,11 @@ extern mat4 perspectiveProjectionMatrix;
 
 static float displacementmap_depth;
 
-#ifdef ENABLE_SKYBOX
-// Variables For Skybox
-extern GLuint texture_skybox;
-extern struct SkyboxUniform sceneSkyBoxUniform;
-#endif // ENABLE_SKYBOX
-
-#ifdef ENABLE_STARFIELD
-// Variables For Starfieldx
-extern GLuint texture_star; 
-extern double deltaTime;
-extern struct StarfieldUniform sceneStarfieldUniform;
-#endif // ENABLE_STARFIELD
-
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-extern STATIC_MODEL rockModel;
-extern STATIC_MODEL streetLightModel;
-extern DYNAMIC_MODEL skeletonModel;
+STATIC_MODEL rockModel;
+STATIC_MODEL streetLightModel;
+DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -209,8 +141,7 @@ extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
-
-int initializeScene10_AdbhutRas(void)
+int initializeScene09_VeerRas(void)
 {
 	// Function Declarations
 
@@ -227,7 +158,7 @@ int initializeScene10_AdbhutRas(void)
 	cameraUpY = 1.0f;
 	cameraUpZ = 0.0f;
 
-    // Code.
+	// Code.
 	// initializeCamera(&camera);
 
 #ifdef ENABLE_STATIC_MODELS
@@ -242,43 +173,13 @@ int initializeScene10_AdbhutRas(void)
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
-#ifdef ENABLE_BILLBOARDING
-	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
-	// generate positions per instance
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
-	{
-		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
-		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
-		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
-		instance_positions[(i*4)+3] = 1.0f;
-		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
-	}
-
-	// sort z vertices
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
-	{
-		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
-		{
-			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
-			{
-				auto a = instance_positions[(i*4)+2];
-				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
-				instance_positions[(j*4)+2] = a; 
-			}
-		}
-	}
-
-	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
-
-
-#endif // ENABLE_BILLBOARDING
-
 	displacementmap_depth = 0;
 	return 0;
+
 }
 
-void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
-
+void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0)
+{
 	// Code
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -298,17 +199,16 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	mat4 finalViewMatrix = mat4::identity();
 
-	if (actualDepthQuadScene == 0) {
-	
+	if (actualDepthQuadScene == 0)
+	{
+
 		finalViewMatrix = viewMatrix;
 
-	} else if(actualDepthQuadScene == 1) {
-	
-		
-
+	}
+	else if (actualDepthQuadScene == 1)
+	{
 		finalViewMatrix = mat4::identity();
 		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
-		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
@@ -316,41 +216,13 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
 		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
 #endif // ENABLE_SHADOW
-	
 	}
 
-	//lightPosition[0] = cameraEyeX;
-	//lightPosition[1] = cameraEyeY;
-	//lightPosition[2] = cameraEyeZ;
+	if (actualDepthQuadScene == 0)
+	{
 
-
-	if (recordWaterReflectionRefraction == true) {
-
-#ifdef ENABLE_WATER
-		waterUniform = useWaterShader();
-
-		float distance = 2.0f * (cameraEyeY - waterHeight);
-		if (isReflection == true) {
-			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-			cameraEyeY -= distance;
-			setCamera();
-			//setCamera(&camera);
-			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-			cameraEyeY += distance;
-			setCamera();
-			//setCamera(&camera);
-		}
-
-		if (isReflection == false) {
-			glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		}
-#endif // ENABLE_WATER
-	}
-
-	if (actualDepthQuadScene == 0) {
-
-		if (godRays == 1) {
+		if (godRays == 1)
+		{
 
 #ifdef ENABLE_ATMOSPHERE
 
@@ -392,8 +264,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 #endif // ENABLE_ATMOSPHERE
 
 		} // if(godRays == 1)
-
-
 
 #ifdef ENABLE_CLOUD_NOISE
 
@@ -444,8 +314,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_3D, noise_texture);
 
-		float color[3] = {1.0f, 1.0f, 1.0f};
-		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+		float color[3] = { 1.0f, 1.0f, 1.0f };
+		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f, 1.0f, 1.0f));
 		displaySphere(color);
 
 		glUseProgram(0);
@@ -453,55 +323,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glDisable(GL_TEXTURE_3D);
 
 #endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_STARFIELD
-
-		sceneStarfieldUniform = useStarfieldShader();
-
-		float time = (float)deltaTime;
-
-		time = time * 0.05f;
-		time = time - floor(time);
-
-		// Transformations
-		translationMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
-		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
-		glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
-		displayStarfield(texture_star);
-		glUseProgram(0);
-
-#endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_SKYBOX
-
-		sceneSkyBoxUniform = useSkyboxShader();
-
-		// Transformations
-		translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		displaySkybox(texture_skybox);
-		glUseProgram(0);
-#endif // ENABLE_SKYBOX
 	}
 
 #ifdef ENABLE_TERRIAN
@@ -541,20 +362,20 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
 
-	if (actualDepthQuadScene == 1) {
+	if (actualDepthQuadScene == 1)
+	{
 
 		glUniform1i(terrainUniform.actualSceneUniform, 0);
 		glUniform1i(terrainUniform.depthSceneUniform, 1);
 		glUniformMatrix4fv(terrainUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
 	}
-	else {
-
+	else
+	{
 		glUniform1i(terrainUniform.actualSceneUniform, 1);
 		glUniform1i(terrainUniform.depthSceneUniform, 0);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
 	}
 
 #ifdef ENABLE_FOG
@@ -613,22 +434,20 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	if (actualDepthQuadScene == 1) {
-
+	if (actualDepthQuadScene == 1)
+	{
 		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
-	} else {
-
+	}
+	else
+	{
 		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
 		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
-
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
 	}
-
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
@@ -655,7 +474,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	drawStaticModel(streetLightModel);
 
-	if (actualDepthQuadScene == 0) {
+	if (actualDepthQuadScene == 0)
+	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -703,21 +523,19 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	if (actualDepthQuadScene == 1) {
-
+	if (actualDepthQuadScene == 1)
+	{
 		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
 	}
-	else {
-
+	else
+	{
 		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
 		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
 	}
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -728,143 +546,16 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUseProgram(0);
 
 #endif
-
-#ifdef ENABLE_WATER
-	if(waterDraw == true){
-		waterUniform = useWaterShader();
-
-		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
-
-		scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
-
-		modelMatrix = translationMatrix * scaleMatrix;
-
-		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
-
-		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
-
-		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
-
-		displayWater();
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
-    }
-
-#endif // ENABLE_WATER
-
-if(godRays == 1){
-#ifdef ENABLE_BILLBOARDING	
-	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
-		void displayScene10_Billboarding(int);
-
-		displayScene10_Billboarding(godRays);	
-	}
-#endif // ENABLE_BILLBOARDING
-}
 }
 
-#ifdef ENABLE_BILLBOARDING
-void displayScene10_Billboarding(int godRays = 1)
+void updateScene09_VeerRas(void)
 {
-	// variable declaration
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	
-	// code
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	billboardingEffectUniform = useBillboardingShader();
-
-	// instanced quads with grass texture
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	/// Grass
-	if (texture_grass.height > texture_grass.width)
-		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-	glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
-	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	/// Flower
-	if (texture_flower.height > texture_flower.width)
-		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
-
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
-	glDisable(GL_BLEND);
 
 }
-#endif // ENABLE_BILLBOARDING	
 
-void updateScene10_AdbhutRas(void)
+void uninitializeScene09_VeerRas(void)
 {
 	// Code
-#ifdef ENABLE_BILLBOARDING
-	frameTime += 1;
-
-#endif // ENABLE_BILLBOARDING
-}
-
-void uninitializeScene10_AdbhutRas(void)
-{
-	// Code
-#ifdef ENABLE_BILLBOARDING
-    uninitializeInstancedQuads();
-
-#endif // ENABLE_BILLBOARDING
-
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel);
@@ -876,6 +567,4 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadDynamicModel(&skeletonModel);
 #endif
 	//uninitializeCamera(&camera);
-
 }
-

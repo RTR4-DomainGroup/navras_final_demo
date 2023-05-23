@@ -16,6 +16,7 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene09_VeerRas.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
@@ -51,7 +52,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
+static scene_types_t currentScene = SCENE9_VEER_RAS;
 
 bool sceneFadeOut = false;
 
@@ -388,7 +389,7 @@ int initializeNavras(void) {
 	// Debug
 	 //currentScene = SCENE7_RAUDRA_RAS;
 	// currentScene = SCENE11_SHRINGAR_RAS;
-	currentScene = SCENE10_ADBHUT_RAS;
+	currentScene = SCENE9_VEER_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
@@ -504,6 +505,13 @@ void displayNavras(void)
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
+	else if (currentScene == SCENE9_VEER_RAS)
+	{
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene09_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
@@ -545,6 +553,11 @@ void updateNavras(void)
 
 	
 	// Call Scenes Update Here
+	if (currentScene == SCENE9_VEER_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene09_VeerRas();
+	}
 	if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
@@ -574,6 +587,7 @@ void uninitializeNavras(void) {
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene11_ShringarRas();
+	uninitializeScene09_VeerRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
