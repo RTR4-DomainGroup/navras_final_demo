@@ -68,7 +68,7 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-#include "../../inc/scenes/scene10_AdbhutRas.h"
+#include "../../inc/scenes/Scene11_ShringarRas.h"
 
 
 
@@ -191,9 +191,9 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL rockModel;
-STATIC_MODEL streetLightModel;
-DYNAMIC_MODEL skeletonModel;
+STATIC_MODEL rockModel_11;
+STATIC_MODEL streetLightModel_11;
+DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -210,7 +210,7 @@ extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
 
-int initializeScene10_AdbhutRas(void)
+int initializeScene11_ShringarRas(void)
 {
 	// Function Declarations
 
@@ -232,20 +232,20 @@ int initializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	loadStaticModel("res/models/rock/rock.obj", &rockModel_11);
+	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
-	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_11);
+	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_11);
+	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_11);
 #endif // ENABLE_DYNAMIC_MODELS
 
 	return 0;
 }
 
-void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
+void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
 
 	// Code
 	mat4 translationMatrix = mat4::identity();
@@ -600,7 +600,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(rockModel);
+	drawStaticModel(rockModel_11);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -621,7 +621,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 
-	drawStaticModel(streetLightModel);
+	drawStaticModel(streetLightModel_11);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -691,7 +691,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_11, 1.0f);
 
 	glUseProgram(0);
 
@@ -746,7 +746,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 }
 
 #ifdef ENABLE_BILLBOARDING
-void displayScene10_Billboarding(int godRays = 1)
+void displayScene11_ShringarRas(int godRays = 1)
 {
 	// variable declaration
 	mat4 translationMatrix = mat4::identity();
@@ -814,24 +814,24 @@ void displayScene10_Billboarding(int godRays = 1)
 }
 #endif // ENABLE_BILLBOARDING	
 
-void updateScene10_AdbhutRas(void)
+void updateScene11_ShringarRas(void)
 {
 	// Code
 
 }
 
-void uninitializeScene10_AdbhutRas(void)
+void uninitializeScene11_ShringarRas(void)
 {
 	// Code
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&rockModel);
-	unloadStaticModel(&streetLightModel);
+	unloadStaticModel(&rockModel_11);
+	unloadStaticModel(&streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&skeletonModel);
+	unloadDynamicModel(&skeletonModel_11);
 #endif
 	//uninitializeCamera(&camera);
 
