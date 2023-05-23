@@ -67,7 +67,6 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 extern float myScale; // = 1.0f;
 
 extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -96,6 +95,7 @@ extern float displacementmap_depth;
 extern GLuint texture_star; 
 extern double deltaTime;
 extern struct StarfieldUniform sceneStarfieldUniform;
+GLuint texture_road;
 #endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_STATIC_MODELS
@@ -110,6 +110,7 @@ extern GLfloat density; // = 0.15;
 extern GLfloat gradient; // = 0.5;
 extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
+struct ADSUniform bibhatsaRasObject;
 
 // Camera angle for rotation
 extern GLfloat cameraAngle; // = 0.0f;
@@ -119,7 +120,7 @@ extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
 
-int initializeScene09_AdbhutRas(void)
+int initializeScene09_BibhatsaRas(void)
 {
 	// Function Declarations
 
@@ -139,6 +140,22 @@ int initializeScene09_AdbhutRas(void)
     // Code.
 	// initializeCamera(&camera);
 
+#ifdef ENABLE_STARFIELD
+	initializeQuad();
+	initializeCube();
+
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"\\Bibhatsa\\albedo.png") == FALSE) 
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_road FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_road Successfull = %u!!!\n", texture_road);
+	}
+#endif
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
@@ -156,6 +173,8 @@ int initializeScene09_AdbhutRas(void)
 
 void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0)
 {
+	// Function Declaration
+	void depthQuadSceneCalls(int);
 
 	// Code
 	mat4 translationMatrix = mat4::identity();
@@ -178,9 +197,7 @@ void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	if (actualDepthQuadScene == 0)
 	{
-
 		finalViewMatrix = viewMatrix;
-
 	}
 	else if (actualDepthQuadScene == 1)
 	{
@@ -228,6 +245,141 @@ void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	displayStarfield(texture_star);
 	glUseProgram(0);
 
+	// Road Drawing
+	bibhatsaRasObject = useADSShader();
+
+	// Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(2.0f, 1.0f, 25.0f);
+	rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+
+	depthQuadSceneCalls(actualDepthQuadScene);
+
+	glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, texture_road);
+	glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+
+	glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
+	glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+	displayQuad();
+	//glUseProgram(0);
+
+	// Buildings
+	//bibhatsaRasObject = useADSShader();
+	// Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(3.5f, 1.0f, -5.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.25f, 2.0f, 1.5f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	depthQuadSceneCalls(actualDepthQuadScene);
+	glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glActiveTexture(GL_TEXTURE7);
+	//glBindTexture(GL_TEXTURE_2D, texture_road);
+	//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+
+	glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
+	glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+	displayCube();
+
+	// Building 2 Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(-3.5f, 1.0f, -5.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.25f, 2.0f, 1.5f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	depthQuadSceneCalls(actualDepthQuadScene);
+	glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glActiveTexture(GL_TEXTURE7);
+	//glBindTexture(GL_TEXTURE_2D, texture_road);
+	//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+
+	glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
+	glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+	displayCube();
+
+	// Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(3.5f, 0.0f, -2.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.5f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	depthQuadSceneCalls(actualDepthQuadScene);
+	glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glActiveTexture(GL_TEXTURE7);
+	//glBindTexture(GL_TEXTURE_2D, texture_road);
+	//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+
+	glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
+	glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+	displayCube();
+
+	// Building 2 Transformations
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(-3.5f, 0.0f, -2.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.5f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	depthQuadSceneCalls(actualDepthQuadScene);
+	glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glActiveTexture(GL_TEXTURE7);
+	//glBindTexture(GL_TEXTURE_2D, texture_road);
+	//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+
+	glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
+	glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+	displayCube();
+
+	glUseProgram(0);
+
 #endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_STATIC_MODELS
@@ -263,16 +415,15 @@ void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	if (actualDepthQuadScene == 1) {
-
+	if (actualDepthQuadScene == 1) 
+	{
 		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
 		glUniform1i(sceneOutdoorADSStaticUniform.depthQuadSceneUniform, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
 	}
-	else {
-
+	else 
+	{
 		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
 		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.depthQuadSceneUniform, 0);
@@ -280,7 +431,6 @@ void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glActiveTexture(GL_TEXTURE6);
 		glUniform1i(sceneOutdoorADSStaticUniform.shadowMapSamplerUniform, 6);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
 	}
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -367,13 +517,34 @@ void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 #endif
 }
 
-void updateScene09_AdbhutRas(void)
+void depthQuadSceneCalls(int actualDepthQuadScene)
+{
+	if (actualDepthQuadScene == 1)
+	{
+		glUniform1i(bibhatsaRasObject.actualSceneUniform, 0);
+		glUniform1i(bibhatsaRasObject.depthSceneUniform, 1);
+		glUniform1i(bibhatsaRasObject.depthQuadSceneUniform, 0);
+		glUniformMatrix4fv(bibhatsaRasObject.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	}
+	else
+	{
+		glUniform1i(bibhatsaRasObject.actualSceneUniform, 1);
+		glUniform1i(bibhatsaRasObject.depthSceneUniform, 0);
+		glUniform1i(bibhatsaRasObject.depthQuadSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE6);
+		glUniform1i(bibhatsaRasObject.shadowMapSamplerUniform, 6);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	}
+}
+
+void updateScene09_BibhatsaRas(void)
 {
 	// Code
 
 }
 
-void uninitializeScene09_AdbhutRas(void)
+void uninitializeScene09_BibhatsaRas(void)
 {
 	// Code
 #ifdef ENABLE_STATIC_MODELS

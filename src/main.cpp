@@ -566,6 +566,7 @@ int initialize(void) {
 
 	// Initialize Scenes
     scenePush(SCENE_10);
+    scenePush(SCENE_09);
 	scenePush(SCENE_7);
     scenePush(SCENE_3);
     scenePush(SCENE_2);
@@ -589,6 +590,12 @@ int initialize(void) {
 	if(initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+        return (-8);
+	}
+
+	if(initializeScene09_BibhatsaRas() != 0)
+	{
+		LOG("initializeScene9_BibhatsaRas() FAILED !!!\n");
         return (-8);
 	}
 
@@ -626,7 +633,7 @@ int initialize(void) {
 	// currentScene = scenePop();
 	// Debug
 	// currentScene = SCENE_7;
-	currentScene = SCENE_10;
+	currentScene = SCENE_09;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
@@ -791,6 +798,13 @@ void display(void)
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
+	else if(currentScene == SCENE_09)
+	{
+		isGodRequired = false;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene09_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if(currentScene == SCENE_7)
 	{
 		displayScene7_Raudra();
@@ -834,6 +848,11 @@ void update(void)
 	{
 		// updateScene_Scene1();
 	}
+	else if(currentScene == SCENE_09)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene09_BibhatsaRas();
+	}
 	else if(currentScene == SCENE_10)
 	{
 		updateScene_PlaceHolderOutdoor();
@@ -864,6 +883,7 @@ void uninitialize(void) {
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene10_AdbhutRas();
+	uninitializeScene09_BibhatsaRas();
 	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();

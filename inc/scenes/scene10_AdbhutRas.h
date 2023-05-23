@@ -1,8 +1,8 @@
 #pragma once
 
-int initializeScene09_AdbhutRas(void);
-void displayScene09_Passes(int, bool, bool, bool, int);
-void updateScene09_AdbhutRas(void);
-void uninitializeScene09_AdbhutRas(void);
+int initializeScene10_AdbhutRas(void);
+void displayScene10_Passes(int, bool, bool, bool, int);
+void updateScene10_AdbhutRas(void);
+void uninitializeScene10_AdbhutRas(void);
 
 
