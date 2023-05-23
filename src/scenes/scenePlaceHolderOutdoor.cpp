@@ -9,6 +9,7 @@
 #include "../../inc/helper/framebuffer.h"
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 
@@ -83,7 +84,9 @@ GLuint texture_Marble;
 TEXTURE texture_grass;
 TEXTURE texture_flower;
 
-struct ADSUniform sceneOutdoorADSUniform;
+struct ADSUniform sceneOutdoorADSStaticUniform;
+struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
+
 
 struct FSQuadUniform fsqUniform;
 
@@ -597,17 +600,17 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			displayPasses(0, false, false, isWaterRequired, 0);
 
-			sceneOutdoorADSUniform = useADSShader();
+			sceneOutdoorADSStaticUniform = useADSShader();
 			translationMatrix = mat4::identity();
 			modelMatrix = mat4::identity();
 			translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
 			modelMatrix = translationMatrix;
 			
-			glUniformMatrix4fv(sceneOutdoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-			glUniformMatrix4fv(sceneOutdoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-			glUniformMatrix4fv(sceneOutdoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-			glUniform1i(sceneOutdoorADSUniform.uniform_enable_godRays, 0);
-			glUniform1i(sceneOutdoorADSUniform.godrays_blackpass_sphere, 1);
+			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
+			glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
 			float color[3] = {1.0f, 1.0f, 1.0f};
 			//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 			displaySphere(color);
