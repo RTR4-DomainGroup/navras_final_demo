@@ -387,8 +387,8 @@ int initializeNavras(void) {
 	// currentScene = scenePop();
 	// Debug
 	 //currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE11_SHRINGAR_RAS;
-	//currentScene = SCENE10_ADBHUT_RAS;
+	// currentScene = SCENE11_SHRINGAR_RAS;
+	currentScene = SCENE10_ADBHUT_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera

@@ -174,7 +174,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern float displacementmap_depth;
+static float displacementmap_depth;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -273,7 +273,7 @@ int initializeScene10_AdbhutRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
-
+	displacementmap_depth = 0;
 	return 0;
 }
 
@@ -768,6 +768,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 #endif // ENABLE_WATER
 
+if(godRays == 1){
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
 		void displayScene10_Billboarding(int);
@@ -775,6 +776,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
+}
 }
 
 #ifdef ENABLE_BILLBOARDING
