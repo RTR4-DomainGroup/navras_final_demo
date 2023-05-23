@@ -94,7 +94,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -173,7 +173,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern float displacementmap_depth;
+float displacementmap_depth_11;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -231,7 +231,7 @@ int initializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel_11);
+	loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
@@ -240,6 +240,25 @@ int initializeScene11_ShringarRas(void)
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_11);
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_11);
 #endif // ENABLE_DYNAMIC_MODELS
+
+#ifdef ENABLE_TERRIAN
+	displacementmap_depth_11 = 2.0f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0)
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+
+#endif // ENABLE_TERRIAN
 
 
 #ifdef ENABLE_BILLBOARDING
@@ -536,7 +555,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth_11);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
@@ -598,7 +617,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 1);
+	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
 	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
@@ -862,6 +881,10 @@ void uninitializeScene11_ShringarRas(void)
     uninitializeInstancedQuads();
 
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models

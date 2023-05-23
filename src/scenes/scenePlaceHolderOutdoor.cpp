@@ -93,8 +93,6 @@ struct TerrainUniform terrainUniform;
 struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-struct TextureVariables terrainTextureVariables;
-
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
 struct BillboardingUniform billboardingEffectUniform;
@@ -764,10 +762,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 #ifdef ENABLE_SKYBOX
 	uninitialiseSkybox(texture_skybox);
 #endif // ENABLE_SKYBOX
-
-#ifdef ENABLE_TERRIAN
-	uninitializeTerrain(&terrainTextureVariables);
-#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_ATMOSPHERE
 	uninitializeAtmosphere();

@@ -94,7 +94,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -879,6 +879,10 @@ void uninitializeScene10_AdbhutRas(void)
     uninitializeInstancedQuads();
 
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
