@@ -1,5 +1,5 @@
 #pragma once
 #include "common.h"
 
-BOOL initAllShaders(void);
+bool initAllShaders(void);
 void uninitializeAllShaders(void);

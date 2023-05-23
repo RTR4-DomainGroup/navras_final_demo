@@ -1,8 +1,5 @@
 #include "../../inc/helper/common.h"
 
-
-#pragma once
-
 // standard headers
 #include <stdio.h>
 #include <stdlib.h>
