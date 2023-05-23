@@ -17,6 +17,7 @@
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
+#include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene7_Raudra.h"
 
 #include "../inc/Navras.h"
@@ -46,6 +47,9 @@ float yaw = -180.0f;
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
+
+int winWidth;
+int winHeight;
 
 static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
 
@@ -319,6 +323,7 @@ int initializeNavras(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
 
@@ -336,10 +341,16 @@ int initializeNavras(void) {
 	}
 #endif // ENABLE_VIDEO_RENDER
 
-	if(initializeScene10_AdbhutRas() != 0)
+	if(initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
+	}
+
+	if (initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-        return (-8);
+		return (-8);
 	}
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
@@ -375,8 +386,9 @@ int initializeNavras(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE10_ADBHUT_RAS;
+	 //currentScene = SCENE7_RAUDRA_RAS;
+	currentScene = SCENE11_SHRINGAR_RAS;
+	//currentScene = SCENE10_ADBHUT_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
@@ -485,6 +497,13 @@ void displayNavras(void)
 		glUseProgram(0);
 #endif	
 	}
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
+	{
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
@@ -554,6 +573,7 @@ void uninitializeNavras(void) {
 	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
+	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene7_Raudra();
 	// uninitializeScene_Scene0();
