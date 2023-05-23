@@ -240,6 +240,8 @@ int initializeADSShader(void)
 				"if(u_actualScene == 1) { \n" \
 					"vec4 phong_ads_light; \n" \
 					"vec4 texColor = texture(texture_diffuse, a_texcoord_out); \n"		\
+					"if(texColor.a < 0.1) \n" \
+						"discard; \n" \
 					
 					//read normals from normal map and normalize it
 					"vec3 normalizedNormals = normalize(texture(texture_normal,a_texcoord_out).rgb*2.0 - vec3(1.0)); \n" \
