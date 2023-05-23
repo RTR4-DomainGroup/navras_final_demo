@@ -15,16 +15,16 @@
 #include "../../inc/helper/sceneStack.h"
 
 
-static scene_t sceneStack[32];
+static scene_types_t sceneStack[32];
 static int head = 0;
 
-void scenePush(scene_t scene)
+void scenePush(scene_types_t scene)
 {
     sceneStack[head] = scene;
     head++;
 }
 
-scene_t scenePop ()
+scene_types_t scenePop ()
 {
     head--;
     return sceneStack[head];

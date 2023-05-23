@@ -47,7 +47,7 @@ float pitch = 0.0f;
 float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
 
-static scene_t currentScene = SCENE_7;
+static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
 
 bool sceneFadeOut = false;
 
@@ -319,12 +319,8 @@ int initializeNavras(void) {
     }
 
 	// Initialize Scenes
-    scenePush(SCENE_10);
-	scenePush(SCENE_7);
-    scenePush(SCENE_3);
-    scenePush(SCENE_2);
-    scenePush(SCENE_1);
-    scenePush(SCENE_0);
+    scenePush(SCENE10_ADBHUT_RAS);
+	scenePush(SCENE7_RAUDRA_RAS);
 
 
     //initializeTriangle();
@@ -379,8 +375,8 @@ int initializeNavras(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	// currentScene = SCENE_7;
-	currentScene = SCENE_10;
+	// currentScene = SCENE7_RAUDRA_RAS;
+	currentScene = SCENE10_ADBHUT_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
@@ -479,7 +475,7 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE_0)
+	if(currentScene == SCENE0_AMC_BANNER)
 	{
 #ifdef ENABLE_VIDEO_RENDER
 		extern struct FSQuadUniform fsqUniform;
@@ -489,18 +485,14 @@ void displayNavras(void)
 		glUseProgram(0);
 #endif	
 	}
-	else if(currentScene == SCENE_1)
-	{
-		// displayScene_Scene1();
-	}
-	else if(currentScene == SCENE_10)
+	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
-	else if(currentScene == SCENE_7)
+	else if(currentScene == SCENE7_RAUDRA_RAS)
 	{
 		displayScene7_Raudra();
 	}
@@ -508,7 +500,7 @@ void displayNavras(void)
 	{
 		displayScene_PlaceHolderIndoor();
 	}
-	else if (currentScene == SCENE_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		displayParticle();
 	}
@@ -534,15 +526,7 @@ void updateNavras(void)
 
 	
 	// Call Scenes Update Here
-	if(currentScene == SCENE_0)
-	{
-		// updateScene_Scene0();
-	}
-	else if(currentScene == SCENE_1)
-	{
-		// updateScene_Scene1();
-	}
-	else if(currentScene == SCENE_10)
+	if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();

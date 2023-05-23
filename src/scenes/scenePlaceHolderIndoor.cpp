@@ -28,8 +28,8 @@
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
 
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
+#define FBO_WIDTH WIN_WIDTH
+#define FBO_HEIGHT WIN_HEIGHT
 
 
 extern int windowWidth;
