@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####

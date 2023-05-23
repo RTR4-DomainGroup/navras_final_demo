@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
@@ -146,7 +145,6 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 extern float myScale; // = 1.0f;
 
 extern float noiseScale; // = 2.0f;
@@ -163,7 +161,6 @@ extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
 extern GLfloat materialShininess; // = 128.0f;
 
 extern mat4 viewMatrix;
-
 
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
 extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
@@ -191,9 +188,10 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL rockModel;
-STATIC_MODEL streetLightModel;
-DYNAMIC_MODEL skeletonModel;
+static STATIC_MODEL rockModel;
+static STATIC_MODEL streetLightModel;
+static STATIC_MODEL treeModel;
+static DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -234,6 +232,7 @@ int initializeScene10_AdbhutRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	// loadStaticModel("res/models/tree_adbhut/tree.obj", &treeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -273,7 +272,25 @@ int initializeScene10_AdbhutRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
-	displacementmap_depth = 0;
+#ifdef ENABLE_TERRIAN
+	// displacementmap_depth = 15.0f;
+	displacementmap_depth = 1.5f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0) 
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+	
+#endif // ENABLE_TERRIAN
 	return 0;
 }
 
@@ -653,7 +670,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 
-	drawStaticModel(streetLightModel);
+	// drawStaticModel(treeModel);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -768,7 +785,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 #endif // ENABLE_WATER
 
-if(godRays == 1){
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
 		void displayScene10_Billboarding(int);
@@ -776,7 +792,6 @@ if(godRays == 1){
 		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
-}
 }
 
 #ifdef ENABLE_BILLBOARDING

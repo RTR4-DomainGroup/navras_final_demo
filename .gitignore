@@ -3,6 +3,8 @@ res
 
 *.obj
 *.exe
+*.ilk
+*.pdb
 Log.txt
 
 .vs/

@@ -256,7 +256,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_SIZE:
 		resize(LOWORD(lParam), HIWORD(lParam));
 		break;
-		
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;
