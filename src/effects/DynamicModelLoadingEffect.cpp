@@ -1,4 +1,3 @@
-#pragma once
 #include "../../inc/helper/common.h"
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 
