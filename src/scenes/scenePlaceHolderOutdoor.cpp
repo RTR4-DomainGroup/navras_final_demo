@@ -250,8 +250,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_SHADOW
 
-	shadowFramebuffer.textureWidth = 1080;
-	shadowFramebuffer.textureHeight = 1080;
+	shadowFramebuffer.textureWidth = FBO_WIDTH;
+	shadowFramebuffer.textureHeight = FBO_HEIGHT;
 
 	if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
 
@@ -420,50 +420,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 #endif // ENABLE_STARFIELD
 
 
-#ifdef ENABLE_BILLBOARDING
-	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
-	// generate positions per instance
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
-	{
-		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
-		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
-		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
-		instance_positions[(i*4)+3] = 1.0f;
-		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
-	}
-
-	// sort z vertices
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
-	{
-		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
-		{
-			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
-			{
-				auto a = instance_positions[(i*4)+2];
-				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
-				instance_positions[(j*4)+2] = a; 
-			}
-		}
-	}
-
-	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
-
-	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
-	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-	{
-		LOG("Texture loading failed for image %s\n", imagefile);
-		return (-6);
-	}
-
-	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
-	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
-	{
-		LOG("Texture loading failed for image %s\n", imagefile);
-		return (-6);
-	}
-
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 	initializeQuad();
@@ -484,6 +440,24 @@ int initializeScene_PlaceHolderOutdoor(void)
 	
 #endif // ENABLE_GAUSSIAN_BLUR
 
+#ifdef ENABLE_BILLBOARDING
+	char imagefile[64] = {};
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	{
+		LOG("Texture loading failed for image %s\n", imagefile);
+		return (-6);
+	}
+
+	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
+	{
+		LOG("Texture loading failed for image %s\n", imagefile);
+		return (-6);
+	}
+
+#endif // ENABLE_BILLBOARDING
+
 	return 0;
 }
 
@@ -494,7 +468,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 
 	// Code
 	// Here The Game STarts
-
 	// set cameraa
 
 	setCamera();
@@ -688,76 +661,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 	}
 }
 
-
-#ifdef ENABLE_BILLBOARDING
-void displayBillboarding(int godRays = 1)
-{
-	// variable declaration
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
-	
-	// code
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	billboardingEffectUniform = useBillboardingShader();
-
-	// instanced quads with grass texture
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	/// Grass
-	if (texture_grass.height > texture_grass.width)
-		scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-	glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
-	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	/// Flower
-	if (texture_flower.height > texture_flower.width)
-		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
-	else
-		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
-
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glUseProgram(0);
-	glDisable(GL_BLEND);
-
-}
-#endif // ENABLE_BILLBOARDING	
-
 int initializeGodRays(void)
 {
 	fboBlackPass.textureWidth = FBO_WIDTH;
@@ -840,10 +743,7 @@ void updateScene_PlaceHolderOutdoor(void)
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif // ENABLE_CLOUD_NOISE
 
-#ifdef ENABLE_BILLBOARDING
-	frameTime += 1;
 
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 
@@ -864,7 +764,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
 #ifdef ENABLE_BILLBOARDING
-    uninitializeInstancedQuads();
 
 	// texture
     if(texture_flower.id)

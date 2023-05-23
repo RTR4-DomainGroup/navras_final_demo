@@ -242,6 +242,39 @@ int initializeScene11_ShringarRas(void)
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_11);
 #endif // ENABLE_DYNAMIC_MODELS
 
+
+#ifdef ENABLE_BILLBOARDING
+	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+	// generate positions per instance
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+3] = 1.0f;
+		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	}
+
+	// sort z vertices
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+		{
+			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
+			{
+				auto a = instance_positions[(i*4)+2];
+				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+				instance_positions[(j*4)+2] = a; 
+			}
+		}
+	}
+
+	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
+
+
+#endif // ENABLE_BILLBOARDING
+
+
 	return 0;
 }
 
@@ -738,15 +771,15 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
-		void displayScene10_Billboarding(int);
+		void displayScene11_Billboarding(int);
 
-		displayScene10_Billboarding(godRays);	
+		displayScene11_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
 }
 
 #ifdef ENABLE_BILLBOARDING
-void displayScene11_ShringarRas(int godRays = 1)
+void displayScene11_Billboarding(int godRays = 1)
 {
 	// variable declaration
 	mat4 translationMatrix = mat4::identity();
@@ -797,7 +830,7 @@ void displayScene11_ShringarRas(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
+	translationMatrix = vmath::translate(-1.5f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -817,12 +850,20 @@ void displayScene11_ShringarRas(int godRays = 1)
 void updateScene11_ShringarRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+	frameTime += 1;
 
+#endif // ENABLE_BILLBOARDING
 }
 
 void uninitializeScene11_ShringarRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+    uninitializeInstancedQuads();
+
+#endif // ENABLE_BILLBOARDING
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel_11);

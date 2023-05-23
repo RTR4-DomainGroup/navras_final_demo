@@ -233,10 +233,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		case 'f':
 			ToggleFullscreen();
 			break;
-		case 'Q':
-		case 'q':
-			DestroyWindow(hwnd);
-			break;
 		default:
 			eventHandlerNavras(iMsg, wParam);
 			break;
@@ -260,7 +256,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_SIZE:
 		resize(LOWORD(lParam), HIWORD(lParam));
 		break;
-
+		
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;

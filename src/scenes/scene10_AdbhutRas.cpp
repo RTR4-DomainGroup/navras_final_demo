@@ -174,7 +174,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern float displacementmap_depth;
+static float displacementmap_depth;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -242,6 +242,38 @@ int initializeScene10_AdbhutRas(void)
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
+#ifdef ENABLE_BILLBOARDING
+	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+	// generate positions per instance
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+3] = 1.0f;
+		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	}
+
+	// sort z vertices
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+		{
+			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
+			{
+				auto a = instance_positions[(i*4)+2];
+				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+				instance_positions[(j*4)+2] = a; 
+			}
+		}
+	}
+
+	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
+
+
+#endif // ENABLE_BILLBOARDING
+
+	displacementmap_depth = 0;
 	return 0;
 }
 
@@ -736,6 +768,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 #endif // ENABLE_WATER
 
+if(godRays == 1){
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
 		void displayScene10_Billboarding(int);
@@ -743,6 +776,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
+}
 }
 
 #ifdef ENABLE_BILLBOARDING
@@ -817,12 +851,20 @@ void displayScene10_Billboarding(int godRays = 1)
 void updateScene10_AdbhutRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+	frameTime += 1;
 
+#endif // ENABLE_BILLBOARDING
 }
 
 void uninitializeScene10_AdbhutRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+    uninitializeInstancedQuads();
+
+#endif // ENABLE_BILLBOARDING
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel);
