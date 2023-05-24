@@ -8,6 +8,7 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/debug/debug_transformation.h"
 
 
 #ifdef ENABLE_WATER
@@ -225,6 +226,12 @@ int initializeScene11_ShringarRas(void)
 	cameraUpY = 1.0f;
 	cameraUpZ = 0.0f;
 
+	// external debugging varaible
+	tf_t = { -1.5f, -1.0f, 0.0f }; // tree pos 
+	// tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
+	// tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
+	//tf_Speed = 0.05f;
+
     // Code.
 	// initializeCamera(&camera);
 
@@ -241,7 +248,7 @@ int initializeScene11_ShringarRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
-	displacementmap_depth = 2.0f;
+	displacementmap_depth = 10.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
@@ -847,7 +854,13 @@ void displayScene11_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, 1.0f, 0.0f);
+	//translationMatrix = vmath::translate(-1.5f, 1.0f, 0.0f);
+	translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	// scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+	// rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
+	// rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
+	// rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
+	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
