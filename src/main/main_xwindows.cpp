@@ -368,7 +368,7 @@ int main(void)
                     }
                     break;
                 default:
-                    LOG("keypressed : %c\n", keys[0]);
+                    // LOG("keypressed : %c\n", keys[0]);
                     eventHandlerNavras(WM_CHAR, keys[0]);
                     break;
                 }
