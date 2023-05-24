@@ -49,6 +49,7 @@ static GLuint texture_door;
 
 //Model variables
 extern STATIC_MODEL deskModel;
+STATIC_MODEL shelfModel;
 
 GLuint textures[4];
 int initializeScene7_Raudra(void)
@@ -127,7 +128,7 @@ int initializeScene7_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_door);
 	}
-	//loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
+	loadStaticModel("res/models/shelf/Shelf.fbx", &shelfModel);
 #endif
 	initializeInvertedNormalCube();
 	initializeQuad();
@@ -292,6 +293,55 @@ void displayScene7_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModelInstanced(deskModel, NO_OF_INSTANCES_DESK);
+
+	// ------ Shelf Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+
+	translationMatrix = vmath::translate(3.0f, 0.0f, -3.35f);
+	scaleMatrix = vmath::scale(0.075f, 0.1f, 0.075f);
+	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	rotationMatrix_y = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(shelfModel);
+
+
+// ------ Shelf Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+
+	translationMatrix = vmath::translate(1.5f, 0.0f, -3.35f);
+	scaleMatrix = vmath::scale(0.075f, 0.1f, 0.075f);
+	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	rotationMatrix_y = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(shelfModel);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
