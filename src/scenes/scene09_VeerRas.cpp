@@ -173,7 +173,27 @@ int initializeScene09_VeerRas(void)
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
-	displacementmap_depth = 0;
+#ifdef ENABLE_TERRIAN
+	// displacementmap_depth = 15.0f;
+	displacementmap_depth = 1.5f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0)
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+
+#endif // ENABLE_TERRIAN
+
+	displacementmap_depth = 15;
 	return 0;
 
 }
@@ -357,7 +377,7 @@ void displayScene09_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	glUniform1f(terrainUniform.uniform_dmap_depth, 10);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
