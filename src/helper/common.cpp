@@ -36,7 +36,17 @@ static FILE* _pFile ;
 
 static char log_buffer[MAX_LOG_LENGTH];
 
-
+const char* removepath(const char* filewithpath)
+{
+    int len = strlen(filewithpath);
+    while(len > 0) {
+        char c = filewithpath[len -1];
+        if(c == PATH_SEPARATOR)
+            return (filewithpath + len);
+        len--;
+    }
+    return (filewithpath);
+}
 
 #ifdef __linux__ 
     //linux code goes here
@@ -128,18 +138,6 @@ char* vararg2string(const char* format, ...)
 
 // windows code goes here
 #include <strsafe.h>
-
-const char* removepath(const char* filewithpath)
-{
-    int len = strlen(filewithpath);
-    while(len > 0) {
-        char c = filewithpath[len -1];
-        if(c == PATH_SEPARATOR)
-            return (filewithpath + len);
-        len--;
-    }
-    return (filewithpath);
-}
 
 char* currentDateTime()
 {

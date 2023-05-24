@@ -304,10 +304,7 @@ int main(void)
                 case Button1: // XK_Pointer_Button1:
                     // left mouse button
                     mouseLeftClickActive = true;
-                    mouseX = (float)event.xbutton.x;
-                    mouseY = (float)event.xbutton.y;
-                    printf("ButtonPress: left mouse button clicked at (%.02f,%.02f)\n", 
-                    mouseX, mouseY);
+
                     break;
                 case Button2:
                     // middle mouse button clicked
@@ -331,6 +328,11 @@ int main(void)
                 }    
                 break;
             case MotionNotify:
+                if(mouseLeftClickActive) {
+                    mouseX = (float)event.xbutton.x;
+                    mouseY = (float)event.xbutton.y;
+                    // printf("ButtonPress: left mouse button clicked at (%.02f,%.02f)\n", mouseX, mouseY);
+                }
                 break;
             case KeyPress:
                 keySym = XkbKeycodeToKeysym(
