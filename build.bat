@@ -1,5 +1,7 @@
 cls
 
+git update-index --skip-worktree inc/helper/constants.h
+@REM git update-index --no-skip-worktree inc/helper/constants.h
 
 del Navras.exe
 @REM del .\obj\*.obj
