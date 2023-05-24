@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
@@ -95,7 +94,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -146,7 +145,6 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 extern float myScale; // = 1.0f;
 
 extern float noiseScale; // = 2.0f;
@@ -164,7 +162,6 @@ extern GLfloat materialShininess; // = 128.0f;
 
 extern mat4 viewMatrix;
 
-
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
 extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
 
@@ -174,7 +171,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern float displacementmap_depth;
+static float displacementmap_depth;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -191,9 +188,10 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL rockModel;
-STATIC_MODEL streetLightModel;
-DYNAMIC_MODEL skeletonModel;
+static STATIC_MODEL rockModel;
+static STATIC_MODEL streetLightModel;
+static STATIC_MODEL treeModel;
+static DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -234,6 +232,7 @@ int initializeScene10_AdbhutRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	// loadStaticModel("res/models/tree_adbhut/tree.obj", &treeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -242,6 +241,56 @@ int initializeScene10_AdbhutRas(void)
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
+#ifdef ENABLE_BILLBOARDING
+	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+	// generate positions per instance
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+3] = 1.0f;
+		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	}
+
+	// sort z vertices
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+		{
+			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
+			{
+				auto a = instance_positions[(i*4)+2];
+				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+				instance_positions[(j*4)+2] = a; 
+			}
+		}
+	}
+
+	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
+
+
+#endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_TERRIAN
+	// displacementmap_depth = 15.0f;
+	displacementmap_depth = 1.5f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0) 
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+	
+#endif // ENABLE_TERRIAN
 	return 0;
 }
 
@@ -621,7 +670,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 
-	drawStaticModel(streetLightModel);
+	// drawStaticModel(treeModel);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -817,12 +866,24 @@ void displayScene10_Billboarding(int godRays = 1)
 void updateScene10_AdbhutRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+	frameTime += 1;
 
+#endif // ENABLE_BILLBOARDING
 }
 
 void uninitializeScene10_AdbhutRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+    uninitializeInstancedQuads();
+
+#endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif // ENABLE_TERRIAN
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel);

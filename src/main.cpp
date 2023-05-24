@@ -341,17 +341,19 @@ int initializeNavras(void) {
 	}
 #endif // ENABLE_VIDEO_RENDER
 
+	if (initializeScene10_AdbhutRas() != 0)
+	{
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+		return (-8);
+	}
+
 	if(initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
 	}
 
-	if (initializeScene10_AdbhutRas() != 0)
-	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-		return (-8);
-	}
+	
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -386,8 +388,8 @@ int initializeNavras(void) {
 
 	// currentScene = scenePop();
 	// Debug
-	 //currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE11_SHRINGAR_RAS;
+	//currentScene = SCENE7_RAUDRA_RAS;
+	 currentScene = SCENE11_SHRINGAR_RAS;
 	//currentScene = SCENE10_ADBHUT_RAS;
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
@@ -507,7 +509,7 @@ void displayNavras(void)
 	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
-		isWaterRequired = true;
+		isWaterRequired = false;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}

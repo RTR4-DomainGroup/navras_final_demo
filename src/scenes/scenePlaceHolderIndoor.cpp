@@ -1,5 +1,3 @@
-#pragma once
-
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/helper/texture_loader.h"
@@ -320,20 +318,20 @@ void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
 
-//#ifdef ENABLE_ADSLIGHT
-//	if (texture_Marble)
-//	{
-//		glDeleteTextures(1, &texture_Marble);
-//		texture_Marble = NULL;
-//	}
+#ifdef ENABLE_ADSLIGHT
+	if (texture_Marble)
+	{
+		glDeleteTextures(1, &texture_Marble);
+		texture_Marble = NULL;
+	}
 
-//	// uninitializeSphere();
-//	// uninitializeTriangle();
-//	// uninitializeQuad();
-//	// uninitializePyramid();
-//	uninitializeCube();
-//
-//#endif // ENABLE_ADSLIGHT
+	// uninitializeSphere();
+	// uninitializeTriangle();
+	// uninitializeQuad();
+	// uninitializePyramid();
+	uninitializeCube();
+
+#endif // ENABLE_ADSLIGHT
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
@@ -348,3 +346,5 @@ void uninitializeScene_PlaceHolderIndoor(void)
 	unloadDynamicModel(&skeletonModel_in);
 #endif
 }
+
+

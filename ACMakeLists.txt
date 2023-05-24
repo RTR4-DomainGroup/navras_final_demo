@@ -17,7 +17,7 @@ include_directories(${CMAKE_SOURCE_DIR}/ext/SOIL/)
 link_directories(${CMAKE_SOURCE_DIR}/ext/Assimp/lib/)
 
 set(PROJ_LIBS
-    X11
+#    X11
     GL
     m
     GLEW

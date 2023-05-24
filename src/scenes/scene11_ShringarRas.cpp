@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
@@ -95,7 +94,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -174,7 +173,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern float displacementmap_depth;
+float displacementmap_depth_11;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -232,7 +231,7 @@ int initializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel_11);
+	loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
@@ -241,6 +240,58 @@ int initializeScene11_ShringarRas(void)
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_11);
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_11);
 #endif // ENABLE_DYNAMIC_MODELS
+
+#ifdef ENABLE_TERRIAN
+	displacementmap_depth_11 = 2.0f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0)
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+
+#endif // ENABLE_TERRIAN
+
+
+#ifdef ENABLE_BILLBOARDING
+	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+	// generate positions per instance
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+3] = 1.0f;
+		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	}
+
+	// sort z vertices
+	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	{
+		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+		{
+			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
+			{
+				auto a = instance_positions[(i*4)+2];
+				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+				instance_positions[(j*4)+2] = a; 
+			}
+		}
+	}
+
+	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
+
+
+#endif // ENABLE_BILLBOARDING
+
 
 	return 0;
 }
@@ -504,7 +555,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth_11);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
@@ -566,7 +617,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 1);
+	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
 	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
@@ -738,15 +789,15 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
-		void displayScene10_Billboarding(int);
+		void displayScene11_Billboarding(int);
 
-		displayScene10_Billboarding(godRays);	
+		displayScene11_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
 }
 
 #ifdef ENABLE_BILLBOARDING
-void displayScene11_ShringarRas(int godRays = 1)
+void displayScene11_Billboarding(int godRays = 1)
 {
 	// variable declaration
 	mat4 translationMatrix = mat4::identity();
@@ -797,7 +848,7 @@ void displayScene11_ShringarRas(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
+	translationMatrix = vmath::translate(-1.5f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -817,12 +868,24 @@ void displayScene11_ShringarRas(int godRays = 1)
 void updateScene11_ShringarRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+	frameTime += 1;
 
+#endif // ENABLE_BILLBOARDING
 }
 
 void uninitializeScene11_ShringarRas(void)
 {
 	// Code
+#ifdef ENABLE_BILLBOARDING
+    uninitializeInstancedQuads();
+
+#endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif // ENABLE_TERRIAN
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel_11);
