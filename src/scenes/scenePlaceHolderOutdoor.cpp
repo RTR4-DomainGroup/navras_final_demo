@@ -228,8 +228,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_ADSLIGHT
 	// Texture
-	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
-	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
+	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == GL_FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == GL_FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED!!!\n");
 		return(-1);
@@ -246,7 +246,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	shadowFramebuffer.textureWidth = FBO_WIDTH;
 	shadowFramebuffer.textureHeight = FBO_HEIGHT;
 
-	if (shadowCreateFBO(&shadowFramebuffer) == FALSE) {
+	if (shadowCreateFBO(&shadowFramebuffer) == GL_FALSE) {
 
 		LOG("shadowCreateFBO() For Shadow FAILED!!!\n");
 			return(-1);
@@ -324,7 +324,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	waterReflectionFrameBufferDetails.textureWidth = 1280;
 	waterReflectionFrameBufferDetails.textureHeight = 720;
 
-	if (waterCreateFBO(&waterReflectionFrameBufferDetails) == FALSE) {
+	if (waterCreateFBO(&waterReflectionFrameBufferDetails) == GL_FALSE) {
 
 		LOG("waterCreateFBO() For WaterReflection FAILED!!!\n");
 		return(-1);
@@ -339,7 +339,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	waterRefractionFrameBufferDetails.textureWidth = 1280;
 	waterRefractionFrameBufferDetails.textureHeight = 720;
 
-	if (waterCreateFBO(&waterRefractionFrameBufferDetails) == FALSE) {
+	if (waterCreateFBO(&waterRefractionFrameBufferDetails) == GL_FALSE) {
 
 		LOG("waterCreateFBO() For WaterRefraction FAILED!!!\n");
 		return(-1);

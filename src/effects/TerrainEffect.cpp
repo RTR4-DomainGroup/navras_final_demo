@@ -7,7 +7,7 @@ extern mat4 perspectiveProjectionMatrix;
 
 int initializeTerrain(TextureVariables *terrainTexture) {
 	
-	if (LoadGLTexture_UsingSOIL(&terrainTexture->displacement, terrainTexture->displacementPath) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&terrainTexture->displacement, terrainTexture->displacementPath) == false) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Displacement For Terrain FAILED!!!\n");
 		return(-1);
@@ -17,7 +17,7 @@ int initializeTerrain(TextureVariables *terrainTexture) {
 		LOG("LoadGLTexture Successfull for terrain = %u!!!\n", terrainTexture->displacement);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&terrainTexture->albedo, terrainTexture->albedoPath) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&terrainTexture->albedo, terrainTexture->albedoPath) == false) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Diffuse For Terrain FAILED!!!\n");
 		return(-1);
@@ -27,7 +27,7 @@ int initializeTerrain(TextureVariables *terrainTexture) {
 		LOG("LoadGLTexture Successfull for terrain = %u!!!\n", terrainTexture->albedo);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&terrainTexture->normal, terrainTexture->normalPath) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&terrainTexture->normal, terrainTexture->normalPath) == false) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Diffuse For Terrain FAILED!!!\n");
 		return(-1);
