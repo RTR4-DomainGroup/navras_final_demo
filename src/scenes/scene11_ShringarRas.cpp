@@ -151,16 +151,6 @@ extern float myScale; // = 1.0f;
 extern float noiseScale; // = 2.0f;
 extern bool noiseScaleIncrement; // = true;
 
-extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] ; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] ; //= { 10.0f, 10.0f, 0.0f, 1.0f };
-
-extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess; // = 128.0f;
-
 extern mat4 viewMatrix;
 
 
@@ -173,7 +163,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-float displacementmap_depth_11;
+static float displacementmap_depth;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -208,6 +198,15 @@ extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
+static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
 int initializeScene11_ShringarRas(void)
 {
@@ -242,7 +241,7 @@ int initializeScene11_ShringarRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
-	displacementmap_depth_11 = 2.0f;
+	displacementmap_depth = 2.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
@@ -555,7 +554,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth_11);
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);

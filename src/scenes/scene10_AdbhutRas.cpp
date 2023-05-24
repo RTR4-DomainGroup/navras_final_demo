@@ -151,16 +151,6 @@ extern float myScale; // = 1.0f;
 extern float noiseScale; // = 2.0f;
 extern bool noiseScaleIncrement; // = true;
 
-extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] ; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] ; //= { 10.0f, 10.0f, 0.0f, 1.0f };
-
-extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess; // = 128.0f;
-
 extern mat4 viewMatrix;
 
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
@@ -187,14 +177,6 @@ extern double deltaTime;
 extern struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_STATIC_MODELS
-//Model variables
-static STATIC_MODEL rockModel;
-static STATIC_MODEL treeModel;
-static DYNAMIC_MODEL skeletonModel;
-
-#endif // ENABLE_STATIC_MODELS
-
 extern GLfloat density; // = 0.15;
 extern GLfloat gradient; // = 0.5;
 extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
@@ -206,6 +188,26 @@ extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
+
+
+#ifdef ENABLE_STATIC_MODELS
+//Model variables
+static STATIC_MODEL rockModel;
+static STATIC_MODEL treeModel;
+static DYNAMIC_MODEL skeletonModel;
+
+#endif // ENABLE_STATIC_MODELS
+
+
+static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
 
 int initializeScene10_AdbhutRas(void)
@@ -226,12 +228,12 @@ int initializeScene10_AdbhutRas(void)
 	cameraUpZ = 0.0f;
 
 	// external debugging varaible
-    rAngle = 0.0f;
-    tf_t = {4.0f, 0.0f, -6.0f}; // tree pos 
-    tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
-    tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
-
-    // Code.
+    tf_t = {-1.5f, -3.5f, 0.0f}; // tree pos 
+    // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
+    // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
+	tf_Speed = 0.05f;
+    
+	// Code.
 	// initializeCamera(&camera);
 
 #ifdef ENABLE_STATIC_MODELS
@@ -663,17 +665,9 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	// translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-	translationMatrix = vmath::translate(tf_t.x, tf_t.y,tf_t.z);
-
-	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
-
-	rotationMatrix_x = vmath::rotate(rAngle, tf_r.x, tf_r.y, tf_r.z);
-	rotationMatrix_y = vmath::rotate(rAngle, tf_r.x, tf_r.y, tf_r.z);
-	rotationMatrix_z = vmath::rotate(rAngle, tf_r.x, tf_r.y, tf_r.z);
-	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-
+	translationMatrix = vmath::translate(-4.53f, -1.20f, -6.00f);
+	scaleMatrix = vmath::scale(0.21f, 0.21f, 0.21f);
+	
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -835,7 +829,8 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
-	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
+	translationMatrix = vmath::translate(1.5f, -3.5f, -25.0f);
+
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -851,12 +846,17 @@ void displayScene10_Billboarding(int godRays = 1)
 
 
 	/// Flower
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
 	if (texture_flower.height > texture_flower.width)
 		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
+	translationMatrix = vmath::translate(-1.50f, -3.50f, -25.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -869,6 +869,13 @@ void displayScene10_Billboarding(int godRays = 1)
 
 	glUseProgram(0);
 	glDisable(GL_BLEND);
+
+	// translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	// scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+	// rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
+	// rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
+	// rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
+	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
 }
 #endif // ENABLE_BILLBOARDING	

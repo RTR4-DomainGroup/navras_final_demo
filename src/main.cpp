@@ -34,9 +34,6 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-// camera related variables for movement in scene during debugging
-float cameraCounterSideWays = 3.2f;
-float cameraCounterUpDownWays = 3.2f;
 
 extern bool mouseLeftClickActive;
 extern float mouseX;
@@ -54,7 +51,6 @@ int winHeight;
 static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
 
 bool sceneFadeOut = false;
-bool cameraMode = false;
 
 extern AtmosphericVariables atmosVariables;
 
@@ -78,27 +74,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			// playSong(songId);
 			togglePlayback();
 			break;
-		case VK_UP:	// Up
-			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-			cameraCounterUpDownWays += 0.025f;
-			break;
-		case VK_DOWN:	// down
-			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-			cameraCounterUpDownWays -= 0.025f;
-			break;
-		case VK_LEFT:	// left
-			//LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
-			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-			cameraCounterSideWays += 0.025f;
-			break;
-		case VK_RIGHT:	// right
-			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-			cameraCounterSideWays -= 0.025f;
-			break;
 		default:
 			// LOG("keypress : %d\n", wParam);
 			break;
@@ -108,66 +83,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 	case WM_CHAR:
 		switch (wParam) {
 
-		case 'c':
-			cameraMode = cameraMode ? false : true; 
-			break;
-		case 'W':
-		case 'w':
-			if(cameraMode)
-			{
-				cameraEyeZ = cameraEyeZ - 0.25f;
-				cameraCenterZ = cameraCenterZ - 0.25f;
-			}
-			break;
-		case 'S':
-		case 's':
-			if(cameraMode)
-			{
-				cameraEyeZ = cameraEyeZ + 0.25f;
-				cameraCenterZ = cameraCenterZ + 0.25f;
-			}
-			break;
-		case 'A':
-		case 'a':
-			if(cameraMode)
-			{
-				cameraEyeX = cameraEyeX - 0.25f;
-				cameraCenterX = cameraCenterX - 0.25f;
-			}
-			break;
-		case 'D':
-		case 'd':
-			if(cameraMode)
-			{
-				cameraEyeX = cameraEyeX + 0.25f;
-				cameraCenterX = cameraCenterX + 0.25f;
-			}
-			break;
-		case 'Q':
-		case 'q':
-			if(cameraMode)
-			{
-				cameraEyeY = cameraEyeY - 0.25f;
-				cameraCenterY = cameraCenterY - 0.25f;
-			}
-			break;
-		case 'E':
-		case 'e':
-			if(cameraMode)
-			{
-				cameraEyeY = cameraEyeY + 0.25f;
-				cameraCenterY = cameraCenterY + 0.25f;
-			}
-			break;
-		case 'R':
-		case 'r':
-			if(cameraMode)
-				resetCamera();
-			break;
-		case 'P':
-		case 'p':
-			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f]", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
-			break;
 		case 'n':
 			playSong(songId);
 			songId++;
@@ -434,24 +349,6 @@ int initializeNavras(void) {
 	perspectiveProjectionMatrix = mat4::identity();
 
 	return(0);
-}
-
-void resetCamera(void)
-{
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
-	cameraCounterSideWays = 3.2f;
-	cameraCounterUpDownWays = 3.2f;
 }
 
 void printGLInfo(void) {
