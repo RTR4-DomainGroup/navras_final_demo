@@ -37,21 +37,24 @@ static FILE* _pFile ;
 static char log_buffer[MAX_LOG_LENGTH];
 
 
-char* currentDateTime()
-{
-    time_t now = time(0);
-    struct tm curr_time = *localtime(&now);
-    memset(log_buffer, 0, MAX_LOG_LENGTH);
-    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", &curr_time);
-    return (log_buffer);
-};
-
 
 #ifdef __linux__ 
     //linux code goes here
     // dummy macro
 #include <sys/time.h>
 #include <string.h>
+
+char* currentDateTime()
+{
+    time_t timer = 0;
+    struct tm* tm_info = NULL;
+
+    // timer = time(NULL);
+    tm_info = localtime(&timer);
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", tm_info);
+    return (log_buffer);
+};
 
 int log_open(char const* FileName , char const* Mode)
 {
@@ -138,6 +141,15 @@ char* vararg2string(const char* format, ...)
 // windows code goes here
 #include <strsafe.h>
 
+
+char* currentDateTime()
+{
+    time_t now = time(NULL);
+    struct tm curr_time = *localtime(&now);
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", &curr_time);
+    return (log_buffer);
+};
 
 // file operations
 int log_open(char const* FileName , char const* Mode)

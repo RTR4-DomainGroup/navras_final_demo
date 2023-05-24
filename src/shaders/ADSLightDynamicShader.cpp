@@ -1,9 +1,11 @@
-#include <windows.h>
+// #include <windows.h>
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 
+typedef unsigned char byte;
 
 // Variable Declarations
 GLuint adsDynamicShaderProgramObject;
+
 ADSDynamicUniform adsDynamicUniform;
 
 int initializeADSDynamicShader(void)
@@ -406,7 +408,7 @@ int initializeADSDynamicShader(void)
 	for (int i = 0; i < MAX_BONES; i++)
 	{
 		byte str[100];
-		sprintf_s((char* const)str, 100, "u_finalBonesMatrices[%d]", i);
+		snprintf((char* const)str, 100, "u_finalBonesMatrices[%d]", i);
 		adsDynamicUniform.finalBonesMatricesUniform[i] = glGetUniformLocation(adsDynamicShaderProgramObject, (const GLchar*)str);
 	}
 

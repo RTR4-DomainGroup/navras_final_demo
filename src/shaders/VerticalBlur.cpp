@@ -2,7 +2,6 @@
 
 GLuint shaderProgram_verticalBlur;
 struct VerticalBlurUniform vBlurUniform;
-extern HWND ghwnd;
 
 int initialize_verticalBlur()
 {
@@ -73,7 +72,7 @@ int initialize_verticalBlur()
                 free(log);
                 log = NULL;
                 uninitialize_verticalBlurShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -146,7 +145,7 @@ int initialize_verticalBlur()
                 free(log);
                 log = NULL;
                 uninitialize_verticalBlurShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -187,7 +186,7 @@ int initialize_verticalBlur()
                 free(log);
                 log = NULL;
                 uninitialize_verticalBlurShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }    

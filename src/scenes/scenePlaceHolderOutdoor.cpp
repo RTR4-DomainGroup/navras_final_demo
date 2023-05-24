@@ -408,14 +408,14 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_BILLBOARDING
 	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\grass.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/grass.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);
 		return (-6);
 	}
 
-	sprintf(imagefile, "%s", TEXTURE_DIR"\\billboarding\\flower.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);

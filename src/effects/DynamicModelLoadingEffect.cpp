@@ -1,5 +1,6 @@
 #include "../../inc/helper/common.h"
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 
 #define MAX_BONES 100
 

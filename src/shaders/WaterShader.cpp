@@ -3,7 +3,6 @@
 GLuint shaderProgramObj_water;
 
 struct WaterUniform waterShaderUniform;
-extern HWND ghwnd;
 
 int initializeWaterShader(void)
 {
@@ -71,7 +70,7 @@ int initializeWaterShader(void)
                 free(log);
                 log = NULL;
                 uninitializeWaterShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -169,7 +168,7 @@ int initializeWaterShader(void)
                 free(log);
                 log = NULL;
                 uninitializeWaterShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -211,7 +210,7 @@ int initializeWaterShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeWaterShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }

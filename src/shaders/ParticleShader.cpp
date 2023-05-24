@@ -7,7 +7,6 @@ extern mat4 perspectiveProjectionMatrix;
 
 struct ParticleComputeUniform particleComputeShaderUniform;
 struct ParticleUniform particleShaderUniform;
-extern HWND ghwnd;
 
 int initializeParticleShader(void)
 {
@@ -150,7 +149,7 @@ int initializeParticleShader(void)
                 free(log);
                 log = NULL;
                 uninitializeParticleShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -199,7 +198,7 @@ int initializeParticleShader(void)
                 free(log);
                 log = NULL;
                 uninitializeParticleShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -239,7 +238,7 @@ int initializeParticleShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeParticleShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }

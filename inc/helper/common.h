@@ -70,7 +70,7 @@ struct TextureVariables {
 #define TEXTURE_DIR   "res/textures/"
 
 #define AUDIO_DIR     "res/audios/"
-#define PATH_SEPARATOR '\\'
+#define PATH_SEPARATOR '/'
 
 #define VK_NUMPAD0 XK_KP_0
 #define VK_NUMPAD1 XK_KP_1
@@ -95,6 +95,9 @@ struct TextureVariables {
 
 #define WM_KEYDOWN 999
 #define WM_CHAR 998
+
+#define ZeroMemory(a, b)  memset(a, 0, b)
+
 
 
 #elif _WIN32
