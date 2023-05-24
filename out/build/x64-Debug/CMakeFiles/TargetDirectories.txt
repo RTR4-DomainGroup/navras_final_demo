@@ -1,4 +1,0 @@
-C:/Navras/navras_final_demo/out/build/x64-Debug/CMakeFiles/srcobjects.dir
-C:/Navras/navras_final_demo/out/build/x64-Debug/CMakeFiles/Navras.dir
-C:/Navras/navras_final_demo/out/build/x64-Debug/CMakeFiles/edit_cache.dir
-C:/Navras/navras_final_demo/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
