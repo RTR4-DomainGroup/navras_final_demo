@@ -22,6 +22,8 @@
 
 #include "../inc/Navras.h"
 
+#include "../inc/debug/debug_transformation.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
 
@@ -273,8 +275,9 @@ int initializeNavras(void) {
 	// Debug
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 	//currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE10_ADBHUT_RAS;
+	// currentScene = SCENE10_ADBHUT_RAS;
 	//  currentScene = SCENE11_SHRINGAR_RAS;
+	currentScene = CURRENT_SCENE;
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -477,6 +480,8 @@ void updateNavras(void)
 
 	// camera movement related updates
 	updateMouseMovement();
+
+	debug_tranformation();
 
 }
 
