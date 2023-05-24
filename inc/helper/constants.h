@@ -29,13 +29,13 @@
 
 // #define Z_MIN (0.0f)
 // #define Z_MAX (1.0f)
-#define Z_MIN (-30.0f)
-#define Z_MAX (30.0f)
+#define Z_MIN (-50.0f)
+#define Z_MAX (70.0f)
 
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
-#define NO_OF_INSTANCES 500
+#define NO_OF_INSTANCES 1000
 
 #define X_INCREMENT 2.0f
 #define Y_INCREMENT 0.8f
@@ -77,6 +77,8 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
+
+
 
 
 #define ENABLE_DYNAMIC_MODELS
