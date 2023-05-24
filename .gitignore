@@ -8,7 +8,9 @@ res
 Log.txt
 
 .vs/
+build/
 .vscode/
+out/
 *.zip
 
 inc/helper/constants.h
