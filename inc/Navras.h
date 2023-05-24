@@ -6,3 +6,5 @@ void resizeNavras(int, int);
 void displayNavras(void);
 void updateNavras(void);
 void uninitializeNavras(void);
+
+

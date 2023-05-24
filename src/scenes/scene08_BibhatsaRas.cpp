@@ -58,15 +58,15 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] ; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] ; //= { 10.0f, 10.0f, 0.0f, 1.0f };
+GLfloat lightAmbient_bibhatsa[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightDiffuse_bibhatsa[]	= { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightSpecular_bibhatsa[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat lightPosition_bibhatsa[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess; // = 128.0f;
+GLfloat materialAmbient_bibhatsa[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat materialDiffuse_bibhatsa[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialSpecular_bibhatsa[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialShininess_bibhatsa = 128.0f;
 
 extern mat4 viewMatrix;
 
@@ -167,7 +167,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	} else if(actualDepthQuadScene == 1) 
 	{
 		finalViewMatrix = mat4::identity();
-		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		finalViewMatrix = lookat(vec3(lightPosition_bibhatsa[0], lightPosition_bibhatsa[1], lightPosition_bibhatsa[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
 		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
@@ -233,15 +233,15 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
 
-		glUniformMatrix4fv(bibhatsaRasObject.laUniform, 1, GL_FALSE, lightAmbient);
-		glUniformMatrix4fv(bibhatsaRasObject.ldUniform, 1, GL_FALSE, lightDiffuse);
-		glUniformMatrix4fv(bibhatsaRasObject.lsUniform, 1, GL_FALSE, lightSpecular);
-		glUniformMatrix4fv(bibhatsaRasObject.lightPositionUniform, 1, GL_FALSE, lightPosition);
+		glUniformMatrix4fv(bibhatsaRasObject.laUniform, 1, GL_FALSE, lightAmbient_bibhatsa);
+		glUniformMatrix4fv(bibhatsaRasObject.ldUniform, 1, GL_FALSE, lightDiffuse_bibhatsa);
+		glUniformMatrix4fv(bibhatsaRasObject.lsUniform, 1, GL_FALSE, lightSpecular_bibhatsa);
+		glUniformMatrix4fv(bibhatsaRasObject.lightPositionUniform, 1, GL_FALSE, lightPosition_bibhatsa);
 		
-		glUniformMatrix4fv(bibhatsaRasObject.kaUniform, 1, GL_FALSE, materialAmbient);
-		glUniformMatrix4fv(bibhatsaRasObject.kdUniform, 1, GL_FALSE, materialDiffuse);
-		glUniformMatrix4fv(bibhatsaRasObject.ksUniform, 1, GL_FALSE, materialSpecular);
-		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess);		
+		glUniformMatrix4fv(bibhatsaRasObject.kaUniform, 1, GL_FALSE, materialAmbient_bibhatsa);
+		glUniformMatrix4fv(bibhatsaRasObject.kdUniform, 1, GL_FALSE, materialDiffuse_bibhatsa);
+		glUniformMatrix4fv(bibhatsaRasObject.ksUniform, 1, GL_FALSE, materialSpecular_bibhatsa);
+		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess_bibhatsa);		
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_road);
@@ -357,14 +357,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		// Sending Light Related Uniforms
 		glUniform1i(sceneOutdoorADSStaticUniform.lightingEnableUniform, 1);
-		glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
-		glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
-		glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
-		glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
-		glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
-		glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
+		glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient_bibhatsa);
+		glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse_bibhatsa);
+		glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular_bibhatsa);
+		glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition_bibhatsa);
+		glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient_bibhatsa);
+		glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse_bibhatsa);
+		glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular_bibhatsa);
+		glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess_bibhatsa);
 
 		//normal mapping
 		glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
@@ -445,14 +445,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		sceneOutdoorADSDynamicUniform = useADSDynamicShader();
 
 		// Sending Light Related Uniforms
-		glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient);
-		glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
-		glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
-		glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient);
-		glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
-		glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient_bibhatsa);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse_bibhatsa);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular_bibhatsa);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition_bibhatsa);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient_bibhatsa);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse_bibhatsa);
+		glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular_bibhatsa);
+		glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess_bibhatsa);
 
 		glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
 		glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
