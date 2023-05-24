@@ -45,7 +45,7 @@ GLuint texture_side;
 GLuint texture_back;
 
 //Model variables
-extern STATIC_MODEL deskModel;
+static STATIC_MODEL deskModel;
 
 GLuint textures[4];
 int initializeScene7_Raudra(void)
