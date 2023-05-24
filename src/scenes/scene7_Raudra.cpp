@@ -29,23 +29,23 @@ extern GLfloat density;
 extern GLfloat gradient;
 extern GLfloat skyFogColor[];
 
-extern GLfloat lightAmbient[];
-extern GLfloat lightDiffuse[];
-extern GLfloat lightSpecular[];
-extern GLfloat lightPosition[];
-						  
-extern GLfloat materialAmbient[];
-extern GLfloat materialDiffuse[];
-extern GLfloat materialSpecular[];
-extern GLfloat materialShininess;
+static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-GLuint texture_ceiling;
-GLuint texture_floor;
-GLuint texture_side;
-GLuint texture_back;
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
+
+static GLuint texture_ceiling;
+static GLuint texture_floor;
+static GLuint texture_side;
+static GLuint texture_back;
 
 //Model variables
-extern STATIC_MODEL deskModel;
+static STATIC_MODEL deskModel;
 
 GLuint textures[4];
 int initializeScene7_Raudra(void)

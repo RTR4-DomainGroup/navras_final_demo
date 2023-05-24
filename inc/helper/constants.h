@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../inc/scenes/scenes_types.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h> 
 
@@ -33,7 +35,7 @@
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
-#define NO_OF_INSTANCES 50
+#define NO_OF_INSTANCES 500
 
 #define X_INCREMENT 2.0f
 #define Y_INCREMENT 0.8f
@@ -75,5 +77,9 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
+
+
 #define ENABLE_DYNAMIC_MODELS
 
+#define CURRENT_SCENE SCENE10_ADBHUT_RAS
+// #define CURRENT_SCENE SCENE9_VEER_RAS
