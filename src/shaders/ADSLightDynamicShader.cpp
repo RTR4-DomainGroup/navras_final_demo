@@ -33,6 +33,19 @@ int initializeADSDynamicShader(void)
 		"uniform mat4 u_projectionMatrix; \n" \
 
 		"uniform vec4 u_lightPosition; \n" \
+
+		// Shadow
+		"uniform int u_actualScene; \n" \
+		"uniform int u_depthScene; \n" \
+		"uniform int u_depthQuadScene; \n" \
+
+		"uniform mat4 lightSpaceMatrix; \n" \
+		"out VS_OUT{ \n" \
+		"vec4 FragPos; \n" \
+		"vec3 Normal; \n" \
+		"vec2 TexCoords; \n" \
+		"vec4 FragPosLightSpace; \n" \
+		"} vs_out; \n" \
 		
 		//fog
 		"uniform int u_fogEnable; \n" \
@@ -60,7 +73,7 @@ int initializeADSDynamicShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-
+		
 		"	vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
 		"	mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
 		"	transformedNormals = normalMatrix * a_normal; \n" \
@@ -99,6 +112,8 @@ int initializeADSDynamicShader(void)
 
 		"	} \n" \
 
+		"if (u_actualScene == 1) \n" \
+		"{ \n" \
 		"	gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * totalPosition; \n" \
 
 		"	if (u_fogEnable == 1) \n" \
@@ -109,8 +124,19 @@ int initializeADSDynamicShader(void)
 		"		visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
 		"	} \n" \
 
+			// Shadow
+			"vs_out.Normal = mat3(transpose(inverse(u_modelMatrix))) * a_normal; \n" \
+			"vs_out.FragPosLightSpace = lightSpaceMatrix * vs_out.FragPos; \n" \
+
 		"	a_color_out = a_color;\n" \
 		"	a_texcoord_out = a_texcoord;\n" \
+		"} \n" \
+
+		"if(u_depthScene == 1) { \n" \
+
+		"gl_Position = lightSpaceMatrix * u_modelMatrix * totalPosition; \n" \
+
+		"} \n" \
 		"} \n";
 
 	GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
@@ -177,12 +203,53 @@ int initializeADSDynamicShader(void)
 		"in vec3 a_fragPosNM_out; \n" \
 		"uniform sampler2D texture_normal; \n" \
 
+		// Shadow
+		"uniform int u_actualScene; \n" \
+		"uniform int u_depthScene; \n" \
+		"uniform int u_depthQuadScene; \n" \
+		"in VS_OUT{ \n" \
+		"vec4 FragPos; \n" \
+		"vec3 Normal; \n" \
+		"vec2 TexCoords; \n" \
+		"vec4 FragPosLightSpace; \n" \
+		"} fs_in; \n" \
+		"uniform sampler2D shadowMap; \n" \
+		"uniform vec4 u_lightPosition; \n" \
+
 		"out vec4 FragColor; \n" \
+
+		"float ShadowCalculation(vec4 fragPosLightSpace) \n" \
+		"{ \n" \
+			"vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w; \n" \
+			"projCoords = projCoords * 0.5 + 0.5; \n" \
+			"float closestDepth = texture(shadowMap, projCoords.xy).r; \n" \
+			"float currentDepth = projCoords.z; \n" \
+			"vec3 normal = normalize(fs_in.Normal); \n" \
+			"vec3 lightDir = normalize(u_lightPosition - fs_in.FragPos).xyz; \n" \
+			"float bias = max(0.025 * (1.0 - dot(normal, lightDir)), 0.005); \n" \
+			"float shadow = 0.0; \n" \
+			"vec2 texelSize = 1.0 / textureSize(shadowMap, 0); \n" \
+			"for (int x = -1; x <= 1; ++x) \n" \
+			"{ \n" \
+			"for (int y = -1; y <= 1; ++y) \n" \
+			"{ \n" \
+			"float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; \n" \
+			"shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; \n" \
+			"} \n" \
+			"} \n" \
+			"shadow /= 9.0; \n" \
+
+			"if (projCoords.z > 1.0) \n" \
+			"shadow = 0.0; \n" \
+
+			"return shadow; \n" \
+		"} \n" \
 
 		"void main(void) \n" \
 		"{ \n" \
 		"	if (enable_godRays == 1) \n" \
 		"	{\n" \
+				"if(u_actualScene == 1) { \n" \
 		"		vec4 phong_ads_light; \n" \
 		"		vec4 texColor = texture(u_texturesampler, a_texcoord_out); \n" \
 
@@ -209,14 +276,20 @@ int initializeADSDynamicShader(void)
 		"       vec3 halfwayDir = normalize(normalized_lightDirection + normalized_viewerVector); \n" \
 	
 		"       vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
-
-		"		phong_ads_light = ambient + diffuse + specular; \n" \
+			"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
+		"		phong_ads_light = ambient + (1.0 - shadow) * (diffuse + specular); \n" \
 		
 		"		FragColor = phong_ads_light; \n" \
 
 		"		if (u_fogEnable == 1) \n" \
 		"		{ \n" \
 		"			FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
+		"		} \n" \
+				"if(u_depthScene == 1) { \n" \
+
+				"FragColor = vec4(1.0); \n" \
+
+				"} \n" \
 		"		} \n" \
 		"	} \n" \
 
@@ -322,6 +395,14 @@ int initializeADSDynamicShader(void)
 	adsDynamicUniform.godrays_blackpass_sphere = glGetUniformLocation(adsDynamicShaderProgramObject, "enable_sphere_color");
 
 
+	// Shadow
+	adsDynamicUniform.lightSpaceMatrixUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "lightSpaceMatrix");
+	adsDynamicUniform.shadowMapSamplerUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "shadowMap");
+	adsDynamicUniform.actualSceneUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_actualScene");
+	adsDynamicUniform.depthSceneUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_depthScene");
+	adsDynamicUniform.depthQuadSceneUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_depthQuadScene");
+	adsDynamicUniform.depthTextureSamplerUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "depthMap");
+
 	for (int i = 0; i < MAX_BONES; i++)
 	{
 		byte str[100];
@@ -331,6 +412,7 @@ int initializeADSDynamicShader(void)
 
 	glUseProgram(adsDynamicShaderProgramObject);
     glUniform1i(adsDynamicUniform.textureSamplerUniform, 0);
+	glUniform1i(adsDynamicUniform.shadowMapSamplerUniform, 1);
 	glUniform1i(adsDynamicUniform.textureSamplerUniform_normal, 2);   //don't change
 	glUseProgram(0);
 

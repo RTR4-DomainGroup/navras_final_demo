@@ -35,6 +35,8 @@ GLfloat impreciselerp(GLfloat, GLfloat, GLfloat);
 GLfloat preciselerp(GLfloat, GLfloat, GLfloat);
 
 void rotateCamera(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+void resetCamera(void);
+
 
 //void rotateCamera(Camera, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
 
