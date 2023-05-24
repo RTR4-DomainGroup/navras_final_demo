@@ -23,6 +23,8 @@
 
 #include "../inc/Navras.h"
 
+#include "../inc/debug/debug_transformation.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
 
@@ -500,6 +502,8 @@ void updateNavras(void)
 
 	// camera movement related updates
 	updateMouseMovement();
+
+	debug_tranformation();
 
 }
 
