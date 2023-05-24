@@ -85,3 +85,4 @@ static const char *szAudios[] = {
 
 #define CURRENT_SCENE SCENE10_ADBHUT_RAS
 // #define CURRENT_SCENE SCENE9_VEER_RAS
+// #define CURRENT_SCENE SCENE11_SHRINGAR_RAS
