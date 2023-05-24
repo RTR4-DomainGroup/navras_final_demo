@@ -23,6 +23,8 @@
 
 #include "../inc/Navras.h"
 
+#include "../inc/debug/debug_transformation.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
 
@@ -274,8 +276,9 @@ int initializeNavras(void) {
 	// Debug
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 	//currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE10_ADBHUT_RAS;
+	// currentScene = SCENE10_ADBHUT_RAS;
 	//  currentScene = SCENE11_SHRINGAR_RAS;
+	currentScene = CURRENT_SCENE;
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -310,6 +313,14 @@ int initializeNavras(void) {
 	}
 
 	if (
+		SCENE9_VEER_RAS == currentScene &&
+		initializeScene09_VeerRas() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
+		return (-8);
+	}
+
+	if (
 		SCENE10_ADBHUT_RAS == currentScene && 
 		initializeScene10_AdbhutRas() != 0)
 	{
@@ -330,20 +341,6 @@ int initializeNavras(void) {
 		LOG("initializeParticle() FAILED !!!\n");
 		return (-8);
 	}
-
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
-
-	// currentScene = scenePop();
-	// Debug
-	 //currentScene = SCENE7_RAUDRA_RAS;
-	// currentScene = SCENE11_SHRINGAR_RAS;
-	currentScene = SCENE9_VEER_RAS;
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -503,6 +500,8 @@ void updateNavras(void)
 
 	// camera movement related updates
 	updateMouseMovement();
+
+	debug_tranformation();
 
 }
 
