@@ -8,6 +8,7 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/debug/debug_transformation.h"
 
 
 #ifdef ENABLE_WATER
@@ -224,6 +225,12 @@ int initializeScene10_AdbhutRas(void)
 	cameraUpY = 1.0f;
 	cameraUpZ = 0.0f;
 
+	// external debugging varaible
+    rAngle = 0.0f;
+    tf_t = {4.0f, 0.0f, -6.0f}; // tree pos 
+    tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
+    tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
+
     // Code.
 	// initializeCamera(&camera);
 
@@ -318,8 +325,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		finalViewMatrix = viewMatrix;
 
 	} else if(actualDepthQuadScene == 1) {
-	
-		
 
 		finalViewMatrix = mat4::identity();
 		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -658,10 +663,18 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	// translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
+	translationMatrix = vmath::translate(tf_t.x, tf_t.y,tf_t.z);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	// scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+
+	rotationMatrix_x = vmath::rotate(rAngle, tf_r.x, tf_r.y, tf_r.z);
+	rotationMatrix_y = vmath::rotate(rAngle, tf_r.x, tf_r.y, tf_r.z);
+	rotationMatrix_z = vmath::rotate(rAngle, tf_r.x, tf_r.y, tf_r.z);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -709,7 +722,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
-	// ------ Dancing Vampire Model ------
 
 	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
@@ -868,6 +880,7 @@ void updateScene10_AdbhutRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
+	debug_tranformation();
 }
 
 void uninitializeScene10_AdbhutRas(void)

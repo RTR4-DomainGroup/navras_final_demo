@@ -54,6 +54,7 @@ int winHeight;
 static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
 
 bool sceneFadeOut = false;
+bool cameraMode = false;
 
 extern AtmosphericVariables atmosVariables;
 
@@ -99,7 +100,7 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			cameraCounterSideWays -= 0.025f;
 			break;
 		default:
-			LOG("keypress : %d\n", wParam);
+			// LOG("keypress : %d\n", wParam);
 			break;
 		}
 		break;
@@ -107,39 +108,61 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 	case WM_CHAR:
 		switch (wParam) {
 
+		case 'c':
+			cameraMode = cameraMode ? false : true; 
+			break;
 		case 'W':
 		case 'w':
-			cameraEyeZ = cameraEyeZ - 0.25f;
-			cameraCenterZ = cameraCenterZ - 0.25f;
+			if(cameraMode)
+			{
+				cameraEyeZ = cameraEyeZ - 0.25f;
+				cameraCenterZ = cameraCenterZ - 0.25f;
+			}
 			break;
 		case 'S':
 		case 's':
-			cameraEyeZ = cameraEyeZ + 0.25f;
-			cameraCenterZ = cameraCenterZ + 0.25f;
+			if(cameraMode)
+			{
+				cameraEyeZ = cameraEyeZ + 0.25f;
+				cameraCenterZ = cameraCenterZ + 0.25f;
+			}
 			break;
 		case 'A':
 		case 'a':
-			cameraEyeX = cameraEyeX - 0.25f;
-			cameraCenterX = cameraCenterX - 0.25f;
+			if(cameraMode)
+			{
+				cameraEyeX = cameraEyeX - 0.25f;
+				cameraCenterX = cameraCenterX - 0.25f;
+			}
 			break;
 		case 'D':
 		case 'd':
-			cameraEyeX = cameraEyeX + 0.25f;
-			cameraCenterX = cameraCenterX + 0.25f;
+			if(cameraMode)
+			{
+				cameraEyeX = cameraEyeX + 0.25f;
+				cameraCenterX = cameraCenterX + 0.25f;
+			}
 			break;
 		case 'Q':
 		case 'q':
-			cameraEyeY = cameraEyeY - 0.25f;
-			cameraCenterY = cameraCenterY - 0.25f;
+			if(cameraMode)
+			{
+				cameraEyeY = cameraEyeY - 0.25f;
+				cameraCenterY = cameraCenterY - 0.25f;
+			}
 			break;
 		case 'E':
 		case 'e':
-			cameraEyeY = cameraEyeY + 0.25f;
-			cameraCenterY = cameraCenterY + 0.25f;
+			if(cameraMode)
+			{
+				cameraEyeY = cameraEyeY + 0.25f;
+				cameraCenterY = cameraCenterY + 0.25f;
+			}
 			break;
 		case 'R':
 		case 'r':
-			resetCamera();
+			if(cameraMode)
+				resetCamera();
 			break;
 		case 'P':
 		case 'p':
@@ -228,9 +251,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;
 
 		default:
-			LOG("keypressed : %d\n", wParam);
+			// LOG("keypressed : %d\n", wParam);
 			break;
-
 		}
 		break;
 

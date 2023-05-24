@@ -287,7 +287,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel, 0.2f);
+	// drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel, 0.2f);
 
 	glUseProgram(0);
 
