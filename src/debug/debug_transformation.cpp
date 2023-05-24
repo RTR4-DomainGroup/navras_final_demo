@@ -2,34 +2,42 @@
 // internal headers
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/geometrytypes.h"
+#include "../../inc/helper/camera.h"
 
 // transformation controllers
 TRANFORM tf_t; // translation
 TRANFORM tf_s; // scale
 TRANFORM tf_r; // rotation
-GLfloat rAngle;
 GLfloat tf_Speed = 0.05f; // transformation speed
+
 
 static bool translateMode = false;
 static bool scaleMode = false;
 static bool rotateMode = false;
+static bool cameraMode = false;
 
 // extern these variables in your WndProc 
 extern GLbyte charPressed;
 extern GLuint keyPressed;
 
+// extern
+// camera related variables for movement in scene during debugging
+extern float cameraCounterSideWays;
+extern float cameraCounterUpDownWays;
+
 void debug_tranformation(void)
 {
 	// local trnasformation
-	static TRANFORM ltf;
+	static TRANFORM l_tsl; // local translation
+	static TRANFORM l_scl; // local scale
+	static TRANFORM l_rot; // local rotation
 	static GLfloat ltf_R, ltf_Speed;
 	static GLboolean firstCall = GL_TRUE;
 	if(firstCall)
 	{
-		ltf.x = tf_t.x;  
-		ltf.y = tf_t.y;  
-		ltf.z = tf_t.z; 
-		ltf_R = rAngle;
+		l_tsl = tf_t;  
+		l_scl = tf_s;  
+		l_rot = tf_r; 
 		firstCall = GL_FALSE;
 	}
 
@@ -44,10 +52,20 @@ void debug_tranformation(void)
 			translateMode = translateMode ? false : true;
 			break;
 		case 's':
-			scaleMode = scaleMode ? false : true;
+			if(cameraMode)
+			{
+				cameraEyeZ = cameraEyeZ + 0.25f;
+				cameraCenterZ = cameraCenterZ + 0.25f;
+			}
+			else {
+				scaleMode = scaleMode ? false : true;
+			}
 			break;
 		case 'r':
-			rotateMode = rotateMode ? false : true;
+			if(cameraMode)
+				resetCamera();
+			else	
+				rotateMode = rotateMode ? false : true;
 			break;
 		case 'x':
 		case 'X':
@@ -56,7 +74,7 @@ void debug_tranformation(void)
 					tf_t.x += tf_Speed;
 				else
 					tf_t.x -= tf_Speed;
-				// LOG("X translation changed to %.02ff\n", tf_t.x);
+				LOG("X translation changed to %.02ff\n", tf_t.x);
 			}
 			if(scaleMode) {
 				if('x' == charPressed)
@@ -67,9 +85,9 @@ void debug_tranformation(void)
 			}
 			if(rotateMode) {
 				if('x' == charPressed)
-					tf_r.x = 1.0;
+					tf_r.x += tf_Speed;
 				else
-					tf_r.x = 0.0f;
+					tf_r.x -= tf_Speed;
 				// LOG("X rotation changed to %.02ff\n", tf_r.x);
 			}
 			break;
@@ -80,7 +98,7 @@ void debug_tranformation(void)
 					tf_t.y += tf_Speed;
 				else
 					tf_t.y -= tf_Speed;
-				// LOG("Y translation changed to %.02ff\n", tf_t.y);
+				LOG("Y translation changed to %.02ff\n", tf_t.y);
 			}
 			if(scaleMode) {
 				if('y' == charPressed)
@@ -104,7 +122,7 @@ void debug_tranformation(void)
 					tf_t.z += tf_Speed;
 				else
 					tf_t.z -= tf_Speed;
-				// LOG("Z translation changed to %.02ff\n", tf_t.z);
+				LOG("Z translation changed to %.02ff\n", tf_t.z);
 			}
 			if(scaleMode) {
 				if('z' == charPressed)
@@ -123,24 +141,16 @@ void debug_tranformation(void)
 			break;
 		case 'p':
 			LOG("\n");
+			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f])\n", 
+				cameraEyeX, cameraEyeY, cameraEyeZ, 
+				cameraCenterX, cameraCenterY, cameraCenterZ, 
+				cameraUpX, cameraUpY, cameraUpZ);
 			LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
-			LOG("Rotation is (%.02ff) %.02ff, %.02ff, %.02ff\n", rAngle, tf_r.x, tf_r.y, tf_r.z);
-			break;
-		case 'g':
-			if(rotateMode) {
-				rAngle += tf_Speed;
-				// LOG("R transform changed to %.02ff\n", rAngle);
-			}
-			break;
-		case 'G':
-			if(rotateMode) {
-				rAngle -= tf_Speed;
-				// LOG("R transform changed to %.02ff\n", rAngle);
-			}
+			LOG("Rotation is (%.02ff) %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			break;
 		case '+':
-			tf_Speed += 0.05f;
+			tf_Speed += 0.04f;
 			if(tf_Speed < 0)
 				tf_Speed = 0.0f;
 			break;
@@ -153,10 +163,53 @@ void debug_tranformation(void)
 		// 	tf_t.x = tf_t.y = tf_t.z = tf_R = tf_Speed = 0.0f;
 		// 	break;
 		case 'C':
-			tf_t.x = ltf.x;
-			tf_t.y = ltf.y;
-			tf_t.z = ltf.z;
-			rAngle = ltf_R;
+			tf_t = l_tsl;  
+			tf_s = l_scl;  
+			tf_r = l_rot; 
+			break;
+		case 'c':
+			cameraMode = cameraMode ? false : true; 
+			break;
+		case 'W':
+		case 'w':
+			if(cameraMode)
+			{
+				cameraEyeZ = cameraEyeZ - 0.25f;
+				cameraCenterZ = cameraCenterZ - 0.25f;
+			}
+			break;
+
+		case 'A':
+		case 'a':
+			if(cameraMode)
+			{
+				cameraEyeX = cameraEyeX - 0.25f;
+				cameraCenterX = cameraCenterX - 0.25f;
+			}
+			break;
+		case 'D':
+		case 'd':
+			if(cameraMode)
+			{
+				cameraEyeX = cameraEyeX + 0.25f;
+				cameraCenterX = cameraCenterX + 0.25f;
+			}
+			break;
+		case 'Q':
+		case 'q':
+			if(cameraMode)
+			{
+				cameraEyeY = cameraEyeY - 0.25f;
+				cameraCenterY = cameraCenterY - 0.25f;
+			}
+			break;
+		case 'E':
+		case 'e':
+			if(cameraMode)
+			{
+				cameraEyeY = cameraEyeY + 0.25f;
+				cameraCenterY = cameraCenterY + 0.25f;
+			}
 			break;
 		default:
 			charHandled = GL_FALSE;
@@ -176,6 +229,33 @@ void debug_tranformation(void)
 
 	if(keyPressed)
 	{
+		switch (keyPressed)
+		{
+		case VK_UP:	// Up
+			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
+			cameraCounterUpDownWays += 0.025f;
+			break;
+		case VK_DOWN:	// down
+			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
+			cameraCounterUpDownWays -= 0.025f;
+			break;
+		case VK_LEFT:	// left
+			//LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
+			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
+			cameraCounterSideWays += 0.025f;
+			break;
+		case VK_RIGHT:	// right
+			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
+			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
+			cameraCounterSideWays -= 0.025f;
+			break;
+		
+		default:
+			break;
+		}
 		keyPressed = 0;
 	}
 }
