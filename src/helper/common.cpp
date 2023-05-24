@@ -85,18 +85,6 @@ int log_open(char const* FileName , char const* Mode)
     return retval;
 }
 
-const char* removepath(const char* filewithpath)
-{
-    int len = strlen(filewithpath);
-    while(len > 0) {
-        char c = filewithpath[len -1];
-        if(c == PATH_SEPARATOR)
-            return (filewithpath + len);
-        len--;
-    }
-    return (filewithpath);
-}
-
 int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
     int _Result = 0;
@@ -141,6 +129,17 @@ char* vararg2string(const char* format, ...)
 // windows code goes here
 #include <strsafe.h>
 
+const char* removepath(const char* filewithpath)
+{
+    int len = strlen(filewithpath);
+    while(len > 0) {
+        char c = filewithpath[len -1];
+        if(c == PATH_SEPARATOR)
+            return (filewithpath + len);
+        len--;
+    }
+    return (filewithpath);
+}
 
 char* currentDateTime()
 {
