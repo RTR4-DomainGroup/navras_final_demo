@@ -53,12 +53,12 @@ void uninitializeTerrain(TextureVariables *terrainTexture) {
 	if (terrainTexture->displacement)
 	{
 		glDeleteTextures(1, &terrainTexture->displacement);
-		terrainTexture->displacement = NULL;
+		terrainTexture->displacement = 0;
 	}
 
 	if (terrainTexture->albedo)
 	{
 		glDeleteTextures(1, &terrainTexture->albedo);
-		terrainTexture->albedo = NULL;
+		terrainTexture->albedo = 0;
 	}
 }

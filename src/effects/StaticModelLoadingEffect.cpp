@@ -392,7 +392,8 @@ vector<StaticModelTexture> StaticModel::loadMaterialTextures(aiMaterial* mat, ai
             texture.id = TextureFromFile(str.C_Str(), this->directory);
 
             if (texture.id == 0)
-                MessageBox(NULL, NULL, TEXT("Tex not loaded"), MB_OK);
+                // MessageBox(NULL, NULL, TEXT("Tex not loaded"), MB_OK);
+                LOG("Tex not loaded\n");
 
             texture.type = typeName;
             texture.path = str.C_Str();
