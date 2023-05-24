@@ -335,15 +335,15 @@ void uninitializeScene_PlaceHolderIndoor(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&schoolBagModel);
-	unloadStaticModel(&deskModel);
-	unloadStaticModel(&streetLightModel);
-	unloadStaticModel(&rockModel);
+	// unloadStaticModel(&schoolBagModel);
+	// unloadStaticModel(&deskModel);
+	// unloadStaticModel(&streetLightModel);
+	// unloadStaticModel(&rockModel);
 #endif
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&skeletonModel);
+	// unloadDynamicModel(&skeletonModel);
 #endif
 }
 
