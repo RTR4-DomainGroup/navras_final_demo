@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
@@ -9,6 +8,7 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/debug/debug_transformation.h"
 
 
 #ifdef ENABLE_WATER
@@ -95,7 +95,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -146,24 +146,12 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 extern float myScale; // = 1.0f;
 
 extern float noiseScale; // = 2.0f;
 extern bool noiseScaleIncrement; // = true;
 
-extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] ; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] ; //= { 10.0f, 10.0f, 0.0f, 1.0f };
-
-extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess; // = 128.0f;
-
 extern mat4 viewMatrix;
-
 
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
 extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
@@ -189,14 +177,6 @@ extern double deltaTime;
 extern struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_STATIC_MODELS
-//Model variables
-extern STATIC_MODEL rockModel;
-extern STATIC_MODEL streetLightModel;
-extern DYNAMIC_MODEL skeletonModel;
-
-#endif // ENABLE_STATIC_MODELS
-
 extern GLfloat density; // = 0.15;
 extern GLfloat gradient; // = 0.5;
 extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
@@ -208,6 +188,26 @@ extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
+
+
+#ifdef ENABLE_STATIC_MODELS
+//Model variables
+static STATIC_MODEL rockModel;
+static STATIC_MODEL treeModel;
+static DYNAMIC_MODEL skeletonModel;
+
+#endif // ENABLE_STATIC_MODELS
+
+
+extern GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+extern GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+extern GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+
+extern GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+extern GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+extern GLfloat materialShininess = 128.0f;
 
 
 int initializeScene10_AdbhutRas(void)
@@ -227,13 +227,19 @@ int initializeScene10_AdbhutRas(void)
 	cameraUpY = 1.0f;
 	cameraUpZ = 0.0f;
 
-    // Code.
+	// external debugging varaible
+    tf_t = {-1.5f, -3.5f, 0.0f}; // tree pos 
+    // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
+    // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
+	tf_Speed = 0.05f;
+    
+	// Code.
 	// initializeCamera(&camera);
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -273,7 +279,25 @@ int initializeScene10_AdbhutRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
-	displacementmap_depth = 0;
+#ifdef ENABLE_TERRIAN
+	// displacementmap_depth = 15.0f;
+	displacementmap_depth = 1.5f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0) 
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+	
+#endif // ENABLE_TERRIAN
 	return 0;
 }
 
@@ -303,8 +327,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		finalViewMatrix = viewMatrix;
 
 	} else if(actualDepthQuadScene == 1) {
-	
-		
 
 		finalViewMatrix = mat4::identity();
 		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -643,17 +665,17 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-
-	modelMatrix = translationMatrix * scaleMatrix;
+	translationMatrix = vmath::translate(-4.53f, -1.20f, -6.00f);
+	scaleMatrix = vmath::scale(0.21f, 0.21f, 0.21f);
+	
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 
-	drawStaticModel(streetLightModel);
+	drawStaticModel(treeModel);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -694,7 +716,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
-	// ------ Dancing Vampire Model ------
 
 	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
@@ -768,7 +789,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 #endif // ENABLE_WATER
 
-if(godRays == 1){
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
 		void displayScene10_Billboarding(int);
@@ -776,7 +796,6 @@ if(godRays == 1){
 		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
-}
 }
 
 #ifdef ENABLE_BILLBOARDING
@@ -810,7 +829,8 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
-	translationMatrix = vmath::translate(0.0f, -5.0f, 0.0f);
+	translationMatrix = vmath::translate(1.5f, -3.5f, -25.0f);
+
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -826,12 +846,17 @@ void displayScene10_Billboarding(int godRays = 1)
 
 
 	/// Flower
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
 	if (texture_flower.height > texture_flower.width)
 		scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, 0.0f, 0.0f);
+	translationMatrix = vmath::translate(-1.50f, -3.50f, -25.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -845,6 +870,13 @@ void displayScene10_Billboarding(int godRays = 1)
 	glUseProgram(0);
 	glDisable(GL_BLEND);
 
+	// translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	// scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+	// rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
+	// rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
+	// rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
+	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
 }
 #endif // ENABLE_BILLBOARDING	
 
@@ -855,6 +887,7 @@ void updateScene10_AdbhutRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
+	debug_tranformation();
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -865,10 +898,14 @@ void uninitializeScene10_AdbhutRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif // ENABLE_TERRIAN
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel);
-	unloadStaticModel(&streetLightModel);
+	unloadStaticModel(&treeModel);
 #endif // ENABLE_STATIC_MODELS
 
 

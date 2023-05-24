@@ -59,7 +59,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables

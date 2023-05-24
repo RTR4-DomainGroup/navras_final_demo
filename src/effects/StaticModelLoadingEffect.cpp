@@ -1,4 +1,3 @@
-#pragma once
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/shaders/ADSLightShader.h"
 
@@ -211,6 +210,8 @@ void StaticModel::loadModel(string const& path)
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 void StaticModel::processNode(aiNode* node, const aiScene* scene)
 {
+    static int count = 0;
+    LOG("Enter : %d\n", count++);
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {

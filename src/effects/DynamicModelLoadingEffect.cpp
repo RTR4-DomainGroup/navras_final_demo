@@ -859,7 +859,11 @@ void loadDynamicModel(const char* path, DYNAMIC_MODEL* dynamicModel)
 
 void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime)
 {
-    float currentFrame = GetTickCount();
+    float currentFrame = 0; // GetTickCount();
+#ifdef _WIN32
+    currentFrame = GetTickCount();
+#endif // _WIN32
+
     m_deltaTime = (currentFrame - m_lastFrame) * deltaTime;
     m_lastFrame = currentFrame;
 

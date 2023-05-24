@@ -14,6 +14,10 @@ GLfloat cameraUpX;
 GLfloat cameraUpY;
 GLfloat cameraUpZ;
 
+// camera related variables for movement in scene during debugging
+float cameraCounterSideWays = 3.2f;
+float cameraCounterUpDownWays = 3.2f;
+
 Camera camera;
 
 void initializeCamera(Camera* camera)
@@ -26,6 +30,25 @@ void setCamera(void)
 	camera.eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
 	camera.center = { cameraCenterX, cameraCenterY, cameraCenterZ };
 	camera.up = { cameraUpX, cameraUpY, cameraUpZ };
+}
+
+
+void resetCamera(void)
+{
+	cameraEyeX = 0.0f;
+	cameraEyeY = 0.0f;
+	cameraEyeZ = 6.0f;
+
+	cameraCenterX = 0.0f;
+	cameraCenterY = 0.0f;
+	cameraCenterZ = 0.0f;
+
+	cameraUpX = 0.0f;
+	cameraUpY = 1.0f;
+	cameraUpZ = 0.0f;
+
+	cameraCounterSideWays = 3.2f;
+	cameraCounterUpDownWays = 3.2f;
 }
 
 //void setCamera(Camera *camera)
