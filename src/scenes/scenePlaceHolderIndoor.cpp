@@ -56,12 +56,12 @@ static GLfloat materialShininess = 128.0f;
 
 static mat4 viewMatrix;
 
-//Model variables
-STATIC_MODEL rockModel_in;
-STATIC_MODEL streetLightModel_in;
-STATIC_MODEL deskModel;
-STATIC_MODEL schoolBagModel;
-DYNAMIC_MODEL skeletonModel_in;
+// //Model variables
+// static STATIC_MODEL rockModel;
+// static STATIC_MODEL streetLightModel;
+// static STATIC_MODEL deskModel;
+// static STATIC_MODEL schoolBagModel;
+// static DYNAMIC_MODEL skeletonModel;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -84,20 +84,20 @@ int initializeScene_PlaceHolderIndoor(void)
 
 #endif // ENABLE_ADSLIGHT
 	
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel_in);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_in);
-	loadStaticModel("res/models/desk/desk.obj", &deskModel);
-	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
-#endif // ENABLE_STATIC_MODELS
+// #ifdef ENABLE_STATIC_MODELS
+// 	//load models
+// 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+// 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+// 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
+// 	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
+// #endif // ENABLE_STATIC_MODELS
 
 
-#ifdef ENABLE_DYNAMIC_MODELS
-	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_in);
-	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_in);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_in);
-#endif
+// #ifdef ENABLE_DYNAMIC_MODELS
+// 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+// 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
+// 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+// #endif
 
 
 	return 0;
@@ -174,7 +174,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(rockModel_in);
+	// drawStaticModel(rockModel);
 
 	// ------ Streetlight Model ------
 	translationMatrix = mat4::identity();
@@ -195,7 +195,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(streetLightModel_in);
+	// drawStaticModel(streetLightModel);
 
 	// ------ SchoolBag Model ------
 	translationMatrix = mat4::identity();
@@ -216,7 +216,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(schoolBagModel);
+	// drawStaticModel(schoolBagModel);
 
 
 	// ------ Desk Model ------
@@ -237,7 +237,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(deskModel);
+	// drawStaticModel(deskModel);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
@@ -287,7 +287,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel_in, 0.2f);
+	drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel, 0.2f);
 
 	glUseProgram(0);
 
@@ -337,13 +337,13 @@ void uninitializeScene_PlaceHolderIndoor(void)
 	//UNINIT models
 	unloadStaticModel(&schoolBagModel);
 	unloadStaticModel(&deskModel);
-	unloadStaticModel(&streetLightModel_in);
-	unloadStaticModel(&rockModel_in);
+	unloadStaticModel(&streetLightModel);
+	unloadStaticModel(&rockModel);
 #endif
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&skeletonModel_in);
+	unloadDynamicModel(&skeletonModel);
 #endif
 }
 

@@ -327,9 +327,17 @@ int initializeNavras(void) {
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
 
-
+	// samples
     //initializeTriangle();
     //initializeSphere();
+	
+
+	// currentScene = scenePop();
+	// Debug
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
+	//currentScene = SCENE7_RAUDRA_RAS;
+	currentScene = SCENE10_ADBHUT_RAS;
+	//  currentScene = SCENE11_SHRINGAR_RAS;
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -341,36 +349,42 @@ int initializeNavras(void) {
 	}
 #endif // ENABLE_VIDEO_RENDER
 
-	if (initializeScene10_AdbhutRas() != 0)
-	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-		return (-8);
-	}
-
-	if(initializeScene11_ShringarRas() != 0)
-	{
-		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
-        return (-8);
-	}
-
-	
-
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
         return (-8);
 	}
 
-	if(initializeScene7_Raudra() != 0)
+	if (
+		SCENE_PLACEHOLDER_INDOOR == currentScene && 
+		initializeScene_PlaceHolderIndoor() != 0)
+	{
+		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
+		return (-8);
+	}
+
+	if(
+		SCENE7_RAUDRA_RAS == currentScene && 
+		initializeScene7_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
         return (-8);
 	}
 
-	if (initializeScene_PlaceHolderIndoor() != 0)
+	if (
+		SCENE10_ADBHUT_RAS == currentScene && 
+		initializeScene10_AdbhutRas() != 0)
 	{
-		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
 		return (-8);
+	}
+
+	if(
+		SCENE11_SHRINGAR_RAS == currentScene && 
+		initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
 	}
 
 	if (initializeParticle() != 0)
@@ -379,19 +393,6 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
-
-	// currentScene = scenePop();
-	// Debug
-	//currentScene = SCENE7_RAUDRA_RAS;
-	 currentScene = SCENE11_SHRINGAR_RAS;
-	//currentScene = SCENE10_ADBHUT_RAS;
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -409,8 +410,6 @@ int initializeNavras(void) {
 	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
-
-
 
 	return(0);
 }
