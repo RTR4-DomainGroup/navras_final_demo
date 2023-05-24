@@ -81,11 +81,12 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-extern STATIC_MODEL rockModel;
-extern STATIC_MODEL streetLightModel;
-extern DYNAMIC_MODEL skeletonModel;
-
+static STATIC_MODEL rockModel;
+static STATIC_MODEL streetLightModel;
+static DYNAMIC_MODEL skeletonModel;
 #endif // ENABLE_STATIC_MODELS
+
+GLuint texture_road;
 
 int initializeScene08_BibhatsaRas(void)
 {
@@ -109,16 +110,16 @@ int initializeScene08_BibhatsaRas(void)
 	initializeQuad();
 	initializeCube();
 
-	//if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"\\Bibhatsa\\albedo.png") == FALSE)
-	//{
-	//	//uninitialize();
-	//	LOG("LoadGLTexture for texture_road FAILED!!!\n");
-	//	return(-1);
-	//}
-	//else
-	//{
-	//	LOG("LoadGLTexture texture_road Successfull = %u!!!\n", texture_road);
-	//}
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"\\Road\\Road.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_road FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_road Successfull = %u!!!\n", texture_road);
+	}
 #endif
 
 #ifdef ENABLE_STATIC_MODELS
@@ -204,7 +205,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+		//glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
 		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
 		glUniform1f(sceneStarfieldUniform.timeUniform, time);
 
@@ -221,7 +222,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		modelMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(2.0f, 1.0f, 25.0f);
+		scaleMatrix = vmath::scale(3.0f, 1.0f, 35.0f);
 		rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
@@ -232,11 +233,23 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
 
+		glUniformMatrix4fv(bibhatsaRasObject.laUniform, 1, GL_FALSE, lightAmbient);
+		glUniformMatrix4fv(bibhatsaRasObject.ldUniform, 1, GL_FALSE, lightDiffuse);
+		glUniformMatrix4fv(bibhatsaRasObject.lsUniform, 1, GL_FALSE, lightSpecular);
+		glUniformMatrix4fv(bibhatsaRasObject.lightPositionUniform, 1, GL_FALSE, lightPosition);
+		
+		glUniformMatrix4fv(bibhatsaRasObject.kaUniform, 1, GL_FALSE, materialAmbient);
+		glUniformMatrix4fv(bibhatsaRasObject.kdUniform, 1, GL_FALSE, materialDiffuse);
+		glUniformMatrix4fv(bibhatsaRasObject.ksUniform, 1, GL_FALSE, materialSpecular);
+		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess);		
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_road);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+
 		displayQuad();
-		//glUseProgram(0);
 
 		// Buildings
-		//bibhatsaRasObject = useADSShader();
 		// Transformations
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
@@ -253,11 +266,10 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//glActiveTexture(GL_TEXTURE7);
-		//glBindTexture(GL_TEXTURE_2D, texture_road);
-		//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_road);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 
-		glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
 
 		displayCube();
@@ -278,11 +290,10 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//glActiveTexture(GL_TEXTURE7);
-		//glBindTexture(GL_TEXTURE_2D, texture_road);
-		//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_road);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 
-		glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
 
 		displayCube();
@@ -303,11 +314,10 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//glActiveTexture(GL_TEXTURE7);
-		//glBindTexture(GL_TEXTURE_2D, texture_road);
-		//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_road);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 
-		glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
 
 		displayCube();
@@ -328,11 +338,10 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//glActiveTexture(GL_TEXTURE7);
-		//glBindTexture(GL_TEXTURE_2D, texture_road);
-		//glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_road);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 
-		glUniform1i(bibhatsaRasObject.textureSamplerUniform_normal, 0);
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
 
 		displayCube();

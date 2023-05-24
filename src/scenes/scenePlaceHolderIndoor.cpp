@@ -1,5 +1,3 @@
-#pragma once
-
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/helper/texture_loader.h"
@@ -348,3 +346,5 @@ void uninitializeScene_PlaceHolderIndoor(void)
 	unloadDynamicModel(&skeletonModel_in);
 #endif
 }
+
+

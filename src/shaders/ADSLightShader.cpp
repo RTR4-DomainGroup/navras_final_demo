@@ -96,7 +96,6 @@ int initializeADSShader(void)
 				"a_texcoord_out = a_texcoord;\n" \
 
 			"} \n" \
-			
 
 			"if(u_depthScene == 1) { \n" \
 

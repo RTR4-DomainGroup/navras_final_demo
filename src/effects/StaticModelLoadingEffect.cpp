@@ -1,4 +1,3 @@
-#pragma once
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/shaders/ADSLightShader.h"
 

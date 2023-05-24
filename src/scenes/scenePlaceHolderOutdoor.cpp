@@ -1,7 +1,4 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
-
-
 
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
@@ -12,8 +9,6 @@
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
-
-
 
 
 #ifdef ENABLE_WATER
@@ -263,24 +258,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_SHADOW
 
-#ifdef ENABLE_TERRIAN
-	displacementmap_depth = 15.0f;
-
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/DiffuseMapTerrain.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/DisplacementMapTerrain.jpg";
-	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/NormalMapTerrain.jpg";
-
-	if (initializeTerrain(&terrainTextureVariables) != 0) 
-	{
-		LOG("initializeTerrain() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeTerrain() Successfull!!!\n");
-	}
-	
-#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_ATMOSPHERE
 
@@ -736,8 +713,6 @@ void updateScene_PlaceHolderOutdoor(void)
 	// update Cloud
 	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
 #endif // ENABLE_CLOUD_NOISE
-
-
 
 #ifdef ENABLE_WATER
 
