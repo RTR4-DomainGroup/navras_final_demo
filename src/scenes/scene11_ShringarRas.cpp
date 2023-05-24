@@ -67,7 +67,7 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-#include "../../inc/scenes/Scene11_ShringarRas.h"
+#include "../../inc/scenes/scene11_ShringarRas.h"
 
 
 

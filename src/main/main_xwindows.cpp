@@ -45,7 +45,7 @@ GLbyte charPressed;
 GLuint keyPressed;
 
 // mouse Interaction 
-Bool mouseLeftClickActive = False;
+bool mouseLeftClickActive = false;
 // mouse position
 float mouseX;
 float mouseY;
