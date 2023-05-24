@@ -19,6 +19,8 @@
 #include "../../inc/helper/shadowframebuffer.h"
 #endif // ENABLE_SHADOW
 
+#undef ENABLE_BILLBOARDING
+
 #ifdef ENABLE_BILLBOARDING
 #include "../../inc/shaders/BillboardingShader.h"
 #endif // ENABLE_BILLBOARDING
@@ -237,7 +239,7 @@ int initializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
+	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
@@ -537,7 +539,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 proj_matrix = mat4::identity();
 
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translate(0.0f, -0.5f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
@@ -657,7 +659,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(rockModel_11);
+	//drawStaticModel(rockModel_11);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -764,7 +766,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-		scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
+		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
 
@@ -884,6 +886,13 @@ void updateScene11_ShringarRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_WATER
+
+	moveFactor += 0.0003f;
+	if (moveFactor >= 360.0f)
+		moveFactor -= 360.0f;
+#endif // ENABLE_WATER
 }
 
 void uninitializeScene11_ShringarRas(void)
@@ -911,4 +920,3 @@ void uninitializeScene11_ShringarRas(void)
 	//uninitializeCamera(&camera);
 
 }
-

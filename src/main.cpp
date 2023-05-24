@@ -468,6 +468,11 @@ void updateNavras(void)
 
 	
 	// Call Scenes Update Here
+	if (currentScene == SCENE11_SHRINGAR_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene11_ShringarRas();
+	}
 	if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();

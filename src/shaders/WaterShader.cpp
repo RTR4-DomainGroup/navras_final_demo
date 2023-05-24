@@ -26,7 +26,7 @@ int initializeWaterShader(void)
         "out vec2 a_texcoord_out;\n" \
 
         "uniform vec4 u_plane;\n" \
-        "const float tiling = 8.0;\n" \
+        "const float tiling = 100.0;\n" \
         "void main(void) \n" \
         "{ \n" \
             "gl_ClipDistance[0] = dot(u_modelMatrix * a_position, u_plane); \n" \
@@ -93,7 +93,7 @@ int initializeWaterShader(void)
 
         "uniform float u_moveFactor; \n" \
         "uniform bool enable_godRays = true; \n" \
-        "const float waveStrength = 0.01; \n" \
+        "const float waveStrength = 0.04; \n" \
         "out vec4 FragColor; \n" \
 
         "void main(void) \n" \
