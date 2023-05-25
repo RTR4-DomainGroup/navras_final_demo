@@ -104,7 +104,7 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;	
 		case ']':	
 			currentScene = sceneNext();
-			LOG("current scene changed: %s\n", currentScene);
+			LOG("current scene changed: %d\n", currentScene);
 			break;	
 		case '1':
 		case '!':
@@ -273,15 +273,13 @@ int initializeNavras(void) {
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
-
 	// samples
     //initializeTriangle();
     //initializeSphere();
 	
-
 	currentScene = CURRENT_SCENE;
 	// currentScene = scenePop();
-	LOG("current scene changed: %s\n", currentScene);
+	LOG("current scene changed: %d\n", currentScene);
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -452,6 +450,7 @@ void displayNavras(void)
 	}
 	else
 	{
+		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
 	}
 
@@ -467,7 +466,7 @@ void updateNavras(void)
 	if(sceneFadeOut == true)
 	{
 		currentScene = scenePop();
-		LOG("current scene changed: %s\n", currentScene);
+		LOG("current scene changed: %d\n", currentScene);
 		sceneFadeOut = false;
 	} 
 

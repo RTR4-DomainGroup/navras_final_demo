@@ -22,19 +22,25 @@ static int curr = 0;
 
 void scenePush(scene_types_t scene)
 {
-    if(head < (int)MAX_SCENES) {
+    LOG("Enter \n");
+    if(head < (int)MAX_SCENES) {    
+        LOG("Enter \n");
         sceneStack[head] = scene;
+        LOG("Enter \n");
         head++;
+        LOG("Enter \n");
     }
     else {
         LOG("scene stack overflow: %d !!!\n", head);
     }
+    LOG("Enter \n");
 }
 
 scene_types_t scenePop ()
 {
     if((head-1) >= 0) {
         head--;
+        curr = head;
         sceneStack[head+1] = SCENE_INVALID;
     }
     else {
