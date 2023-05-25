@@ -12,7 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include "../../inc/helper/assimp_glm_helpers.h"
+#include "../helper/assimp_glm_helpers.h"
+#include "../debug/debug_transformation.h"
 
 #include "resources.h"
 #include "vmath.h"
