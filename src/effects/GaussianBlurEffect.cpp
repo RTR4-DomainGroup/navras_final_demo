@@ -53,8 +53,6 @@ void uninitializeGaussianBlur(GaussianBlurEffect* gaussianBlurEffect)
             gaussianBlurEffect->verticalFBDetails.renderBuffer = 0;
         }
         
-        free(gaussianBlurEffect);
-        gaussianBlurEffect = NULL;
     }
     
 }

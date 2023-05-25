@@ -1,6 +1,7 @@
 // Header Files
 
 #include "../inc/helper/common.h"
+#include "../inc/helper/geometry.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
@@ -20,6 +21,8 @@
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
 #include "../inc/scenes/scene06_BhayanakRas.h"
+
+#include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
 
@@ -99,6 +102,14 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 				songId = NUM_AUDIO-1;
 			break;	
 
+		case '[':
+			currentScene = scenePrev();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
+		case ']':	
+			currentScene = sceneNext();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
 		case '1':
 		case '!':
 			if (wParam == '!')
@@ -263,22 +274,19 @@ int initializeNavras(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE14_PARTICLE);
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
-
+	scenePush(SCENE6_BHAYANK_RAS);
+	scenePush(SCENE0_AMC_BANNER);
 	// samples
     //initializeTriangle();
     //initializeSphere();
 	
-
-	// currentScene = scenePop();
-	// Debug
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
-	//currentScene = SCENE7_RAUDRA_RAS;
-	// currentScene = SCENE10_ADBHUT_RAS;
-	//  currentScene = SCENE11_SHRINGAR_RAS;
 	currentScene = CURRENT_SCENE;
+	// currentScene = scenePop();
+	LOG("current scene changed: %d\n", currentScene);
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -297,7 +305,7 @@ int initializeNavras(void) {
 	}
 
 	if (
-		SCENE_PLACEHOLDER_INDOOR == currentScene && 
+		// SCENE_PLACEHOLDER_INDOOR == currentScene && 
 		initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
@@ -313,7 +321,7 @@ int initializeNavras(void) {
 	}
 
 	if(
-		SCENE7_RAUDRA_RAS == currentScene && 
+		// SCENE7_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
@@ -321,7 +329,7 @@ int initializeNavras(void) {
 	}
 
 	if (
-		SCENE10_ADBHUT_RAS == currentScene && 
+		// SCENE10_ADBHUT_RAS == currentScene && 
 		initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
@@ -329,7 +337,7 @@ int initializeNavras(void) {
 	}
 
 	if(
-		SCENE11_SHRINGAR_RAS == currentScene && 
+		// SCENE11_SHRINGAR_RAS == currentScene && 
 		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
@@ -464,6 +472,7 @@ void displayNavras(void)
 	}
 	else
 	{
+		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
 	}
 
@@ -479,6 +488,7 @@ void updateNavras(void)
 	if(sceneFadeOut == true)
 	{
 		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
 		sceneFadeOut = false;
 	} 
 

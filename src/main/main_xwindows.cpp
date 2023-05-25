@@ -278,7 +278,7 @@ int main(void)
     retval = initialize();
     if(retval != 0)
     {
-        LOG("Initialize OpenGL failed\n");
+        printf("Initialize OpenGL failed\n");
         exit(1);
     }
     else
@@ -629,7 +629,6 @@ void uninitialize(void)
 
     LOG("%s(%d): %s: Successful\n", __FILE__, __LINE__, __FUNCTION__);
 
-    LOG("log file successfully closed.\n");
-    log_close();
+
 }
 
