@@ -218,8 +218,6 @@ int initializeScene10_AdbhutRas(void)
 	cameraUpX = 0.0f;
 	cameraUpY = 1.0f;
 	cameraUpZ = 0.0f;
-
-
     
 	// Code.
 	// initializeCamera(&camera);
@@ -295,13 +293,13 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
+	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
 
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
 
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -651,8 +649,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(-4.53f, -1.20f, -6.00f);
-	scaleMatrix = vmath::scale(0.21f, 0.21f, 0.21f);
+	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
+	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
 	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -897,3 +895,5 @@ void uninitializeScene10_AdbhutRas(void)
 
 #endif // ENABLE_WATER
 #endif // ENABLE_STARFIELD
+
+

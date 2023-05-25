@@ -117,7 +117,7 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
         vfprintf(_pFile, format, _ArgList);
         __builtin_va_end(_ArgList);
 
-        _Result = fprintf(_pFile, "%s %s:%s (%d) %s", currentDateTime(), removepath(filewithpath), funcname, linenum, myBuffer);
+        _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), removepath(filewithpath), linenum, funcname, myBuffer);
     }
     fclose(_pFile);
     return _Result;	
@@ -161,10 +161,10 @@ int log_open(char const* FileName , char const* Mode)
 	{
         strcpy(_filename, FileName);
         retval = 0;
+        fclose(_pFile);
+        _pFile = NULL;
 	}
 
-    fclose(_pFile);
-    _pFile = NULL;
     return retval;
 }
 
@@ -189,12 +189,13 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
         _vsnprintf_l(myBuffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
         __crt_va_end(_ArgList);
 
-        _Result = fprintf(_pFile, "%s %s:%s (%d) %s", currentDateTime(), removepath(filewithpath), funcname, linenum, myBuffer);
+        _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), removepath(filewithpath), linenum, funcname, myBuffer);
+
+        fclose(_pFile);
+        _pFile = NULL;
     }
-    fclose(_pFile);
     return _Result;	
 }
-
 
 char* vararg2string(const char* format, ...)
 {
@@ -210,8 +211,13 @@ char* vararg2string(const char* format, ...)
 // architecture not supported
 #endif
 
-
 int log_close(void)
 {
-    return (_pFile) ? fclose(_pFile) : 0;
+    if(_pFile)  {
+        fclose(_pFile);
+        _pFile = NULL;
+    }
+    return (0);
 }
+
+

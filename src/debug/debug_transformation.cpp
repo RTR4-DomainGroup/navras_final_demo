@@ -5,7 +5,6 @@
 #include "../../inc/helper/camera.h"
 #include "../../inc/debug/debug_transformation.h"
 
-
 // transformation controllers
 TRANFORM tf_t; // translation
 TRANFORM tf_s; // scale
@@ -284,4 +283,5 @@ void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMa
 	mat4 rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 }
+
 

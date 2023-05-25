@@ -112,7 +112,7 @@ struct TextureVariables {
 #define AUDIO_DIR "res\\audios\\"
 
 
-#define PATH_SEPARATOR '/'
+#define PATH_SEPARATOR '\\'
 
 #else
 // no platform supported like mac
@@ -137,5 +137,5 @@ char* vararg2string(const char* format, ...);
 
 
 #define LOG(format, ...) \
-	log_printf(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
+	log_printf(__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 	
