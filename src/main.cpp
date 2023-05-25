@@ -276,9 +276,10 @@ int initializeNavras(void) {
 	// Debug
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 	//currentScene = SCENE7_RAUDRA_RAS;
+	currentScene = SCENE5_KARUN_RAS;
 	// currentScene = SCENE10_ADBHUT_RAS;
 	//  currentScene = SCENE11_SHRINGAR_RAS;
-	currentScene = CURRENT_SCENE;
+	//currentScene = CURRENT_SCENE;
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -511,7 +512,7 @@ void uninitializeNavras(void) {
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
-	uninitializeScene7_Raudra();
+	uninitializeScene07_Raudra();
 	uninitializeScene5_karun();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();

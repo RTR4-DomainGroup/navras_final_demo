@@ -8,9 +8,9 @@
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
-
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../../inc/scenes/scene5_karun.h"
+#include "../../inc/debug/debug_transformation.h"
 
 
 #define FBO_WIDTH WIN_WIDTH
@@ -29,15 +29,15 @@ extern GLfloat density;
 extern GLfloat gradient;
 extern GLfloat skyFogColor[];
 
-extern GLfloat lightAmbient[];
-extern GLfloat lightDiffuse[];
-extern GLfloat lightSpecular[];
-extern GLfloat lightPosition[];
-						  
-extern GLfloat materialAmbient[];
-extern GLfloat materialDiffuse[];
-extern GLfloat materialSpecular[];
-extern GLfloat materialShininess;
+static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
 GLuint texture_kidroom_ceiling;
 GLuint texture_kidroom_floor;
@@ -58,7 +58,7 @@ int initializeScene5_karun(void)
 	//load models
 	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
 
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room\\ceiling.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room\\scene5Room\\ceiling.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
 		return(-1);
@@ -76,7 +76,7 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room\\back.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room\\scene5Room\\frontwall2.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in back Raudra!!!\n");
 		return(-1);
@@ -85,7 +85,7 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room\\sidewall.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room\\scene5Room\\sidewalls.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in sidewall Raudra!!!\n");
 		return(-1);
@@ -170,10 +170,10 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	//translatevalues.x = 0.500000 , translatevalues.y = -2.000000, translatevalues.z = -5.500000 
-	translationMatrix = vmath::translate(0.500000f, -2.000000f, -5.500000f);                         
-	//translationMatrix = vmath::translate(translatevalues.x, translatevalues.y, translatevalues.z);
-	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", translatevalues.x, translatevalues.y, translatevalues.z);
+	//translatevalues.x = 1.799999 , translatevalues.y = -1.000000, translatevalues.z = -3.299998 
+	translationMatrix = vmath::translate(1.799999f, -1.000000f, -3.299998f);
+	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
 	scaleMatrix = vmath::scale(0.5f, 0.4f, 0.35f);
 	//rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
