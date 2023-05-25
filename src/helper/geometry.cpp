@@ -361,7 +361,7 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
 
         glBufferData(GL_ARRAY_BUFFER, 
             sizeof(square_vertices) + 
-            (sizeof(GLfloat) * 4 * NO_OF_INSTANCES), // float * 4 (x,y,z,w) * num inst
+            (sizeof(GLfloat) * 4 * numInstances), // float * 4 (x,y,z,w) * num inst
             NULL, GL_STATIC_DRAW);
         
         glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(square_vertices), square_vertices);
@@ -369,8 +369,8 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
         glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, NULL);
         glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
 
-        glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(GLfloat) * 4 * NO_OF_INSTANCES, instancePositions);
-        offset += sizeof(GLfloat) * 4 * NO_OF_INSTANCES;
+        glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(GLfloat) * 4 * numInstances, instancePositions);
+        offset += sizeof(GLfloat) * 4 * numInstances;
         glVertexAttribPointer(DOMAIN_ATTRIBUTE_INSTANCE_POSITION, 4, GL_FLOAT, GL_FALSE, 0, (GLvoid *)(sizeof(square_vertices)));
         glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_INSTANCE_POSITION);
         glVertexAttribDivisor(DOMAIN_ATTRIBUTE_INSTANCE_POSITION, 1);
