@@ -1,7 +1,7 @@
 #pragma once
 
 typedef enum {
-    SCENE_INVALID,
+    SCENE_INVALID = -1,
     SCENE_PLACEHOLDER_INDOOR,
     SCENE00_AMC_BANNER,          // Loading AMC banner 
     SCENE01_DOMAIN_LOGO,         // Domain Logo animation
@@ -19,5 +19,6 @@ typedef enum {
     SCENE13_SHANT_RAS,          // Shant Ras
     SCENE14_PARTICLE,           // Particle Simulation
     SCENE15_END_CREDIS,         // End Credits
+    MAX_SCENES
 } scene_types_t;
 

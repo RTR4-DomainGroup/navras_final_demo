@@ -20,11 +20,9 @@
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
+#include "../inc/scenes/scene5_karun.h"
 #include "../inc/scenes/scene02_EarthAndSpace.h"
 #include "../inc/effects/SkyboxEffect.h"
-//#include "../inc/helper/texture_loader.h"
-//
-//#include "../inc/shaders/ADSLightShader.h"
 
 #include "../inc/Navras.h"
 
@@ -56,7 +54,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE02_EARTH_AND_SPACE;
+static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
@@ -104,6 +102,14 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 				songId = NUM_AUDIO-1;
 			break;	
 
+		case '[':
+			currentScene = scenePrev();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
+		case ']':	
+			currentScene = sceneNext();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
 		case '1':
 		case '!':
 			if (wParam == '!')
@@ -172,7 +178,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			else
 				atmosVariables.m_fExposure += 0.1f;
 			break;
-
 		default:
 			// LOG("keypressed : %d\n", wParam);
 			break;
@@ -271,11 +276,14 @@ int initializeNavras(void) {
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	// currentScene = scenePop();
 
 	currentScene = CURRENT_SCENE;
+	// currentScene = scenePop();
+	LOG("current scene changed: %d\n", currentScene);
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -314,6 +322,11 @@ int initializeNavras(void) {
 	if (SCENE10_ADBHUT_RAS == currentScene && initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+		return (-8);
+	}
+	if (initializeScene5_karun() != 0)
+	{
+		LOG("initializeScene5_karun() FAILED !!!\n");
 		return (-8);
 	}
 
@@ -484,6 +497,10 @@ void displayNavras(void)
 	{
 		displayScene07_Raudra();
 	}
+	else if(currentScene == SCENE05_KARUN_RAS)
+	{
+		displayScene5_karun();
+	}
 	else if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		isGodRequired = true;
@@ -501,6 +518,7 @@ void displayNavras(void)
 	}
 	else
 	{
+		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
 	}
 
@@ -511,13 +529,14 @@ void updateNavras(void)
 	// local function declarations
 	void updateMouseMovement(void);
 
-	//// Code
-	//// switch scene
-	//if(sceneFadeOut == true)
-	//{
-	//	currentScene = scenePop();
-	//	sceneFadeOut = false;
-	//} 
+	// Code
+	// switch scene
+	if(sceneFadeOut == true)
+	{
+		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
+		sceneFadeOut = false;
+	} 
 
 	//
 	// Call Scenes Update Here
@@ -567,6 +586,7 @@ void uninitializeNavras(void) {
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene07_Raudra();
+	uninitializeScene5_karun();
 	uninitializeScene02_EarthAndSpace();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();

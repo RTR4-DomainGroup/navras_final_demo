@@ -9,6 +9,7 @@ git update-index --skip-worktree inc/helper/constants.h
 @REM git update-index --no-assume-unchanged inc/helper/constants.h
 
 del Navras.exe
+del log.txt
 @REM del .\obj\*.obj
 @REM del res\resources.res
 
