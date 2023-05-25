@@ -4,7 +4,6 @@ GLuint shaderProgramObj_starfield;
 
 struct StarfieldUniform starfieldUniform;
 
-
 int initializeStarfieldShader(void)
 {
     // Code
@@ -76,6 +75,7 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			return(-1);
 			}
 		}
 	}
@@ -142,6 +142,7 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			return(-1);
 			}
 		}
 	}
@@ -185,6 +186,8 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			return(-1);
+
 			}
 		}
 	}
@@ -228,5 +231,4 @@ void uninitializeStarfieldShader(void)
 		glDeleteProgram(shaderProgramObj_starfield);
 		shaderProgramObj_starfield = 0;
     }
-    
 }

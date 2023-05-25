@@ -1,5 +1,3 @@
-#pragma once
-
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/helper/texture_loader.h"
@@ -11,6 +9,7 @@
 
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
 
 #include "../../inc/effects/videoEffect.h"
@@ -20,18 +19,16 @@
 #include "../../inc/effects/CloudEffect.h"
 #include "../../inc/effects/WaterEffect.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
-// #include "../../inc/effects/Billboarding.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
 
-#define FBO_WIDTH 1920
-#define FBO_HEIGHT 1080
-//#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+#define FBO_WIDTH WIN_WIDTH
+#define FBO_HEIGHT WIN_HEIGHT
 
-#define ENABLE_STATIC_MODELS	
 
 extern int windowWidth;
 extern int windowHeight;
@@ -41,34 +38,36 @@ extern int windowHeight;
 extern mat4 perspectiveProjectionMatrix;
 
 struct ADSUniform sceneIndoorADSUniform;
+struct ADSDynamicUniform sceneIndoorADSDynamicUniform;
 
-extern GLfloat density;
-extern GLfloat gradient;
-extern GLfloat skyFogColor[];
+static GLfloat density = 0.15;
+static GLfloat gradient = 0.5;
+static GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 
-extern GLfloat lightAmbient[];
-extern GLfloat lightDiffuse[];
-extern GLfloat lightSpecular[];
-extern GLfloat lightPosition[];
-						  
-extern GLfloat materialAmbient[];
-extern GLfloat materialDiffuse[];
-extern GLfloat materialSpecular[];
-extern GLfloat materialShininess;
+static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-//Model variables
-STATIC_MODEL rockModel_in;
-STATIC_MODEL streetLightModel_in;
-STATIC_MODEL deskModel;
-STATIC_MODEL schoolBagModel;
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
+
+static mat4 viewMatrix;
+
+// //Model variables
+// static STATIC_MODEL rockModel;
+// static STATIC_MODEL streetLightModel;
+// static STATIC_MODEL deskModel;
+// static STATIC_MODEL schoolBagModel;
+// static DYNAMIC_MODEL skeletonModel;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
 	// Function Declarations
 
     // Code.
-
-	
 
 #ifdef ENABLE_ADSLIGHT
     // Texture
@@ -84,15 +83,22 @@ int initializeScene_PlaceHolderIndoor(void)
 	}
 
 #endif // ENABLE_ADSLIGHT
-
 	
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel_in);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_in);
-	loadStaticModel("res/models/desk/desk.obj", &deskModel);
-	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
-#endif
+// #ifdef ENABLE_STATIC_MODELS
+// 	//load models
+// 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+// 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+// 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
+// 	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
+// #endif // ENABLE_STATIC_MODELS
+
+
+// #ifdef ENABLE_DYNAMIC_MODELS
+// 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
+// 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
+// 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+// #endif
+
 
 	return 0;
 }
@@ -116,7 +122,7 @@ void displayScene_PlaceHolderIndoor(void)
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	viewMatrix = mat4::identity();
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
@@ -151,6 +157,13 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform1i(sceneIndoorADSUniform.uniform_enable_godRays, 1);
 	glUniform1i(sceneIndoorADSUniform.godrays_blackpass_sphere, 0);
 
+	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
+	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+
+	//For Normal Mapping
+	glUniform4fv(sceneIndoorADSUniform.viewpositionUniform, 1, camera.eye);
+
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -161,7 +174,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(rockModel_in);
+	// drawStaticModel(rockModel);
 
 	// ------ Streetlight Model ------
 	translationMatrix = mat4::identity();
@@ -182,7 +195,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(streetLightModel_in);
+	// drawStaticModel(streetLightModel);
 
 	// ------ SchoolBag Model ------
 	translationMatrix = mat4::identity();
@@ -194,7 +207,7 @@ void displayScene_PlaceHolderIndoor(void)
 	rotationMatrix_z = mat4::identity();
 
 
-	translationMatrix = vmath::translate(1.0f, 2.0f, -6.0f);
+	translationMatrix = vmath::translate(1.0f, 0.0f, -1.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
@@ -203,7 +216,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(schoolBagModel);
+	// drawStaticModel(schoolBagModel);
 
 
 	// ------ Desk Model ------
@@ -224,11 +237,62 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(deskModel);
+	// drawStaticModel(deskModel);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 #endif
+
+
+#ifdef ENABLE_DYNAMIC_MODELS
+
+	glm::mat4 glm_modelMatrix;
+	glm::mat4 glm_translateMatrix;
+	glm::mat4 glm_rotateMatrix;
+	glm::mat4 glm_scaleMatrix;
+
+	glm_modelMatrix = glm::mat4(1.0f);
+	glm_translateMatrix = glm::mat4(1.0f);
+	glm_rotateMatrix = glm::mat4(1.0f);
+	glm_scaleMatrix = glm::mat4(1.0f);
+
+	sceneIndoorADSDynamicUniform = useADSDynamicShader();
+
+	// Sending Light Related Uniforms
+	glUniform4fv(sceneIndoorADSDynamicUniform.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneIndoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneIndoorADSDynamicUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneIndoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
+	glUniform4fv(sceneIndoorADSDynamicUniform.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneIndoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneIndoorADSDynamicUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneIndoorADSDynamicUniform.materialShininessUniform, materialShininess);
+
+	glUniform1i(sceneIndoorADSDynamicUniform.fogEnableUniform, 0);
+	glUniform1f(sceneIndoorADSDynamicUniform.densityUniform, density);
+	glUniform1f(sceneIndoorADSDynamicUniform.gradientUniform, gradient);
+	glUniform4fv(sceneIndoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneIndoorADSDynamicUniform.uniform_enable_godRays, 1);
+	glUniform1i(sceneIndoorADSDynamicUniform.godrays_blackpass_sphere, 1);
+
+	// ------ Dancing Vampire Model ------
+
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f));
+	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	// drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel, 0.2f);
+
+	glUseProgram(0);
+
+#endif
+
 
 }
 
@@ -254,28 +318,33 @@ void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
 
-//#ifdef ENABLE_ADSLIGHT
-//	if (texture_Marble)
-//	{
-//		glDeleteTextures(1, &texture_Marble);
-//		texture_Marble = NULL;
-//	}
+#ifdef ENABLE_ADSLIGHT
+	if (texture_Marble)
+	{
+		glDeleteTextures(1, &texture_Marble);
+		texture_Marble = NULL;
+	}
 
-//	// uninitializeSphere();
-//	// uninitializeTriangle();
-//	// uninitializeQuad();
-//	// uninitializePyramid();
-//	uninitializeCube();
-//
-//#endif // ENABLE_ADSLIGHT
+	// uninitializeSphere();
+	// uninitializeTriangle();
+	// uninitializeQuad();
+	// uninitializePyramid();
+	uninitializeCube();
+
+#endif // ENABLE_ADSLIGHT
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&schoolBagModel);
-	unloadStaticModel(&deskModel);
-	unloadStaticModel(&streetLightModel_in);
-	unloadStaticModel(&rockModel_in);
+	// unloadStaticModel(&schoolBagModel);
+	// unloadStaticModel(&deskModel);
+	// unloadStaticModel(&streetLightModel);
+	// unloadStaticModel(&rockModel);
 #endif
 
 
+#ifdef ENABLE_DYNAMIC_MODELS
+	// unloadDynamicModel(&skeletonModel);
+#endif
 }
+
+

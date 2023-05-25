@@ -63,6 +63,8 @@ int initialize_horrizontalBlur()
                 LOG("Horrizontal Blur Vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
+                uninitialize_horrizontalBlurShader();
+                return(-1);
             }
         }
     }
@@ -134,6 +136,8 @@ int initialize_horrizontalBlur()
                 LOG("Horrizontal Blur Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
+                uninitialize_horrizontalBlurShader();
+                return(-1);
             }
         }
     }
@@ -172,6 +176,8 @@ int initialize_horrizontalBlur()
                 glGetProgramInfoLog(shaderProgram_horrizontalBlur, infoLogLength, &written, log);
                 LOG("Horrizontal Blur Shader Program Link Log: %s\n", log);
                 free(log);
+                log = NULL;
+                return(-1);
             }
         }
     }

@@ -70,6 +70,7 @@ int initializeWaterShader(void)
                 free(log);
                 log = NULL;
                 uninitializeWaterShader();
+                return(-1);
             }
         }
     }
@@ -167,6 +168,7 @@ int initializeWaterShader(void)
                 free(log);
                 log = NULL;
                 uninitializeWaterShader();
+                return(-1);
             }
         }
     }
@@ -208,6 +210,7 @@ int initializeWaterShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeWaterShader();
+                return(-1);
             }
         }
     }

@@ -1,58 +1,40 @@
 // Header Files
 
-#include <WindowsX.h>	// for mouse move x and y coordinates
-
 #include "../inc/helper/common.h"
 #include "../inc/helper/shaders.h"
-#include "../inc/scenes/scenes.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/geometry.h"
 #include "../inc/helper/framebuffer.h"
 #include "../inc/helper/sceneStack.h"
 #include "../inc/helper/audioplayer.h"
+
+#include "../inc/effects/AtmosphereEffect.h"
+#include "../inc/effects/ParticelEffect.h"
+
+#include "../inc/shaders/FSQuadShader.h"
+#include "../inc/shaders/ParticleShader.h"
+
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../inc/scenes/sceneEarthAndSpace.h"
+#include "../inc/scenes/scene10_AdbhutRas.h"
+#include "../inc/scenes/scene11_ShringarRas.h"
+#include "../inc/scenes/scene07_Raudra.h"
+#include "../inc/scenes/scene02_EarthAndSpace.h"
 #include "../inc/effects/SkyboxEffect.h"
 //#include "../inc/helper/texture_loader.h"
 //
 //#include "../inc/shaders/ADSLightShader.h"
 
+#include "../inc/Navras.h"
+
+#include "../inc/debug/debug_transformation.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
-#include "../inc/shaders/FSQuadShader.h"
-
-// OpenGL Libraries
-#pragma comment(lib, "glew32.lib")
-#pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "SOIL/lib/SOIL.lib")
-#pragma comment(lib, "AL/lib/OpenAL32.lib")
-#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
-#pragma comment(lib, "ffmpeg/lib/avformat.lib")
-#pragma comment(lib, "ffmpeg/lib/avutil.lib")
-#pragma comment(lib, "ffmpeg/lib/swscale.lib")
-#pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
-
-
-//#define WIN_WIDTH  1920
-//#define WIN_HEIGHT  1080
-
-// Global Function Declarations
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-// Global Variable Declarations
-HWND ghwnd = NULL;
-BOOL gbFullScreen = FALSE;
-BOOL gbActiveWindow = FALSE;
 
 // audio
-BOOL gbPlayback = FALSE;
-
-// FILE* gpFile = NULL;
-HDC ghdc = NULL;
-HGLRC ghrc = NULL;
+bool gbPlayback = false;
 
 mat4 perspectiveProjectionMatrix;
 
@@ -60,13 +42,10 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-// camera related variables for movement in scene during debugging
-float cameraCounterSideWays = 3.2f;
-float cameraCounterUpDownWays = 3.2f;
 
-BOOL mouseLeftClickActive = FALSE;
-float mouseX;
-float mouseY;
+extern bool mouseLeftClickActive;
+extern float mouseX;
+extern float mouseY;
 
 bool firstMouse = true;
 float yaw = -180.0f;
@@ -76,163 +55,16 @@ float lastY = 600.0f / 2.0f;
 
 int winWidth;
 int winHeight;
-struct FSQuadUniform sceneFSQuadUniform;
 
-extern struct FrameBufferDetails fboColorPass;
-extern struct FrameBufferDetails fboGodRayPass;
-
-static scene_t currentScene = SCENE_EARTHANDSPACE;
+static scene_types_t currentScene = SCENE02_EARTH_AND_SPACE;
 
 bool sceneFadeOut = false;
 
-//GLuint* texture;
+extern AtmosphericVariables atmosVariables;
 
-// extern
-// extern scene_t sceneStack[];
-
-//struct ADSUniform adsEarthAndSpaceUniform;
-//struct ADSUniform earthADSUniform;
-//GLuint texture_earthSun;
-//
-//GLfloat ligAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-//GLfloat ligDiffuse[] = { 1.0f, 1.0f, 0.0f, 1.0f };
-//GLfloat ligSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-//GLfloat ligPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
-//
-//GLfloat matAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-//GLfloat matDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-//GLfloat matSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-//GLfloat matShininess = 128.0f;
-
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) {
+int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// Function Declarations
-	int initialize(void);
-	void display(void);
-	void update(void);
-	void uninitialize(void);
-
-
-	// Variable Declarations
-	WNDCLASSEX wndclass;
-	HWND hwnd;
-	MSG msg;
-	TCHAR szAppName[] = TEXT("MyWindow!!!");
-	BOOL bDone = FALSE;
-	int iRetVal = 0;
-
-	int iDesktopWidth, iDesktopHeight;
-	int iWCoorx, iWCoory;
-
-	// Code
-	//if (fopen_s(&gpFile, "Log.txt", "w") != 0) {
-
-	//	MessageBox(NULL, TEXT("Creation Of Log.txt File Failed. Exiting..."), TEXT("File I/O Error."), MB_OK);
-	//	exit(0);
-
-	//}
-	//else {
-
-	//	LOG("Log File SuccessFully Created!!!\n");
-	//}
-
-	// Initialisation Of WNDCLASSEX Structure
-	wndclass.cbSize = sizeof(WNDCLASSEX);
-	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wndclass.cbClsExtra = 0;
-	wndclass.cbWndExtra = 0;
-	wndclass.lpfnWndProc = WndProc;
-	wndclass.hInstance = hInstance;
-	wndclass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wndclass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
-	wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndclass.lpszClassName = szAppName;
-	wndclass.lpszMenuName = NULL;
-	wndclass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON));
-
-	// Register WNDCLASSEX
-	RegisterClassEx(&wndclass);
-
-	// Full Screen Code
-	iDesktopWidth = GetSystemMetrics(SM_CXSCREEN);
-	iDesktopHeight = GetSystemMetrics(SM_CYSCREEN);
-
-	iWCoorx = ((iDesktopWidth / 2) - (WIN_WIDTH / 2));
-	iWCoory = ((iDesktopHeight / 2) - (WIN_HEIGHT / 2));
-
-	// Create The Window
-	hwnd = CreateWindowEx(WS_EX_APPWINDOW, 
-		szAppName,
-		TEXT("DOMAIN's NAVRAS!!!"),
-		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE,
-		iWCoorx,
-		iWCoory,
-		WIN_WIDTH,
-		WIN_HEIGHT,
-		NULL,
-		NULL,
-		hInstance,
-		NULL);
-
-	ghwnd = hwnd;
-
-	// Show Window
-	ShowWindow(hwnd, iCmdShow);
-
-	//
-	iRetVal = initialize();
-	if(iRetVal < 0)
-	{
-
-		LOG("Initialize() FAILED!!!\n");
-		uninitialize();
-		return(-1);
-
-	}
-
-	// Foregrounding And Focusing the Window
-	SetForegroundWindow(hwnd);
-	SetFocus(hwnd);
-
-	// Game Loop
-	while (bDone == FALSE) {
-
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-
-			if (msg.message == WM_QUIT)
-				bDone = TRUE;
-			else {
-
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-
-			}
-
-		}
-		else {
-
-			if (gbActiveWindow == TRUE) {
-
-				display();
-
-				update();
-
-			}
-
-		}
-
-	}
-
-	return((int)msg.wParam);
-
-}
-
-// CAllBack Function
-LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-
-	// Function Declarations
-	void ToggleFullScreen(void);
 	void resize(int, int);
 	int playSong(int );
 	void togglePlayback();
@@ -244,54 +76,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	// Code
 	switch (iMsg) {
-
-	case WM_SETFOCUS:
-		gbActiveWindow = TRUE;
-		break;
-
-	case WM_KILLFOCUS:
-		gbActiveWindow = FALSE;
-		break;
-
-	case WM_ERASEBKGND:
-		return(0);
-
 	case WM_KEYDOWN:
-
 		switch (wParam) {
-
-		case VK_ESCAPE:
-			DestroyWindow(hwnd);
-			break;
-
 		case VK_SPACE:
 			// playSong(songId);
 			togglePlayback();
 			break;
-
-		case 38:	// Up
-			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-			cameraCounterUpDownWays += 0.025f;
-			break;
-		case 40:	// down
-			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-			cameraCounterUpDownWays -= 0.025f;
-			break;
-		case 37:	// left
-			//LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
-			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-			cameraCounterSideWays += 0.025f;
-			break;
-		case 39:	// right
-			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-			cameraCounterSideWays -= 0.025f;
-			break;
 		default:
-			LOG("keypress : %d\n", wParam);
+			// LOG("keypress : %d\n", wParam);
 			break;
 		}
 		break;
@@ -299,48 +91,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 	case WM_CHAR:
 		switch (wParam) {
 
-		case 'F':
-		case 'f':
-			ToggleFullScreen();
-			break;
-		case 'W':
-		case 'w':
-			cameraEyeZ = cameraEyeZ - 0.25f;
-			cameraCenterZ = cameraCenterZ - 0.25f;
-			break;
-		case 'S':
-		case 's':
-			cameraEyeZ = cameraEyeZ + 0.25f;
-			cameraCenterZ = cameraCenterZ + 0.25f;
-			break;
-		case 'A':
-		case 'a':
-			cameraEyeX = cameraEyeX - 0.25f;
-			cameraCenterX = cameraCenterX - 0.25f;
-			break;
-		case 'D':
-		case 'd':
-			cameraEyeX = cameraEyeX + 0.25f;
-			cameraCenterX = cameraCenterX + 0.25f;
-			break;
-		case 'Q':
-		case 'q':
-			cameraEyeY = cameraEyeY - 0.25f;
-			cameraCenterY = cameraCenterY - 0.25f;
-			break;
-		case 'E':
-		case 'e':
-			cameraEyeY = cameraEyeY + 0.25f;
-			cameraCenterY = cameraCenterY + 0.25f;
-			break;
-		case 'R':
-		case 'r':
-			resetCamera();
-			break;
-		case 'P':
-		case 'p':
-			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f]", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
-			break;
 		case 'n':
 			playSong(songId);
 			songId++;
@@ -353,36 +103,80 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 			if(songId < 0)
 				songId = NUM_AUDIO-1;
 			break;	
-		default:
-			LOG("keypressed : %d\n", wParam);
+
+		case '1':
+		case '!':
+			if (wParam == '!')
+				atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
+			else
+				atmosVariables.m_Kr += 0.0001f;
+			atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
 			break;
 
+		case '2':
+		case '@':
+			if (wParam == '@')
+				atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
+			else
+				atmosVariables.m_Km += 0.0001f;
+			atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
+			break;
+
+		case '3':
+		case '#':
+			if (wParam == '#')
+				atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
+			else
+				atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
+			break;
+
+		case '4':
+		case '$':
+			if (wParam == '$')
+				atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
+			else
+				atmosVariables.m_ESun += 0.1f;
+			break;
+
+		case '5':
+		case '%':
+			if (wParam == '%')
+				atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
+			else
+				atmosVariables.m_fWavelength[0] += 0.001f;
+			atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
+			break;
+
+		case '6':
+		case '^':
+			if (wParam == '^')
+				atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
+			else
+				atmosVariables.m_fWavelength[1] += 0.001f;
+			atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
+			break;
+
+		case '7':
+		case '&':
+			if (wParam == '&')
+				atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
+			else
+				atmosVariables.m_fWavelength[2] += 0.001f;
+			atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
+			break;
+
+		case '8':
+		case '*':
+			if (wParam == '*')
+				atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
+			else
+				atmosVariables.m_fExposure += 0.1f;
+			break;
+
+		default:
+			// LOG("keypressed : %d\n", wParam);
+			break;
 		}
-		break;
-
-	case WM_MOUSEMOVE:
-		mouseX = (float)GET_X_LPARAM(lParam);
-		mouseY = (float)GET_Y_LPARAM(lParam);
-		break;
-
-	case WM_LBUTTONDOWN:
-		mouseLeftClickActive = TRUE;
-		break;
-
-	case WM_LBUTTONUP:
-		mouseLeftClickActive = FALSE;
-		break;
-
-	case WM_SIZE:
-		resize(LOWORD(lParam), HIWORD(lParam));
-		break;
-
-	case WM_CLOSE:
-		DestroyWindow(hwnd);
-		break;
-
-	case WM_DESTROY:
-		PostQuitMessage(0);
 		break;
 
 	default:
@@ -390,7 +184,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	}
 
-	return(DefWindowProc(hwnd, iMsg, wParam, lParam));
+	return(0);
 }
 
 int playSong(int songId)
@@ -402,12 +196,12 @@ int playSong(int songId)
 	// if(gbPlayback && lastSongId == songId) 
 	// {
 	// 	pauseAudio();
-	// 	gbPlayback = FALSE;
+	// 	gbPlayback = false;
 	// }
 	// else if (!gbPlayback && lastSongId == songId)
 	// {
 	// 	resumeAudio();
-	// 	gbPlayback = TRUE;
+	// 	gbPlayback = true;
 	// }
 	// else
 	{
@@ -430,73 +224,37 @@ void togglePlayback()
 	if(gbPlayback) 
 	{
 		pauseAudio();
-		gbPlayback = FALSE;
+		gbPlayback = false;
 	}
 	else
 	{
 		resumeAudio();
-		gbPlayback = TRUE;
+		gbPlayback = true;
 	} 
 }
 
-int initialize(void) {
+int initializeNavras(void) {
 
 	// Function Declarations
-	void ToggleFullScreen(void);
 	void resize(int, int);
-	BOOL LoadGLTexture(GLuint*, TCHAR[]);
 	void printGLInfo(void);
 	void uninitialize(void);
 	void resetCamera(void);
 
 	// Variable Declarations
-	PIXELFORMATDESCRIPTOR pfd;
-	int iPixelFormatIndex = 0;
 
 	// Code
-	// Initialization of PIXELFORMATDESCRIPTOR
-	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));		//MemSet((void *)&pfd, NULL, sizeof(PIXELFORMATDESCRIPTOR));
-	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
-	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 32;
-	pfd.cRedBits = 8;
-	pfd.cGreenBits = 8;
-	pfd.cBlueBits = 8;
-	pfd.cAlphaBits = 8;
-	pfd.cDepthBits = 32;
+	// Here starts OpenGL code
+    // GLEW initialization
+    // codes related to PP requires Core profile
+    if(glewInit() != GLEW_OK)
+    {
+        LOG("Error: glewInit() failed\n");
+        return (-5);
+    }
 
-	// GetDC
-	ghdc = GetDC(ghwnd);
-
-	// Choose Pixel Format
-	iPixelFormatIndex = ChoosePixelFormat(ghdc, &pfd);
-	if (iPixelFormatIndex == 0) {
-	
-		return(-1);
-
-	}
-
-	// Set The Choosen Pixel Format
-	if (SetPixelFormat(ghdc, iPixelFormatIndex, &pfd) == FALSE)
-		return(-2);
-
-	// Create OpenGL Rendering Context
-	ghrc = wglCreateContext(ghdc);
-	if (ghrc == NULL)
-		return(-3);
-
-	// Make The Rendering Context As The Running Context
-	if (wglMakeCurrent(ghdc, ghrc) == FALSE)
-		return(-4);
-
-	// glew initialisation
-	if (glewInit() != GLEW_OK)
-		return(-5);
-
-	// Print OpenGLInfo
-	printGLInfo();
+	// // Print OpenGLInfo
+	// printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -510,10 +268,24 @@ int initialize(void) {
     }
 
 	// Initialize Scenes
-    scenePush(SCENE_3);
-    scenePush(SCENE_2);
-    scenePush(SCENE_1);
-    scenePush(SCENE_EARTHANDSPACE);
+    scenePush(SCENE11_SHRINGAR_RAS);
+    scenePush(SCENE10_ADBHUT_RAS);
+	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE02_EARTH_AND_SPACE);
+
+	// currentScene = scenePop();
+
+	currentScene = CURRENT_SCENE;
+
+	// Scene0 - Astromedicomp video
+#ifdef ENABLE_VIDEO_RENDER
+	initializeQuadForVideo(); 
+	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
+	) {
+		LOG("initializeVideoEffect() FAILED !!!\n");
+        return (-8);
+	}
+#endif // ENABLE_VIDEO_RENDER
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -521,26 +293,42 @@ int initialize(void) {
         return (-8);
 	}
 
-	if (initializeScene_PlaceHolderIndoor() != 0)
+	if (SCENE_PLACEHOLDER_INDOOR == currentScene && initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
 		return (-8);
 	}
 
-	if (initializeScene1_EarthAndSpace() != 0)
+	if(SCENE02_EARTH_AND_SPACE == currentScene && initializeScene02_EarthAndSpace() != 0)
 	{
-		LOG("initializeScene_EarthAndSpace() FAILED !!!\n");
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+        return (-8);
+	}
+
+	if(SCENE07_RAUDRA_RAS == currentScene && initializeScene07_Raudra() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
+        return (-8);
+	}
+
+	if (SCENE10_ADBHUT_RAS == currentScene && initializeScene10_AdbhutRas() != 0)
+	{
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
 		return (-8);
 	}
 
-	//if(initializeScene_Scene0() != 0)
-	//{
-	//	LOG("initializeScene_Scene0() FAILED !!!\n");
-	//  return (-8);
-	//}
+	if(SCENE11_SHRINGAR_RAS == currentScene && initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
+	}
 
+	if (initializeParticle() != 0)
+	{
+		LOG("initializeParticle() FAILED !!!\n");
+		return (-8);
+	}
 
-	// currentScene = scenePop();
 
 	// initialize camera
 	//resetCamera();
@@ -572,32 +360,7 @@ int initialize(void) {
 
 	perspectiveProjectionMatrix = mat4::identity();
 
-	ToggleFullScreen();
-
-	//set fps to system
-	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
-
 	return(0);
-
-	resize(WIN_WIDTH, WIN_HEIGHT);
-}
-
-void resetCamera(void)
-{
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
-	cameraCounterSideWays = 3.2f;
-	cameraCounterUpDownWays = 3.2f;
 }
 
 void printGLInfo(void) {
@@ -628,47 +391,7 @@ void printGLInfo(void) {
 	LOG("**********************************************************\n");
 }
 
-void ToggleFullScreen(void) {
-
-	// Variable Declarations
-	static DWORD dwStyle;
-	static WINDOWPLACEMENT wp;
-	MONITORINFO mi;
-
-	// Code
-	wp.length = sizeof(WINDOWPLACEMENT);
-
-	if (gbFullScreen == FALSE) {
-
-		dwStyle = GetWindowLong(ghwnd, GWL_STYLE);
-		if (dwStyle & WS_OVERLAPPEDWINDOW) {
-
-			mi.cbSize = sizeof(MONITORINFO);
-			if (GetWindowPlacement(ghwnd, &wp) && GetMonitorInfo(MonitorFromWindow(ghwnd, MONITORINFOF_PRIMARY), &mi)) {
-
-				SetWindowLong(ghwnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
-				SetWindowPos(ghwnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right - mi.rcMonitor.left, mi.rcMonitor.bottom - mi.rcMonitor.top, SWP_NOZORDER | SWP_FRAMECHANGED);
-
-			}
-
-			ShowCursor(TRUE);		//usually kept false
-			gbFullScreen = TRUE;
-		}
-	}
-	else {
-
-		SetWindowLong(ghwnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
-		SetWindowPlacement(ghwnd, &wp);
-		SetWindowPos(ghwnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-		ShowCursor(TRUE);
-		gbFullScreen = FALSE;
-
-	}
-
-}
-
-void resize(int width, int height) {
+void resizeNavras(int width, int height) {
 
 	// Code
 	if (height == 0)			// To Avoid Divided by 0(in Future)
@@ -681,11 +404,14 @@ void resize(int width, int height) {
 
 	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
 
-
 }
 
-void display(void)
+void displayNavras(void)
 {
+	bool isGodRequired = false;
+	bool isWaterRequired = false;
+	bool isGaussianBlurRequired = false;
+
 	// Function declarations
 	void resize(int, int);
 
@@ -730,33 +456,57 @@ void display(void)
 	//glUseProgram(0);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE_EARTHANDSPACE)
+	if(currentScene == SCENE00_AMC_BANNER)
 	{
-		// displayScene_Scene0();
-		displayScene1_EarthAndSpace();
+#ifdef ENABLE_VIDEO_RENDER
+		extern struct FSQuadUniform fsqUniform;
+
+		fsqUniform = useFSQuadShader();
+		displayVideoEffect(&fsqUniform);
+		glUseProgram(0);
+#endif	
 	}
-	else if(currentScene == SCENE_1)
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
-		// displayScene_Scene1();
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
-	else if (currentScene==SCENE_PLACEHOLDER_OUTDOOR)
+	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
-		displayScene_PlaceHolderOutdoor();
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
+	else if(currentScene == SCENE07_RAUDRA_RAS)
+	{
+		displayScene07_Raudra();
+	}
+	else if (currentScene == SCENE02_EARTH_AND_SPACE)
+	{
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene02_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		displayScene_PlaceHolderIndoor();
+	}
+	else if (currentScene == SCENE14_PARTICLE)
+	{
+		displayParticle();
 	}
 	else
 	{
 		currentScene = SCENE_INVALID;
 	}
 
-	SwapBuffers(ghdc);
-
 }
 
-void update(void)
+void updateNavras(void)
 {
 	// local function declarations
 	void updateMouseMovement(void);
@@ -771,9 +521,15 @@ void update(void)
 
 	//
 	// Call Scenes Update Here
-	if(currentScene == SCENE_EARTHANDSPACE)
+	if(currentScene == SCENE10_ADBHUT_RAS)
 	{
-		updateScene1_EarthAndSpace();
+		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
+	}
+	else if(currentScene == SCENE02_EARTH_AND_SPACE)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene02_EarthAndSpace();
 	}
 	//else if(currentScene == SCENE_1)
 	//{
@@ -788,14 +544,16 @@ void update(void)
 	//	updateScene_PlaceHolderIndoor();
 	//}
 
-	//// camera movement related updates
-	//updateMouseMovement();
+	// camera movement related updates
+	updateMouseMovement();
+
+	debug_tranformation();
+
 }
 
-void uninitialize(void) {
+void uninitializeNavras(void) {
 
 	// Function Declarations
-	void ToggleFullScreen(void);
 
 	// Code
 
@@ -803,57 +561,19 @@ void uninitialize(void) {
 	uninitializeAudio();
 
 	//uninitialize all scenes
-	uninitializeScene1_EarthAndSpace();
+	uninitializeParticle();
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
+	uninitializeScene11_ShringarRas();
+	uninitializeScene10_AdbhutRas();
+	uninitializeScene07_Raudra();
+	uninitializeScene02_EarthAndSpace();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
 
 	//uninitialize all shaders
 	uninitializeAllShaders();
-
-	if (gbFullScreen) {
-
-		ToggleFullScreen();
-
-	}
-
-	// 
-	if (wglGetCurrentContext() == ghrc) {
-
-		wglMakeCurrent(NULL, NULL);
-
-	}
-
-	if (ghrc) {
-
-		wglDeleteContext(ghrc);
-		ghrc = NULL;
-
-	}
-
-	if (ghdc) {
-
-		ReleaseDC(ghwnd, ghdc);
-		ghdc = NULL;
-
-	}
-
-	if (ghwnd) {
-
-		DestroyWindow(ghwnd);
-		ghwnd = NULL;
-
-	}
-
-	//if (gpFile) {
-
-	//	fprintf(gpFile, "Log File Close!!!\n");
-	//	fclose(gpFile);
-	//	gpFile = NULL;
-
-	//}
 
 }
 
@@ -884,10 +604,11 @@ void updateMouseMovement(void)
 	if (pitch < -90.0f)
 		pitch = -90.0f;
 
-	if (mouseLeftClickActive == TRUE)
+	if (mouseLeftClickActive == true)
 	{
 		cameraCenterX = cameraEyeX + cos(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 		cameraCenterY = cameraEyeY + sin(pitch * M_PI / 180.0f);
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
+

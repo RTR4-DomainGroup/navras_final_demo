@@ -69,7 +69,9 @@ int initializeBillboardingShader(void)
 				glGetShaderInfoLog(vertexShadderObject, infoLogLength, &written, log);
 				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
+				log = NULL;
 				uninitializeBillboardingShader();
+				return(-1);
 			}
 		}
 	}
@@ -117,6 +119,7 @@ int initializeBillboardingShader(void)
 				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
+				return(-1);
 			}
 		}
 	}
@@ -144,6 +147,7 @@ int initializeBillboardingShader(void)
 				LOG("ADS ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeBillboardingShader();
+				return(-1);
 			}
 		}
 	}

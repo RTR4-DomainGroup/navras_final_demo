@@ -7,3 +7,8 @@ Resource Files may include libraries, icons, images, videos and high-res texture
 https://drive.google.com/drive/folders/1L9A3AoO1_Roq9J9Tu1sKcFHRMEs3pD4Y
 
 git 
+
+<!-- build command for linux -->
+
+(mkdir -p build && cd build && cmake .. && make -j8) && ./build/Navras
+

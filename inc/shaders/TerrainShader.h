@@ -18,6 +18,30 @@ struct TerrainUniform
     GLuint skyFogColorUniform;
     GLuint fogEnableUniform;
 
+    //Normal mapping
+    GLuint modelMatrixUniform;
+    GLuint viewMatrixUniform;
+    GLuint projectionMatrixUniform;
+
+    GLuint textureSamplerUniform_diffuse;
+    GLuint textureSamplerUniform_normal;
+
+    GLuint laUniform;	
+    GLuint ldUniform;	
+    GLuint lsUniform;	
+    GLuint lightPositionUniform;
+
+    GLuint kaUniform;	
+    GLuint kdUniform;
+    GLuint ksUniform;
+    GLuint materialShininessUniform;
+
+    // Shadow
+    GLuint shadowMapSamplerUniform;
+    GLuint actualSceneUniform;
+    GLuint depthSceneUniform;
+    GLuint lightSpaceMatrixUniform;
+
 };
 
 int initializeTerrainShader(void);

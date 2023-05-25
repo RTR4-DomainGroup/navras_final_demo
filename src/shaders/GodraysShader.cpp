@@ -5,7 +5,6 @@ extern FILE* gpFile;
 
 struct GodraysUniform godRaysUniform;
 
-
 int initializeGodraysShader(void)
 {
     // Code
@@ -67,6 +66,7 @@ int initializeGodraysShader(void)
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
+                return(-1);
             }
         }
     }
@@ -209,6 +209,7 @@ int initializeGodraysShader(void)
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
+                return(-1);
             }
         }
     }
@@ -249,6 +250,7 @@ int initializeGodraysShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeGodraysShader();
+                return(-1);
             }
         }
     }
@@ -304,5 +306,4 @@ void uninitializeGodraysShader(void)
 		glDeleteProgram(shaderProgramObj_godrays);
 		shaderProgramObj_godrays = 0;
     }
-    
 }

@@ -3,11 +3,11 @@
 
 bool initializeGaussianBlur(GaussianBlurEffect* gaussianBlurEffect)
 {
-    gaussianBlurEffect->horrizontalFBDetails.textureWidth = 1920;
-    gaussianBlurEffect->horrizontalFBDetails.textureHeight = 1080;
+    gaussianBlurEffect->horrizontalFBDetails.textureWidth = WIN_WIDTH;
+    gaussianBlurEffect->horrizontalFBDetails.textureHeight = WIN_HEIGHT;
 
-    gaussianBlurEffect->verticalFBDetails.textureWidth = 1920;
-    gaussianBlurEffect->verticalFBDetails.textureHeight = 1080;
+    gaussianBlurEffect->verticalFBDetails.textureWidth = WIN_WIDTH;
+    gaussianBlurEffect->verticalFBDetails.textureHeight = WIN_HEIGHT;
 
     return createFBO(&gaussianBlurEffect->horrizontalFBDetails) 
         && createFBO(&gaussianBlurEffect->verticalFBDetails);

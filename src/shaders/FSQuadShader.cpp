@@ -58,6 +58,7 @@ int initializeFSQuadShader(void)
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
+                return(-1);
             }
         }
     }
@@ -74,9 +75,19 @@ int initializeFSQuadShader(void)
         "\n" \
         "out vec4 FragColor;" \
         "\n" \
+
+        "float LinearizeDepth(float depth) \n" \
+        "{ \n" \
+        "float z = depth * 2.0 - 1.0; \n" \
+        "return (2.0 * 0.1 * 100.0) / (100.0 + 0.1 - z * (100.0 - 0.1)); \n" \
+        "} \n" \
+
         "void main(void)" \
         "{" \
             "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
+          /*"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
+            "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \*/
+            //"FragColor = vec4(vec3(depthValue), 1.0); \n" \/
             "\n" \
         "}";
     
@@ -113,6 +124,7 @@ int initializeFSQuadShader(void)
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
+                return(-1);
             }
         }
     }
@@ -153,6 +165,7 @@ int initializeFSQuadShader(void)
                 LOG("FSQuad Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeFSQuadShader();
+                return(-1);
             }
         }
     }
