@@ -19,6 +19,7 @@
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
+#include "../inc/scenes/scene06_BhayanakRas.h"
 
 #include "../inc/Navras.h"
 
@@ -50,7 +51,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
+static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
@@ -303,6 +304,14 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
+	if (
+		SCENE6_BHAYANK_RAS == currentScene &&
+		initializeScene06_BhayanakRas() != 0)
+	{
+		LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
+		return (-8);
+	}
+
 	if(
 		SCENE7_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
@@ -420,6 +429,13 @@ void displayNavras(void)
 		glUseProgram(0);
 #endif	
 	}
+	else if (currentScene == SCENE6_BHAYANK_RAS)
+	{
+		isGodRequired = false;
+		isWaterRequired = true;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		isGodRequired = true;
@@ -473,6 +489,11 @@ void updateNavras(void)
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
 	}
+	else if (currentScene == SCENE6_BHAYANK_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene06_BhayanakRas();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		updateScene_PlaceHolderIndoor();
@@ -501,6 +522,7 @@ void uninitializeNavras(void) {
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene07_Raudra();
+	uninitializeScene06_BhayanakRas();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
