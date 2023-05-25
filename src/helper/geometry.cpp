@@ -349,44 +349,6 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
 
     GLuint offset = 0;
 
-
-    // VAO AND VBO RELATED CODE
-	// vao_Cube
-	// glGenVertexArrays(1, &vao_quadInstanced);
-	// glBindVertexArray(vao_quadInstanced);
-
-	// glGenBuffers(1, &vbo_quadInstanced);
-	// glBindBuffer(GL_ARRAY_BUFFER, vbo_quadInstanced);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), NULL, GL_STATIC_DRAW); 
-	
-    // // Position
-	// glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
-	// glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
-
-	// // Normal
-	// glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-	// glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
-
-	// // TexCoord
-	// glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
-	// glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
-
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    
-    // // Per Instance Position
-    // glGenBuffers(1, &vbo_quadInstancePosition);
-	// glBindBuffer(GL_ARRAY_BUFFER, vbo_quadInstancePosition);
-	// glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * NUM_CORDS * numInstances, instancePositions, GL_STATIC_DRAW); 
-    // glVertexAttribPointer(DOMAIN_ATTRIBUTE_INSTANCE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, (GLvoid *)NULL);
-    // glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_INSTANCE_POSITION);
-    // glVertexAttribDivisor(DOMAIN_ATTRIBUTE_INSTANCE_POSITION, 1);
-
-	// glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-
-
     // VAO and VBO related code
     glGenVertexArrays(1, &vao_quadInstanced);
     glBindVertexArray(vao_quadInstanced);
@@ -616,7 +578,7 @@ void displayRoom(GLuint* roomWalls)
 	glBindTextureUnit(0, roomWalls[3]);
 	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
 
-	glBindTextureUnit(0, roomWalls[4]);
+	glBindTextureUnit(0, roomWalls[3]);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
 

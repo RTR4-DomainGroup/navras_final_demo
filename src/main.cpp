@@ -18,7 +18,7 @@
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
-#include "../inc/scenes/scene7_Raudra.h"
+#include "../inc/scenes/scene07_Raudra.h"
 
 #include "../inc/Navras.h"
 
@@ -305,7 +305,7 @@ int initializeNavras(void) {
 
 	if(
 		SCENE7_RAUDRA_RAS == currentScene && 
-		initializeScene7_Raudra() != 0)
+		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
         return (-8);
@@ -436,7 +436,7 @@ void displayNavras(void)
 	}
 	else if(currentScene == SCENE7_RAUDRA_RAS)
 	{
-		displayScene7_Raudra();
+		displayScene07_Raudra();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -500,7 +500,7 @@ void uninitializeNavras(void) {
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
-	uninitializeScene7_Raudra();
+	uninitializeScene07_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
