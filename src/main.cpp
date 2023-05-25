@@ -19,6 +19,7 @@
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
+#include "../inc/scenes/scene5_karun.h"
 
 #include "../inc/Navras.h"
 
@@ -50,7 +51,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
+static scene_types_t currentScene = SCENE5_KARUN_RAS;
 
 bool sceneFadeOut = false;
 
@@ -174,7 +175,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			else
 				atmosVariables.m_fExposure += 0.1f;
 			break;
-
 		default:
 			// LOG("keypressed : %d\n", wParam);
 			break;
@@ -273,6 +273,8 @@ int initializeNavras(void) {
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
+	scenePush(SCENE5_KARUN_RAS);
+
 	// samples
     //initializeTriangle();
     //initializeSphere();
@@ -321,8 +323,14 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	if(
-		// SCENE11_SHRINGAR_RAS == currentScene && 
+	if(initializeScene5_karun() != 0)
+	{
+		LOG("initializeScene5_karun() FAILED !!!\n");
+        return (-8);
+	}
+
+	if (
+		//SCENE11_SHRINGAR_RAS == currentScene &&
 		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
@@ -440,6 +448,10 @@ void displayNavras(void)
 	{
 		displayScene07_Raudra();
 	}
+	else if(currentScene == SCENE5_KARUN_RAS)
+	{
+		displayScene5_karun();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		displayScene_PlaceHolderIndoor();
@@ -505,6 +517,7 @@ void uninitializeNavras(void) {
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene07_Raudra();
+	uninitializeScene5_karun();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
