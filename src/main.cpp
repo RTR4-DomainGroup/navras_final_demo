@@ -24,6 +24,7 @@
 #include "../inc/scenes/scene06_BhayanakRas.h"
 #include "../inc/scenes/scene5_karun.h"
 
+#include "../inc/scenes/scene12_Hasya.h"
 #include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
@@ -285,6 +286,7 @@ int initializeNavras(void) {
 	scenePush(SCENE00_AMC_BANNER);
 
 	// samples
+	scenePush(SCENE12_HASYA_RAS);
     //initializeTriangle();
     //initializeSphere();
 	
@@ -355,6 +357,14 @@ int initializeNavras(void) {
 	if (
 		//SCENE11_SHRINGAR_RAS == currentScene &&
 		initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
+	}
+
+	if(
+		SCENE12_HASYA_RAS == currentScene && 
+		initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
@@ -502,6 +512,10 @@ void displayNavras(void)
 	else if(currentScene == SCENE05_KARUN_RAS)
 	{
 		displayScene5_karun();
+	}
+	else if (currentScene == SCENE12_HASYA_RAS)
+	{
+		displayScene12_Hasya();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{

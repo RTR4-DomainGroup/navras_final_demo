@@ -134,6 +134,8 @@ struct FrameBufferDetails fboBlackPass;
 struct FrameBufferDetails fboColorPass;
 struct FrameBufferDetails fboGodRayPass;
 
+struct FrameBufferDetails fboEarthAndSpace;
+
 extern int windowWidth;
 extern int windowHeight;
 
