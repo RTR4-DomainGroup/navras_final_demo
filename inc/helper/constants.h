@@ -87,7 +87,10 @@ static const char *szAudios[] = {
 #define ENABLE_STATIC_MODELS	
 
 
+
+
 #define ENABLE_DYNAMIC_MODELS
 
 #define CURRENT_SCENE SCENE7_RAUDRA_RAS
 // #define CURRENT_SCENE SCENE9_VEER_RAS
+// #define CURRENT_SCENE SCENE11_SHRINGAR_RAS

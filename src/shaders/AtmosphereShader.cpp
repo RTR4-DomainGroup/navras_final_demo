@@ -3,7 +3,6 @@
 GLuint shaderProgramObj_atmos;
 
 struct AtmosphereUniform atmosUniform;
-extern HWND ghwnd;
 
 int initializeAtmosphereShader(void)
 {
@@ -122,7 +121,7 @@ int initializeAtmosphereShader(void)
                 free(log);
                 log = NULL;
                 uninitializeAtmosphereShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -180,7 +179,7 @@ int initializeAtmosphereShader(void)
                 free(log);
                 log = NULL;
                 uninitializeAtmosphereShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -222,7 +221,7 @@ int initializeAtmosphereShader(void)
                 free(log);
                 log = NULL;
                 uninitializeAtmosphereShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
