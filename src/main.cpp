@@ -19,7 +19,7 @@
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
-
+#include "../inc/scenes/scene12_Hasya.h"
 #include "../inc/Navras.h"
 
 #include "../inc/debug/debug_transformation.h"
@@ -50,7 +50,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE7_RAUDRA_RAS;
+static scene_types_t currentScene = SCENE12_HASYA_RAS;
 
 bool sceneFadeOut = false;
 
@@ -265,6 +265,7 @@ int initializeNavras(void) {
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
+	scenePush(SCENE12_HASYA_RAS);
 
 	// samples
     //initializeTriangle();
@@ -322,6 +323,14 @@ int initializeNavras(void) {
 	if(
 		SCENE11_SHRINGAR_RAS == currentScene && 
 		initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
+	}
+
+	if(
+		SCENE12_HASYA_RAS == currentScene && 
+		initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
@@ -437,6 +446,10 @@ void displayNavras(void)
 	else if(currentScene == SCENE7_RAUDRA_RAS)
 	{
 		displayScene07_Raudra();
+	}
+	else if (currentScene == SCENE12_HASYA_RAS)
+	{
+		displayScene12_Hasya();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
