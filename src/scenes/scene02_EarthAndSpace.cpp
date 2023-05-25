@@ -201,6 +201,8 @@ int initializeScene02_EarthAndSpace(void)
 	{
 		LOG("LoadGLTexture for Sun is Successful = %u!!!\n", texture_sun);
 	}
+
+	initializeQuad();
 #endif // ENABLE_STARFIELD
 
 	return 0;
