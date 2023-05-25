@@ -6,3 +6,8 @@
 void scenePush(scene_types_t);
 
 scene_types_t scenePop ();
+
+scene_types_t sceneNext();
+
+scene_types_t scenePrev();
+
