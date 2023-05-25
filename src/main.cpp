@@ -99,6 +99,14 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 				songId = NUM_AUDIO-1;
 			break;	
 
+		case '[':
+			currentScene = scenePrev();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
+		case ']':	
+			currentScene = sceneNext();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
 		case '1':
 		case '!':
 			if (wParam == '!')
@@ -271,15 +279,9 @@ int initializeNavras(void) {
     //initializeTriangle();
     //initializeSphere();
 	
-
+	currentScene = CURRENT_SCENE;
 	// currentScene = scenePop();
-	// Debug
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
-	//currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE5_KARUN_RAS;
-	// currentScene = SCENE10_ADBHUT_RAS;
-	//  currentScene = SCENE11_SHRINGAR_RAS;
-	//currentScene = CURRENT_SCENE;
+	LOG("current scene changed: %d\n", currentScene);
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -298,7 +300,7 @@ int initializeNavras(void) {
 	}
 
 	if (
-		SCENE_PLACEHOLDER_INDOOR == currentScene && 
+		// SCENE_PLACEHOLDER_INDOOR == currentScene && 
 		initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
@@ -306,7 +308,7 @@ int initializeNavras(void) {
 	}
 
 	if(
-		SCENE7_RAUDRA_RAS == currentScene && 
+		// SCENE7_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
@@ -314,7 +316,7 @@ int initializeNavras(void) {
 	}
 
 	if (
-		SCENE10_ADBHUT_RAS == currentScene && 
+		// SCENE10_ADBHUT_RAS == currentScene && 
 		initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
@@ -328,7 +330,7 @@ int initializeNavras(void) {
 	}
 
 	if (
-		SCENE11_SHRINGAR_RAS == currentScene &&
+		//SCENE11_SHRINGAR_RAS == currentScene &&
 		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
@@ -460,6 +462,7 @@ void displayNavras(void)
 	}
 	else
 	{
+		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
 	}
 
@@ -475,6 +478,7 @@ void updateNavras(void)
 	if(sceneFadeOut == true)
 	{
 		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
 		sceneFadeOut = false;
 	} 
 

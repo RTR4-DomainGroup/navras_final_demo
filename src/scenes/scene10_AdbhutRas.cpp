@@ -8,11 +8,17 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
-#include "../../inc/debug/debug_transformation.h"
+
+#ifdef ENABLE_STARFIELD
+#undef ENABLE_STARFIELD
+
+#ifdef ENABLE_WATER
+#undef ENABLE_WATER
 
 
 #ifdef ENABLE_WATER
 #include "../../inc/helper/waterframebuffer.h"
+#include "../../inc/effects/WaterEffect.h"
 #endif // ENABLE_WATER
 
 #ifdef ENABLE_SHADOW
@@ -28,10 +34,6 @@
 #include "../../inc/effects/AtmosphereEffect.h"
 #endif // ENABLE_ATMOSPHERE
 
-#ifdef ENABLE_VIDEO_RENDER
-#include "../../inc/effects/videoEffect.h"
-#endif // ENABLE_VIDEO_RENDER
-
 #ifdef ENABLE_TERRIAN
 #include "../../inc/effects/TerrainEffect.h"
 #endif // ENABLE_TERRIAN
@@ -40,9 +42,6 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_SKYBOX
 #include "../../inc/effects/SkyboxEffect.h"
 #endif // ENABLE_SKYBOX
@@ -50,10 +49,6 @@
 #ifdef ENABLE_CLOUD_NOISE
 #include "../../inc/effects/CloudEffect.h"
 #endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_WATER
-#include "../../inc/effects/WaterEffect.h"
-#endif // ENABLE_WATER
 
 #ifdef ENABLE_STATIC_MODELS
 #include "../../inc/effects/StaticModelLoadingEffect.h"
@@ -71,7 +66,6 @@
 #include "../../inc/scenes/scene10_AdbhutRas.h"
 
 
-
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
@@ -84,7 +78,6 @@ extern TEXTURE texture_flower;
 
 extern struct ADSUniform sceneOutdoorADSStaticUniform;
 extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
-
 extern struct FSQuadUniform fsqUniform;
 
 #ifdef ENABLE_TERRIAN
@@ -95,7 +88,6 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -162,7 +154,6 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-static float displacementmap_depth;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -198,6 +189,8 @@ static DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS
 
+static struct TextureVariables terrainTextureVariables;
+static float displacementmap_depth;
 
 static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -208,7 +201,6 @@ static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
-
 
 int initializeScene10_AdbhutRas(void)
 {
@@ -226,12 +218,6 @@ int initializeScene10_AdbhutRas(void)
 	cameraUpX = 0.0f;
 	cameraUpY = 1.0f;
 	cameraUpZ = 0.0f;
-
-	// external debugging varaible
-    tf_t = {-1.5f, -3.5f, 0.0f}; // tree pos 
-    // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
-    // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
-	tf_Speed = 0.05f;
     
 	// Code.
 	// initializeCamera(&camera);
@@ -314,7 +300,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	mat4 rotateX = mat4::identity();
+
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	setCamera();
@@ -431,14 +417,12 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_y = mat4::identity();
 		rotationMatrix_z = mat4::identity();
 
-		rotateX = mat4::identity();
 
 		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
 		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
 		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
 		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
-		//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotateX;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
@@ -665,9 +649,10 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(-4.53f, -1.20f, -6.00f);
-	scaleMatrix = vmath::scale(0.21f, 0.21f, 0.21f);
-	
+	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
+	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
+
+	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -870,13 +855,6 @@ void displayScene10_Billboarding(int godRays = 1)
 	glUseProgram(0);
 	glDisable(GL_BLEND);
 
-	// translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	// scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
-	// rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
-	// rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
-	// rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
-	// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-
 }
 #endif // ENABLE_BILLBOARDING	
 
@@ -914,4 +892,8 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
+
+#endif // ENABLE_WATER
+#endif // ENABLE_STARFIELD
+
 

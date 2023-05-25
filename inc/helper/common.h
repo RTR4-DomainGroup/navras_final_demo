@@ -12,7 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include "../../inc/helper/assimp_glm_helpers.h"
+#include "../helper/assimp_glm_helpers.h"
+#include "../debug/debug_transformation.h"
 
 #include "resources.h"
 #include "vmath.h"
@@ -111,7 +112,7 @@ struct TextureVariables {
 #define AUDIO_DIR "res\\audios\\"
 
 
-#define PATH_SEPARATOR '/'
+#define PATH_SEPARATOR '\\'
 
 #else
 // no platform supported like mac
@@ -136,5 +137,5 @@ char* vararg2string(const char* format, ...);
 
 
 #define LOG(format, ...) \
-	log_printf(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
+	log_printf(__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 	
