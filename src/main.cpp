@@ -18,9 +18,11 @@
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
-#include "../inc/scenes/scene7_Raudra.h"
+#include "../inc/scenes/scene07_Raudra.h"
 
 #include "../inc/Navras.h"
+
+#include "../inc/debug/debug_transformation.h"
 
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
@@ -272,9 +274,10 @@ int initializeNavras(void) {
 	// currentScene = scenePop();
 	// Debug
 	// currentScene = SCENE_PLACEHOLDER_INDOOR;
-	currentScene = SCENE7_RAUDRA_RAS;
-	//currentScene = SCENE10_ADBHUT_RAS;
+	//currentScene = SCENE7_RAUDRA_RAS;
+	// currentScene = SCENE10_ADBHUT_RAS;
 	//  currentScene = SCENE11_SHRINGAR_RAS;
+	currentScene = CURRENT_SCENE;
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -302,7 +305,7 @@ int initializeNavras(void) {
 
 	if(
 		SCENE7_RAUDRA_RAS == currentScene && 
-		initializeScene7_Raudra() != 0)
+		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
         return (-8);
@@ -330,18 +333,6 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
-
-	// currentScene = scenePop();
-	// Debug
-	currentScene = SCENE7_RAUDRA_RAS;
-	// currentScene = SCENE10_ADBHUT_RAS;
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -427,7 +418,7 @@ void displayNavras(void)
 		fsqUniform = useFSQuadShader();
 		displayVideoEffect(&fsqUniform);
 		glUseProgram(0);
-#endif
+#endif	
 	}
 	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
@@ -445,7 +436,7 @@ void displayNavras(void)
 	}
 	else if(currentScene == SCENE7_RAUDRA_RAS)
 	{
-		displayScene7_Raudra();
+		displayScene07_Raudra();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -490,6 +481,8 @@ void updateNavras(void)
 	// camera movement related updates
 	updateMouseMovement();
 
+	debug_tranformation();
+
 }
 
 void uninitializeNavras(void) {
@@ -507,7 +500,7 @@ void uninitializeNavras(void) {
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
-	uninitializeScene7_Raudra();
+	uninitializeScene07_Raudra();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 

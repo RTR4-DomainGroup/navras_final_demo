@@ -578,7 +578,7 @@ void displayRoom(GLuint* roomWalls)
 	glBindTextureUnit(0, roomWalls[3]);
 	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
 
-	glBindTextureUnit(0, roomWalls[4]);
+	glBindTextureUnit(0, roomWalls[3]);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
 

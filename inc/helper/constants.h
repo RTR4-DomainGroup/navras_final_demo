@@ -1,21 +1,21 @@
 #pragma once
 
+#include "../../inc/scenes/scenes_types.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h> 
 
 // Macro definitions
 
-// small window
-#define WIN_WIDTH 800
-#define WIN_HEIGHT 600
-
 // // maximized
 // #define WIN_WIDTH 1280
 // #define WIN_HEIGHT 720
 
-// // regular FHD
-// #define WIN_WIDTH 1920
-// #define WIN_HEIGHT 1080
+// regular
+#define WIN_WIDTH 1920
+#define WIN_HEIGHT 1080
+// #define WIN_WIDTH 800
+// #define WIN_HEIGHT 600
 
 #define DEG2RADN(x) (x * (M_PI / 180)) 
 
@@ -35,8 +35,7 @@
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
-#define NO_OF_INSTANCES 50
-#define NO_OF_INSTANCES_DESK 10
+#define NO_OF_INSTANCES 500
 
 #define X_INCREMENT 2.0f
 #define Y_INCREMENT 0.8f
@@ -78,5 +77,9 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
+
+
 #define ENABLE_DYNAMIC_MODELS
 
+#define CURRENT_SCENE SCENE10_ADBHUT_RAS
+// #define CURRENT_SCENE SCENE9_VEER_RAS
