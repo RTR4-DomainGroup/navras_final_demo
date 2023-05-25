@@ -6,6 +6,7 @@
 #include "../../inc/helper/framebuffer.h"
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/StarfieldShader.h"
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
@@ -65,9 +66,6 @@
 #ifdef ENABLE_GAUSSIAN_BLUR
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
-
-
-
 
 
 #define FBO_WIDTH WIN_WIDTH
@@ -135,9 +133,12 @@ GLfloat waterHeight = 0.0f;
 GLfloat moveFactor = 0.0f;
 GLfloat planeReflection[] = { 0.0f, 1.0f, 0.0f, -waterHeight };
 GLfloat planeRefration[] = { 0.0f, -1.0f, 0.0f, waterHeight };
+
 struct FrameBufferDetails fboBlackPass;
 struct FrameBufferDetails fboColorPass;
 struct FrameBufferDetails fboGodRayPass;
+
+struct FrameBufferDetails fboEarthAndSpace;
 
 extern int windowWidth;
 extern int windowHeight;
@@ -148,9 +149,7 @@ float myScale = 1.0f;
 float noiseScale = 2.0f;
 bool noiseScaleIncrement = true;
 
-
 mat4 viewMatrix;
-
 
 GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
 GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
@@ -374,6 +373,12 @@ int initializeScene_PlaceHolderOutdoor(void)
 #endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_STARFIELD
+
+	fboEarthAndSpace.textureWidth = FBO_WIDTH;
+	fboEarthAndSpace.textureHeight = FBO_HEIGHT;
+
+	createFBO(&fboEarthAndSpace);
+
 	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
 		LOG("initializeStarfield() FAILED!!!\n");
@@ -384,7 +389,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 		LOG("initializeStarfield() Successfull!!!\n");
 	}
 #endif // ENABLE_STARFIELD
-
 
 
 #ifdef ENABLE_GAUSSIAN_BLUR
@@ -446,7 +450,8 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 	viewMatrix = mat4::identity();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
-	if(isWaterRequired) {
+	if(isWaterRequired) 
+	{
 		// Water Frame Buffers
 		// Reflection
 		glEnable(GL_CLIP_DISTANCE0);
@@ -467,7 +472,48 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glDisable(GL_CLIP_DISTANCE0);
 	}
 
-	#ifdef ENABLE_SHADOW
+#ifdef ENABLE_STARFIELD
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fboEarthAndSpace.frameBuffer);
+
+	glViewport(0, 0, (GLsizei)fboEarthAndSpace.textureWidth, (GLsizei)fboEarthAndSpace.textureHeight);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboEarthAndSpace.textureWidth / fboEarthAndSpace.textureHeight, 0.1f, 1000.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	sceneStarfieldUniform = useStarfieldShader();
+
+	float time = (float)deltaTime;
+
+	time = time * 0.05f;
+	time = time - floor(time);
+	LOG("LoadGLTexture STAR is Successful = %f!!!\n", time);
+
+	// Transformations
+	translationMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
+	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+	glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+	displayStarfield(texture_star);
+	glUseProgram(0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+#endif // ENABLE_STARFIELD
+
+#ifdef ENABLE_SHADOW
 
 		// Shadow
 		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
@@ -493,7 +539,8 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glUseProgram(0);*/
 
-	if(!isGaussianBlurRequired && !isGodRequired) {
+	if(!isGaussianBlurRequired && !isGodRequired) 
+	{
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
@@ -501,9 +548,8 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		displayPasses(1, false, false, isWaterRequired, 0);
 	}
-	
-	else if(isGaussianBlurRequired) {
-
+	else if(isGaussianBlurRequired) 
+	{
 		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
@@ -560,8 +606,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		// GodRay Color Pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboColorPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboColorPass.textureWidth, (GLsizei)fboColorPass.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 
-			0.1f, 1000.0f);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		displayPasses(1, false, false, isWaterRequired, 0);
@@ -570,8 +615,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		// God Rays Pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboGodRayPass.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboGodRayPass.textureWidth, (GLsizei)fboGodRayPass.textureHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 
-			0.1f, 1000.0f);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -608,8 +652,7 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 
 		// Godrays Default Frame Buffer
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 
-			0.1f, 1000.0f);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqUniform = useFSQuadShader();

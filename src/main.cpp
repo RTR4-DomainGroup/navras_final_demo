@@ -17,10 +17,11 @@
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
+#include "../inc/scenes/scene02_EarthAndSpace.h"
+#include "../inc/scenes/scene06_BhayanakRas.h"
+#include "../inc/scenes/scene07_Raudra.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
-#include "../inc/scenes/scene07_Raudra.h"
-#include "../inc/scenes/scene06_BhayanakRas.h"
 #include "../inc/scenes/scene5_karun.h"
 
 #include "../inc/effects/videoEffect.h"
@@ -277,10 +278,11 @@ int initializeNavras(void) {
     scenePush(SCENE14_PARTICLE);
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
-	scenePush(SCENE7_RAUDRA_RAS);
-	scenePush(SCENE6_BHAYANK_RAS);
-	scenePush(SCENE5_KARUN_RAS);
-	scenePush(SCENE0_AMC_BANNER);
+	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE02_EARTH_AND_SPACE);
+	scenePush(SCENE00_AMC_BANNER);
 
 	// samples
     //initializeTriangle();
@@ -314,49 +316,53 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	if (
-		SCENE6_BHAYANK_RAS == currentScene &&
-		initializeScene06_BhayanakRas() != 0)
+	if (initializeScene02_EarthAndSpace() != 0)
 	{
-		LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
 		return (-8);
 	}
 
-	if(
-		// SCENE7_RAUDRA_RAS == currentScene && 
-		initializeScene07_Raudra() != 0)
-	{
-		LOG("initializeScene7_Raudra() FAILED !!!\n");
-        return (-8);
-	}
+	//if (SCENE06_BHAYANK_RAS == currentScene && initializeScene06_BhayanakRas() != 0)
+	//{
+	//	LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	if (
-		// SCENE10_ADBHUT_RAS == currentScene && 
-		initializeScene10_AdbhutRas() != 0)
-	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-		return (-8);
-	}
+	//if(
+	//	// SCENE7_RAUDRA_RAS == currentScene && 
+	//	initializeScene07_Raudra() != 0)
+	//{
+	//	LOG("initializeScene7_Raudra() FAILED !!!\n");
+ //       return (-8);
+	//}
 
-	if(initializeScene5_karun() != 0)
-	{
-		LOG("initializeScene5_karun() FAILED !!!\n");
-        return (-8);
-	}
+	//if (
+	//	// SCENE10_ADBHUT_RAS == currentScene && 
+	//	initializeScene10_AdbhutRas() != 0)
+	//{
+	//	LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	if (
-		//SCENE11_SHRINGAR_RAS == currentScene &&
-		initializeScene11_ShringarRas() != 0)
-	{
-		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
-        return (-8);
-	}
+	//if(initializeScene5_karun() != 0)
+	//{
+	//	LOG("initializeScene5_karun() FAILED !!!\n");
+ //       return (-8);
+	//}
 
-	if (initializeParticle() != 0)
-	{
-		LOG("initializeParticle() FAILED !!!\n");
-		return (-8);
-	}
+	//if (
+	//	//SCENE11_SHRINGAR_RAS == currentScene &&
+	//	initializeScene11_ShringarRas() != 0)
+	//{
+	//	LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+ //       return (-8);
+	//}
+
+	//if (initializeParticle() != 0)
+	//{
+	//	LOG("initializeParticle() FAILED !!!\n");
+	//	return (-8);
+	//}
 
 
 	// initialize camera
@@ -435,58 +441,65 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE0_AMC_BANNER)
-	{
-#ifdef ENABLE_VIDEO_RENDER
-		extern struct FSQuadUniform fsqUniform;
-
-		fsqUniform = useFSQuadShader();
-		displayVideoEffect(&fsqUniform);
-		glUseProgram(0);
-#endif	
-	}
-	else if (currentScene == SCENE6_BHAYANK_RAS)
-	{
-		isGodRequired = false;
-		isWaterRequired = true;
-		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
-	}
-	else if (currentScene == SCENE11_SHRINGAR_RAS)
+//	if(currentScene == SCENE00_AMC_BANNER)
+//	{
+//#ifdef ENABLE_VIDEO_RENDER
+//		extern struct FSQuadUniform fsqUniform;
+//
+//		fsqUniform = useFSQuadShader();
+//		displayVideoEffect(&fsqUniform);
+//		glUseProgram(0);
+//#endif	
+//	}
+	if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		isGodRequired = true;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
-	else if(currentScene == SCENE10_ADBHUT_RAS)
-	{
-		isGodRequired = true;
-		isWaterRequired = false;
-		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
-	}
-	else if(currentScene == SCENE7_RAUDRA_RAS)
-	{
-		displayScene07_Raudra();
-	}
-	else if(currentScene == SCENE5_KARUN_RAS)
-	{
-		displayScene5_karun();
-	}
-	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
-	{
-		displayScene_PlaceHolderIndoor();
-	}
-	else if (currentScene == SCENE14_PARTICLE)
-	{
-		displayParticle();
-	}
-	else
-	{
-		LOG("current scene changed: %d\n", currentScene);
-		currentScene = SCENE_INVALID;
-	}
+	//else if (currentScene == SCENE06_BHAYANK_RAS)
+	//{
+	//	isGodRequired = false;
+	//	isWaterRequired = true;
+	//	isGaussianBlurRequired = false;
+	//	displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	//}
+	//else if (currentScene == SCENE11_SHRINGAR_RAS)
+	//{
+	//	isGodRequired = true;
+	//	isWaterRequired = false;
+	//	isGaussianBlurRequired = false;
+	//	displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	//}
+	//else if(currentScene == SCENE10_ADBHUT_RAS)
+	//{
+	//	isGodRequired = true;
+	//	isWaterRequired = false;
+	//	isGaussianBlurRequired = false;
+	//	displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	//}
+	//else if(currentScene == SCENE07_RAUDRA_RAS)
+	//{
+	//	displayScene07_Raudra();
+	//}
+	//else if(currentScene == SCENE05_KARUN_RAS)
+	//{
+	//	displayScene5_karun();
+	//}
+	//else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	//{
+	//	displayScene_PlaceHolderIndoor();
+	//}
+	//else if (currentScene == SCENE14_PARTICLE)
+	//{
+	//	displayParticle();
+	//}
+	//else
+	//{
+	//	LOG("current scene changed: %d\n", currentScene);
+	//	currentScene = SCENE_INVALID;
+	//}
 
 }
 
@@ -504,14 +517,18 @@ void updateNavras(void)
 		sceneFadeOut = false;
 	} 
 
-	
 	// Call Scenes Update Here
-	if(currentScene == SCENE10_ADBHUT_RAS)
+	if(currentScene == SCENE02_EARTH_AND_SPACE)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene02_EarthAndSpace();
+	}
+	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
 	}
-	else if (currentScene == SCENE6_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene06_BhayanakRas();
@@ -546,6 +563,7 @@ void uninitializeNavras(void) {
 	uninitializeScene07_Raudra();
 	uninitializeScene06_BhayanakRas();
 	uninitializeScene5_karun();
+	uninitializeScene02_EarthAndSpace();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 
