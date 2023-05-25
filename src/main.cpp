@@ -278,10 +278,10 @@ int initializeNavras(void) {
     scenePush(SCENE14_PARTICLE);
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
-	scenePush(SCENE7_RAUDRA_RAS);
+	scenePush(SCENE07_RAUDRA_RAS);
 
 	// samples
-	scenePush(SCENE0_AMC_BANNER);
+	scenePush(SCENE00_AMC_BANNER);
 
 	// samples
 	scenePush(SCENE12_HASYA_RAS);
@@ -317,7 +317,7 @@ int initializeNavras(void) {
 	}
 
 	if (
-		SCENE6_BHAYANK_RAS == currentScene &&
+		SCENE06_BHAYANK_RAS == currentScene &&
 		initializeScene06_BhayanakRas() != 0)
 	{
 		LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
@@ -445,7 +445,7 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE0_AMC_BANNER)
+	if(currentScene == SCENE00_AMC_BANNER)
 	{
 #ifdef ENABLE_VIDEO_RENDER
 		extern struct FSQuadUniform fsqUniform;
@@ -455,7 +455,7 @@ void displayNavras(void)
 		glUseProgram(0);
 #endif	
 	}
-	else if (currentScene == SCENE6_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		isGodRequired = false;
 		isWaterRequired = true;
@@ -476,7 +476,7 @@ void displayNavras(void)
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
-	else if(currentScene == SCENE7_RAUDRA_RAS)
+	else if(currentScene == SCENE07_RAUDRA_RAS)
 	{
 		displayScene07_Raudra();
 	}
@@ -525,7 +525,7 @@ void updateNavras(void)
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
 	}
-	else if (currentScene == SCENE6_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene06_BhayanakRas();
