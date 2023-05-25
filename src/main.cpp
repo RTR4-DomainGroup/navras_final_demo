@@ -23,6 +23,8 @@
 
 #include "../inc/Navras.h"
 
+#include "../inc/debug/debug_transformation.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h>		// for PI
 
@@ -35,9 +37,6 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-// camera related variables for movement in scene during debugging
-float cameraCounterSideWays = 3.2f;
-float cameraCounterUpDownWays = 3.2f;
 
 extern bool mouseLeftClickActive;
 extern float mouseX;
@@ -78,29 +77,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			// playSong(songId);
 			togglePlayback();
 			break;
-		case VK_UP:	// Up
-			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-			cameraCounterUpDownWays += 0.025f;
-			break;
-		case VK_DOWN:	// down
-			cameraCenterY = sin(cameraCounterUpDownWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterUpDownWays) * 360.0f;
-			cameraCounterUpDownWays -= 0.025f;
-			break;
-		case VK_LEFT:	// left
-			//LOG("cameraCounterSideWays : %f\n", cameraCounterSideWays);
-			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-			cameraCounterSideWays += 0.025f;
-			break;
-		case VK_RIGHT:	// right
-			cameraCenterX = sin(cameraCounterSideWays) * 360.0f;
-			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
-			cameraCounterSideWays -= 0.025f;
-			break;
 		default:
-			LOG("keypress : %d\n", wParam);
+			// LOG("keypress : %d\n", wParam);
 			break;
 		}
 		break;
@@ -108,44 +86,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 	case WM_CHAR:
 		switch (wParam) {
 
-		case 'W':
-		case 'w':
-			cameraEyeZ = cameraEyeZ - 0.25f;
-			cameraCenterZ = cameraCenterZ - 0.25f;
-			break;
-		case 'S':
-		case 's':
-			cameraEyeZ = cameraEyeZ + 0.25f;
-			cameraCenterZ = cameraCenterZ + 0.25f;
-			break;
-		case 'A':
-		case 'a':
-			cameraEyeX = cameraEyeX - 0.25f;
-			cameraCenterX = cameraCenterX - 0.25f;
-			break;
-		case 'D':
-		case 'd':
-			cameraEyeX = cameraEyeX + 0.25f;
-			cameraCenterX = cameraCenterX + 0.25f;
-			break;
-		case 'Q':
-		case 'q':
-			cameraEyeY = cameraEyeY - 0.25f;
-			cameraCenterY = cameraCenterY - 0.25f;
-			break;
-		case 'E':
-		case 'e':
-			cameraEyeY = cameraEyeY + 0.25f;
-			cameraCenterY = cameraCenterY + 0.25f;
-			break;
-		case 'R':
-		case 'r':
-			resetCamera();
-			break;
-		case 'P':
-		case 'p':
-			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f]", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
-			break;
 		case 'n':
 			playSong(songId);
 			songId++;
@@ -228,9 +168,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 				atmosVariables.m_fExposure += 0.1f;
 			break;
 		default:
-			LOG("keypressed : %d\n", wParam);
+			// LOG("keypressed : %d\n", wParam);
 			break;
-
 		}
 		break;
 
@@ -328,9 +267,18 @@ int initializeNavras(void) {
 	scenePush(SCENE7_RAUDRA_RAS);
 	scenePush(SCENE5_KARUN_RAS);
 
-
+	// samples
     //initializeTriangle();
     //initializeSphere();
+	
+
+	// currentScene = scenePop();
+	// Debug
+	// currentScene = SCENE_PLACEHOLDER_INDOOR;
+	//currentScene = SCENE7_RAUDRA_RAS;
+	// currentScene = SCENE10_ADBHUT_RAS;
+	//  currentScene = SCENE11_SHRINGAR_RAS;
+	currentScene = CURRENT_SCENE;
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -342,28 +290,34 @@ int initializeNavras(void) {
 	}
 #endif // ENABLE_VIDEO_RENDER
 
-	if(initializeScene11_ShringarRas() != 0)
-	{
-		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
-        return (-8);
-	}
-
-	if (initializeScene10_AdbhutRas() != 0)
-	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-		return (-8);
-	}
-
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
         return (-8);
 	}
 
-	if(initializeScene7_Raudra() != 0)
+	if (
+		SCENE_PLACEHOLDER_INDOOR == currentScene && 
+		initializeScene_PlaceHolderIndoor() != 0)
+	{
+		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
+		return (-8);
+	}
+
+	if(
+		SCENE7_RAUDRA_RAS == currentScene && 
+		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
         return (-8);
+	}
+
+	if (
+		SCENE10_ADBHUT_RAS == currentScene && 
+		initializeScene10_AdbhutRas() != 0)
+	{
+		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+		return (-8);
 	}
 
 	if(initializeScene5_karun() != 0)
@@ -372,10 +326,12 @@ int initializeNavras(void) {
         return (-8);
 	}
 
-	if (initializeScene_PlaceHolderIndoor() != 0)
+	if (
+		SCENE11_SHRINGAR_RAS == currentScene &&
+		initializeScene11_ShringarRas() != 0)
 	{
-		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
-		return (-8);
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+        return (-8);
 	}
 
 	if (initializeParticle() != 0)
@@ -384,20 +340,6 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
-
-	// currentScene = scenePop();
-	// Debug
-	//currentScene = SCENE7_RAUDRA_RAS;
-	//currentScene = SCENE5_KARUN_RAS;
-	// currentScene = SCENE11_SHRINGAR_RAS;
-	//currentScene = SCENE10_ADBHUT_RAS;
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -416,27 +358,7 @@ int initializeNavras(void) {
 
 	perspectiveProjectionMatrix = mat4::identity();
 
-
-
 	return(0);
-}
-
-void resetCamera(void)
-{
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
-	cameraCounterSideWays = 3.2f;
-	cameraCounterUpDownWays = 3.2f;
 }
 
 void printGLInfo(void) {
@@ -515,13 +437,13 @@ void displayNavras(void)
 	else if(currentScene == SCENE10_ADBHUT_RAS)
 	{
 		isGodRequired = true;
-		isWaterRequired = true;
+		isWaterRequired = false;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if(currentScene == SCENE7_RAUDRA_RAS)
 	{
-		displayScene7_Raudra();
+		displayScene07_Raudra();
 	}
 	else if(currentScene == SCENE5_KARUN_RAS)
 	{
@@ -569,6 +491,8 @@ void updateNavras(void)
 
 	// camera movement related updates
 	updateMouseMovement();
+
+	debug_tranformation();
 
 }
 

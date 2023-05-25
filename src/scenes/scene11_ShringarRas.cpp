@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
@@ -68,7 +67,7 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-#include "../../inc/scenes/Scene11_ShringarRas.h"
+#include "../../inc/scenes/scene11_ShringarRas.h"
 
 
 
@@ -95,7 +94,7 @@ extern struct TerrainUniform terrainUniform;
 extern struct CloudNoiseUniform sceneCloudNoiseUniform;
 #endif // ENABLE_CLOUD_NOISE
 
-extern struct TextureVariables terrainTextureVariables;
+static struct TextureVariables terrainTextureVariables;
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -152,16 +151,6 @@ extern float myScale; // = 1.0f;
 extern float noiseScale; // = 2.0f;
 extern bool noiseScaleIncrement; // = true;
 
-extern GLfloat lightAmbient[] ; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] ; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] ; //= { 10.0f, 10.0f, 0.0f, 1.0f };
-
-extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] ; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess; // = 128.0f;
-
 extern mat4 viewMatrix;
 
 
@@ -174,7 +163,7 @@ extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-extern float displacementmap_depth;
+static float displacementmap_depth;
 
 #ifdef ENABLE_SKYBOX
 // Variables For Skybox
@@ -209,6 +198,15 @@ extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
+static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
 int initializeScene11_ShringarRas(void)
 {
@@ -232,7 +230,7 @@ int initializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel_11);
+	loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
@@ -241,6 +239,25 @@ int initializeScene11_ShringarRas(void)
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_11);
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_11);
 #endif // ENABLE_DYNAMIC_MODELS
+
+#ifdef ENABLE_TERRIAN
+	displacementmap_depth = 2.0f;
+
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_nor_gl_2k.jpg";
+
+	if (initializeTerrain(&terrainTextureVariables) != 0)
+	{
+		LOG("initializeTerrain() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeTerrain() Successfull!!!\n");
+	}
+
+#endif // ENABLE_TERRIAN
 
 
 #ifdef ENABLE_BILLBOARDING
@@ -599,7 +616,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 1);
+	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
 	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
@@ -863,6 +880,10 @@ void uninitializeScene11_ShringarRas(void)
     uninitializeInstancedQuads();
 
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_TERRIAN
+	uninitializeTerrain(&terrainTextureVariables);
+#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models

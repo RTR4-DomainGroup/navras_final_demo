@@ -4,7 +4,6 @@ GLuint shaderProgramObj_terrain;
 extern FILE* gpFile;
 
 struct TerrainUniform terrainShaderUniform;
-extern HWND ghwnd;
 
 int initializeTerrainShader(void)
 {
@@ -168,12 +167,12 @@ int initializeTerrainShader(void)
                     "float l1 = length(p3.xy - p2.xy) * (16.0 + 1.0); \n" \
                     "float l2 = length(p3.xy - p1.xy) * (16.0 + 1.0); \n" \
                     "float l3 = length(p1.xy - p0.xy) * (16.0 + 1.0); \n" \
-                    "gl_TessLevelOuter[0] = 4.0; \n" \
-                    "gl_TessLevelOuter[1] = 4.0; \n" \
-                    "gl_TessLevelOuter[2] = 4.0; \n" \
-                    "gl_TessLevelOuter[3] = 4.0; \n" \
-                    "gl_TessLevelInner[0] = 2.0; \n" \
-                    "gl_TessLevelInner[1] = 2.0; \n" \
+                    "gl_TessLevelOuter[0] = 50.0; \n" \
+                    "gl_TessLevelOuter[1] = 50.0; \n" \
+                    "gl_TessLevelOuter[2] = 50.0; \n" \
+                    "gl_TessLevelOuter[3] = 50.0; \n" \
+                    "gl_TessLevelInner[0] = 50.0; \n" \
+                    "gl_TessLevelInner[1] = 50.0; \n" \
                 "} \n" \
             "} \n" \
             "gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position; \n" \
@@ -336,7 +335,7 @@ int initializeTerrainShader(void)
                 free(log);
                 log = NULL;
                 uninitializeTerrainShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -478,7 +477,7 @@ int initializeTerrainShader(void)
             // Shadow
             "float shadow = ShadowCalculation(fsm_in.FragPosLightSpace); \n" \
 
-            "phong_ads_light = ambient + (1.0 - shadow) + diffuse_light_color + specular; \n" \
+            "phong_ads_light = ambient + (1.0 - shadow) * (diffuse_light_color + specular); \n" \
             
             /********************************************/
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
@@ -533,7 +532,7 @@ int initializeTerrainShader(void)
                 free(log);
                 log = NULL;
                 uninitializeTerrainShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -575,7 +574,7 @@ int initializeTerrainShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeTerrainShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }

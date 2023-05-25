@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../inc/scenes/scenes_types.h"
+
 #define _USE_MATH_DEFINES 1
 #include <math.h> 
 
@@ -19,27 +21,35 @@
 
 // #define X_MIN (0.0f)
 // #define X_MAX (1.0f)
-#define X_MIN (-30.0f)
-#define X_MAX (30.0f)
+
+#define X_MIN_ROUDRA_SHELF (0.0f)
+
+#define X_MIN (-3.0f)
+#define X_MAX (3.0f)
 
 #define Y_MIN (-3.0f)
-#define Y_MAX (3.0f)
+#define Y_MAX (0.0f)
 
 // #define Z_MIN (0.0f)
 // #define Z_MAX (1.0f)
-#define Z_MIN (-30.0f)
-#define Z_MAX (30.0f)
+#define Z_MIN (-8.5f)
+#define Z_MIN_ROUDRA_SHELF (0.0f)
+#define Z_MAX (-3.0f)
 
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
 #define NO_OF_INSTANCES 50
+#define NO_OF_INSTANCES_DESK 6
+#define NO_OF_INSTANCES_SHELF 2
 
 #define X_INCREMENT 2.0f
+#define X_INCREMENT_SHELF 0.0f
 #define Y_INCREMENT 0.8f
-#define Z_INCREMENT -0.5f
+#define Z_INCREMENT -2.5f
 
 #define X_SEPARTION_OFFSET 0.5f
+#define X_SEPARTION_OFFSET_SHELF 80.0f
 #define Y_SEPARTION_OFFSET 0.0f
 #define Z_SEPARTION_OFFSET 0.0f
 
@@ -75,5 +85,12 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
+
+
+
+
 #define ENABLE_DYNAMIC_MODELS
 
+#define CURRENT_SCENE SCENE7_RAUDRA_RAS
+// #define CURRENT_SCENE SCENE9_VEER_RAS
+// #define CURRENT_SCENE SCENE11_SHRINGAR_RAS

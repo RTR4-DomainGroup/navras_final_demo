@@ -2,7 +2,6 @@
 
 GLuint shaderProgram_horrizontalBlur;
 struct HorrizontalBlurUniform hBlurUniform;
-extern HWND ghwnd;
 
 int initialize_horrizontalBlur()
 {
@@ -65,7 +64,7 @@ int initialize_horrizontalBlur()
                 free(log);
                 log = NULL;
                 uninitialize_horrizontalBlurShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -138,7 +137,7 @@ int initialize_horrizontalBlur()
                 free(log);
                 log = NULL;
                 uninitialize_horrizontalBlurShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -178,7 +177,7 @@ int initialize_horrizontalBlur()
                 LOG("Horrizontal Blur Shader Program Link Log: %s\n", log);
                 free(log);
                 log = NULL;
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
