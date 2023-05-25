@@ -7,30 +7,41 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # set include path
+# include_directories(${PROJECT_SOURCE_DIR}/ext/Assimp/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ext/)
-include_directories(${PROJECT_SOURCE_DIR}/ext/Assimp/include/)
+include_directories(${CMAKE_SOURCE_DIR}/ext/Assimp/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ext/ffmpeg/include/)
 include_directories(${CMAKE_SOURCE_DIR}/ext/glm/)
 include_directories(${CMAKE_SOURCE_DIR}/ext/SOIL/)
 
 # set library path
-link_directories(${CMAKE_SOURCE_DIR}/ext/Assimp/lib/)
+link_directories(${CMAKE_SOURCE_DIR}/ext/Assimp/bin/)
+link_directories(${CMAKE_SOURCE_DIR}/ext/AL/lib/)
+link_directories(${CMAKE_SOURCE_DIR}/ext/ffmpeg/bin/)
+
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 
 set(PROJ_LIBS
-#    X11
     GL
+    openal
     m
     GLEW
     SOIL
     assimp
+    X11
+    ffmpeg
+    swscale
 )
 
 
 file(GLOB PROJ_SOURCES
-     "src/helper/*.cpp"
-     "src/shader/*.cpp"
-     "src/effects/*.cpp"
-     "src/scenes/*.cpp"
+    "src/debug/*.cpp"
+    "src/helper/*.cpp"
+    "src/shaders/*.cpp"
+    "src/effects/*.cpp"
+    "src/scenes/*.cpp"
+    "src/main.cpp"
 )
 
 
@@ -50,9 +61,10 @@ file(GLOB PROJ_SOURCES
 #         ${EFFECTS_SRC_FILES} ${SCENES_SRC_FILES} 
 #         )
 
-add_library( srcobjects SHARED ${PROJ_SOURCES})
-add_executable( ${target_name} src/main.cpp )
-target_link_libraries( ${target_name} ${PROJ_LIBS} srcobjects)
+# add_library( srcobjects SHARED ${PROJ_SOURCES})
+# add_executable( ${target_name} src/main.cpp )
+add_executable( ${target_name} ${PROJ_SOURCES} src/main/main_xwindows.cpp)
+target_link_libraries( ${target_name} ${PROJ_LIBS} )
 
 #target_link_libraries(model PRIVATE mw)
 

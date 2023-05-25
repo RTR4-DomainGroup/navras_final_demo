@@ -241,11 +241,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		break;
 	case WM_MOUSEMOVE:
 		// variables
-		if(mouseLeftClickActive == true)
-		{
-			mouseX = GET_X_LPARAM(lParam);
-			mouseY = GET_Y_LPARAM(lParam);
-		}
+		mouseX = GET_X_LPARAM(lParam);
+		mouseY = GET_Y_LPARAM(lParam);
 		break;
 	case WM_LBUTTONDOWN:
 		mouseLeftClickActive = true;

@@ -5,7 +5,7 @@
 
 int initializeWater(TextureVariables *waterTexture) {
 	
-	if (LoadGLTexture_UsingSOIL(&waterTexture->displacement, waterTexture->displacementPath) == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&waterTexture->displacement, waterTexture->displacementPath) == false) {
 		//uninitialize();
 		LOG("LoadGLTexture texture_Displacement For Water FAILED!!!\n");
 		return(-1);
@@ -34,7 +34,7 @@ void uninitializeWater(TextureVariables *waterTexture) {
 	if (waterTexture->displacement)
 	{
 		glDeleteTextures(1, &waterTexture->displacement);
-		waterTexture->displacement = NULL;
+		waterTexture->displacement = 0;
 	}
 
 }

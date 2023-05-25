@@ -2,7 +2,6 @@
 #define __SPHERE_H__
 
 #include <stdlib.h>
-#include <GL/GL.h>
 
 #include "vmath.h"
 #include "common.h"

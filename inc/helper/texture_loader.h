@@ -90,8 +90,8 @@ void Draw_Text(const char* text, size_t length);
 
 // drawing helpers
 
-GLboolean LoadGLTexture_Cubemap(GLuint* textureid, const char* path);
-
+GLboolean LoadGLTexture(GLuint *texture, GLsizei width, GLsizei height, void* data);
 GLboolean LoadGLTexture_UsingSOIL(GLuint* texture, const char* path);
 GLboolean LoadGLTextureData_UsingSOIL(TEXTURE* texture, const char* path);
+GLboolean LoadGLTexture_Cubemap(GLuint* textureid, const char* path);
 

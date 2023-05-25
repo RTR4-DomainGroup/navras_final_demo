@@ -67,7 +67,7 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-#include "../../inc/scenes/Scene11_ShringarRas.h"
+#include "../../inc/scenes/scene11_ShringarRas.h"
 
 
 
@@ -208,6 +208,8 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
+float distance11;
+
 int initializeScene11_ShringarRas(void)
 {
 	// Function Declarations
@@ -347,15 +349,14 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 #ifdef ENABLE_WATER
 		waterUniform = useWaterShader();
 
-		float distance = 2.0f * (cameraEyeY - waterHeight);
+		distance11 = 2.0f * (cameraEyeY - waterHeight);
 		if (isReflection == true) {
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-			cameraEyeY -= distance;
+			cameraEyeY -= distance11;
+			cameraCenterY -= distance11;
 			setCamera();
 			//setCamera(&camera);
-			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-			cameraEyeY += distance;
-			setCamera();
+			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
 		}
 
@@ -793,6 +794,16 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		displayScene11_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
+
+	if (isReflection == true) {
+
+		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		cameraEyeY += distance11;
+		cameraCenterY += distance11;
+		setCamera();
+		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	}
+
 }
 
 #ifdef ENABLE_BILLBOARDING
