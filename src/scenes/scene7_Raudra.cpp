@@ -54,7 +54,7 @@ int initializeScene7_Raudra(void)
 	//load models
 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
 
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room\\ceiling.jpg") == GL_FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room/ceiling.jpg") == GL_FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
 		return(-1);
@@ -63,7 +63,7 @@ int initializeScene7_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room\\floor.jpg") == GL_FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room/floor.jpg") == GL_FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in floor Raudra!!!\n");
 		return(-1);
@@ -72,7 +72,7 @@ int initializeScene7_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room\\back.jpg") == GL_FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room/back.jpg") == GL_FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in back Raudra!!!\n");
 		return(-1);
@@ -81,7 +81,7 @@ int initializeScene7_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room\\sidewall.jpg") == GL_FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room/sidewall.jpg") == GL_FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in sidewall Raudra!!!\n");
 		return(-1);

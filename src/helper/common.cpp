@@ -29,7 +29,7 @@
 
 
 static char _filename[256] ; 
-static FILE* _pFile ; 
+static FILE* _pFile = NULL; 
 
 
 ////////////
