@@ -2,7 +2,6 @@
 
 typedef enum {
     SCENE_INVALID = -1,
-    SCENE_PLACEHOLDER_INDOOR,
     SCENE0_AMC_BANNER,          // Loading AMC banner 
     SCENE1_DOMAIN_LOGO,         // Domain Logo animation
     SCENE2_EARTH_AND_SPACE,     // Earth and Space 
@@ -19,6 +18,7 @@ typedef enum {
     SCENE13_SHANT_RAS,          // Shant Ras
     SCENE14_PARTICLE,           // Particle Simulation
     SCENE15_END_CREDIS,         // End Credits
+    SCENE_PLACEHOLDER_INDOOR,
     MAX_SCENES
 } scene_types_t;
 

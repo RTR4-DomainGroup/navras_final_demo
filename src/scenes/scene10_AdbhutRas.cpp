@@ -202,6 +202,8 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
+float distance10;
+
 int initializeScene10_AdbhutRas(void)
 {
 	// Function Declarations
@@ -337,15 +339,14 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 #ifdef ENABLE_WATER
 		waterUniform = useWaterShader();
 
-		float distance = 2.0f * (cameraEyeY - waterHeight);
 		if (isReflection == true) {
+			distance10 = 2.0f * (cameraEyeY - waterHeight);
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-			cameraEyeY -= distance;
+			cameraEyeY -= distance10;
+			cameraCenterY -= distance10;
 			setCamera();
 			//setCamera(&camera);
-			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-			cameraEyeY += distance;
-			setCamera();
+			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
 		}
 
@@ -781,6 +782,18 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_WATER
+	if (isReflection == true) {
+
+		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		cameraEyeY += distance10;
+		cameraCenterY += distance10;
+		setCamera();
+		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	}
+#endif
+
 }
 
 #ifdef ENABLE_BILLBOARDING

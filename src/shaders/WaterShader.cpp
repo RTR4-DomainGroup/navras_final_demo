@@ -66,7 +66,7 @@ int initializeWaterShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(vertexShaderObj, infoLogLength, &written, log);
-                LOG("Terrain Shader Vertex Shader Compilation Log: %s\n", log);
+                LOG("WATER Shader Vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeWaterShader();
@@ -92,7 +92,8 @@ int initializeWaterShader(void)
 
         "uniform float u_moveFactor; \n" \
         "uniform bool enable_godRays = true; \n" \
-        "const float waveStrength = 0.01; \n" \
+        "uniform float waveStrength; \n" \
+        "uniform vec4 waterColor; \n" \
         "out vec4 FragColor; \n" \
 
         "void main(void) \n" \
@@ -125,7 +126,7 @@ int initializeWaterShader(void)
             /*"refractiveFactor = pow(refractiveFactor, 10.0); \n" \*/
 
             "texture_color = mix(texture_Reflection, texture_Refraction, 0.1); \n" \
-            "texture_color = mix(texture_color, vec4(0.0, 0.3, 0.5, 1.0), 0.2); \n" \
+            "texture_color = mix(texture_color, waterColor, 0.2); \n" \
             "if (enable_godRays) \n" \
             "{" \
                 "FragColor = texture_color; \n" \
@@ -164,7 +165,7 @@ int initializeWaterShader(void)
             {
                 GLsizei written;
                 glGetShaderInfoLog(fragementShaderObj, infoLogLength, &written, log);
-                LOG("Fragment Shader Terrain Compilation Log: %s\n", log);
+                LOG("Fragment Shader WATER Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
                 uninitializeWaterShader();
@@ -225,6 +226,8 @@ int initializeWaterShader(void)
     waterShaderUniform.planeUniform = glGetUniformLocation(shaderProgramObj_water, "u_plane");
     waterShaderUniform.cameraPositionUniform = glGetUniformLocation(shaderProgramObj_water, "u_cameraPosition");
     waterShaderUniform.uniform_enable_godRays = glGetUniformLocation(shaderProgramObj_water, "enable_godRays");
+    waterShaderUniform.uniform_waveStrength = glGetUniformLocation(shaderProgramObj_water, "waveStrength");
+    waterShaderUniform.uniform_watercolor = glGetUniformLocation(shaderProgramObj_water, "waterColor");
 
     glUseProgram(shaderProgramObj_water);
     glUniform1i(waterShaderUniform.reflectionTextureSamplerUniform, 0);

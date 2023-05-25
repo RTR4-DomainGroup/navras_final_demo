@@ -1,6 +1,7 @@
 // Header Files
 
 #include "../inc/helper/common.h"
+#include "../inc/helper/geometry.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
@@ -19,7 +20,10 @@
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
+#include "../inc/scenes/scene06_BhayanakRas.h"
 #include "../inc/scenes/scene5_karun.h"
+
+#include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
 
@@ -51,7 +55,7 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
-static scene_types_t currentScene = SCENE5_KARUN_RAS;
+static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
@@ -270,10 +274,13 @@ int initializeNavras(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE14_PARTICLE);
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE7_RAUDRA_RAS);
+	scenePush(SCENE6_BHAYANK_RAS);
 	scenePush(SCENE5_KARUN_RAS);
+	scenePush(SCENE0_AMC_BANNER);
 
 	// samples
     //initializeTriangle();
@@ -304,6 +311,14 @@ int initializeNavras(void) {
 		initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
+		return (-8);
+	}
+
+	if (
+		SCENE6_BHAYANK_RAS == currentScene &&
+		initializeScene06_BhayanakRas() != 0)
+	{
+		LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
 		return (-8);
 	}
 
@@ -430,6 +445,13 @@ void displayNavras(void)
 		glUseProgram(0);
 #endif	
 	}
+	else if (currentScene == SCENE6_BHAYANK_RAS)
+	{
+		isGodRequired = false;
+		isWaterRequired = true;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		isGodRequired = true;
@@ -489,6 +511,11 @@ void updateNavras(void)
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
 	}
+	else if (currentScene == SCENE6_BHAYANK_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene06_BhayanakRas();
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		updateScene_PlaceHolderIndoor();
@@ -517,6 +544,7 @@ void uninitializeNavras(void) {
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene07_Raudra();
+	uninitializeScene06_BhayanakRas();
 	uninitializeScene5_karun();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
