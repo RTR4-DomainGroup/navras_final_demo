@@ -4,7 +4,6 @@ GLuint shaderProgramObj_godrays;
 extern FILE* gpFile;
 
 struct GodraysUniform godRaysUniform;
-extern HWND ghwnd;
 
 int initializeGodraysShader(void)
 {
@@ -67,7 +66,7 @@ int initializeGodraysShader(void)
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -210,7 +209,7 @@ int initializeGodraysShader(void)
                 free(log);
                 log = NULL;
                 uninitializeGodraysShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -251,7 +250,7 @@ int initializeGodraysShader(void)
                 LOG("Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeGodraysShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }

@@ -12,7 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include "../../inc/helper/assimp_glm_helpers.h"
+#include "../helper/assimp_glm_helpers.h"
+#include "../debug/debug_transformation.h"
 
 #include "resources.h"
 #include "vmath.h"
@@ -42,12 +43,12 @@ struct TextureVariables {
 	GLuint roughness;
 	GLuint displacement;
 
-	char* albedoPath;
-	char* normalPath;
-	char* aoPath;
-	char* metallicPath;
-	char* roughnessPath;
-	char* displacementPath;
+	const char* albedoPath;
+	const char* normalPath;
+	const char* aoPath;
+	const char* metallicPath;
+	const char* roughnessPath;
+	const char* displacementPath;
 
 };
 
@@ -70,6 +71,7 @@ struct TextureVariables {
 #define TEXTURE_DIR   "res/textures/"
 
 #define AUDIO_DIR     "res/audios/"
+#define PATH_SEPARATOR '/'
 
 #define VK_NUMPAD0 XK_KP_0
 #define VK_NUMPAD1 XK_KP_1
@@ -95,6 +97,9 @@ struct TextureVariables {
 #define WM_KEYDOWN 999
 #define WM_CHAR 998
 
+#define ZeroMemory(a, b)  memset(a, 0, b)
+
+
 
 #elif _WIN32
 
@@ -106,10 +111,11 @@ struct TextureVariables {
 #define TEXTURE_DIR "res\\textures\\"
 #define AUDIO_DIR "res\\audios\\"
 
-// #define PATH_SEPARATOR '\\'
-#define PATH_SEPARATOR '/'
+
+#define PATH_SEPARATOR '\\'
 
 #else
+// no platform supported like mac
 
 #endif
 
@@ -129,9 +135,7 @@ int log_close();
 char* currentDateTime(char* log_buffer);
 char* vararg2string(const char* format, ...);
 
-// #define LOG(print_buff) \
-// 	log_printf_novararg( __FILE__, __FUNCTION__, __LINE__,  vararg2string(print_buff))
 
 #define LOG(format, ...) \
-	log_printf(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
+	log_printf(__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 	

@@ -2,7 +2,6 @@
 
 GLuint fsQuadShaderProgramObject;
 struct FSQuadUniform fsQuadUniform;
-extern HWND ghwnd;
 
 int initializeFSQuadShader(void)
 {
@@ -59,7 +58,7 @@ int initializeFSQuadShader(void)
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -125,7 +124,7 @@ int initializeFSQuadShader(void)
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -166,7 +165,7 @@ int initializeFSQuadShader(void)
                 LOG("FSQuad Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeFSQuadShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }

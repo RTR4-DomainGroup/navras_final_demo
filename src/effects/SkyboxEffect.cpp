@@ -13,7 +13,7 @@ int initializeSkybox(GLuint* texture, const char * path)
 {
 	// Code.
 	// Texture
-	if (LoadGLTexture_Cubemap(texture, path) == FALSE) 
+	if (LoadGLTexture_Cubemap(texture, path) == false) 
 	{
 		LOG("LoadGLTexture_Cubemap() FAILED!!!\n");
 		return(-1);

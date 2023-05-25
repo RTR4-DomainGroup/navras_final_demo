@@ -1,6 +1,7 @@
 // Header Files
 
 #include "../inc/helper/common.h"
+#include "../inc/helper/geometry.h"
 #include "../inc/helper/shaders.h"
 #include "../inc/helper/camera.h"
 #include "../inc/helper/framebuffer.h"
@@ -19,7 +20,11 @@
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene08_BibhatsaRas.h"
-#include "../inc/scenes/scene7_Raudra.h"
+#include "../inc/scenes/scene07_Raudra.h"
+#include "../inc/scenes/scene06_BhayanakRas.h"
+#include "../inc/scenes/scene5_karun.h"
+
+#include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
 
@@ -99,6 +104,14 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 				songId = NUM_AUDIO-1;
 			break;	
 
+		case '[':
+			currentScene = scenePrev();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
+		case ']':	
+			currentScene = sceneNext();
+			LOG("current scene changed: %d\n", currentScene);
+			break;	
 		case '1':
 		case '!':
 			if (wParam == '!')
@@ -167,7 +180,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			else
 				atmosVariables.m_fExposure += 0.1f;
 			break;
-
 		default:
 			// LOG("keypressed : %d\n", wParam);
 			break;
@@ -263,23 +275,22 @@ int initializeNavras(void) {
     }
 
 	// Initialize Scenes
+    scenePush(SCENE14_PARTICLE);
     scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
 	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE00_AMC_BANNER);
 
 	// samples
     //initializeTriangle();
     //initializeSphere();
 	
-
+	currentScene = CURRENT_SCENE;
 	// currentScene = scenePop();
-	// Debug
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
-	// currentScene = SCENE7_RAUDRA_RAS;
-	currentScene = SCENE08_BIBHATSA_RAS;
-	// currentScene = SCENE10_ADBHUT_RAS;
-	// currentScene = SCENE11_SHRINGAR_RAS;
+	LOG("current scene changed: %d\n", currentScene);
 
 	// Scene0 - Astromedicomp video
 #ifdef ENABLE_VIDEO_RENDER
@@ -297,28 +308,53 @@ int initializeNavras(void) {
         return (-8);
 	}
 
-	if (SCENE_PLACEHOLDER_INDOOR == currentScene && initializeScene_PlaceHolderIndoor() != 0)
+	if (
+		// SCENE_PLACEHOLDER_INDOOR == currentScene && 
+		initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
 		return (-8);
 	}
-	if(SCENE07_RAUDRA_RAS == currentScene && initializeScene7_Raudra() != 0)
+
+	if (
+		SCENE06_BHAYANK_RAS == currentScene &&
+		initializeScene06_BhayanakRas() != 0)
 	{
-		LOG("initializeScene7_Raudra() FAILED !!!\n");
-        return (-8);
+		LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
+		return (-8);
 	}
+
 	if (SCENE08_BIBHATSA_RAS == currentScene && initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
 		return (-8);
 	}
-	if (SCENE10_ADBHUT_RAS == currentScene && initializeScene10_AdbhutRas() != 0)
+
+	if(
+		// SCENE7_RAUDRA_RAS == currentScene && 
+		initializeScene07_Raudra() != 0)
 	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
+        return (-8);
+	}
+
+	if (
+		// SCENE10_ADBHUT_RAS == currentScene && 
+		initializeScene10_AdbhutRas() != 0)
+	{
+		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
 		return (-8);
 	}
 
-	if(SCENE11_SHRINGAR_RAS == currentScene && initializeScene11_ShringarRas() != 0)
+	if(initializeScene5_karun() != 0)
+	{
+		LOG("initializeScene5_karun() FAILED !!!\n");
+        return (-8);
+	}
+
+	if (
+		//SCENE11_SHRINGAR_RAS == currentScene &&
+		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
@@ -431,6 +467,13 @@ void displayNavras(void)
 		glUseProgram(0);
 #endif	
 	}
+	else if (currentScene == SCENE06_BHAYANK_RAS)
+	{
+		isGodRequired = false;
+		isWaterRequired = true;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
 	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		isGodRequired = true;
@@ -454,7 +497,11 @@ void displayNavras(void)
 	}
 	else if(currentScene == SCENE07_RAUDRA_RAS)
 	{
-		displayScene7_Raudra();
+		displayScene07_Raudra();
+	}
+	else if(currentScene == SCENE05_KARUN_RAS)
+	{
+		displayScene5_karun();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -466,6 +513,7 @@ void displayNavras(void)
 	}
 	else
 	{
+		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
 	}
 
@@ -481,6 +529,7 @@ void updateNavras(void)
 	if(sceneFadeOut == true)
 	{
 		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
 		sceneFadeOut = false;
 	} 
 
@@ -489,6 +538,11 @@ void updateNavras(void)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene10_AdbhutRas();
+	}
+	else if (currentScene == SCENE06_BHAYANK_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene06_BhayanakRas();
 	}
 	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
@@ -523,7 +577,8 @@ void uninitializeNavras(void) {
 	uninitializeScene11_ShringarRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene08_BibhatsaRas();
-	uninitializeScene7_Raudra();
+	uninitializeScene07_Raudra();
+	uninitializeScene06_BhayanakRas();
 	// uninitializeScene_Scene0();
 	// uninitializeScene_Scene1();
 

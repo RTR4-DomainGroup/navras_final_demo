@@ -3,6 +3,7 @@
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/geometrytypes.h"
 #include "../../inc/helper/camera.h"
+#include "../../inc/debug/debug_transformation.h"
 
 // transformation controllers
 TRANFORM tf_t; // translation
@@ -81,14 +82,14 @@ void debug_tranformation(void)
 					tf_s.x += tf_Speed;
 				else
 					tf_s.x -= tf_Speed;
-				// LOG("X scale changed to %.02ff\n", tf_s.x);
+				LOG("X scale changed to %.02ff\n", tf_s.x);
 			}
 			if(rotateMode) {
 				if('x' == charPressed)
 					tf_r.x += tf_Speed;
 				else
 					tf_r.x -= tf_Speed;
-				// LOG("X rotation changed to %.02ff\n", tf_r.x);
+				LOG("X rotation changed to %.02ff\n", tf_r.x);
 			}
 			break;
 		case 'y':
@@ -105,14 +106,14 @@ void debug_tranformation(void)
 					tf_s.y += tf_Speed;
 				else
 					tf_s.y -= tf_Speed;
-				// LOG("Y transform changed to %.02ff\n", tf_s.y);
+				LOG("Y transform changed to %.02ff\n", tf_s.y);
 			}
 			if(rotateMode) {
 				if('y' == charPressed)
 					tf_r.y = 1.0;
 				else
 					tf_r.y = 0.0f;
-				// LOG("Y rotation changed to %.02ff\n", tf_r.y);
+				LOG("Y rotation changed to %.02ff\n", tf_r.y);
 			}
 			break;
 		case 'z':
@@ -129,14 +130,14 @@ void debug_tranformation(void)
 					tf_s.z += tf_Speed;
 				else
 					tf_s.z -= tf_Speed;
-				// LOG("Z scale changed to %.02ff\n", tf_s.z);
+				LOG("Z scale changed to %.02ff\n", tf_s.z);
 			}
 			if(rotateMode) {
 				if('z' == charPressed)
 					tf_r.z = 1.0;
 				else
 					tf_r.z = 0.0f;
-				// LOG("Z rotation changed to %.02ff\n", tf_r.z);
+				LOG("Z rotation changed to %.02ff\n", tf_r.z);
 			}
 			break;
 		case 'p':
@@ -221,7 +222,7 @@ void debug_tranformation(void)
 			if(ltf_Speed != tf_Speed)
 			{
 				ltf_Speed = tf_Speed;
-				// LOG("TF speed changed to %.02ff\n", ltf_Speed);
+				LOG("TF speed changed to %.02ff\n", ltf_Speed);
 			}
 		}
 		charPressed = 0;
@@ -259,3 +260,28 @@ void debug_tranformation(void)
 		keyPressed = 0;
 	}
 }
+
+
+void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMatrix, vmath::mat4& rotationMatrix) 
+{
+	static bool firstCall = 1;
+
+	// external debugging varaible
+	if(firstCall) {
+		tf_t = {translationMatrix[0][0], translationMatrix[1][1], translationMatrix[2][2]}; // tree pos
+		tf_s = {scaleMatrix[0][0], scaleMatrix[1][1], scaleMatrix[2][2]}; // tree scale
+		tf_r = {rotationMatrix[0][0], rotationMatrix[1][1], rotationMatrix[2][2]}; // tree rotate
+		tf_Speed = 0.05f;
+		firstCall = 0;
+	}
+
+	translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	// scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
+	scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+	mat4 rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
+	mat4 rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
+	mat4 rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+}
+
+
