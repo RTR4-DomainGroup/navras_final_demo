@@ -18,7 +18,7 @@
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
-#include "../inc/scenes/scene7_Raudra.h"
+#include "../inc/scenes/scene07_Raudra.h"
 #include "../inc/scenes/scene5_karun.h"
 
 #include "../inc/Navras.h"
