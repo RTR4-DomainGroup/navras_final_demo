@@ -92,6 +92,7 @@ void displayStarfield(GLuint texture)
 		glDrawArrays(GL_POINTS, 0, NUM_STARS);
 	glBindVertexArray(0);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_BLEND);
 
 }

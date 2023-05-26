@@ -878,6 +878,7 @@ void updateScene10_AdbhutRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
+	debug_tranformation();
 }
 
 void uninitializeScene10_AdbhutRas(void)
