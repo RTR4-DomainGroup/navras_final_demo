@@ -99,7 +99,8 @@ struct TextureVariables {
 
 #define ZeroMemory(a, b)  memset(a, 0, b)
 
-
+#define TRUE true
+#define FALSE false
 
 #elif _WIN32
 
