@@ -334,7 +334,7 @@ int initializeNavras(void) {
 	}
 
 	if(
-		SCENE7_RAUDRA_RAS == currentScene && 
+		SCENE07_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
@@ -356,7 +356,7 @@ int initializeNavras(void) {
 	}
 
 	if(
-		SCENE5_KARUN_RAS == currentScene &&
+		SCENE05_KARUN_RAS == currentScene &&
 		initializeScene5_karun() != 0)
 	{
 		LOG("initializeScene5_karun() FAILED !!!\n");
