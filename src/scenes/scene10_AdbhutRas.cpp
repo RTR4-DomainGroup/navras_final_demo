@@ -358,6 +358,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		}
 
 		if (isReflection == false) {
