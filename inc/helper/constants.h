@@ -79,7 +79,7 @@ static const char *szAudios[] = {
 //#define ENABLE_ATMOSPHERE
 #define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-#define ENABLE_STARFIELD
+//#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
@@ -94,7 +94,7 @@ static const char *szAudios[] = {
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
-//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space 
+//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 

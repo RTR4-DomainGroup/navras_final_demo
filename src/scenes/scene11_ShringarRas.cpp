@@ -358,8 +358,9 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 #ifdef ENABLE_WATER
 		waterUniform = useWaterShader();
 
-		distance11 = 2.0f * (cameraEyeY - waterHeight);
+		
 		if (isReflection == true) {
+			distance11 = 2.0f * (cameraEyeY - waterHeight);
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 			cameraEyeY -= distance11;
 			cameraCenterY -= distance11;
