@@ -364,8 +364,6 @@ void StaticModel::loadModelInstanced(string const& path, int numInstanced, vecto
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 void StaticModel::processNode(aiNode* node, const aiScene* scene)
 {
-    static int count = 0;
-    LOG("Enter : %d\n", count++);
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -532,7 +530,7 @@ Mesh* StaticModel::processMesh(aiMesh* mesh, const aiScene* scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    LOG("mesh number = %zu\n", meshes.size());
+    // LOG("mesh number = %zu\n", meshes.size());
 
     // return a mesh object created from the extracted mesh data
     return new Mesh(vertices, indices, textures);

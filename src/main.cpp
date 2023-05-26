@@ -49,7 +49,6 @@ extern bool mouseLeftClickActive;
 extern float mouseX;
 extern float mouseY;
 
-bool firstMouse = true;
 float yaw = -180.0f;
 float pitch = 0.0f;
 float lastX = 800.0f / 2.0f;
@@ -314,15 +313,15 @@ int initializeNavras(void) {
         return (-8);
 	}
 
-	if (
-		// SCENE_PLACEHOLDER_INDOOR == currentScene && 
-		initializeScene_PlaceHolderIndoor() != 0)
+	if (initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
 		return (-8);
 	}
 
-	if (initializeScene02_EarthAndSpace() != 0)
+	if (
+		SCENE02_EARTH_AND_SPACE == currentScene &&
+		initializeScene02_EarthAndSpace() != 0)
 	{
 		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
 		return (-8);
@@ -336,36 +335,40 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	if (
-		// SCENE7_RAUDRA_RAS == currentScene && 
+	if(
+		SCENE07_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
 		return (-8);
 	}
 
-	if (SCENE08_BIBHATSA_RAS == currentScene && initializeScene08_BibhatsaRas() != 0)
+	if (
+		SCENE08_BIBHATSA_RAS == currentScene && 
+		initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
 		return (-8);
 	}
 
 	if (
-		// SCENE10_ADBHUT_RAS == currentScene && 
+		SCENE10_ADBHUT_RAS == currentScene && 
 		initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
 		return (-8);
 	}
 
-	//if(initializeScene5_karun() != 0)
-	//{
-	//	LOG("initializeScene5_karun() FAILED !!!\n");
- //       return (-8);
-	//}
+	if(
+		SCENE05_KARUN_RAS == currentScene &&
+		initializeScene5_karun() != 0)
+	{
+		LOG("initializeScene5_karun() FAILED !!!\n");
+        return (-8);
+	}
 
 	if (
-		//SCENE11_SHRINGAR_RAS == currentScene &&
+		SCENE11_SHRINGAR_RAS == currentScene &&
 		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
@@ -386,27 +389,14 @@ int initializeNavras(void) {
 		LOG("initializeScene13_Shant() FAILED !!!\n");
 		return (-8);
 	}
+	if (
+		SCENE14_PARTICLE == currentScene &&
+		initializeParticle() != 0)
+	{
+		LOG("initializeParticle() FAILED !!!\n");
+		return (-8);
+	}
 
-	//if (initializeParticle() != 0)
-	//{
-	//	LOG("initializeParticle() FAILED !!!\n");
-	//	return (-8);
-	//}
-
-	// if(initializeScene_Scene0() != 0)
-	// {
-	// 	LOG("initializeScene_Scene0() FAILED !!!\n");
-    //     return (-8);
-	// }
-
-
-	// currentScene = scenePop();
-	// Debug
-	//currentScene = SCENE7_RAUDRA_RAS;
-	// currentScene = SCENE11_SHRINGAR_RAS;
-	//currentScene = SCENE10_ADBHUT_RAS;
-	//currentScene = SCENE08_BIBHATSA_RAS;
-	// currentScene = SCENE_PLACEHOLDER_INDOOR;
 
 	// initialize camera
 	//resetCamera();
@@ -639,6 +629,7 @@ void uninitializeNavras(void) {
 
 void updateMouseMovement(void)
 {
+	static bool firstMouse = true;
 	if (firstMouse)
 	{
 		lastX = mouseX;
