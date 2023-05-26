@@ -9,12 +9,6 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 
-#ifdef ENABLE_STARFIELD
-#undef ENABLE_STARFIELD
-
-#ifdef ENABLE_WATER
-#undef ENABLE_WATER
-
 // billboarding config
 #define BB_X_MIN (-30.0f)
 #define BB_X_MAX (30.0f)
@@ -934,8 +928,5 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
-
-#endif // ENABLE_WATER
-#endif // ENABLE_STARFIELD
 
 
