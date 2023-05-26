@@ -672,7 +672,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
 	// usage type 1 
-	update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
+	update_transformations(&translationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
