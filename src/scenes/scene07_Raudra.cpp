@@ -53,7 +53,7 @@ static GLuint texture_door;
 static STATIC_MODEL deskModel;
 STATIC_MODEL shelfModel;
 
-GLuint textures[4];
+static GLuint textures[4];
 int initializeScene07_Raudra(void)
 {
 #ifdef ENABLE_STATIC_MODELS
