@@ -25,6 +25,7 @@
 #include "../inc/scenes/scene5_karun.h"
 
 #include "../inc/scenes/scene12_Hasya.h"
+#include "../inc/scenes/scene13_Shant.h"
 #include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
@@ -277,13 +278,16 @@ int initializeNavras(void) {
 
 	// Initialize Scenes
     scenePush(SCENE14_PARTICLE);
-    scenePush(SCENE11_SHRINGAR_RAS);
+	scenePush(SCENE13_SHANT_RAS);
+	scenePush(SCENE11_SHRINGAR_RAS);
     scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
 	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE00_AMC_BANNER);
+
+	// samples
 
 	// samples
 	scenePush(SCENE12_HASYA_RAS);
@@ -368,6 +372,13 @@ int initializeNavras(void) {
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
+	}
+	if (
+		SCENE13_SHANT_RAS == currentScene && 
+		initializeScene13_Shant() != 0)
+	{
+		LOG("initializeScene13_Shant() FAILED !!!\n");
+		return (-8);
 	}
 
 	if (initializeParticle() != 0)
@@ -516,6 +527,10 @@ void displayNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		displayScene12_Hasya();
+	}
+	else if (currentScene == SCENE13_SHANT_RAS)
+	{
+		displayScene13_Shant();
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
