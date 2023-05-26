@@ -203,6 +203,8 @@ int initializeScene02_EarthAndSpace(void)
 	}
 
 	initializeQuad();
+	//initializeSphere(null);
+
 #endif // ENABLE_STARFIELD
 
 	return 0;

@@ -67,10 +67,8 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
 
-
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
-
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -142,7 +140,6 @@ struct FrameBufferDetails fboEarthAndSpace;
 
 extern int windowWidth;
 extern int windowHeight;
-
 
 float myScale = 1.0f;
 
