@@ -9,12 +9,21 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 
-#ifdef ENABLE_STARFIELD
-#undef ENABLE_STARFIELD
+// billboarding config
+#define BB_X_MIN (-30.0f)
+#define BB_X_MAX (30.0f)
 
-#ifdef ENABLE_WATER
-#undef ENABLE_WATER
+#define BB_Y_MIN (-3.0f)
+#define BB_Y_MAX (3.0f)
 
+#define BB_Z_MIN (-50.0f)
+#define BB_Z_MAX (70.0f)
+
+#define BB_NO_OF_INSTANCES 1000
+
+// #define X_INCREMENT 2.5f
+// #define Y_INCREMENT 0.8f
+// #define Z_INCREMENT -0.5f
 
 #ifdef ENABLE_WATER
 #include "../../inc/helper/waterframebuffer.h"
@@ -209,6 +218,7 @@ int initializeScene10_AdbhutRas(void)
 	// Function Declarations
 
 	// set Camera location
+	// -10.000000, -2.250000, -8.000000], [-10.193824, -3.229223, -8.059628] [0.000000, 1.000000, 0.000000
 	cameraEyeX = 0.0f;
 	cameraEyeY = 0.0f;
 	cameraEyeZ = 6.0f;
@@ -237,21 +247,21 @@ int initializeScene10_AdbhutRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_BILLBOARDING
-	GLfloat instance_positions[NO_OF_INSTANCES * 4] = {};
+	GLfloat instance_positions[BB_NO_OF_INSTANCES * 4] = {};
 	// generate positions per instance
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
 	{
-		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;
-		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (Y_MAX - Y_MIN)) + Y_MIN;
-		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;
+		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (BB_X_MAX - BB_X_MIN)) + BB_X_MIN;
+		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (BB_Y_MAX - BB_Y_MIN)) + BB_Y_MIN;
+		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (BB_Z_MAX - BB_Z_MIN)) + BB_Z_MIN;
 		instance_positions[(i*4)+3] = 1.0f;
 		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
 	}
 
 	// sort z vertices
-	for(int i = 0; i < NO_OF_INSTANCES; i++)
+	for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
 	{
-		for (int j = i + 1; j < NO_OF_INSTANCES; ++j)
+		for (int j = i + 1; j < BB_NO_OF_INSTANCES; ++j)
 		{
 			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
 			{
@@ -262,7 +272,7 @@ int initializeScene10_AdbhutRas(void)
 		}
 	}
 
-	initializeInstancedQuad(NO_OF_INSTANCES, instance_positions);
+	initializeInstancedQuad(BB_NO_OF_INSTANCES, instance_positions);
 
 
 #endif // ENABLE_BILLBOARDING
@@ -615,10 +625,18 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
+	translationMatrix = vmath::translate(-7.78f, -3.88f, -16.69f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	// usage type 2
+	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
+	rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
+	rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix_z = vmath::rotate(rotationAngles.z, 1.0f, 0.0f, 1.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix, &rotationAngles);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1) {
@@ -650,17 +668,17 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	// ------ Streetlight Model ------
+	// ------ Tree Model ------
 	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
 	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
-	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
+	// usage type 1 
+	update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 
 	drawStaticModel(treeModel);
 
@@ -840,7 +858,7 @@ void displayScene10_Billboarding(int godRays = 1)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+	displayInstancedQuads(BB_NO_OF_INSTANCES);  // how many instances to draw
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 
@@ -855,15 +873,19 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.50f, -3.50f, -25.0f);
+	translationMatrix = vmath::translate(-1.5f, -3.5f, -25.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
+	glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
+	glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
+	glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
+	glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
+	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-	displayInstancedQuads(NO_OF_INSTANCES);  // how many instances to draw
+	displayInstancedQuads(BB_NO_OF_INSTANCES);  // how many instances to draw
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	glUseProgram(0);
@@ -907,8 +929,5 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
-
-#endif // ENABLE_WATER
-#endif // ENABLE_STARFIELD
 
 

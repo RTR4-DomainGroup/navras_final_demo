@@ -79,7 +79,7 @@ static const char *szAudios[] = {
 //#define ENABLE_ATMOSPHERE
 #define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
-//#define ENABLE_STARFIELD
+#define ENABLE_STARFIELD
 //#define ENABLE_FOG
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
