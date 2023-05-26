@@ -115,7 +115,7 @@ int initializeScene08_BibhatsaRas(void)
 	initializeQuad();
 	initializeCube();
 
-	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"\\Road\\Road.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"/Road/Road.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_road FAILED!!!\n");
@@ -133,12 +133,12 @@ int initializeScene08_BibhatsaRas(void)
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 
 	// Buildings Model Loading
-	loadStaticModel("res/models/buildings/1/Building1.obj", &buildingOneModel);
-	loadStaticModel("res/models/buildings/2/Building2.obj", &buildingTwoModel);
-	loadStaticModel("res/models/buildings/3/Building3.obj", &buildingThreeModel);
-	loadStaticModel("res/models/buildings/4/Building4.obj", &buildingFourModel);
-	loadStaticModel("res/models/buildings/5/Building5.obj", &buildingFiveModel);
-	loadStaticModel("res/models/buildings/6/Building6.obj", &buildingSixModel);
+	// loadStaticModel("res/models/buildings/1/Building1.obj", &buildingOneModel);
+	// loadStaticModel("res/models/buildings/2/Building2.obj", &buildingTwoModel);
+	// loadStaticModel("res/models/buildings/3/Building3.obj", &buildingThreeModel);
+	// loadStaticModel("res/models/buildings/4/Building4.obj", &buildingFourModel);
+	// loadStaticModel("res/models/buildings/5/Building5.obj", &buildingFiveModel);
+	// loadStaticModel("res/models/buildings/6/Building6.obj", &buildingSixModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS

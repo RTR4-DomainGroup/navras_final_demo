@@ -53,7 +53,7 @@ int initializeScene13_Shant(void)
 	// function declarations
 
 	//load models
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta/ceiling.jpg") == FALSE) {
 		uninitializeScene13_Shant();
 		LOG("LoadGLTexture FAILED in Shanta!!!\n");
 		return(-1);
@@ -62,7 +62,7 @@ int initializeScene13_Shant(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Shanta\\floor.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Shanta/floor.jpg") == FALSE) {
 		uninitializeScene13_Shant();
 		LOG("LoadGLTexture FAILED in floor Shanta!!!\n");
 		return(-1);
@@ -71,7 +71,7 @@ int initializeScene13_Shant(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Shanta\\back.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Shanta/back.jpg") == FALSE) {
 		uninitializeScene13_Shant();
 		LOG("LoadGLTexture FAILED in backwall Shanta!!!\n");
 		return(-1);
@@ -80,7 +80,7 @@ int initializeScene13_Shant(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Shanta\\sidewall.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Shanta/sidewall.jpg") == FALSE) {
 		uninitializeScene13_Shant();
 		LOG("LoadGLTexture FAILED for sidewall Shanta!!!\n");
 		return(-1);

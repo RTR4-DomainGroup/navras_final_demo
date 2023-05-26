@@ -320,7 +320,8 @@ int initializeNavras(void) {
 	}
 
 	// SCENE02
-	if (SCENE02_EARTH_AND_SPACE == currentScene &&
+	if (
+		// SCENE02_EARTH_AND_SPACE == currentScene &&
 		initializeScene02_EarthAndSpace() != 0)
 	{
 		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
@@ -328,7 +329,8 @@ int initializeNavras(void) {
 	}
 
 	// SCENE05
-	if (SCENE05_KARUN_RAS == currentScene &&
+	if (
+		// SCENE05_KARUN_RAS == currentScene &&
 		initializeScene5_karun() != 0)
 	{
 		LOG("initializeScene5_karun() FAILED !!!\n");
@@ -337,7 +339,7 @@ int initializeNavras(void) {
 
 	// SCENE06
 	if (
-		SCENE06_BHAYANK_RAS == currentScene &&
+		// SCENE06_BHAYANK_RAS == currentScene &&
 		initializeScene06_BhayanakRas() != 0)
 	{
 		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
@@ -346,7 +348,7 @@ int initializeNavras(void) {
 
 	// SCENE07
 	if (
-		SCENE07_RAUDRA_RAS == currentScene &&
+		// SCENE07_RAUDRA_RAS == currentScene &&
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
@@ -354,7 +356,8 @@ int initializeNavras(void) {
 	}
 
 	// SCENE08
-	if (SCENE08_BIBHATSA_RAS == currentScene &&
+	if (
+		// SCENE08_BIBHATSA_RAS == currentScene &&
 		initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
@@ -363,7 +366,7 @@ int initializeNavras(void) {
 
 	// SCENE10
 	if (
-		SCENE10_ADBHUT_RAS == currentScene &&
+		// SCENE10_ADBHUT_RAS == currentScene &&
 		initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
@@ -372,7 +375,7 @@ int initializeNavras(void) {
 
 	// SCENE11
 	if (
-		SCENE11_SHRINGAR_RAS == currentScene &&
+		// SCENE11_SHRINGAR_RAS == currentScene &&
 		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
@@ -381,7 +384,7 @@ int initializeNavras(void) {
 
 	// SCENE12
 	if(
-		SCENE12_HASYA_RAS == currentScene && 
+		// SCENE12_HASYA_RAS == currentScene && 
 		initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene12_Hasya() FAILED !!!\n");
@@ -390,7 +393,7 @@ int initializeNavras(void) {
 
 	// SCENE13
 	if (
-		SCENE13_SHANT_RAS == currentScene && 
+		// SCENE13_SHANT_RAS == currentScene && 
 		initializeScene13_Shant() != 0)
 	{
 		LOG("initializeScene13_Shant() FAILED !!!\n");
@@ -399,7 +402,7 @@ int initializeNavras(void) {
 
 	// SCENE14
 	if (
-		SCENE14_PARTICLE == currentScene &&
+		// SCENE14_PARTICLE == currentScene &&
 		initializeParticle() != 0)
 	{
 		LOG("initializeParticle() FAILED !!!\n");
