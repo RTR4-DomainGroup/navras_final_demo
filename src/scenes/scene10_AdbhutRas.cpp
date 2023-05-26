@@ -224,6 +224,7 @@ int initializeScene10_AdbhutRas(void)
 	// Function Declarations
 
 	// set Camera location
+	// -10.000000, -2.250000, -8.000000], [-10.193824, -3.229223, -8.059628] [0.000000, 1.000000, 0.000000
 	cameraEyeX = 0.0f;
 	cameraEyeY = 0.0f;
 	cameraEyeZ = 6.0f;
@@ -629,10 +630,18 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
+	translationMatrix = vmath::translate(-7.78f, -3.88f, -16.69f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	// usage type 2
+	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
+	rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
+	rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix_z = vmath::rotate(rotationAngles.z, 1.0f, 0.0f, 1.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix, &rotationAngles);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1) {
@@ -664,17 +673,17 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	// ------ Streetlight Model ------
+	// ------ Tree Model ------
 	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
 	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
-	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
+	// usage type 1 
+	update_transformations(translationMatrix, scaleMatrix, rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 
 	drawStaticModel(treeModel);
 

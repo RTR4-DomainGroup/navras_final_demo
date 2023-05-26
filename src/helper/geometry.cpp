@@ -4,6 +4,7 @@
 
 // coordinates - x, y, z 
 #define NUM_CORDS 3 
+
 // cube
 GLuint vao_Cube;
 GLuint vbo_Cube;
