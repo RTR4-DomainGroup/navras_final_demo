@@ -319,7 +319,9 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	if (initializeScene02_EarthAndSpace() != 0)
+	if (
+		SCENE02_EARTH_AND_SPACE == currentScene &&
+		initializeScene02_EarthAndSpace() != 0)
 	{
 		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
 		return (-8);
@@ -341,7 +343,9 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	if (SCENE08_BIBHATSA_RAS == currentScene && initializeScene08_BibhatsaRas() != 0)
+	if (
+		SCENE08_BIBHATSA_RAS == currentScene && 
+		initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
 		return (-8);
