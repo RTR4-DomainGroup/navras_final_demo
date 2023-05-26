@@ -8,9 +8,9 @@
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
-
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../../inc/scenes/scene7_Raudra.h"
+#include "../../inc/scenes/scene5_karun.h"
+#include "../../inc/debug/debug_transformation.h"
 
 
 #define FBO_WIDTH WIN_WIDTH
@@ -39,70 +39,74 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
-static GLuint texture_ceiling;
-static GLuint texture_floor;
-static GLuint texture_side;
-static GLuint texture_back;
+GLuint texture_kidroom_ceiling;
+GLuint texture_kidroom_floor;
+GLuint texture_kidroom_side;
+GLuint texture_kidroom_back;
 
 //Model variables
-static STATIC_MODEL deskModel;
+STATIC_MODEL tableModel;
 
-GLuint textures[4];
-int initializeScene7_Raudra(void)
+GLuint textures_kidroom[4];
+
+//values
+scene5_variables translatevalues;
+
+int initializeScene5_karun(void)
 {
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/desk/desk.obj", &deskModel);
+	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
 
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room\\ceiling.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room\\scene5Room\\ceiling.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
 		return(-1);
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room\\floor.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_floor, TEXTURE_DIR"Room\\floor.jpg") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in floor Raudra!!!\n");
 		return(-1);
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room\\back.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room\\scene5Room\\frontwall2.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in back Raudra!!!\n");
 		return(-1);
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room\\sidewall.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room\\scene5Room\\sidewalls.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in sidewall Raudra!!!\n");
 		return(-1);
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_side);
 	}
 	//loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
 #endif
 	initializeInvertedNormalCube();
 
-	textures[0] = (GLuint)texture_ceiling;
-	textures[1] = (GLuint)texture_floor;
-	textures[2] = (GLuint)texture_back;
-	textures[3] = (GLuint)texture_side;
+	textures_kidroom[0] = (GLuint)texture_kidroom_ceiling;
+	textures_kidroom[1] = (GLuint)texture_kidroom_floor;
+	textures_kidroom[2] = (GLuint)texture_kidroom_back;
+	textures_kidroom[3] = (GLuint)texture_kidroom_side;
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
 
-void displayScene7_Raudra(void)
+void displayScene5_karun(void)
 {
     // set camera
 	setCamera();
@@ -154,7 +158,7 @@ void displayScene7_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//glEnable(GL_TEXTURE_2D);
 	
-	displayRoom(textures);
+	displayRoom(textures_kidroom);
 
 
     // ------ Desk Model ------
@@ -166,18 +170,20 @@ void displayScene7_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
+	//translatevalues.x = 1.799999 , translatevalues.y = -1.000000, translatevalues.z = -3.299998 
+	translationMatrix = vmath::translate(1.799999f, -1.000000f, -3.299998f);
+	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
+	scaleMatrix = vmath::scale(0.5f, 0.4f, 0.35f);
+	//rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-	translationMatrix = vmath::translate(0.0f, -2.0f, -2.0f);
-	//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	modelMatrix = translationMatrix * scaleMatrix ;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(deskModel);
+	drawStaticModel(tableModel);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
@@ -185,29 +191,29 @@ void displayScene7_Raudra(void)
     #endif 
 }
 
-void uninitializeScene7_Raudra(void)
+void uninitializeScene5_karun(void)
 {
     //UNINIT models
-	unloadStaticModel(&deskModel);
-	if (texture_ceiling)
+	unloadStaticModel(&tableModel);
+	if (texture_kidroom_ceiling)
 	{
-		glDeleteTextures(1, &texture_ceiling);
-		texture_ceiling = 0;
+		glDeleteTextures(1, &texture_kidroom_ceiling);
+		texture_kidroom_ceiling = 0;
 	}
-	if (texture_floor)
+	if (texture_kidroom_floor)
 	{
-		glDeleteTextures(1, &texture_floor);
-		texture_floor = 0;
+		glDeleteTextures(1, &texture_kidroom_floor);
+		texture_kidroom_floor = 0;
 	}
-	if (texture_back)
+	if (texture_kidroom_back)
 	{
-		glDeleteTextures(1, &texture_back);
-		texture_floor = 0;
+		glDeleteTextures(1, &texture_kidroom_back);
+		texture_kidroom_floor = 0;
 	}
-	if (texture_side)
+	if (texture_kidroom_side)
 	{
-		glDeleteTextures(1, &texture_side);
-		texture_side = 0;
+		glDeleteTextures(1, &texture_kidroom_side);
+		texture_kidroom_side = 0;
 	}
 	
 }

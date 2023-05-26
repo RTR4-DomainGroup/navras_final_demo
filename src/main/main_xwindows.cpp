@@ -45,7 +45,7 @@ GLbyte charPressed;
 GLuint keyPressed;
 
 // mouse Interaction 
-Bool mouseLeftClickActive = False;
+bool mouseLeftClickActive = false;
 // mouse position
 float mouseX;
 float mouseY;
@@ -278,7 +278,7 @@ int main(void)
     retval = initialize();
     if(retval != 0)
     {
-        LOG("Initialize OpenGL failed\n");
+        printf("Initialize OpenGL failed\n");
         exit(1);
     }
     else
@@ -304,10 +304,7 @@ int main(void)
                 case Button1: // XK_Pointer_Button1:
                     // left mouse button
                     mouseLeftClickActive = true;
-                    mouseX = (float)event.xbutton.x;
-                    mouseY = (float)event.xbutton.y;
-                    printf("ButtonPress: left mouse button clicked at (%.02f,%.02f)\n", 
-                    mouseX, mouseY);
+
                     break;
                 case Button2:
                     // middle mouse button clicked
@@ -331,6 +328,11 @@ int main(void)
                 }    
                 break;
             case MotionNotify:
+                if(mouseLeftClickActive) {
+                    mouseX = (float)event.xbutton.x;
+                    mouseY = (float)event.xbutton.y;
+                    // printf("ButtonPress: left mouse button clicked at (%.02f,%.02f)\n", mouseX, mouseY);
+                }
                 break;
             case KeyPress:
                 keySym = XkbKeycodeToKeysym(
@@ -368,7 +370,7 @@ int main(void)
                     }
                     break;
                 default:
-                    LOG("keypressed : %c\n", keys[0]);
+                    // LOG("keypressed : %c\n", keys[0]);
                     eventHandlerNavras(WM_CHAR, keys[0]);
                     break;
                 }
@@ -627,7 +629,6 @@ void uninitialize(void)
 
     LOG("%s(%d): %s: Successful\n", __FILE__, __LINE__, __FUNCTION__);
 
-    LOG("log file successfully closed.\n");
-    log_close();
+
 }
 

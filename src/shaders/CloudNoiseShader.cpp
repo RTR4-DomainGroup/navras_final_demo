@@ -4,7 +4,6 @@
 GLuint cloudNoiseShaderProgramObject;
 
 CloudNoiseUniform cloudNoiseUniform;
-extern HWND ghwnd;
 
 int intializeCloudNoiseShader(void)
 {
@@ -72,7 +71,7 @@ int intializeCloudNoiseShader(void)
 				free(log);
 				log = NULL;
 				uninitializeCloudNoiseShader();
-				DestroyWindow(ghwnd);
+				return(-1);
 			}
 		}
 	}
@@ -149,7 +148,7 @@ int intializeCloudNoiseShader(void)
 				free(log);
 				uninitializeCloudNoiseShader();
 				log = NULL;
-				DestroyWindow(ghwnd);
+				return(-1);
 			}
 		}
 	}
@@ -177,7 +176,7 @@ int intializeCloudNoiseShader(void)
 				LOG("Cloud Noise ShaderProgram Linking Log: %s\n", log);
 				free(log);
 				uninitializeCloudNoiseShader();
-				DestroyWindow(ghwnd);
+				return(-1);
 			}
 		}
 	}

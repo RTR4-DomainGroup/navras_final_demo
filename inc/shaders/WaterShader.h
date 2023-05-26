@@ -15,6 +15,10 @@ struct WaterUniform
     GLuint planeUniform;
     GLuint cameraPositionUniform;
     GLuint uniform_enable_godRays;
+
+    GLuint uniform_waveStrength;
+    GLuint uniform_watercolor;
+
 };
 
 int initializeWaterShader(void);
