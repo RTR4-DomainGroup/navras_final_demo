@@ -323,13 +323,19 @@ int initializeNavras(void) {
 		LOG("initializeScene06_BhayanakRas() FAILED !!!\n");
 		return (-8);
 	}
+	else {
+		LOG("initializeScene06_BhayanakRas() Successful !!!\n");
+	}
 
 	if(
 		SCENE07_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
-        return (-8);
+		return (-8);
+	}
+	else {
+		LOG("initializeScene7_Raudra() Successful !!!\n");
 	}
 
 	if (
@@ -339,12 +345,18 @@ int initializeNavras(void) {
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
 		return (-8);
 	}
+	else {
+		LOG("initializeScene10_AdbhutRas() Successful !!!\n");
+	}
 
 	if(SCENE05_KARUN_RAS == currentScene &&
 		initializeScene5_karun() != 0)
 	{
 		LOG("initializeScene5_karun() FAILED !!!\n");
         return (-8);
+	}
+	else {
+		LOG("initializeScene5_karun() Successful !!!\n");
 	}
 
 	if (
@@ -354,6 +366,10 @@ int initializeNavras(void) {
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
 	}
+	else {
+		LOG("initializeScene11_ShringarRas() Successful !!!\n");
+
+	}
 
 	if(
 		SCENE12_HASYA_RAS == currentScene && 
@@ -362,6 +378,10 @@ int initializeNavras(void) {
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
         return (-8);
 	}
+	else {
+		LOG("initializeScene11_ShringarRas() Successful !!!\n");
+
+	}
 
 	if (SCENE14_PARTICLE == currentScene && 
 		initializeParticle() != 0)
@@ -369,6 +389,10 @@ int initializeNavras(void) {
 	{
 		LOG("initializeParticle() FAILED !!!\n");
 		return (-8);
+	}
+	else {
+		LOG("initializeParticle() Successful !!!\n");
+
 	}
 
 
