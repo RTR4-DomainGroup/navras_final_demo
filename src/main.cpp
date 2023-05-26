@@ -325,7 +325,7 @@ int initializeNavras(void) {
 	}
 
 	if(
-		// SCENE7_RAUDRA_RAS == currentScene && 
+		SCENE07_RAUDRA_RAS == currentScene && 
 		initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
@@ -333,21 +333,22 @@ int initializeNavras(void) {
 	}
 
 	if (
-		// SCENE10_ADBHUT_RAS == currentScene && 
+		SCENE10_ADBHUT_RAS == currentScene && 
 		initializeScene10_AdbhutRas() != 0)
 	{
 		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
 		return (-8);
 	}
 
-	if(initializeScene5_karun() != 0)
+	if(SCENE05_KARUN_RAS == currentScene &&
+		initializeScene5_karun() != 0)
 	{
 		LOG("initializeScene5_karun() FAILED !!!\n");
         return (-8);
 	}
 
 	if (
-		//SCENE11_SHRINGAR_RAS == currentScene &&
+		SCENE11_SHRINGAR_RAS == currentScene &&
 		initializeScene11_ShringarRas() != 0)
 	{
 		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
@@ -362,7 +363,9 @@ int initializeNavras(void) {
         return (-8);
 	}
 
-	if (initializeParticle() != 0)
+	if (SCENE14_PARTICLE == currentScene && 
+		initializeParticle() != 0)
+		
 	{
 		LOG("initializeParticle() FAILED !!!\n");
 		return (-8);
