@@ -358,7 +358,7 @@ void displayScene07_Raudra(void)
 	drawStaticModelInstanced(shelfModel, NO_OF_INSTANCES_SHELF);
 
 
-// ------ Pencil Model ------
+	// ------ Pencil Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -381,6 +381,30 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(pencilModel);
+
+	// ------ Failed Texture ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(1.8f, -0.54f, -1.1f);
+	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
+	scaleMatrix = vmath::scale(0.15f, 0.12f, 0.2f);
+	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_failed);
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
