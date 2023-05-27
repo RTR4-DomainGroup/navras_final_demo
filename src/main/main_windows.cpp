@@ -402,8 +402,6 @@ void set_title(char* title)
 void resize(int width, int height)
 {
 	// code
-	LOG("resize called\n");
-
 	resizeNavras(width, height);
 }
 

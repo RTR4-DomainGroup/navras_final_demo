@@ -54,7 +54,7 @@ static STATIC_MODEL deskModel;
 STATIC_MODEL shelfModel;
 static STATIC_MODEL pencilModel;
 
-GLuint textures[4];
+static GLuint textures[4];
 int initializeScene07_Raudra(void)
 {
 #ifdef ENABLE_STATIC_MODELS
@@ -169,7 +169,7 @@ void initializeDeskInstancePositions(void)
 		instance_positions[(i*3)+1] = 0.0f;
 		instance_positions[(i*3)+2] = zPos;
 
-		LOG("Desk Instance %d Position: [%f %f %f]\n", i, 
+		LOG("Desk Instance %d Position: [%.02f %.02f %.02f]\n", i, 
             instance_positions[(i*3)+0], instance_positions[(i*3)+1], instance_positions[(i*3)+2]);
 
         xPos += X_INCREMENT + X_SEPARTION_OFFSET;    
@@ -205,7 +205,7 @@ void initializeShelfInstancePositions(void)
 		instance_positions[(i*3)+1] = 0.0f;
 		instance_positions[(i*3)+2] = zPos;
 
-		LOG("Shelf Instance %d Position: [%f %f %f]\n", i, 
+		LOG("Shelf Instance %d Position: [%.02f %.02f %.02f]\n", i, 
             instance_positions[(i*3)+0], instance_positions[(i*3)+1], instance_positions[(i*3)+2]);
 
         xPos += (X_INCREMENT_SHELF + X_SEPARTION_OFFSET_SHELF);
