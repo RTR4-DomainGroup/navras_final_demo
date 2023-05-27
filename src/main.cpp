@@ -22,6 +22,7 @@
 #include "../inc/scenes/scene06_BhayanakRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
 #include "../inc/scenes/scene08_BibhatsaRas.h"
+#include "../inc/scenes/scene09_VeerRas.h"
 #include "../inc/scenes/scene10_AdbhutRas.h"
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene12_Hasya.h"
@@ -62,6 +63,8 @@ static scene_types_t currentScene = SCENE_INVALID;
 bool sceneFadeOut = false;
 
 extern AtmosphericVariables atmosVariables;
+
+bool isInitialDisplay = true;
 
 int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
@@ -354,10 +357,20 @@ int initializeNavras(void) {
 	}
 
 	// SCENE08
-	if (SCENE08_BIBHATSA_RAS == currentScene &&
+	if (
+		SCENE08_BIBHATSA_RAS == currentScene && 
 		initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
+		return (-8);
+	}
+
+	// SCENE09
+	if (
+		SCENE09_VEER_RAS == currentScene && 
+		initializeScene09_VeerRas() != 0)
+	{
+		LOG("initializeScene09_VeerRas() FAILED !!!\n");
 		return (-8);
 	}
 
@@ -476,6 +489,25 @@ void displayNavras(void)
 	bool isWaterRequired = false;
 	bool isGaussianBlurRequired = false;
 
+	//if (isInitialDisplay == true)
+	//{
+	//	// set Camera location
+	//	
+	//	cameraEyeX = 1.95f;
+	//	cameraEyeY = -0.40f;
+	//	cameraEyeZ = 1.45f;
+	//	
+	//	cameraCenterX = 8.92f;
+	//	cameraCenterY = -0.40f;
+	//	cameraCenterZ = -359.89f;
+
+	//	cameraUpX = 0.0f;
+	//	cameraUpY = 1.0f;
+	//	cameraUpZ = 0.0f;
+
+	//	isInitialDisplay = false;
+	//}
+
 	// Function declarations
 	void resize(int, int);
 
@@ -521,6 +553,13 @@ void displayNavras(void)
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+	}
+	else if (currentScene == SCENE09_VEER_RAS)
+	{
+		isGodRequired = true;
+		isWaterRequired = false;
+		isGaussianBlurRequired = false;
+		displayScene_PlaceHolderOutdoor(displayScene09_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if (currentScene == SCENE10_ADBHUT_RAS)
 	{
@@ -575,7 +614,12 @@ void updateNavras(void)
 	} 
 
 	// Call Scenes Update Here
-	if (currentScene == SCENE11_SHRINGAR_RAS)
+	if (currentScene == SCENE09_VEER_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene09_VeerRas();
+	}
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene11_ShringarRas();
@@ -621,6 +665,7 @@ void uninitializeNavras(void) {
 	uninitializeScene_PlaceHolderOutdoor();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene11_ShringarRas();
+	uninitializeScene09_VeerRas();
 	uninitializeScene10_AdbhutRas();
 	uninitializeScene08_BibhatsaRas();
 	uninitializeScene07_Raudra();
@@ -671,6 +716,3 @@ void updateMouseMovement(void)
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
-
-
-
