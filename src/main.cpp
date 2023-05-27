@@ -64,6 +64,8 @@ bool sceneFadeOut = false;
 
 extern AtmosphericVariables atmosVariables;
 
+bool isInitialDisplay = true;
+
 int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// Function Declarations
@@ -487,6 +489,25 @@ void displayNavras(void)
 	bool isWaterRequired = false;
 	bool isGaussianBlurRequired = false;
 
+	//if (isInitialDisplay == true)
+	//{
+	//	// set Camera location
+	//	
+	//	cameraEyeX = 1.95f;
+	//	cameraEyeY = -0.40f;
+	//	cameraEyeZ = 1.45f;
+	//	
+	//	cameraCenterX = 8.92f;
+	//	cameraCenterY = -0.40f;
+	//	cameraCenterZ = -359.89f;
+
+	//	cameraUpX = 0.0f;
+	//	cameraUpY = 1.0f;
+	//	cameraUpZ = 0.0f;
+
+	//	isInitialDisplay = false;
+	//}
+
 	// Function declarations
 	void resize(int, int);
 
@@ -695,6 +716,3 @@ void updateMouseMovement(void)
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
-
-
-

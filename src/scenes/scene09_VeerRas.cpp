@@ -174,12 +174,13 @@ int initializeScene09_VeerRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
-	// displacementmap_depth = 15.0f;
-	displacementmap_depth = 1.5f;
+	 displacementmap_depth = 15.0f;
+	//displacementmap_depth = 1.5f;
 
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
-	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
+	//terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/dm_s11_02.jpg";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/11_Diffuse.png";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene09_Veer/11_Mountains_displacement.png";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene09_Veer/11_Mountains_normal.png";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
 	{
