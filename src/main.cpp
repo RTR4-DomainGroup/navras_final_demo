@@ -323,7 +323,8 @@ int initializeNavras(void) {
 	}
 
 	// SCENE02
-	if (SCENE02_EARTH_AND_SPACE == currentScene &&
+	if (
+		SCENE02_EARTH_AND_SPACE == currentScene &&
 		initializeScene02_EarthAndSpace() != 0)
 	{
 		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
@@ -331,7 +332,8 @@ int initializeNavras(void) {
 	}
 
 	// SCENE05
-	if (SCENE05_KARUN_RAS == currentScene &&
+	if (
+		SCENE05_KARUN_RAS == currentScene &&
 		initializeScene5_karun() != 0)
 	{
 		LOG("initializeScene5_karun() FAILED !!!\n");
