@@ -485,7 +485,6 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 
 	time = time * 0.05f;
 	time = time - floor(time);
-	LOG("LoadGLTexture STAR is Successful = %f!!!\n", time);
 
 	// Transformations
 	translationMatrix = mat4::identity();

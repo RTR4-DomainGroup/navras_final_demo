@@ -322,7 +322,8 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	if (initializeScene02_EarthAndSpace() != 0)
+	if (SCENE02_EARTH_AND_SPACE == currentScene &&
+		initializeScene02_EarthAndSpace() != 0)
 	{
 		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
 		return (-8);

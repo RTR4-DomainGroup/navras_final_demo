@@ -202,8 +202,8 @@ int initializeScene02_EarthAndSpace(void)
 		LOG("LoadGLTexture for Sun is Successful = %u!!!\n", texture_sun);
 	}
 
+	initializeCube();
 	initializeQuad();
-	//initializeSphere(null);
 
 #endif // ENABLE_STARFIELD
 
@@ -276,7 +276,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glUniform1i(adsEarthAndSpaceUniform.godrays_blackpass_sphere, 0);
 
 		// Earth
-		translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
+		translationMatrix = vmath::translate(2.0f, 0.0f, -4.75f);					// glTranslatef() is replaced by this line.
 		//scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
@@ -301,10 +301,11 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 
 		// Cube
 		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(200.0f, 200.0f, 200.0f);
+		translationMatrix = vmath::translate(2.0f, 0.0f, -4.75f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(500.0f, 200.0f, 500.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -313,13 +314,12 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboEarthAndSpace.frameBufferTexture);
-		glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
+		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
 
 		displayCube();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Sun
-	// Sun
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
@@ -349,7 +349,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glBindTexture(GL_TEXTURE_2D, texture_sun);
 		glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
 
-		displayCube();
+		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glUseProgram(0);
