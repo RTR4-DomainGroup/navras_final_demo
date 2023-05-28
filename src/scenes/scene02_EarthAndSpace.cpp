@@ -319,7 +319,6 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Sun
-	// Sun
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
