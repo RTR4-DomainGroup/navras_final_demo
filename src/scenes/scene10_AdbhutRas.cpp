@@ -194,6 +194,7 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
+static STATIC_MODEL farmhouseModel;
 static DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS
@@ -201,15 +202,15 @@ static DYNAMIC_MODEL skeletonModel;
 static struct TextureVariables terrainTextureVariables;
 static float displacementmap_depth;
 
-extern GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-extern GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
 
-extern GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess = 128.0f;
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
 float distance10;
 
@@ -238,6 +239,7 @@ int initializeScene10_AdbhutRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
+	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -311,6 +313,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotationMatrix_x = mat4::identity();
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
+	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 
 
 
@@ -616,7 +619,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 1);
+	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
 	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
@@ -629,7 +632,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	// usage type 2
-	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 	rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	rotationMatrix_z = vmath::rotate(rotationAngles.z, 1.0f, 0.0f, 1.0f);
@@ -673,7 +675,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
 	// usage type 1 
-	update_transformations(&translationMatrix) ;
+	// update_transformations(&translationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -681,6 +683,32 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(treeModel);
+
+	// farmhouse
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ farmhouse Model ------
+	translationMatrix = vmath::translate(4.90f, -3.60f, -31.00f);
+	scaleMatrix = vmath::scale(1.56f, 1.56f, 1.56f);
+
+	rotationAngles = {0.0f, 253.0f, 0.0f};
+	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+
+	// usage type 1 
+	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(farmhouseModel);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -918,6 +946,7 @@ void uninitializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
+	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
 #endif // ENABLE_STATIC_MODELS
