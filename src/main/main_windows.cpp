@@ -335,7 +335,7 @@ int initialize(void)
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
 
-	ToggleFullscreen();
+	// ToggleFullscreen();
 
 	//set fps to system
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
@@ -385,15 +385,16 @@ void ToggleFullscreen(void) {
 
 void set_title(char* title)
 {
-	TCHAR str[255] = {};
+	TCHAR str[MAX_LOG_LENGTH] = {};
 
 	size_t newsize = strlen(title) + 1;
 	wchar_t * wcstring = new wchar_t[newsize];
 
 	size_t convertedChars = 0;
-	mbstowcs_s(&convertedChars, wcstring, newsize, title, _TRUNCATE);
+	// mbstowcs_s(&convertedChars, wcstring, newsize, title, _TRUNCATE);
+	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, title, -1, wcstring, MAX_LOG_LENGTH);
 
-	wsprintf(str, TEXT("Domain: %s"), wcstring);
+	wsprintf(str, TEXT("%s"), wcstring);
 	SetWindowText(ghwnd, str);
 
 	delete[] wcstring;

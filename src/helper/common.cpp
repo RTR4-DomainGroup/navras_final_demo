@@ -169,6 +169,9 @@ int log_open(char const* FileName , char const* Mode)
     return retval;
 }
 
+// external functions
+extern void set_title(char*);
+
 int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
     int _Result = 0;
@@ -178,13 +181,13 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
         firstCall = 1;
     }
     
+    char myBuffer[MAX_LOG_LENGTH] = {};
 	if (fopen_s(&_pFile, _filename, firstCall?"w":"a") != 0)
 	{
 		_Result = -1;
 	}
     else
     {
-        char myBuffer[MAX_LOG_LENGTH] = {};
         va_list _ArgList;
         __crt_va_start(_ArgList, format);
         _vsnprintf_l(myBuffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
@@ -197,6 +200,8 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
         fclose(_pFile);
         _pFile = NULL;
     }
+    // adding to log to title
+    set_title(myBuffer);
     return _Result;	
 }
 
