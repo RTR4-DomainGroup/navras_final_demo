@@ -58,7 +58,7 @@ int initializeScene13_Shant(void)
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	loadStaticModel("res/models/scene13_shanta/room/shantaRoom2.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom4.obj", &shantRoomModel);
 	
 //	//load models
 //	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
@@ -182,7 +182,7 @@ void displayScene13_Shant(void)
 
 	// ------ Streetlight Model ------
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
