@@ -84,6 +84,7 @@ void debug_tranformation(void)
 				else
 					tf_t.x -= tf_Speed;
 				LOG("X translation changed to %.02ff\n", tf_t.x);
+				LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			}
 			if(scaleMode) {
 				if('x' == charPressed)
@@ -91,6 +92,7 @@ void debug_tranformation(void)
 				else
 					tf_s.x -= tf_Speed;
 				LOG("X scale changed to %.02ff\n", tf_s.x);
+				LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 			}
 			if(rotateMode) {
 				if('x' == charPressed)
@@ -98,6 +100,7 @@ void debug_tranformation(void)
 				else
 					tf_r.x -= tf_Speed;
 				LOG("X rotation changed to %.02ff\n", tf_r.x);
+				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'y':
@@ -108,6 +111,7 @@ void debug_tranformation(void)
 				else
 					tf_t.y -= tf_Speed;
 				LOG("Y translation changed to %.02ff\n", tf_t.y);
+				LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			}
 			if(scaleMode) {
 				if('y' == charPressed)
@@ -115,6 +119,7 @@ void debug_tranformation(void)
 				else
 					tf_s.y -= tf_Speed;
 				LOG("Y transform changed to %.02ff\n", tf_s.y);
+				LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 			}
 			if(rotateMode) {
 				if('y' == charPressed)
@@ -122,6 +127,7 @@ void debug_tranformation(void)
 				else
 					tf_r.y += tf_Speed;
 				LOG("Y rotation changed to %.02ff\n", tf_r.y);
+				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'z':
@@ -132,6 +138,7 @@ void debug_tranformation(void)
 				else
 					tf_t.z -= tf_Speed;
 				LOG("Z translation changed to %.02ff\n", tf_t.z);
+				LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			}
 			if(scaleMode) {
 				if('z' == charPressed)
@@ -139,6 +146,7 @@ void debug_tranformation(void)
 				else
 					tf_s.z -= tf_Speed;
 				LOG("Z scale changed to %.02ff\n", tf_s.z);
+				LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 			}
 			if(rotateMode) {
 				if('z' == charPressed)
@@ -146,6 +154,7 @@ void debug_tranformation(void)
 				else
 					tf_r.z += tf_Speed;
 				LOG("Z rotation changed to %.02ff\n", tf_r.z);
+				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'p':
@@ -265,7 +274,7 @@ void debug_tranformation(void)
 }
 
 
-void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMatrix, vmath::mat4& rotationMatrix, TRANFORM* rotationAngles) 
+void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMatrix, vmath::mat4* rotationMatrix, TRANFORM* rotationAngles) 
 {
 	static bool firstCall = 1;
 
@@ -282,16 +291,16 @@ void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMa
 		// translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2], translationMatrix[2][3],
 		// translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2], translationMatrix[3][3]
 		// );
-		LOG("scale Matrix \n"
-		"%.02ff %.02ff %.02ff %.02ff \n"
-		"%.02ff %.02ff %.02ff %.02ff \n"
-		"%.02ff %.02ff %.02ff %.02ff \n"
-		"%.02ff %.02ff %.02ff %.02ff \n", 
-		scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[0][2], scaleMatrix[0][3],
-		scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[1][2], scaleMatrix[1][3],
-		scaleMatrix[2][0], scaleMatrix[2][1], scaleMatrix[2][2], scaleMatrix[2][3],
-		scaleMatrix[3][0], scaleMatrix[3][1], scaleMatrix[3][2], scaleMatrix[3][3]
-		);
+		// LOG("scale Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[0][2], scaleMatrix[0][3],
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[1][2], scaleMatrix[1][3],
+		// scaleMatrix[2][0], scaleMatrix[2][1], scaleMatrix[2][2], scaleMatrix[2][3],
+		// scaleMatrix[3][0], scaleMatrix[3][1], scaleMatrix[3][2], scaleMatrix[3][3]
+		// );
 		// LOG("rotation Matrix \n"
 		// "%.02ff %.02ff %.02ff %.02ff \n"
 		// "%.02ff %.02ff %.02ff %.02ff \n"
@@ -303,8 +312,10 @@ void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMa
 		// rotationMatrix[3][0], rotationMatrix[3][1], rotationMatrix[3][2], rotationMatrix[3][3]
 		// );
 
-		tf_t = {translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2]}; // tree pos
-		tf_s = {scaleMatrix[0][0], scaleMatrix[1][0], scaleMatrix[2][2]}; // tree scale
+		if(translationMatrix)
+			tf_t = {(*translationMatrix)[3][0], (*translationMatrix)[3][1], (*translationMatrix)[3][2]}; // pos
+		if(scaleMatrix)
+			tf_s = {(*scaleMatrix)[0][0], (*scaleMatrix)[1][0], (*scaleMatrix)[2][2]}; // tree scale
 		if(rotationAngles)
 			tf_r = {rotationAngles->x, rotationAngles->y, rotationAngles->z}; // tree rotate
 		else
@@ -313,14 +324,17 @@ void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMa
 		firstCall = 0;
 	}
 
-	translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	if(translationMatrix)
+		*translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
 	// scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
 	// explicitely performing all cordinate scale with same factor, to keep same ratio
-	scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+	if(scaleMatrix)
+		*scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
 	mat4 rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
 	mat4 rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
 	mat4 rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
-	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	if(rotationMatrix)
+		*rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 }
 
 
