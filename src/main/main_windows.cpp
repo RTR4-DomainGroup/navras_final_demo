@@ -387,17 +387,8 @@ void set_title(char* title)
 {
 	TCHAR str[MAX_LOG_LENGTH] = {};
 
-	size_t newsize = strlen(title) + 1;
-	wchar_t * wcstring = new wchar_t[newsize];
-
-	size_t convertedChars = 0;
-	// mbstowcs_s(&convertedChars, wcstring, newsize, title, _TRUNCATE);
-	MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, title, -1, wcstring, MAX_LOG_LENGTH);
-
-	wsprintf(str, TEXT("%s"), wcstring);
+	wsprintf(str, TEXT("%s"), title);
 	SetWindowText(ghwnd, str);
-
-	delete[] wcstring;
 }
 
 void resize(int width, int height)
