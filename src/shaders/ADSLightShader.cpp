@@ -56,6 +56,12 @@ int initializeADSShader(void)
 		"out vec2 a_texcoord_out;\n" \
 		"out float visibility; \n"		\
 
+		// Spotlight
+		"#define NUM_SPOTLIGHT 1 \n" \
+		"uniform vec4 u_spotlightPosition[NUM_SPOTLIGHT]; \n" \
+		"out vec3 spotlightDirection[NUM_SPOTLIGHT]; \n" \
+		"out float spotlightDistance[NUM_SPOTLIGHT]; \n" \
+
 		//normal mapping
 		"out vec3 a_eyeDirection_out; \n" \
 		"out vec3 a_lightDirection_out; \n" \
@@ -64,8 +70,11 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-	    "    vec4 pos = (a_position + a_instancePosition); \n" \
-			
+			"vec4 pos = (a_position + a_instancePosition); \n" \
+
+			"vec4 worldPos; \n" \
+			"worldPos = u_modelMatrix * pos; \n" \
+
 			"mat3 TBN; \n" \
 			"if (u_actualScene == 1) \n" \
 			"{ \n" \
@@ -75,6 +84,13 @@ int initializeADSShader(void)
 				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
 				"viewerVector = vec3(-eyeCoordinates); \n" \
 				"vs_out.FragPos = u_modelMatrix * pos; \n" \
+		
+				// For Spotlight
+                "for(int i = 0; i < NUM_SPOTLIGHT; i++) \n" \
+                "{ \n" \
+                    "spotlightDirection[i] = vec3(u_spotlightPosition[i]) - worldPos.xyz; \n" \
+                    "spotlightDistance[i] = length(u_spotlightPosition[i] - pos); \n" \
+                "} \n" \
 				
 				//Normal Mapping
 				"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
@@ -160,6 +176,21 @@ int initializeADSShader(void)
 		"in vec3 viewerVector;\n" \
 		"in float visibility; \n"		\
 
+		// Spotlight
+		"#define NUM_SPOTLIGHT 1 \n " \
+		"in vec3 spotlightDirection[NUM_SPOTLIGHT]; \n" \
+		"in float spotlightDistance[NUM_SPOTLIGHT]; \n" \
+
+		"uniform vec3 u_spotlightAmbient[NUM_SPOTLIGHT]; \n" \
+		"uniform vec3 u_spotlightDiffuse[NUM_SPOTLIGHT]; \n" \
+		"uniform vec3 u_spotlightSpecular[NUM_SPOTLIGHT]; \n" \
+		"uniform vec3 u_spotDirection[NUM_SPOTLIGHT]; \n" \
+		"uniform float u_constantAttenuation[NUM_SPOTLIGHT]; \n" \
+		"uniform float u_linearAttenuation[NUM_SPOTLIGHT]; \n" \
+		"uniform float u_quadraticAttenuation[NUM_SPOTLIGHT]; \n" \
+		"uniform float u_spotCutoff[NUM_SPOTLIGHT]; \n" \
+		"uniform float u_spotOuterCutoff[NUM_SPOTLIGHT]; \n" \
+
 		//normal mapping
 		"in vec3 a_eyeDirection_out; \n" \
 		"in vec3 a_lightDirection_out; \n" \
@@ -232,13 +263,57 @@ int initializeADSShader(void)
 			"return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane)); \n" \
 		"} \n" \
 
+        "vec3 spotlightCalculation() \n" \
+        "{\n" \
+            "vec3 light; \n" \
+            "vec3 ambient[NUM_SPOTLIGHT]; \n" \
+            "vec3 diffuse[NUM_SPOTLIGHT]; \n" \
+            "vec3 specular[NUM_SPOTLIGHT]; \n" \
+
+            "vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
+            "vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
+            "vec3 texColor = vec3(texture(texture_diffuse, a_texcoord_out)); \n" \
+            //"if(texColor.a<0.1) \n" 
+            //    "discard; \n" 
+            "vec3 normalized_light_direction[NUM_SPOTLIGHT]; \n" \
+
+            "float theta[NUM_SPOTLIGHT]; \n" \
+            "float epsilon[NUM_SPOTLIGHT]; \n" \
+            "float intensity[NUM_SPOTLIGHT]; \n" \
+            "float attenuation[NUM_SPOTLIGHT]; \n" \
+
+            "for(int i = 0; i < NUM_SPOTLIGHT; i++) \n" \
+            "{ \n" \
+                "ambient[i] = u_spotlightAmbient[i] * texColor; \n" \
+                "normalized_light_direction[i] = normalize(spotlightDirection[i]); \n" \
+                "diffuse[i] = u_spotlightDiffuse[i] * texColor * max(dot(normalized_light_direction[i], normalized_transformed_normals), 0.0) * 1.0; \n" \
+
+                "vec3 reflectionVector = reflect(-normalized_light_direction[i], normalized_transformed_normals); \n" \
+                "specular[i] = u_spotlightSpecular[i] * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
+                "theta[i] = dot(normalized_light_direction[i], normalize(-u_spotDirection[i])); \n" \
+                "epsilon[i] = (u_spotCutoff[i] - u_spotOuterCutoff[i]); \n" \
+                "intensity[i] = clamp((theta[i] - u_spotOuterCutoff[i]) / epsilon[i], 0.0, 1.0); \n" \
+                "diffuse[i] = diffuse[i] * intensity[i]; \n" \
+                "specular[i] = specular[i] * intensity[i]; \n" \
+
+                "attenuation[i] = (1.0 / (u_constantAttenuation[i] + (u_linearAttenuation[i] * spotlightDistance[i]) + (u_quadraticAttenuation[i] * spotlightDistance[i] * spotlightDistance[i]))); \n" \
+                "ambient[i] = ambient[i] * attenuation[i]; \n" \
+                "diffuse[i] = diffuse[i] * attenuation[i]; \n" \
+                "specular[i] = specular[i] * attenuation[i]; \n" \
+                "light = light + ambient[i] + diffuse[i] + specular[i]; \n" \
+            "} \n" \
+            "return(light); \n" \
+        "}\n" \
+
 		"void main(void) \n" \
 		"{ \n" \
 			"if (enable_godRays == 1) \n" \
 			"{\n" \
 				"if(u_actualScene == 1) { \n" \
-					"vec4 phong_ads_light; \n" \
+					"vec4 phong_ads_light = vec4(1.0, 1.0, 1.0, 1.0); \n" \
+
 					"vec4 texColor = texture(texture_diffuse, a_texcoord_out); \n"		\
+
 					"if(texColor.a < 0.1) \n" \
 						"discard; \n" \
 					
@@ -259,7 +334,8 @@ int initializeADSShader(void)
 			        "vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
 					
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
-					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
+					"phong_ads_light = vec4(spotlightCalculation(), 1.0); \n" \
+					"phong_ads_light = phong_ads_light + (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
 					
 					"FragColor = texColor + phong_ads_light; \n" \
 					"if (u_fogEnable == 1) \n" \
@@ -387,6 +463,62 @@ int initializeADSShader(void)
 	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
 	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
 	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
+
+	// Uniforms for Spotlight
+	adsUniform.spotlightLAZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightAmbient[0]");
+	adsUniform.spotlightLDZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightDiffuse[0]");
+	adsUniform.spotlightLSZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightSpecular[0]");
+	adsUniform.spotlightPositionZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightPosition[0]");
+	adsUniform.spotDirectionZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotDirection[0]");
+	adsUniform.constantAttenuationZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_constantAttenuation[0]");
+	adsUniform.linearAttenuationZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_linearAttenuation[0]");
+	adsUniform.quadraticAttenuationZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_quadraticAttenuation[0]");
+	adsUniform.spotCosCutoffZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotCutoff[0]");
+	adsUniform.spotCosOuterCutoffZeroUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotOuterCutoff[0]");
+
+	//adsUniform.spotlightLAOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightAmbient[1]");
+	//adsUniform.spotlightLDOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightDiffuse[1]");
+	//adsUniform.spotlightLSOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightSpecular[1]");
+	//adsUniform.spotlightPositionOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightPosition[1]");
+	//adsUniform.spotDirectionOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotDirection[1]");
+	//adsUniform.constantAttenuationOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_constantAttenuation[1]");
+	//adsUniform.linearAttenuationOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_linearAttenuation[1]");
+	//adsUniform.quadraticAttenuationOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_quadraticAttenuation[1]");
+	//adsUniform.spotCosCutoffOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotCutoff[1]");
+	//adsUniform.spotCosOuterCutoffOneUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotOuterCutoff[1]");
+
+	//adsUniform.spotlightLATwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightAmbient[2]");
+	//adsUniform.spotlightLDTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightDiffuse[2]");
+	//adsUniform.spotlightLSTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightSpecular[2]");
+	//adsUniform.spotlightPositionTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightPosition[2]");
+	//adsUniform.spotDirectionTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotDirection[2]");
+	//adsUniform.constantAttenuationTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_constantAttenuation[2]");
+	//adsUniform.linearAttenuationTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_linearAttenuation[2]");
+	//adsUniform.quadraticAttenuationTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_quadraticAttenuation[2]");
+	//adsUniform.spotCosCutoffTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotCutoff[2]");
+	//adsUniform.spotCosOuterCutoffTwoUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotOuterCutoff[2]");
+
+	//adsUniform.spotlightLAThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightAmbient[3]");
+	//adsUniform.spotlightLDThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightDiffuse[3]");
+	//adsUniform.spotlightLSThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightSpecular[3]");
+	//adsUniform.spotlightPositionThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightPosition[3]");
+	//adsUniform.spotDirectionThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotDirection[3]");
+	//adsUniform.constantAttenuationThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_constantAttenuation[3]");
+	//adsUniform.linearAttenuationThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_linearAttenuation[3]");
+	//adsUniform.quadraticAttenuationThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_quadraticAttenuation[3]");
+	//adsUniform.spotCosCutoffThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotCutoff[3]");
+	//adsUniform.spotCosOuterCutoffThreeUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotOuterCutoff[3]");
+
+	//adsUniform.spotlightLAFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightAmbient[4]");
+	//adsUniform.spotlightLDFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightDiffuse[4]");
+	//adsUniform.spotlightLSFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightSpecular[4]");
+	//adsUniform.spotlightPositionFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotlightPosition[4]");
+	//adsUniform.spotDirectionFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotDirection[4]");
+	//adsUniform.constantAttenuationFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_constantAttenuation[4]");
+	//adsUniform.linearAttenuationFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_linearAttenuation[4]");
+	//adsUniform.quadraticAttenuationFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_quadraticAttenuation[4]");
+	//adsUniform.spotCosCutoffFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotCutoff[4]");
+	//adsUniform.spotCosOuterCutoffFourUniform = glGetUniformLocation(adsShaderProgramObject, "u_spotOuterCutoff[4]");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);

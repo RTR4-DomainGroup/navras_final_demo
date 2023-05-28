@@ -68,6 +68,62 @@ GLfloat materialDiffuse_bibhatsa[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialSpecular_bibhatsa[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialShininess_bibhatsa = 128.0f;
 
+// Spotlight Related Code
+GLfloat spotlightAmbientZero[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat spotlightDiffuseZero[] = { 1.0, 1.0, 0.0, 1.0 };
+GLfloat spotlightSpecularZero[] = { 1.0, 1.0, 0.0, 1.0 };
+GLfloat spotlightPositionZero[] = { 0.0, 4.0, 13.5, 1.0 };
+GLfloat spotDirectionZero[] = { 0.0, 0.0, -1.0};
+GLfloat constantAttenuationZero = 1.0f;
+GLfloat linearAttenuationZero = 0.007f;
+GLfloat quadraticAttenuationZero = 0.0002f;
+GLfloat spotCosCutoffZero = cos(15.0f * M_PI / 180.0f);
+GLfloat spotCosOuterCutoffZero = cos(18.0f * M_PI / 180.0f);
+
+//GLfloat spotlightAmbientOne[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightDiffuseOne[] = { 1.0, 1.0, 1.0, 1.0f };
+//GLfloat spotlightSpecularOne[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightPositionOne[] = { -20.0, 4.0, 10.0, 1.0 };
+//GLfloat spotDirectionOne[] = { 0.0, -1.0, 0.0, 1.0f };
+//GLfloat constantAttenuationOne = 1.0f;
+//GLfloat linearAttenuationOne = 0.007f;
+//GLfloat quadraticAttenuationOne = 0.0002f;
+//GLfloat spotCosCutoffOne = cos(6.0);
+//GLfloat spotCosOuterCutoffOne = cos(30.0);
+//
+//GLfloat spotlightAmbientTwo[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightDiffuseTwo[] = { 1.0, 1.0, 1.0, 1.0f };
+//GLfloat spotlightSpecularTwo[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightPositionTwo[] = { 20.0, 4.0, 30.0, 1.0 };
+//GLfloat spotDirectionTwo[] = { 0.0, -1.0, 0.0, 1.0f };
+//GLfloat constantAttenuationTwo = 1.0f;
+//GLfloat linearAttenuationTwo = 0.007f;
+//GLfloat quadraticAttenuationTwo = 0.0002f;
+//GLfloat spotCosCutoffTwo = cos(6.0);
+//GLfloat spotCosOuterCutoffTwo = cos(30.0);
+//
+//GLfloat spotlightAmbientThree[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightDiffuseThree[] = { 1.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightSpecularThree[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightPositionThree[] = { 35.0, 4.0, 8.0, 1.0 };
+//GLfloat spotDirectionThree[] = { 0.0, -1.0, 0.0, 1.0f };
+//GLfloat constantAttenuationThree = 1.0f;
+//GLfloat linearAttenuationThree = 0.007f;
+//GLfloat quadraticAttenuationThree = 0.0002f;
+//GLfloat spotCosCutoffThree = cos(30.0);
+//GLfloat spotCosOuterCutoffThree = cos(32.0);
+//
+//GLfloat spotlightAmbientFour[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightDiffuseFour[] = { 1.0, 1.0, 0.0, 1.0f };
+//GLfloat spotlightSpecularFour[] = { 0.0, 0.0, 0.0, 1.0f };
+//GLfloat spotlightPositionFour[] = { 0.0, 4.0, 0.0, 1.0 };
+//GLfloat spotDirectionFour[] = { 0.0, -1.0, 0.0, 1.0f };
+//GLfloat constantAttenuationFour = 1.0f;
+//GLfloat linearAttenuationFour = 0.007f;
+//GLfloat quadraticAttenuationFour = 0.0002f;
+//GLfloat spotCosCutoffFour = cos(20.0);
+//GLfloat spotCosOuterCutoffFour = cos(25.0);
+
 extern mat4 viewMatrix;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -235,9 +291,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(3.0f, 1.0f, 35.0f);
-		rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		translationMatrix = vmath::translate(-15.0f, 0.0f, -15.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(30.0f, 20.0f, 35.0f);
+		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -256,6 +312,62 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.kdUniform, 1, GL_FALSE, materialDiffuse_bibhatsa);
 		glUniformMatrix4fv(bibhatsaRasObject.ksUniform, 1, GL_FALSE, materialSpecular_bibhatsa);
 		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess_bibhatsa);		
+
+		// Spotlight Related Code
+		glUniformMatrix4fv(bibhatsaRasObject.spotlightLAZeroUniform, 1, GL_FALSE, spotlightAmbientZero);
+		glUniformMatrix4fv(bibhatsaRasObject.spotlightLDZeroUniform, 1, GL_FALSE, spotlightDiffuseZero);
+		glUniformMatrix4fv(bibhatsaRasObject.spotlightLSZeroUniform, 1, GL_FALSE, spotlightSpecularZero);
+		glUniformMatrix4fv(bibhatsaRasObject.spotlightPositionZeroUniform, 1, GL_FALSE, spotlightPositionZero);
+		glUniformMatrix4fv(bibhatsaRasObject.spotDirectionZeroUniform, 1, GL_FALSE, spotDirectionZero);
+		glUniform1f(bibhatsaRasObject.constantAttenuationZeroUniform, constantAttenuationZero);
+		glUniform1f(bibhatsaRasObject.linearAttenuationZeroUniform, linearAttenuationZero);
+		glUniform1f(bibhatsaRasObject.quadraticAttenuationZeroUniform, quadraticAttenuationZero);
+		glUniform1f(bibhatsaRasObject.spotCosCutoffZeroUniform, spotCosCutoffZero);
+		glUniform1f(bibhatsaRasObject.spotCosOuterCutoffZeroUniform, spotCosOuterCutoffZero);
+
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLAOneUniform, 1, GL_FALSE, spotlightAmbientOne);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLDOneUniform, 1, GL_FALSE, spotlightDiffuseOne);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLSOneUniform, 1, GL_FALSE, spotlightSpecularOne);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightPositionOneUniform, 1, GL_FALSE, spotlightPositionOne);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotDirectionOneUniform, 1, GL_FALSE, spotDirectionOne);
+		//glUniform1f(bibhatsaRasObject.constantAttenuationOneUniform, constantAttenuationOne);
+		//glUniform1f(bibhatsaRasObject.linearAttenuationOneUniform, linearAttenuationOne);
+		//glUniform1f(bibhatsaRasObject.quadraticAttenuationOneUniform, quadraticAttenuationOne);
+		//glUniform1f(bibhatsaRasObject.spotCosCutoffOneUniform, spotCosCutoffOne);
+		//glUniform1f(bibhatsaRasObject.spotCosOuterCutoffOneUniform, spotCosOuterCutoffOne);
+
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLATwoUniform, 1, GL_FALSE, spotlightAmbientTwo);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLDTwoUniform, 1, GL_FALSE, spotlightDiffuseTwo);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLSTwoUniform, 1, GL_FALSE, spotlightSpecularTwo);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightPositionTwoUniform, 1, GL_FALSE, spotlightPositionTwo);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotDirectionTwoUniform, 1, GL_FALSE, spotDirectionTwo);
+		//glUniform1f(bibhatsaRasObject.constantAttenuationTwoUniform, constantAttenuationTwo);
+		//glUniform1f(bibhatsaRasObject.linearAttenuationTwoUniform, linearAttenuationTwo);
+		//glUniform1f(bibhatsaRasObject.quadraticAttenuationTwoUniform, quadraticAttenuationTwo);
+		//glUniform1f(bibhatsaRasObject.spotCosCutoffTwoUniform, spotCosCutoffTwo);
+		//glUniform1f(bibhatsaRasObject.spotCosOuterCutoffTwoUniform, spotCosOuterCutoffTwo);
+
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLAThreeUniform, 1, GL_FALSE, spotlightAmbientThree);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLDThreeUniform, 1, GL_FALSE, spotlightDiffuseThree);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLSThreeUniform, 1, GL_FALSE, spotlightSpecularThree);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightPositionThreeUniform, 1, GL_FALSE, spotlightPositionThree);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotDirectionThreeUniform, 1, GL_FALSE, spotDirectionThree);
+		//glUniform1f(bibhatsaRasObject.constantAttenuationThreeUniform, constantAttenuationThree);
+		//glUniform1f(bibhatsaRasObject.linearAttenuationThreeUniform, linearAttenuationThree);
+		//glUniform1f(bibhatsaRasObject.quadraticAttenuationThreeUniform, quadraticAttenuationThree);
+		//glUniform1f(bibhatsaRasObject.spotCosCutoffThreeUniform, spotCosCutoffThree);
+		//glUniform1f(bibhatsaRasObject.spotCosOuterCutoffThreeUniform, spotCosOuterCutoffThree);
+
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLAFourUniform, 1, GL_FALSE, spotlightAmbientFour);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLDFourUniform, 1, GL_FALSE, spotlightDiffuseFour);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightLSFourUniform, 1, GL_FALSE, spotlightSpecularFour);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotlightPositionFourUniform, 1, GL_FALSE, spotlightPositionFour);
+		//glUniformMatrix4fv(bibhatsaRasObject.spotDirectionFourUniform, 1, GL_FALSE, spotDirectionFour);
+		//glUniform1f(bibhatsaRasObject.constantAttenuationFourUniform, constantAttenuationFour);
+		//glUniform1f(bibhatsaRasObject.linearAttenuationFourUniform, linearAttenuationFour);
+		//glUniform1f(bibhatsaRasObject.quadraticAttenuationFourUniform, quadraticAttenuationFour);
+		//glUniform1f(bibhatsaRasObject.spotCosCutoffFourUniform, spotCosCutoffFour);
+		//glUniform1f(bibhatsaRasObject.spotCosOuterCutoffFourUniform, spotCosOuterCutoffFour);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_road);
@@ -336,27 +448,27 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		drawStaticModel(streetLightModel);
 
-		// ################################### BUILDING ONE ###################################  
-		translationMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
+		//// ################################### BUILDING ONE ###################################  
+		//translationMatrix = mat4::identity();
+		//rotationMatrix = mat4::identity();
+		//modelMatrix = mat4::identity();
+		//scaleMatrix = mat4::identity();
+		//rotationMatrix_x = mat4::identity();
+		//rotationMatrix_y = mat4::identity();
+		//rotationMatrix_z = mat4::identity();
 
-		// ------ Streetlight Model ------
-		translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-		scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		//// ------ Streetlight Model ------
+		//translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
+		//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
-		modelMatrix = translationMatrix * scaleMatrix;
+		//modelMatrix = translationMatrix * scaleMatrix;
 
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModel(buildingOneModel);
-		// ################################### BUILDING ONE ###################################  
+		//drawStaticModel(buildingOneModel);
+		//// ################################### BUILDING ONE ###################################  
 
 		//// ################################### BUILDING TWO ###################################  
 		//translationMatrix = mat4::identity();
