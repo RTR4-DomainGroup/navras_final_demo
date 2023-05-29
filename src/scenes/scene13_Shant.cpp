@@ -58,7 +58,7 @@ int initializeScene13_Shant(void)
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	loadStaticModel("res/models/scene13_shanta/room/shantaRoom4.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
 	
 //	//load models
 //	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
@@ -113,6 +113,9 @@ int initializeScene13_Shant(void)
     // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
 	tf_Speed = 0.05f;
 //	glEnable(GL_TEXTURE_2D);
+
+
+
 	return 0;
 }
 
