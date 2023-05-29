@@ -27,7 +27,7 @@
 #include "../../inc/effects/videoEffect.h"
 #include "../../inc/Navras.h"
 
-struct FSQuadUniform videoUniform;
+struct FSVQuadUniform videoUniform;
 
 // OpenGL Libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
@@ -485,7 +485,7 @@ void display(void)
 	// code
 	if (!gTaskFinished.load())
     {
-		videoUniform = useFSQuadShader();
+		videoUniform = useFSVQuadShader();
 		displayVideoEffect(&videoUniform);
 		glUseProgram(0);
 	}

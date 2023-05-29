@@ -2,7 +2,7 @@
 #include <math.h>		// for PI
 
 #include "../../inc/effects/videoEffect.h"
-#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/FSVQuadShader.h"
 #include "../../inc/helper/texture_loader.h"
 
 
@@ -20,9 +20,9 @@ int initializeVideoEffect(const char* videoFile)
         return -1;
     }
    
-    if(initializeFSQuadShader() != 0)
+    if(initializeFSVQuadShader() != 0)
     {
-        LOG("Failed to initializeFSQuadShader().\n");
+        LOG("Failed to initializeFSVQuadShader().\n");
         return -2;
     }
     initializeQuadForVideo();
@@ -47,7 +47,7 @@ int initializeVideoEffect(const char* videoFile)
     return 0;
 }
 
-void displayVideoEffect( struct FSQuadUniform* fsqUniform)
+void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
 {
     // Function declaration
     static bool myFlag = true;
@@ -64,8 +64,8 @@ void displayVideoEffect( struct FSQuadUniform* fsqUniform)
             LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture_frame);
-            glUniform1i(fsqUniform->textureSamplerUniform1, 0);
-            glUniform1i(fsqUniform->textureSamplerUniform2, 1);  
+            glUniform1i(fsvqUniform->textureSamplerUniform1, 0);
+            glUniform1i(fsvqUniform->textureSamplerUniform2, 1);  
             displayVideoQuad();
         }
         glBindTexture(GL_TEXTURE_2D, 0);

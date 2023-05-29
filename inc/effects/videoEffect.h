@@ -2,10 +2,10 @@
 #include "../video_reader.h"
 #include "../helper/common.h"
 #include "../helper/geometry.h"
-#include "../shaders/FSQuadShader.h"
+#include "../shaders/FSVQuadShader.h"
 
 int initializeVideoEffect(const char*);
 
-void displayVideoEffect(struct FSQuadUniform*);
+void displayVideoEffect(struct FSVQuadUniform*);
 
 void uninitializeVideoEffect(void);
