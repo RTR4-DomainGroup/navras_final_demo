@@ -1,12 +1,12 @@
-#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/FSVQuadShader.h"
 
-GLuint fsQuadShaderProgramObject;
-struct FSQuadUniform fsQuadUniform;
+GLuint fsvQuadShaderProgramObject;
+struct FSVQuadUniform fsvQuadUniform;
 
-int initializeFSQuadShader(void)
+int initializeFSVQuadShader(void)
 {
     // Code
-    ZeroMemory((void*)&fsQuadUniform, sizeof(FSQuadUniform));
+    ZeroMemory((void*)&fsvQuadUniform, sizeof(FSVQuadUniform));
     // Vertex Shader
     const GLchar* vertexShaderSrcCode = 
         "#version 460 core" \
@@ -57,7 +57,7 @@ int initializeFSQuadShader(void)
                 LOG("FSQuad Vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
-                uninitializeFSQuadShader();
+                uninitializeFSVQuadShader();
                 return(-1);
             }
         }
@@ -123,35 +123,35 @@ LOG("fragmentShaderSrcCode in initializeFSQuadShader().\n");
                 LOG("FSQuad Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
-                uninitializeFSQuadShader();
+                uninitializeFSVQuadShader();
                 return(-1);
             }
         }
     }
 
     // Shader Program Object
-    fsQuadShaderProgramObject = glCreateProgram();
+    fsvQuadShaderProgramObject = glCreateProgram();
     
     // Attach desired shader object to the program object
-    glAttachShader(fsQuadShaderProgramObject, vertexShaderObj);
-    glAttachShader(fsQuadShaderProgramObject, fragementShaderObj);
+    glAttachShader(fsvQuadShaderProgramObject, vertexShaderObj);
+    glAttachShader(fsvQuadShaderProgramObject, fragementShaderObj);
 
     // Pre-linked binding of Shader program object
-    glBindAttribLocation(fsQuadShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
-    glBindAttribLocation(fsQuadShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
+    glBindAttribLocation(fsvQuadShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
+    glBindAttribLocation(fsvQuadShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 
     // Link the program
-    glLinkProgram(fsQuadShaderProgramObject);
+    glLinkProgram(fsvQuadShaderProgramObject);
 
     status = 0;
     infoLogLength = 0;
     log = NULL;
 
-    glGetProgramiv(fsQuadShaderProgramObject, GL_LINK_STATUS, &status);
+    glGetProgramiv(fsvQuadShaderProgramObject, GL_LINK_STATUS, &status);
 
     if (status == GL_FALSE)
     {
-        glGetProgramiv(fsQuadShaderProgramObject, GL_INFO_LOG_LENGTH, &infoLogLength);
+        glGetProgramiv(fsvQuadShaderProgramObject, GL_INFO_LOG_LENGTH, &infoLogLength);
 
         if (infoLogLength > 0)
         {
@@ -161,44 +161,44 @@ LOG("fragmentShaderSrcCode in initializeFSQuadShader().\n");
             {
                 GLsizei written;
 
-                glGetProgramInfoLog(fsQuadShaderProgramObject, infoLogLength, &written, log);
+                glGetProgramInfoLog(fsvQuadShaderProgramObject, infoLogLength, &written, log);
                 LOG("FSQuad Shader Program Link Log: %s\n", log);
                 free(log);
-                uninitializeFSQuadShader();
+                uninitializeFSVQuadShader();
                 return(-1);
             }
         }
     }
 
-    fsQuadUniform.textureSamplerUniform1 = glGetUniformLocation(
-        fsQuadShaderProgramObject, "u_textureSampler0");
-    fsQuadUniform.textureSamplerUniform2 = glGetUniformLocation(
-        fsQuadShaderProgramObject, "u_textureSampler1");
+    fsvQuadUniform.textureSamplerUniform1 = glGetUniformLocation(
+        fsvQuadShaderProgramObject, "u_textureSampler0");
+    fsvQuadUniform.textureSamplerUniform2 = glGetUniformLocation(
+        fsvQuadShaderProgramObject, "u_textureSampler1");
 
     return 0;
 }
 
-struct FSQuadUniform useFSQuadShader(void)
+struct FSVQuadUniform useFSVQuadShader(void)
 {
-    glUseProgram(fsQuadShaderProgramObject);
-    return fsQuadUniform;
+    glUseProgram(fsvQuadShaderProgramObject);
+    return fsvQuadUniform;
 }
 
-void uninitializeFSQuadShader(void)
+void uninitializeFSVQuadShader(void)
 {
     // Code
-    if (fsQuadShaderProgramObject)
+    if (fsvQuadShaderProgramObject)
     {
         GLsizei numAttachedShader;
-		glUseProgram(fsQuadShaderProgramObject);
-		glGetProgramiv(fsQuadShaderProgramObject, GL_ATTACHED_SHADERS, &numAttachedShader);
+		glUseProgram(fsvQuadShaderProgramObject);
+		glGetProgramiv(fsvQuadShaderProgramObject, GL_ATTACHED_SHADERS, &numAttachedShader);
 		GLuint* shaderObjects = NULL;
 		shaderObjects = (GLuint*)malloc(numAttachedShader * sizeof(GLuint));
-		glGetAttachedShaders(fsQuadShaderProgramObject, 
+		glGetAttachedShaders(fsvQuadShaderProgramObject, 
         numAttachedShader, &numAttachedShader, shaderObjects);
 		for (GLsizei i = 0; i < numAttachedShader; i++) {
 		
-			glDetachShader(fsQuadShaderProgramObject, shaderObjects[i]);
+			glDetachShader(fsvQuadShaderProgramObject, shaderObjects[i]);
 			glDeleteShader(shaderObjects[i]);
 			shaderObjects[i] = 0;
 
@@ -208,7 +208,7 @@ void uninitializeFSQuadShader(void)
 		shaderObjects = NULL;
 
 		glUseProgram(0);
-		glDeleteProgram(fsQuadShaderProgramObject);
-		fsQuadShaderProgramObject = 0;
+		glDeleteProgram(fsvQuadShaderProgramObject);
+		fsvQuadShaderProgramObject = 0;
     }
 }

@@ -66,6 +66,9 @@ static const char *szAudios[] = {
 };
 
 // Feature enable / disable
+
+//multithreading
+//#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -85,12 +88,10 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
-
-
-
-
 #define ENABLE_DYNAMIC_MODELS
 
+
+#define ENABLE_SINGLE_SCENE
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
