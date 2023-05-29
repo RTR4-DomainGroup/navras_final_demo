@@ -25,6 +25,7 @@ void scenePush(scene_types_t scene)
     if(head < (int)MAX_SCENES) {    
         sceneStack[head] = scene;
         head++;
+        curr = head;
     }
     else {
         LOG("scene stack overflow: %d !!!\n", head);
@@ -47,11 +48,11 @@ scene_types_t scenePop ()
 
 scene_types_t sceneNext() 
 {
-    return sceneStack[((curr-1) >= 0) ? --curr: curr ];
+    return sceneStack[((curr - 1) >= 0) ? --curr : curr];
 }
 
 scene_types_t scenePrev() 
 {
-    return sceneStack[((curr+1) <= head) ? ++curr: curr ];
+    return sceneStack[((curr + 1) <= head) ? ++curr : curr];
 }
 
