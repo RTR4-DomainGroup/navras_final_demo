@@ -43,8 +43,6 @@ struct FSVQuadUniform videoUniform;
 #pragma comment(lib, "ffmpeg/lib/swscale.lib")
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
-#define ENABLE_MULTI_THREADING
-
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
