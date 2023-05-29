@@ -197,7 +197,7 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
         _Result = fprintf(_pFile, "%s %s(%d): %s() %s", currentDateTime(), removepath(filewithpath), linenum, funcname, myBuffer);
         // _Result = fprintf(_pFile, "%s %s(%d): %s() %s", currentDateTime(), filewithpath, linenum, funcname, myBuffer);
         // _Result = fprintf(_pFile, "%s", myBuffer);
-        fflush(_pFile);
+        //fflush(_pFile);
         fclose(_pFile);
         _pFile = NULL;
     }

@@ -35,5 +35,6 @@ void uninitializeSphere(void);
 void uninitializeSphereAtmos(void);
 void uninitializeWaterQuad(void);
 void uninitializeQuad(void);
+void uninitializeVideoQuad(void);
 void uninitializeInstancedQuads(void);
 void uninitializeTriangle(void);

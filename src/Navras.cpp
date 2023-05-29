@@ -312,7 +312,7 @@ int initializeNavras(void) {
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
         return (-8);
 	}
-
+	LOG("initializeScene_PlaceHolderOutdoor sucessful!!! \n");
 	if (initializeScene_PlaceHolderIndoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderIndoor() FAILED !!!\n");
@@ -514,17 +514,7 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE00_AMC_BANNER)
-	{
-#ifdef ENABLE_VIDEO_RENDER
-		extern struct FSQuadUniform fsqUniform;
-
-		fsqUniform = useFSQuadShader();
-		displayVideoEffect(&fsqUniform);
-		glUseProgram(0);
-#endif	
-	}
-	else if (currentScene == SCENE02_EARTH_AND_SPACE)
+	if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		isGodRequired = true;
 		isWaterRequired = false;
@@ -543,7 +533,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 	}
 	else if (currentScene == SCENE07_RAUDRA_RAS)
-	{
+	{		
 		displayScene07_Raudra();
 	}
 	else if (currentScene == SCENE08_BIBHATSA_RAS)

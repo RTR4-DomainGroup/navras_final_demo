@@ -7,7 +7,6 @@ int initializeFSQuadShader(void)
 {
     // Code
     ZeroMemory((void*)&fsQuadUniform, sizeof(FSQuadUniform));
-
     // Vertex Shader
     const GLchar* vertexShaderSrcCode = 
         "#version 460 core" \
@@ -27,6 +26,7 @@ int initializeFSQuadShader(void)
         "}";
 
     // Create the Vertex Shader object.
+    
     GLuint vertexShaderObj = glCreateShader(GL_VERTEX_SHADER);
 
     // Give the shader source to shader object.
@@ -62,7 +62,7 @@ int initializeFSQuadShader(void)
             }
         }
     }
-
+LOG("fragmentShaderSrcCode in initializeFSQuadShader().\n");
     // Fragement Shader
     const GLchar* fragmentShaderSrcCode = 
         "#version 460 core" \

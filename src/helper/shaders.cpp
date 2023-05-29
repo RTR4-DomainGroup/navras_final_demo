@@ -19,11 +19,11 @@ bool initAllShaders(void)
 {
     // Variable Declarations
 
-    // Code
-    if (initializeFSQuadShader() != 0)
-    {
-        return false;
-    }
+    // // Code
+    // if (initializeFSQuadShader() != 0)
+    // {
+    //     return false;
+    // }
 
     if (initializeAtmosphereShader() != 0)
     {
@@ -45,10 +45,10 @@ bool initAllShaders(void)
         return false;
     }
     
-    if(initializeFSQuadShader() != 0)
-    {
-        return false;
-    }
+    // if(initializeFSQuadShader() != 0)
+    // {
+    //     return false;
+    // }
 
     if (initializeGodraysShader() != 0)
     {

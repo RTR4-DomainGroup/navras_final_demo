@@ -439,7 +439,6 @@ void initializeWaterQuad(void)
 
 }
 
-
 void initializeQuadForVideo(void)
 {
     const GLfloat quadPNT[] = 
@@ -753,6 +752,21 @@ void uninitializeQuad(void)
 	}
 }
 
+void uninitializeVideoQuad(void)
+{
+    // Code
+    if (vbo_quad_video) {
+
+		glDeleteBuffers(1, &vbo_quad_video);
+		vbo_quad_video = 0;
+	}
+
+	if (vao_quad_video) {
+
+		glDeleteVertexArrays(1, &vao_quad_video);
+		vao_quad_video = 0;
+	}
+}
 void uninitializeInstancedQuads(void)
 {
     if (vbo_texcoords) {

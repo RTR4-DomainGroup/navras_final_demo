@@ -7,3 +7,5 @@
 int initializeVideoEffect(const char*);
 
 void displayVideoEffect(struct FSQuadUniform*);
+
+void uninitializeVideoEffect(void);

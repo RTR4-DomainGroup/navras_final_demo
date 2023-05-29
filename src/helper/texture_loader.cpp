@@ -131,8 +131,7 @@ GLboolean LoadGLTexture_UsingSOIL(GLuint* texture, const char* path)
 }
 
 GLboolean LoadGLTexture(GLuint *texture, GLsizei width, GLsizei height, void* data)
-{   
-    LOG("Texture Enter....... \n");
+{
     GLboolean bResult = GL_TRUE;
     
     // For better performance at shader level
@@ -149,11 +148,8 @@ GLboolean LoadGLTexture(GLuint *texture, GLsizei width, GLsizei height, void* da
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    LOG("mipmap  glgenerate....... \n");
-    //glGenerateMipmap(GL_TEXTURE_2D);
-    LOG("mipmap  undone....... \n");
+    glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
-    LOG("Bind  undone....... \n");
 
     return bResult;    
 }
