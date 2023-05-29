@@ -254,9 +254,9 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 10.0f;
 
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
-	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_nor_gl_2k.jpg";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/diffuse.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/disp.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
 	{
@@ -542,7 +542,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 proj_matrix = mat4::identity();
 
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -0.1f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translate(0.0f, -1.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
