@@ -11,9 +11,9 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <thread>
 #include <windowsx.h>	// for mouse move x and y coordinates
-
+#include <condition_variable>
 // #include "../../inc/template_ogl.h"
 
 // OpenGL header files
@@ -24,8 +24,10 @@
 #include "../../inc/helper/constants.h"
 #include "../../inc/helper/resources.h"
 #include "../../inc/helper/common.h"
+#include "../../inc/effects/videoEffect.h"
 #include "../../inc/Navras.h"
 
+struct FSQuadUniform videoUniform;
 
 // OpenGL Libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
@@ -51,6 +53,7 @@ BOOL gbFullscreen = FALSE;
 BOOL gbActiveWindow = FALSE;
 HDC ghdc = NULL;
 HGLRC ghrc = NULL;
+HGLRC ghrc_AMC_Video = NULL;
 
 // keys
 GLbyte charPressed;
@@ -66,7 +69,9 @@ float mouseY;
 int iScrWdth;
 int iScrHght;
 
+// Multithreading
 
+std::atomic<bool> gTaskFinished(false);
 // external variables
 
 // entry point function
@@ -74,6 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	// Function Declarations
 	int initialize(void);
+	int initializeForVideo(void);
 	void display(void);
 	void update(void);
 	void uninitialize(void);
@@ -146,7 +152,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	ShowWindow(hwnd, iCmdShow);
 
 	// initialize()
-	iRetVal = initialize();
+	iRetVal = initializeForVideo();
 	if(iRetVal < 0)
 	{
 
@@ -155,7 +161,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		return(-1);
 
 	}
-
+	LOG("Initialize() Success before first!!!\n");
+	std::thread first (initialize);
+	
 	// Foregrounding And Focusing the Window
 	SetForegroundWindow(hwnd);
 	SetFocus(hwnd);
@@ -187,7 +195,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			}
 		}
 	}
-
+	first.join();
 	return((int)msg.wParam);
 
 }
@@ -339,6 +347,81 @@ int initialize(void)
 
 	//set fps to system
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
+	gTaskFinished = true;
+
+	return(0);
+}
+
+
+int initializeForVideo(void)
+{
+	// function declarations
+	void uninitialize(void);
+	void resize(int, int);
+	void ToggleFullscreen(void);
+
+	// variable declarations
+	PIXELFORMATDESCRIPTOR pfd;
+	int iPixelFormatIndex;
+	int initializeReturnValue;
+
+	// code
+	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
+
+	// initialization of PIXELFORMATDESCRIPTOR structure
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	pfd.cRedBits = 8;
+	pfd.cGreenBits = 8;
+	pfd.cBlueBits = 8;
+	pfd.cAlphaBits = 8;
+	pfd.cDepthBits = 32;
+
+	// GetDC
+	ghdc = GetDC(ghwnd);
+
+	// choose pixel format
+	iPixelFormatIndex = ChoosePixelFormat(ghdc, &pfd);
+	if(iPixelFormatIndex == 0)
+	{
+		return(-1);
+	}
+
+	// set the chosen pixel format
+	if(SetPixelFormat(ghdc, iPixelFormatIndex, &pfd) == FALSE)
+	{
+		return(-2);
+	}
+
+	// create OpenGL rendering context
+	ghrc_AMC_Video = wglCreateContext(ghdc);
+	if(ghrc_AMC_Video == NULL)
+	{
+		return(-3);
+	}
+
+	// make the rendering context as the current context
+	if(wglMakeCurrent(ghdc, ghrc_AMC_Video) == FALSE)
+	{
+		return(-4);
+	}
+	LOG("Reading VIdeo File.  \n");
+	// here starts OpenGL code
+	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
+	initializeQuadForVideo();
+	// warm-up resize()
+	resize(WIN_WIDTH, WIN_HEIGHT);
+
+	LOG("resize VIdeo done.  \n");
+	// ToggleFullscreen();
+
+	//set fps to system
+	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
+
+	LOG("Initialize VIdeo Success.  \n");
 
 	return(0);
 }
@@ -402,7 +485,24 @@ void display(void)
 	// function declarations
 
 	// code
-	displayNavras();
+	if (gTaskFinished.load())
+    {
+		if (ghrc_AMC_Video)
+        {
+            // Delete the the ghrc
+            wglDeleteContext(ghrc_AMC_Video);
+            ghrc = NULL;
+            wglMakeCurrent(ghdc, ghrc);
+			displayNavras();
+        }
+	}
+	else
+	{
+		videoUniform = useFSQuadShader();
+		displayVideoEffect(&videoUniform);
+	}
+	
+	
 
 	SwapBuffers(ghdc);
 }

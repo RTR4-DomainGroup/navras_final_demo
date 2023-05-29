@@ -29,6 +29,7 @@ int initializeVideoEffect(const char* videoFile)
         LOG("Couldn't load video frame.\n");
         exit(-2);
     }
+    LOG("Opening File for texture....... \n");
     if(LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data) == GL_FALSE)
     {
         LOG("Unable to load Texture.\n");
@@ -55,7 +56,7 @@ void displayVideoEffect( struct FSQuadUniform* fsqUniform)
     glBindTexture(GL_TEXTURE_2D, texture_frame);
     glUniform1i(fsqUniform->textureSamplerUniform1, 0);
     glUniform1i(fsqUniform->textureSamplerUniform2, 1);
-    displayQuad();
+    displayVideoQuad();
     glBindTexture(GL_TEXTURE_2D, 0);    
 }
 

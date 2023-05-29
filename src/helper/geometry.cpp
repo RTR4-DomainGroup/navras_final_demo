@@ -20,8 +20,10 @@ GLuint vao_pyramid;
 GLuint vbo_pyramid;
 
 // quad
-GLuint vao_quad; 
+GLuint vao_quad;
+GLuint vao_quad_video; 
 GLuint vbo_quad;
+GLuint vbo_quad_video;
 
 // instanced quads
 GLuint vao_quadInstanced; 
@@ -454,11 +456,15 @@ void initializeQuadForVideo(void)
 
         // VAO AND VBO RELATED CODE
 	// vao_Cube
-	glGenVertexArrays(1, &vao_quad);
-	glBindVertexArray(vao_quad);
-
-	glGenBuffers(1, &vbo_quad);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
+	
+	LOG("Initialize Mohit Success.  \n");
+	glGenVertexArrays(1, &vao_quad_video);
+	glBindVertexArray(vao_quad_video);
+	LOG("Initialize Mohit UnSuccess.  \n");
+	glGenBuffers(1, &vbo_quad_video);
+	
+	LOG("Initialize vbo_quad_video Success.  \n");
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad_video);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
@@ -615,6 +621,16 @@ void displayQuad(void)
 {
     // Code
     glBindVertexArray(vao_quad);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+	glBindVertexArray(0);
+}
+
+void displayVideoQuad(void)
+{
+    // Code
+    glBindVertexArray(vao_quad_video);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 

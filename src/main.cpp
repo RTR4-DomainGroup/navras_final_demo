@@ -289,26 +289,23 @@ int initializeNavras(void) {
 	scenePush(SCENE06_BHAYANK_RAS);
 	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
-	scenePush(SCENE00_AMC_BANNER);
+	//scenePush(SCENE00_AMC_BANNER);
 
 	// samples
-
-    //initializeTriangle();
-    //initializeSphere();
 	
 	currentScene = CURRENT_SCENE;
 	// currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
 
 	// Scene0 - Astromedicomp video
-#ifdef ENABLE_VIDEO_RENDER
-	initializeQuadForVideo(); 
-	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
-	) {
-		LOG("initializeVideoEffect() FAILED !!!\n");
-        return (-8);
-	}
-#endif // ENABLE_VIDEO_RENDER
+// #ifdef ENABLE_VIDEO_RENDER
+// 	initializeQuadForVideo(); 
+// 	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
+// 	) {
+// 		LOG("initializeVideoEffect() FAILED !!!\n");
+//         return (-8);
+// 	}
+// #endif // ENABLE_VIDEO_RENDER
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
