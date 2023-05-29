@@ -271,7 +271,6 @@ void displayScene07_Raudra(void)
 	
 	displayRoom(textures);
 
-
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -283,8 +282,10 @@ void displayScene07_Raudra(void)
 	scaleMatrix = vmath::scale(2.0f, 1.0f, 1.0f);
 	modelMatrix = translationMatrix * scaleMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_blackboard);
+	glBindTexture(GL_TEXTURE_2D, texture_blackboard);	
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -301,7 +302,7 @@ void displayScene07_Raudra(void)
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_door);
+	glBindTexture(GL_TEXTURE_2D, texture_door);	
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -326,7 +327,6 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModelInstanced(deskModel, NO_OF_INSTANCES_DESK);
-
 	// ------ Shelf Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -354,9 +354,8 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 	drawStaticModelInstanced(shelfModel, NO_OF_INSTANCES_SHELF);
-
+	// LOG("Display drawStaticModelInstanced Finished.....\n ");
 
 	// ------ Pencil Model ------
 	translationMatrix = mat4::identity();
@@ -379,7 +378,7 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
+	
 	drawStaticModel(pencilModel);
 
 	// ------ Failed Texture ------
@@ -405,7 +404,7 @@ void displayScene07_Raudra(void)
 	glBindTexture(GL_TEXTURE_2D, texture_failed);
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
-
+	
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);

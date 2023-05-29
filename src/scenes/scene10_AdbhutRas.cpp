@@ -194,6 +194,7 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
+static STATIC_MODEL farmhouseModel;
 static DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS
@@ -238,6 +239,7 @@ int initializeScene10_AdbhutRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
+	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -681,6 +683,29 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(treeModel);
+
+	// farmhouse
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ farmhouse Model ------
+	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
+	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
+
+	// usage type 1 
+	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(farmhouseModel);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
