@@ -182,9 +182,10 @@ void displayScene13_Shant(void)
 
 	// ------ Streetlight Model ------
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
