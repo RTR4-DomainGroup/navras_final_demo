@@ -297,27 +297,11 @@ int initializeNavras(void) {
         LOG("All Shaders FAILED !!!\n");
         return (-6);
     }
-
-	// Initialize Scenes
-	// samples
-
-    //initializeTriangle();
-    //initializeSphere();
 	
+
 	currentScene = CURRENT_SCENE;
 	// currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
-
-	// Scene0 - Astromedicomp video
-#ifdef ENABLE_VIDEO_RENDER
-	
-	if(initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4")
-	) {
-		LOG("initializeVideoEffect() FAILED !!!\n");
-        return (-8);
-	}
-	//scenePush(SCENE00_AMC_BANNER);
-#endif // ENABLE_VIDEO_RENDER
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -331,7 +315,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-#ifdef ENABLE_SINGLE_SCENE
+	#ifdef ENABLE_SINGLE_SCENE
 
 	// SCENE02
 	if (
@@ -566,7 +550,7 @@ int initializeNavras(void) {
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	//initializeQuadForVideo();
+
 	//Depth Related Changes
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -625,12 +609,9 @@ void resizeNavras(int width, int height) {
 
 void displayNavras(void)
 {
-
-	// Function Declaration
-	void sceneTime(int);	
-	void resize(int, int);
-
-	// Code
+	// Function Declarations 
+	void sceneTime(int);
+	
 	bool isGodRequired = false;
 	bool isWaterRequired = false;
 	bool isGaussianBlurRequired = false;
@@ -654,6 +635,9 @@ void displayNavras(void)
 	//	isInitialDisplay = false;
 	//}
 
+	// Function declarations
+	void resize(int, int);
+
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -666,17 +650,7 @@ void displayNavras(void)
 #endif // !ENABLE_SINGLE_SCENE
 
 	// Call Scenes Display Here
-	if(currentScene == SCENE00_AMC_BANNER)
-	{
-#ifdef ENABLE_VIDEO_RENDER
-		extern struct FSQuadUniform fsqUniform;
-
-		fsqUniform = useFSQuadShader();
-		displayVideoEffect(&fsqUniform);
-		glUseProgram(0);
-#endif	
-	}
-	else if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
+	if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		isGodRequired = true;
 		isWaterRequired = false;
