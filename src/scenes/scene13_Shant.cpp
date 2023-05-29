@@ -58,7 +58,7 @@ int initializeScene13_Shant(void)
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	loadStaticModel("res/models/scene13_shanta/room/shantaRoom4.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
 	
 //	//load models
 //	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
@@ -113,6 +113,9 @@ int initializeScene13_Shant(void)
     // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
 	tf_Speed = 0.05f;
 //	glEnable(GL_TEXTURE_2D);
+
+
+
 	return 0;
 }
 
@@ -183,8 +186,9 @@ void displayScene13_Shant(void)
 	// ------ Streetlight Model ------
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
