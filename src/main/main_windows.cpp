@@ -43,6 +43,7 @@ struct FSVQuadUniform videoUniform;
 #pragma comment(lib, "ffmpeg/lib/swscale.lib")
 #pragma comment(lib, "Assimp/lib/assimp-vc142-mtd.lib")
 
+#define ENABLE_MULTI_THREADING
 
 // Global Function Declarations
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -87,7 +88,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	void display(void);
 	void update(void);
 	void uninitialize(void);
-
 
 	// Variable Declarations
 	WNDCLASSEX wndclass;
@@ -153,28 +153,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	// Show Window
 	ShowWindow(hwnd, iCmdShow);
-
+#ifdef ENABLE_MULTI_THREADING
 	// initialize()
 	iRetVal = initializeForVideo();
 	if(iRetVal < 0)
 	{
-
 		LOG("initializeForVideo FAILED!!!\n");
 		uninitialize();
 		return(-1);
-
 	}
 	LOG("initializeForVideo() Success starting Background Load !!!\n");
 	std::thread first (initialize);
-	// iRetVal = initialize();
-	// if(iRetVal < 0)
-	// {
+#else
+	iRetVal = initialize();
+	if(iRetVal < 0)
+	{
 
-	// 	LOG("Initialize() FAILED!!!\n");
-	// 	uninitialize();
-	// 	return(-1);
-
-	// }
+		LOG("Initialize() FAILED!!!\n");
+		uninitialize();
+		return(-1);
+	}
+#endif
 	
 	// Foregrounding And Focusing the Window
 	SetForegroundWindow(hwnd);
@@ -207,7 +206,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 	}
 	LOG("Calling first.join() .....\n ");
+	#ifdef ENABLE_MULTI_THREADING
 	first.join();
+	#endif
 	return((int)msg.wParam);
 
 }
@@ -297,7 +298,42 @@ int initialize(void)
 
 	// variable declarations
 	int initializeReturnValue;
+#ifndef ENABLE_MULTI_THREADING
+	// variable declarations
+	PIXELFORMATDESCRIPTOR pfd;
+	int iPixelFormatIndex;
+	// code
+	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 
+	// initialization of PIXELFORMATDESCRIPTOR structure
+	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cColorBits = 32;
+	pfd.cRedBits = 8;
+	pfd.cGreenBits = 8;
+	pfd.cBlueBits = 8;
+	pfd.cAlphaBits = 8;
+	pfd.cDepthBits = 32;
+
+	// GetDC
+	ghdc = GetDC(ghwnd);
+
+	// choose pixel format
+	iPixelFormatIndex = ChoosePixelFormat(ghdc, &pfd);
+	if(iPixelFormatIndex == 0)
+	{
+		return(-1);
+	}
+
+	// set the chosen pixel format
+	if(SetPixelFormat(ghdc, iPixelFormatIndex, &pfd) == FALSE)
+	{
+		return(-2);
+	}
+			
+#endif
 	// create OpenGL rendering context
 	ghrc = wglCreateContext(ghdc);
 	if(ghrc == NULL)
@@ -310,11 +346,18 @@ int initialize(void)
 	{
 		return(-4);
 	}
-
+#ifndef ENABLE_MULTI_THREADING
+	// glew initalization
+    if (glewInit() != GLEW_OK)
+    {
+        return (-5);
+    }
+#endif
 	// here starts OpenGL code
 	initializeReturnValue = initializeNavras();
 	if(initializeReturnValue < 0)
 	{
+		LOG("Calling uninitialize()");
 		uninitialize();
 	}
 
@@ -325,8 +368,10 @@ int initialize(void)
 
 	//set fps to system
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
+#ifdef ENABLE_MULTI_THREADING
 	LOG("Setting Task finished to True \n");
 	gTaskFinished = true;
+#endif
 
 	return(0);
 }
@@ -483,6 +528,7 @@ void display(void)
 	// function declarations
 
 	// code
+#ifdef ENABLE_MULTI_THREADING
 	if (!gTaskFinished.load())
     {
 		videoUniform = useFSVQuadShader();
@@ -498,14 +544,15 @@ void display(void)
 			if (ghrc)
         	{
 				glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-				LOG("Calling wglMakeCurrent(ghdc, ghrc)\n");
 				wglMakeCurrent(ghdc, ghrc);
-				LOG("Done Setting wglMakeCurrent(ghdc, ghrc)\n");
 			}		
 			uninitializeVideoEffect();			
 		}
 		displayNavras();
 	}
+#else
+	displayNavras();
+#endif
 	SwapBuffers(ghdc);
 }
 
