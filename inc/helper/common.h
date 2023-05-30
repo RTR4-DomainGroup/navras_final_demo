@@ -136,6 +136,8 @@ int log_close();
 char* currentDateTime(char* log_buffer);
 char* vararg2string(const char* format, ...);
 
+// #define __FILENAME__ (realpath(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
 
 #define LOG(format, ...) \
 	log_printf(__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
