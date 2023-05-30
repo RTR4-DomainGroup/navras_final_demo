@@ -492,7 +492,7 @@ void ToggleFullscreen(void) {
 
 }
 
-void set_title(char* title)
+void set_title(const char* const title)
 {
 	TCHAR str[MAX_LOG_LENGTH] = {};
 
