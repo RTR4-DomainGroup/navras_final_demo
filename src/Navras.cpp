@@ -795,6 +795,7 @@ void sceneTime(int sceneTime){
 	{
 		then = time(NULL);
 		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
 	}
 	
 #endif // !ENABLE_SINGLE_SCENE
