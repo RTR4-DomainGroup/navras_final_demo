@@ -837,11 +837,16 @@ void audio(int scene){
 	// function declaration
 	int playSong(int);
 
+
 	// code
+#ifdef ENABLE_AUDIO
+
 	if (audioFlag) {
 		playSong(scene);
 		audioFlag = false;
 	}
+
+#endif // ENABLE_AUDIO
 
 }
 
