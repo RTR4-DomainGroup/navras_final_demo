@@ -58,7 +58,7 @@ int initializeScene5_karun(void)
 	//load models
 	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
 
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room\\scene5Room\\ceiling.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room/scene5Room/ceiling.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
 		return(-1);
@@ -67,7 +67,7 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_floor, TEXTURE_DIR"Room\\floor.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_floor, TEXTURE_DIR"Room/floor.jpg") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in floor Raudra!!!\n");
 		return(-1);
@@ -76,7 +76,7 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room\\scene5Room\\frontwall2.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room/scene5Room/frontwall2.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in back Raudra!!!\n");
 		return(-1);
@@ -85,7 +85,7 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room\\scene5Room\\sidewalls.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room/scene5Room/sidewalls.png") == FALSE) {
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in sidewall Raudra!!!\n");
 		return(-1);

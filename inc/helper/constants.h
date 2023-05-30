@@ -60,9 +60,20 @@
 // sample audios
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
-    "audio1.wav", 
+    "audio1.wav",
+    "audio1.wav",
     "audio2.wav", 
+    "audio1.wav",
+    "audio2.wav", 
+    "audio1.wav", 
     "audio3.wav", 
+    "audio2.wav",
+    "audio1.wav",
+    "audio2.wav",
+    "audio1.wav",
+    "Scene12_HasyaRas_40_seconds.wav",
+    "audio1.wav",
+    "audio3.wav",
 };
 
 // Feature enable / disable
@@ -91,11 +102,11 @@ static const char *szAudios[] = {
 #define ENABLE_DYNAMIC_MODELS
 
 
-#define ENABLE_SINGLE_SCENE
+//#define ENABLE_SINGLE_SCENE
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
-//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
