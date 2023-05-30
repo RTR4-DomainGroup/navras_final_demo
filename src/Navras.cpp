@@ -795,6 +795,8 @@ void sceneTime(int sceneTime){
 	{
 		then = time(NULL);
 		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
+
 	}
 	
 #endif // !ENABLE_SINGLE_SCENE
@@ -880,5 +882,3 @@ void updateMouseMovement(void)
 		cameraCenterZ = cameraEyeZ + sin(yaw * M_PI / 180.0f) * cos(pitch * M_PI / 180.0f);
 	}
 }
-
-
