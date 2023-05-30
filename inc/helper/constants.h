@@ -62,7 +62,19 @@
 static const char *szAudios[] = {
     "audio1.wav", 
     "audio2.wav", 
+    "audio1.wav",
+    "audio2.wav", 
+    "audio1.wav",
+    "audio2.wav", 
+    "audio1.wav", 
     "audio3.wav", 
+    "audio2.wav",
+    "audio1.wav",
+    "audio2.wav",
+    "audio1.wav",
+    "audio2.wav",
+    "audio1.wav",
+    "audio3.wav",
 };
 
 // Feature enable / disable
