@@ -694,8 +694,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ farmhouse Model ------
-	translationMatrix = vmath::translate(4.90f, -3.60f, -31.00f);
-	scaleMatrix = vmath::scale(1.56f, 1.56f, 1.56f);
+	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
+	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
 	rotationAngles = {0.0f, 253.0f, 0.0f};
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
