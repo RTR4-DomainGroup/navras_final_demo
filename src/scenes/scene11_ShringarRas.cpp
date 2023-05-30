@@ -242,7 +242,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
+	loadStaticModel("res/models/tree_shringar/palmTree.obj", &streetLightModel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -673,8 +673,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	translationMatrix = vmath::translate(4.0f, 1.0f, 0.0f);
+	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
