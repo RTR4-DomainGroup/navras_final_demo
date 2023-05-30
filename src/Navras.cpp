@@ -64,7 +64,7 @@ time_t now;
 time_t then;
 
 int time_scene1 = 5;
-int time_scene2 = 5;
+int time_scene2 = 17;
 int time_scene3 = 5;
 int time_scene4 = 5;
 int time_scene5 = 5;
@@ -315,7 +315,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	#ifdef ENABLE_SINGLE_SCENE
+#ifdef ENABLE_SINGLE_SCENE
 
 	// SCENE02
 	if (
