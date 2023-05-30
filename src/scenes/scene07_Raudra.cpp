@@ -65,7 +65,7 @@ int initializeScene07_Raudra(void)
 	//load models
 	initializeDeskInstancePositions();
 	
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room\\ceiling.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room/ceiling.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
 		return(-1);
@@ -74,7 +74,7 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room\\floor.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room/floor.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in floor Raudra!!!\n");
 		return(-1);
@@ -83,7 +83,7 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room\\back.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room/back.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in backwall Raudra!!!\n");
 		return(-1);
@@ -92,7 +92,7 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room\\sidewall.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room/sidewall.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for sidewall Raudra!!!\n");
 		return(-1);
@@ -102,7 +102,7 @@ int initializeScene07_Raudra(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_blackboard, TEXTURE_DIR"Roudra\\blackboard.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_blackboard, TEXTURE_DIR"Roudra/blackboard.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for blackboard Raudra!!!\n");
 		return(-1);
@@ -112,7 +112,7 @@ int initializeScene07_Raudra(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_blackboard);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_failed, TEXTURE_DIR"Roudra\\failed.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_failed, TEXTURE_DIR"Roudra/failed.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for Marksheet Raudra!!!\n");
 		return(-1);
@@ -122,7 +122,7 @@ int initializeScene07_Raudra(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_failed);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_door, TEXTURE_DIR"Roudra\\door.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_door, TEXTURE_DIR"Roudra/door.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for Door Raudra!!!\n");
 		return(-1);

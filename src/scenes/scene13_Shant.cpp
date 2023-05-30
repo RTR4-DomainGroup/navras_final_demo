@@ -59,7 +59,7 @@ int initializeScene13_Shant(void)
 	// function declarations
 
 	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
-	
+
 //	//load models
 //	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
 //		uninitializeScene13_Shant();
