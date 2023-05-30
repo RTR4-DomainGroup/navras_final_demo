@@ -1,4 +1,3 @@
-#pragma once
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
@@ -116,7 +115,7 @@ int initializeScene08_BibhatsaRas(void)
 	initializeQuad();
 	initializeCube();
 
-	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"\\Road\\Road.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"/Road/Road.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_road FAILED!!!\n");

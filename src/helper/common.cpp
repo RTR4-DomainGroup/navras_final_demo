@@ -194,8 +194,8 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
         _vsnprintf_l(myBuffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
         __crt_va_end(_ArgList);
 
-        _Result = fprintf(_pFile, "%s %s(%d): %s() %s", currentDateTime(), removepath(filewithpath), linenum, funcname, myBuffer);
-        // _Result = fprintf(_pFile, "%s %s(%d): %s() %s", currentDateTime(), filewithpath, linenum, funcname, myBuffer);
+        // _Result = fprintf(_pFile, "%s %s(%d): %s() %s", currentDateTime(), removepath(filewithpath), linenum, funcname, myBuffer);
+        _Result = fprintf(_pFile, "%s %s(%d): [%s]: %s", currentDateTime(), filewithpath, linenum, funcname, myBuffer);
         // _Result = fprintf(_pFile, "%s", myBuffer);
         //fflush(_pFile);
         fclose(_pFile);

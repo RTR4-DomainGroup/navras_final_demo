@@ -60,8 +60,7 @@
 // sample audios
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
-    "audio1.wav", 
-    "audio2.wav", 
+    "audio1.wav",
     "audio1.wav",
     "audio2.wav", 
     "audio1.wav",
@@ -72,7 +71,7 @@ static const char *szAudios[] = {
     "audio1.wav",
     "audio2.wav",
     "audio1.wav",
-    "audio2.wav",
+    "Scene12_HasyaRas_40_seconds.wav",
     "audio1.wav",
     "audio3.wav",
 };

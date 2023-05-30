@@ -97,15 +97,15 @@ extern float myScale; // = 1.0f;
 extern float noiseScale; // = 2.0f;
 extern bool noiseScaleIncrement; // = true;
 
-extern GLfloat lightAmbient[]; // = { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightDiffuse[]; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat lightSpecular[]; //= { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat lightPosition[]; //= { 10.0f, 10.0f, 0.0f, 1.0f };
+static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-extern GLfloat materialAmbient[]; // = { 0.0f, 0.0f, 0.0f, 1.0f };
-extern GLfloat materialDiffuse[]; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialSpecular[]; //= { 1.0f, 1.0f, 1.0f, 1.0f };
-extern GLfloat materialShininess; // = 128.0f;
+static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess = 128.0f;
 
 extern mat4 viewMatrix;
 

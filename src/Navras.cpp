@@ -75,7 +75,7 @@ int time_scene8 = 5;
 int time_scene9 = 5;
 int time_scene10 = 5;
 int time_scene11 = 5;
-int time_scene12 = 5;
+int time_scene12 = 40;
 int time_scene13 = 5;
 int time_scene14 = 5;
 
@@ -823,6 +823,8 @@ void sceneTime(int sceneTime){
 	{
 		then = time(NULL);
 		currentScene = scenePop();
+		LOG("current scene changed: %d\n", currentScene);
+
 		audioFlag = true;
 	}
 	
