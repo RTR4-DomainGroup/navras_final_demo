@@ -3,7 +3,6 @@
 // standard headers
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <time.h>
 #include <string.h>
 
@@ -20,6 +19,11 @@
 
 // Open GL headers
 #include <GL/gl.h>
+
+char* getcwd(char* cwd, size_t size)
+{
+    return (cwd);
+}
 
 #else
 // platform support not added
@@ -60,7 +64,7 @@ const char* filename(const char* filewithpath)
 
 const char* removepath(const char* filewithpath)
 {
-    char cwd[PATH_MAX];
+    char cwd[MAX_LOG_LENGTH];
     getcwd(cwd, sizeof(cwd));
     const char* result = strstr(filewithpath, cwd);
     if(result != NULL)
@@ -92,6 +96,7 @@ int log_printf_internal(char const* const filewithpath, char const* const funcna
         // _Result = fprintf(_pFile, "%s", myBuffer);
 
 		fclose(_pFile);
+        _pFile = NULL;
 		// // adding to log to title
 		// set_title(buffer);
     }
@@ -139,10 +144,10 @@ int log_open(char const* FileName , char const* Mode)
 	{
         strcpy(_filename, FileName);
         retval = 0;
+        fclose(_pFile);
+        _pFile = NULL;
 	}
 
-    fclose(_pFile);
-    _pFile = NULL;
     return retval;
 }
 
@@ -204,9 +209,11 @@ int log_open(char const* FileName , char const* Mode)
 
 int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
+    char buffer[MAX_LOG_LENGTH] = {};
+
     va_list _ArgList;
     __crt_va_start(_ArgList, format);
-    _vsnprintf_l(myBuffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
+    _vsnprintf_l(buffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
     __crt_va_end(_ArgList);
 
     int retval = log_printf_internal(filewithpath, funcname, linenum, buffer);
@@ -215,7 +222,6 @@ int log_printf(char const* const filewithpath, char const* const funcname, int l
     set_title(buffer);
 
     return (retval);
-
 }
 
 char* vararg2string(const char* format, ...)
