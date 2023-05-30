@@ -280,6 +280,8 @@ int initializeNavras(void) {
 	// Variable Declarations
 
 	// Code
+
+
 	// Here starts OpenGL code
     // GLEW initialization
     // codes related to PP requires Core profile
@@ -715,7 +717,7 @@ void displayNavras(void)
 		audio(SCENE10_ADBHUT_RAS);
 
 		isGodRequired = true;
-		isWaterRequired = false;
+		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
@@ -837,11 +839,11 @@ void audio(int scene){
 	// function declaration
 	int playSong(int);
 
-	// code
-	if (audioFlag) {
-		playSong(scene);
-		audioFlag = false;
-	}
+	// // code
+	// if (audioFlag) {
+	// 	playSong(scene);
+	// 	audioFlag = false;
+	// }
 
 }
 
@@ -855,23 +857,12 @@ void uninitializeNavras(void) {
 	uninitializeAudio();
 
 #ifdef ENABLE_SINGLE_SCENE
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
-	currentScene = scenePop();
+	// only single scene pushed
 	currentScene = scenePop();
 #endif // !ENABLE_SINGLE_SCENE
 
 	//uninitialize all scenes
 	uninitializeParticle();
-	uninitializeScene_PlaceHolderOutdoor();
-	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene11_ShringarRas();
 	uninitializeScene09_VeerRas();
 	uninitializeScene10_AdbhutRas();
@@ -880,8 +871,8 @@ void uninitializeNavras(void) {
 	uninitializeScene06_BhayanakRas();
 	uninitializeScene5_karun();
 	uninitializeScene02_EarthAndSpace();
-	// uninitializeScene_Scene0();
-	// uninitializeScene_Scene1();
+	uninitializeScene_PlaceHolderIndoor();
+	uninitializeScene_PlaceHolderOutdoor();
 
 
 	//uninitialize all shaders
