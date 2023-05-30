@@ -32,7 +32,7 @@ struct FSVQuadUniform videoUniform;
 // OpenGL Libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
 // By law it not mandatory that is should before OpenGL
-#pragma comment(lib, "GLEW32.lib") 
+#pragma comment(lib, "GLEW32.lib")
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "SOIL/lib/SOIL.lib")
 #pragma comment(lib, "AL/lib/OpenAL32.lib")
