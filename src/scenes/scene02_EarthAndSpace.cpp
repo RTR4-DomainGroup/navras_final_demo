@@ -526,13 +526,13 @@ void uninitializeScene02_EarthAndSpace(void)
 	if (texture_sun)
 	{
 		glDeleteTextures(1, &texture_sun);
-		texture_sun = NULL;
+		texture_sun = 0;
 	}
 
 	if (texture_earth)
 	{
 		glDeleteTextures(1, &texture_earth);
-		texture_earth = NULL;
+		texture_earth = 0;
 	}
 
 	uninitializeStarfield(texture_star);

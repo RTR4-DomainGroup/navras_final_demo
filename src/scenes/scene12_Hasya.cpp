@@ -57,7 +57,7 @@ int initializeScene12_Hasya(void)
 	//load models
 	initializeDeskInstancePositions();
 	
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Hasya\\concrete.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Hasya/concrete.jpg") == FALSE) {
 		uninitializeScene12_Hasya();
 		LOG("LoadGLTexture FAILED in Hasya!!!\n");
 		return(-1);
@@ -66,7 +66,7 @@ int initializeScene12_Hasya(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Hasya\\stone.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Hasya/stone.jpg") == FALSE) {
 		uninitializeScene12_Hasya();
 		LOG("LoadGLTexture FAILED in floor Hasya!!!\n");
 		return(-1);
@@ -75,7 +75,7 @@ int initializeScene12_Hasya(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Hasya\\brick.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Hasya/brick.jpg") == FALSE) {
 		uninitializeScene12_Hasya();
 		LOG("LoadGLTexture FAILED in backwall Hasya!!!\n");
 		return(-1);
@@ -84,7 +84,7 @@ int initializeScene12_Hasya(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Hasya\\pxfuel.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Hasya/pxfuel.jpg") == FALSE) {
 		uninitializeScene12_Hasya();
 		LOG("LoadGLTexture FAILED for sidewall Hasya!!!\n");
 		return(-1);

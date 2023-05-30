@@ -41,7 +41,7 @@ file(GLOB PROJ_SOURCES
     "src/shaders/*.cpp"
     "src/effects/*.cpp"
     "src/scenes/*.cpp"
-    "src/main.cpp"
+    "src/Navras.cpp"
 )
 
 
