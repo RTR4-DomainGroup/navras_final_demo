@@ -60,12 +60,26 @@
 // sample audios
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
-    "audio1.wav", 
+    "audio1.wav",
+    "audio1.wav",
     "audio2.wav", 
+    "audio1.wav",
+    "audio2.wav", 
+    "audio1.wav", 
     "audio3.wav", 
+    "audio2.wav",
+    "audio1.wav",
+    "audio2.wav",
+    "audio1.wav",
+    "Scene12_HasyaRas_40_seconds.wav",
+    "audio1.wav",
+    "audio3.wav",
 };
 
 // Feature enable / disable
+
+//multithreading
+//#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -85,16 +99,15 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
-
-
-
-
 #define ENABLE_DYNAMIC_MODELS
 
 
+#define ENABLE_SINGLE_SCENE
+//#define ENABLE_AUDIO
+
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
-//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
@@ -108,4 +121,3 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
-

@@ -47,57 +47,65 @@ static GLuint texture_back;
 static STATIC_MODEL deskModel;
 
 static GLuint textures[4];
+
+#ifdef ENABLE_STATIC_MODELS
+static STATIC_MODEL shantRoomModel;
+#endif // ENABLE_STATIC_MODELS
+
+
 int initializeScene13_Shant(void)
 {
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	//load models
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
-		uninitializeScene13_Shant();
-		LOG("LoadGLTexture FAILED in Shanta!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Shanta\\floor.jpg") == FALSE) {
-		uninitializeScene13_Shant();
-		LOG("LoadGLTexture FAILED in floor Shanta!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Shanta\\back.jpg") == FALSE) {
-		uninitializeScene13_Shant();
-		LOG("LoadGLTexture FAILED in backwall Shanta!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Shanta\\sidewall.jpg") == FALSE) {
-		uninitializeScene13_Shant();
-		LOG("LoadGLTexture FAILED for sidewall Shanta!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
-	}
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
 
+//	//load models
+//	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
+//		uninitializeScene13_Shant();
+//		LOG("LoadGLTexture FAILED in Shanta!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
+//	}
+//	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Shanta\\floor.jpg") == FALSE) {
+//		uninitializeScene13_Shant();
+//		LOG("LoadGLTexture FAILED in floor Shanta!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
+//	}
+//	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Shanta\\back.jpg") == FALSE) {
+//		uninitializeScene13_Shant();
+//		LOG("LoadGLTexture FAILED in backwall Shanta!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
+//	}
+//	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Shanta\\sidewall.jpg") == FALSE) {
+//		uninitializeScene13_Shant();
+//		LOG("LoadGLTexture FAILED for sidewall Shanta!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
+//	}
+//
 #endif
-	initializeInvertedNormalCube();
-	initializeQuad();
-
-	textures[0] = (GLuint)texture_ceiling;
-	textures[1] = (GLuint)texture_floor;
-	textures[2] = (GLuint)texture_back;
-	textures[3] = (GLuint)texture_side;
+//	initializeInvertedNormalCube();
+//	initializeQuad();
+//
+//	textures[0] = (GLuint)texture_ceiling;
+//	textures[1] = (GLuint)texture_floor;
+//	textures[2] = (GLuint)texture_back;
+//	textures[3] = (GLuint)texture_side;
 
 	// external debugging varaible
     tf_t = {2.0f, 0.0f, -3.35f}; // tree pos 
@@ -105,6 +113,9 @@ int initializeScene13_Shant(void)
     // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
 	tf_Speed = 0.05f;
 //	glEnable(GL_TEXTURE_2D);
+
+
+
 	return 0;
 }
 
@@ -152,16 +163,39 @@ void displayScene13_Shant(void)
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 	
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
-	scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
-	modelMatrix = translationMatrix * scaleMatrix;
+	//translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
+	//scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
+	//modelMatrix = translationMatrix * scaleMatrix;
+
+	//glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//glEnable(GL_TEXTURE_2D);
+	
+	//displayRoom(textures);
+
+	// ################################### BUILDING ONE ###################################  
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ Streetlight Model ------
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	//glEnable(GL_TEXTURE_2D);
-	
-	displayRoom(textures);
+
+	drawStaticModel(shantRoomModel);
+	// ################################### BUILDING ONE ###################################  
 
 
 	glUseProgram(0);
@@ -172,7 +206,8 @@ void displayScene13_Shant(void)
 void uninitializeScene13_Shant(void)
 {
     //UNINIT models
-	unloadStaticModel(&deskModel);
+	unloadStaticModel(&shantRoomModel);
+	//unloadStaticModel(&deskModel);
 	if (texture_ceiling)
 	{
 		glDeleteTextures(1, &texture_ceiling);
