@@ -221,7 +221,7 @@ int initializeScene10_AdbhutRas(void)
 	// set Camera location
 	// -10.000000, -2.250000, -8.000000], [-10.193824, -3.229223, -8.059628] [0.000000, 1.000000, 0.000000
 	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
+	cameraEyeY = 1.0f;
 	cameraEyeZ = 6.0f;
 
 	cameraCenterX = 0.0f;
@@ -281,7 +281,8 @@ int initializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_TERRIAN
 	// displacementmap_depth = 15.0f;
-	displacementmap_depth = 1.5f;
+	// displacementmap_depth = 1.5f;
+	displacementmap_depth = 3.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
@@ -314,13 +315,13 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
+	mat4 finalViewMatrix = mat4::identity();
 
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	setCamera();
 	//setCamera(&camera);
 
-	mat4 finalViewMatrix = mat4::identity();
 
 	if (actualDepthQuadScene == 0) {
 	
@@ -531,17 +532,29 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	vmath::mat4 mv_matrix = mat4::identity();
 	vmath::mat4 proj_matrix = mat4::identity();
 
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+
+	modelMatrix = mat4::identity();
+	viewMatrix = mat4::identity();
+
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -5.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
-	vmath::mat4 v_matrix = finalViewMatrix;
 
-	mv_matrix = finalViewMatrix * m_matrix;
 
+	translationMatrix = vmath::translate(0.0f, -2.0f, -20.0f);
+	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	viewMatrix = finalViewMatrix;
+
+	mv_matrix = finalViewMatrix * modelMatrix;
 	proj_matrix = perspectiveProjectionMatrix;
 
-	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, m_matrix);
-	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, v_matrix);
-	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, proj_matrix);
+	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	glUniform3fv(terrainUniform.laUniform, 1, lightAmbient);
 	glUniform3fv(terrainUniform.ldUniform, 1, lightDiffuse);
@@ -618,7 +631,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 1);
+	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
 	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
@@ -627,7 +640,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(-7.78f, -3.88f, -16.69f);
+	translationMatrix = vmath::translate(18.90f, 0.12f, -40.00f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	// usage type 2
@@ -637,7 +650,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = vmath::rotate(rotationAngles.z, 1.0f, 0.0f, 1.0f);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
-	// update_transformations(translationMatrix, scaleMatrix, rotationMatrix, &rotationAngles);
+	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -671,11 +684,11 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Tree Model ------
-	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
+	translationMatrix = vmath::translate(18.90f, 0.12f, -40.00f);
 	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
 
 	// usage type 1 
-	update_transformations(&translationMatrix) ;
+	// update_transformations(&translationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -694,11 +707,12 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ farmhouse Model ------
-	translationMatrix = vmath::translate(-8.0f, -3.60f, -17.00f);
-	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
+	translationMatrix = vmath::translate(-7.75f, 0.60f, -17.00f);
+	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	// rotationMatrix = mat4::identity();
 
 	// usage type 1 
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -790,7 +804,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-		scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
+		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
 
@@ -808,6 +822,9 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
 
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
+
+		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
+		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.3f, 0.5f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
 
@@ -873,6 +890,8 @@ void displayScene10_Billboarding(int godRays = 1)
 
 	translationMatrix = vmath::translate(1.5f, -3.5f, -25.0f);
 
+
+	// update_transformations(&translationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
