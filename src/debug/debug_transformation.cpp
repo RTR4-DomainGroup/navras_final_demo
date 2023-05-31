@@ -168,11 +168,11 @@ void debug_tranformation(void)
 			LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			break;
 		case '+':
-			tf_Speed += 0.1f;
+			tf_Speed += 0.05f;
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
 			break;
 		case '-':
-			tf_Speed -= 0.05f;
+			tf_Speed -= 0.03f;
 			if(tf_Speed < 0)
 				tf_Speed = 0.0f;
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
@@ -335,6 +335,8 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 	mat4 rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
 	if(rotationMatrix)
 		*rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	if(rotationAngles)
+		*rotationAngles = tf_r;
 }
 
 
