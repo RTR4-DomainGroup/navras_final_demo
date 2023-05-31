@@ -143,11 +143,13 @@ STATIC_MODEL buildingTwoModel;
 STATIC_MODEL buildingThreeModel;
 STATIC_MODEL buildingFourModel;
 STATIC_MODEL buildingFiveModel;
-STATIC_MODEL buildingSixModel;
+STATIC_MODEL trashOneModel;
 static DYNAMIC_MODEL skeletonModel;
 #endif // ENABLE_STATIC_MODELS
 
 GLuint texture_road;
+GLuint texture_footpath;
+GLuint texture_wall;
 
 int initializeScene08_BibhatsaRas(void)
 {
@@ -170,8 +172,9 @@ int initializeScene08_BibhatsaRas(void)
 #ifdef ENABLE_STARFIELD
 	initializeQuad();
 	initializeCube();
+	initializeCubeWithTilingTexcoords();
 
-	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"/Road/Road.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road\\road.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_road FAILED!!!\n");
@@ -181,6 +184,28 @@ int initializeScene08_BibhatsaRas(void)
 	{
 		LOG("LoadGLTexture texture_road Successfull = %u!!!\n", texture_road);
 	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_footpath, TEXTURE_DIR"Road\\foot.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_footpath FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_footpath Successfull = %u!!!\n", texture_footpath);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_wall, TEXTURE_DIR"Road\\foot.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_wall FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_wall Successfull = %u!!!\n", texture_wall);
+	}
 #endif
 
 #ifdef ENABLE_STATIC_MODELS
@@ -189,12 +214,12 @@ int initializeScene08_BibhatsaRas(void)
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 
 	// Buildings Model Loading
-	loadStaticModel("res/models/buildings/1/Building1.obj", &buildingOneModel);
-	loadStaticModel("res/models/buildings/2/Building2.obj", &buildingTwoModel);
-	loadStaticModel("res/models/buildings/3/Building3.obj", &buildingThreeModel);
-	loadStaticModel("res/models/buildings/4/Building4.obj", &buildingFourModel);
-	loadStaticModel("res/models/buildings/5/Building5.obj", &buildingFiveModel);
-	loadStaticModel("res/models/buildings/6/Building6.obj", &buildingSixModel);
+	loadStaticModel("res/models/scene08-beebhatsa/bld1/building1.obj", &buildingOneModel);
+	loadStaticModel("res/models/scene08-beebhatsa/bld2/Building2.obj", &buildingTwoModel);
+	loadStaticModel("res/models/scene08-beebhatsa/bld3/Building3.obj", &buildingThreeModel);
+	loadStaticModel("res/models/scene08-beebhatsa/bld4/Building4_new.obj", &buildingFourModel);
+	loadStaticModel("res/models/scene08-beebhatsa/bld5/Building5.obj", &buildingFiveModel);
+	loadStaticModel("res/models/scene08-beebhatsa/trash1/trashCan1.obj", &trashOneModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -290,9 +315,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(-15.0f, 0.0f, -15.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(30.0f, 20.0f, 35.0f);
-		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		translationMatrix = vmath::translate(-10.0f, -5.0f, -40.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(20.0f, 20.0f, 75.0f);
+		rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -373,6 +398,78 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 
 		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		// Transformations - Wall At The End Of The Road
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(-50.0f, 0.0f, -78.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(100.0f, 10.0f, 1.0f);
+		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		depthQuadSceneCalls(actualDepthQuadScene);
+		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_road);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+			displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		// Transformations - To Draw Footpath Left Side
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(-50.0f, -5.0f, -40.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(40.0f, 0.1f, 75.0f);
+		rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		depthQuadSceneCalls(actualDepthQuadScene);
+		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_footpath);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+			displayCubeWithTilingTexcoords();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		// Transformations - To Draw Footpath On Right Side
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(10.0f, -5.0f, -40.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(40.0f, 0.1f, 75.0f);
+		rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		depthQuadSceneCalls(actualDepthQuadScene);
+		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_footpath);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+			displayCubeWithTilingTexcoords();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		glUseProgram(0);
 
 #endif // ENABLE_STARFIELD
@@ -399,55 +496,34 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
 
-		//glUniform1i(sceneOutdoorADSStaticUniform.)
-		// ------ Rock Model ------
-		translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
-		scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		////glUniform1i(sceneOutdoorADSStaticUniform.)
+		//// ------ Rock Model ------
+		//translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
+		//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
-		modelMatrix = translationMatrix * scaleMatrix;
+		//modelMatrix = translationMatrix * scaleMatrix;
 
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		if (actualDepthQuadScene == 1)
-		{
-			glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-			glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-			glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-		}
-		else
-		{
-			glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-			glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		//if (actualDepthQuadScene == 1)
+		//{
+		//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+		//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+		//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		//}
+		//else
+		//{
+		//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+		//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
 
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-		}
+		//	glActiveTexture(GL_TEXTURE1);
+		//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+		//}
 
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModel(rockModel);
+		//drawStaticModel(rockModel);
 
-		translationMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
-
-		// ------ Streetlight Model ------
-		translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-		scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-
-		modelMatrix = translationMatrix * scaleMatrix;
-
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		drawStaticModel(streetLightModel);
-
-		//// ################################### BUILDING ONE ###################################  
 		//translationMatrix = mat4::identity();
 		//rotationMatrix = mat4::identity();
 		//modelMatrix = mat4::identity();
@@ -466,118 +542,164 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//drawStaticModel(buildingOneModel);
-		//// ################################### BUILDING ONE ###################################  
+		//drawStaticModel(streetLightModel);
 
-		//// ################################### BUILDING TWO ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
+		// ################################### BUILDING ONE ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
 
-		//// ------ Streetlight Model ------
-		//translationMatrix = vmath::translate(-4.0f, 0.0f, -6.0f);
-		//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(22.0f, 2.7f, -30.0f);
+		scaleMatrix = vmath::scale(1.25f, 1.25f, 1.25f);
+		rotationMatrix = vmath::rotate(-90.0f, 0.0f, 1.0f, 0.0f);
 
-		//modelMatrix = translationMatrix * scaleMatrix;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//drawStaticModel(buildingTwoModel);
-		//// ################################### BUILDING TWO ###################################  
+		drawStaticModel(buildingOneModel);
+		// ################################### BUILDING ONE ###################################  
 
-		//// ################################### BUILDING THREE ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
+		// ################################### BUILDING TWO ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
 
-		//// ------ Streetlight Model ------
-		//translationMatrix = vmath::translate(4.0f, 0.0f, -9.0f);
-		//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(-40.0f, -5.0f, -70.0f);
+		scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
+		rotationMatrix = vmath::rotate(-90.0f, 0.0f, 1.0f, 0.0f);
 
-		//modelMatrix = translationMatrix * scaleMatrix;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//drawStaticModel(buildingThreeModel);
-		//// ################################### BUILDING THREE ###################################  
+		drawStaticModel(buildingTwoModel);
+		// ################################### BUILDING TWO ###################################  
 
-		//// ################################### BUILDING FOUR ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
+		// ################################### BUILDING THREE ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
 
-		//// ------ Streetlight Model ------
-		//translationMatrix = vmath::translate(4.0f, 0.0f, -9.0f);
-		//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(-15.0f, 2.0f, -50.0f);
+		scaleMatrix = vmath::scale(0.07f, 0.07f, 0.07f);
+		rotationMatrix = vmath::rotate(-90.0f, 0.0f, 1.0f, 0.0f);
 
-		//modelMatrix = translationMatrix * scaleMatrix;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//drawStaticModel(buildingFourModel);
-		//// ################################### BUILDING FOUR ###################################  
+		drawStaticModel(buildingThreeModel);
+		// ################################### BUILDING THREE ###################################  
 
-		//// ################################### BUILDING FIVE ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
+		// ################################### BUILDING FOUR ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
 
-		//// ------ Streetlight Model ------
-		//translationMatrix = vmath::translate(4.0f, 0.0f, -12.0f);
-		//scaleMatrix = vmath::scale(1.5f, 1.5f, 1.5f);
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(26.0f, 6.0f, -50.0f);
+		scaleMatrix = vmath::scale(0.15f, 0.15f, 0.15f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		//modelMatrix = translationMatrix * scaleMatrix;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//drawStaticModel(buildingFiveModel);
-		//// ################################### BUILDING FIVE ###################################  
+		drawStaticModel(buildingFourModel);
+		// ################################### BUILDING FOUR ###################################  
 
-		//// ################################### BUILDING SIX ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
+		// ################################### BUILDING FIVE ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
 
-		//// ------ Streetlight Model ------
-		//translationMatrix = vmath::translate(-4.0f, 0.0f, -12.0f);
-		//scaleMatrix = vmath::scale(1.5f, 1.5f, 1.5f);
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(25.0f, 5.0f, -65.0f);
+		scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		//modelMatrix = translationMatrix * scaleMatrix;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//drawStaticModel(buildingSixModel);
-		//// ################################### BUILDING SIX ###################################  
+		drawStaticModel(buildingFiveModel);
+		// ################################### BUILDING FIVE ###################################  
+
+		// ################################### BUILDING SIX ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(-10.0f, -4.0f, -25.0f);
+		scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+
+		modelMatrix = translationMatrix * scaleMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(trashOneModel);
+		// ################################### BUILDING SIX ###################################  
+
+		// ################################### BUILDING SEVEN ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(-25.0f, 5.0f, -30.0f);
+		scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(buildingFiveModel);
+		// ################################### BUILDING SEVEN ###################################  
 
 		if (actualDepthQuadScene == 0)
 		{
@@ -681,7 +803,7 @@ void uninitializeScene08_BibhatsaRas(void)
 	unloadStaticModel(&streetLightModel);
 
 	// Unloading Building Models
-	unloadStaticModel(&buildingSixModel);
+	unloadStaticModel(&trashOneModel);
 	unloadStaticModel(&buildingFiveModel);
 	unloadStaticModel(&buildingFourModel);
 	unloadStaticModel(&buildingThreeModel);
