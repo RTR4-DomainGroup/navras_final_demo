@@ -212,24 +212,10 @@ GLfloat cameraTop = 0.0f;
 
 GLfloat cameraUpVector = 1.0f;
 
+bool isInitialDisplayScene06_BhayanakRas = true;
 
 int initializeScene06_BhayanakRas(void)
 {
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
     // Code.
 	// initializeCamera(&camera);
 
@@ -241,6 +227,15 @@ int initializeScene06_BhayanakRas(void)
 
 
 	return 0;
+}
+
+void setCameraScene06_BhyanakRas(void)
+{
+	if (isInitialDisplayScene06_BhayanakRas == true)
+	{
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		isInitialDisplayScene06_BhayanakRas = false;
+	}
 }
 
 void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
@@ -260,7 +255,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	float distance;
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -302,10 +297,11 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 			cameraEyeY -= distance;
 			cameraCenterY -= distance;
-			setCamera();
+			displayCamera();
 			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		}
 
 		if (isReflection == false) {
@@ -424,10 +420,9 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	if (isReflection == true) {
 
-		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		cameraEyeY += distance;
 		cameraCenterY += distance;
-		setCamera();
+		displayCamera();
 		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	}
 
