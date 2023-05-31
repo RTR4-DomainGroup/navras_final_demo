@@ -54,6 +54,12 @@ void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
     // Code
     if (&vr_state)
     {
+        int i = 0;
+        while (i <= 240)
+        {
+            i++;
+        }
+        
         if (!video_reader_read_frame(&vr_state, frame_data))
         {
             LOG("Couldn't load video frame.\n");
