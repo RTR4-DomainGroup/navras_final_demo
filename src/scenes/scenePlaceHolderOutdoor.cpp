@@ -190,26 +190,13 @@ GLfloat haloWidth = 0.45f;
 GLfloat intensity = 1.5f;
 GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
+typedef void(*SET_CAMERA) (void);
+
 typedef void (* DISPLAY_PASSES) (int,bool,bool,bool,int);
 
 
 int initializeScene_PlaceHolderOutdoor(void)
 {
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
     // Code.
 	// initializeCamera(&camera);
 
@@ -428,7 +415,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	return 0;
 }
 
-void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodRequired, bool isWaterRequired, bool isGaussianBlurRequired)
+void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displayPasses, bool isGodRequired, bool isWaterRequired, bool isGaussianBlurRequired)
 {
 	// Function Declarations
 	void displayGodRays(int, int);
@@ -436,8 +423,10 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 	// Code
 	// Here The Game STarts
 	// set cameraa
-
 	setCamera();
+
+
+	displayCamera();
 	//setCamera(&camera);
 
 	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);

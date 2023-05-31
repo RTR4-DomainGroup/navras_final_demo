@@ -116,7 +116,7 @@ int initializeScene12_Hasya(void)
 void displayScene12_Hasya(void)
 {
     // set camera
-	setCamera();
+	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();

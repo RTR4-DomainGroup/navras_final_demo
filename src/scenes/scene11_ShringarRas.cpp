@@ -213,22 +213,10 @@ static GLfloat materialShininess = 128.0f;
 
 float distance11;
 
+bool isInitialDisplayScene11_ShringarRas = true;
+
 int initializeScene11_ShringarRas(void)
 {
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
 
 	// external debugging varaible
 	tf_t = { -1.5f, -1.0f, 0.0f }; // tree pos 
@@ -306,6 +294,15 @@ int initializeScene11_ShringarRas(void)
 	return 0;
 }
 
+void setCameraScene11_ShringarRas(void)
+{
+	if (isInitialDisplayScene11_ShringarRas == true)
+	{
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		isInitialDisplayScene11_ShringarRas = false;
+	}
+}
+
 void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
 
 	// Code
@@ -322,7 +319,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -364,7 +361,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 			cameraEyeY -= distance11;
 			cameraCenterY -= distance11;
-			setCamera();
+			displayCamera();
 			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
@@ -813,7 +810,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		cameraEyeY += distance11;
 		cameraCenterY += distance11;
-		setCamera();
+		displayCamera();
 		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	}
 
