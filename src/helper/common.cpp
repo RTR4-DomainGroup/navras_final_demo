@@ -10,6 +10,7 @@
 
 #ifdef __linux__ 
 // linux specific headers
+#include <unistd.h>
 
 #elif _WIN32 // windows code goes here
 // windows specific header
