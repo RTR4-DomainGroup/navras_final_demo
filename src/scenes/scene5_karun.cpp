@@ -109,7 +109,7 @@ int initializeScene5_karun(void)
 void displayScene5_karun(void)
 {
     // set camera
-	setCamera();
+	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();

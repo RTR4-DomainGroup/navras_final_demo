@@ -123,7 +123,7 @@ int initializeScene13_Shant(void)
 void displayScene13_Shant(void)
 {
     // set camera
-	setCamera();
+	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();

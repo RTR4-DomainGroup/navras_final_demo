@@ -121,25 +121,12 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
+bool isInitialDisplayScene02_EarthAndSpace = true;
+
 //float distance10;
 
 int initializeScene02_EarthAndSpace(void)
-{
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-    
+{   
 	// Code.
 	// initializeCamera(&camera);
 
@@ -210,6 +197,15 @@ int initializeScene02_EarthAndSpace(void)
 	return 0;
 }
 
+void setCameraScene02_EarthAndSpace(void)
+{
+	if (isInitialDisplayScene02_EarthAndSpace == true)
+	{
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		isInitialDisplayScene02_EarthAndSpace = false;
+	}
+}
+
 void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0)
 {
 	// Code
@@ -224,7 +220,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_z = mat4::identity();
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();

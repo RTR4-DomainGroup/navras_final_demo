@@ -92,7 +92,7 @@ int log_printf_internal(char const* const filewithpath, char const* const funcna
     {
 
         // _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), filename(filewithpath), linenum, funcname, myBuffer);
-        _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), removepath(filewithpath), linenum, funcname, buffer);
+        _Result = fprintf(_pFile, "%s %s(%d):%s(): %s", currentDateTime(), filewithpath, linenum, funcname, buffer);
         // _Result = fprintf(_pFile, "%s", myBuffer);
 
 		fclose(_pFile);
@@ -120,7 +120,6 @@ char* currentDateTime(void)
     strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", tm_info);
     return (log_buffer);
 };
-
 
 int log_open(char const* FileName , char const* Mode)
 {
