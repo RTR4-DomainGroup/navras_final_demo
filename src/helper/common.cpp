@@ -92,7 +92,7 @@ int log_printf_internal(char const* const filewithpath, char const* const funcna
     {
 
         // _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), filename(filewithpath), linenum, funcname, myBuffer);
-        _Result = fprintf(_pFile, "%s %s(%d):%s(): %s", currentDateTime(), filewithpath, linenum, funcname, myBuffer);
+        _Result = fprintf(_pFile, "%s %s(%d):%s(): %s", currentDateTime(), filewithpath, linenum, funcname, buffer);
         // _Result = fprintf(_pFile, "%s", myBuffer);
 
 		fclose(_pFile);
