@@ -252,10 +252,10 @@ int initializeScene11_ShringarRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
-	displacementmap_depth = 10.0f;
+	displacementmap_depth = 5.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/diffuse.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/disp.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/render.png";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
