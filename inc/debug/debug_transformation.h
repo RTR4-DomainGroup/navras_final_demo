@@ -4,7 +4,8 @@
 #include "../../inc/helper/vmath.h"
 
 void debug_tranformation(void);
-void update_transformations(vmath::mat4* translationMatrix = NULL, vmath::mat4* scaleMatrix = NULL, vmath::mat4* rotationMatrix = NULL, TRANFORM* rotateAngles = NULL) ;
+void update_transformations(vmath::mat4* translationMatrix = NULL, vmath::mat4* scaleMatrix = NULL, vmath::mat4* rotationMatrix = NULL, TRANFORM* rotateAngles = NULL);
+void update_transformations_glm(glm::mat4* translationMatrix = NULL, glm::mat4* scaleMatrix = NULL, glm::mat4* rotationMatrix = NULL, TRANFORM* rotateAngles = NULL);
 
 // external variables
 // transformation controllers
