@@ -214,23 +214,12 @@ static GLfloat materialShininess = 128.0f;
 
 float distance10;
 
+bool isInitialDisplay_Scene10AdbhutRas = true;
+
 int initializeScene10_AdbhutRas(void)
 {
 	// Function Declarations
-
-	// set Camera location
 	// -10.000000, -2.250000, -8.000000], [-10.193824, -3.229223, -8.059628] [0.000000, 1.000000, 0.000000
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
     
 	// Code.
 	// initializeCamera(&camera);
@@ -301,6 +290,15 @@ int initializeScene10_AdbhutRas(void)
 	return 0;
 }
 
+void setCameraScene10(void)
+{
+	if (isInitialDisplay_Scene10AdbhutRas == true)
+	{
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		isInitialDisplay_Scene10AdbhutRas = false;
+	}
+}
+
 void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
 
 	// Code
@@ -317,7 +315,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -356,7 +354,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 			cameraEyeY -= distance10;
 			cameraCenterY -= distance10;
-			setCamera();
+			displayCamera();
 			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
@@ -833,7 +831,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		cameraEyeY += distance10;
 		cameraCenterY += distance10;
-		setCamera();
+		displayCamera();
 		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	}
 #endif

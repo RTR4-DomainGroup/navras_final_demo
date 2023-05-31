@@ -220,7 +220,7 @@ void initializeShelfInstancePositions(void)
 void displayScene07_Raudra(void)
 {
     // set camera
-	setCamera();
+	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();

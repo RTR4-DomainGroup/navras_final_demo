@@ -89,8 +89,6 @@ bool sceneFadeOut = false;
 
 extern AtmosphericVariables atmosVariables;
 
-bool isInitialDisplay = true;
-
 int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// Function Declarations
@@ -98,7 +96,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 	int playSong(int);
 	void togglePlayback();
 	void resetCamera(void);
-
 
 	// variables
 	static int songId; 
@@ -624,25 +621,6 @@ void displayNavras(void)
 	bool isWaterRequired = false;
 	bool isGaussianBlurRequired = false;
 
-	//if (isInitialDisplay == true)
-	//{
-	//	// set Camera location
-	//	
-	//	cameraEyeX = 1.95f;
-	//	cameraEyeY = -0.40f;
-	//	cameraEyeZ = 1.45f;
-	//	
-	//	cameraCenterX = 8.92f;
-	//	cameraCenterY = -0.40f;
-	//	cameraCenterZ = -359.89f;
-
-	//	cameraUpX = 0.0f;
-	//	cameraUpY = 1.0f;
-	//	cameraUpZ = 0.0f;
-
-	//	isInitialDisplay = false;
-	//}
-
 	// Function declarations
 	void resize(int, int);
 
@@ -665,7 +643,7 @@ void displayNavras(void)
 		isGodRequired = true;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
 	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
@@ -682,7 +660,7 @@ void displayNavras(void)
 		isGodRequired = false;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(setCameraScene06_BhyanakRas, displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene6);
 	}
 	else if (now <= (then + time_scene7) && currentScene == SCENE07_RAUDRA_RAS)
@@ -699,7 +677,7 @@ void displayNavras(void)
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene8);
 	}
 	else if (now <= (then + time_scene9) && currentScene == SCENE09_VEER_RAS)
@@ -709,7 +687,7 @@ void displayNavras(void)
 		isGodRequired = true;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene09_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene9);
 	}
 	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
@@ -719,7 +697,7 @@ void displayNavras(void)
 		isGodRequired = true;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
 	}
 	else if (now <= (then + time_scene11) && currentScene == SCENE11_SHRINGAR_RAS)
@@ -729,7 +707,7 @@ void displayNavras(void)
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
-		displayScene_PlaceHolderOutdoor(displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
+		displayScene_PlaceHolderOutdoor(setCameraScene11_ShringarRas, displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene11);
 	}
 	else if (now <= (then + time_scene12) && currentScene == SCENE12_HASYA_RAS)

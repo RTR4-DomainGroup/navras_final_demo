@@ -93,21 +93,10 @@ static DYNAMIC_MODEL skeletonModel;
 
 GLuint texture_road;
 
+bool isInitialDisplayScene08_BibhatsaRas = true;
+
 int initializeScene08_BibhatsaRas(void)
 {
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
     // Code.
 	// initializeCamera(&camera);
 
@@ -150,6 +139,15 @@ int initializeScene08_BibhatsaRas(void)
 	return 0;
 }
 
+void setCameraScene08(void)
+{
+	if (isInitialDisplayScene08_BibhatsaRas == true)
+	{
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		isInitialDisplayScene08_BibhatsaRas = false;
+	}
+}
+
 void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) 
 {
 	// Function Declaration
@@ -169,7 +167,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotateX = mat4::identity();
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
