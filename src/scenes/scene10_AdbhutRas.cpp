@@ -147,18 +147,14 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-extern float myScale; // = 1.0f;
+extern float myScale; 
 
-extern float noiseScale; // = 2.0f;
-extern bool noiseScaleIncrement; // = true;
+extern float noiseScale; 
+extern bool noiseScaleIncrement; 
 
-extern mat4 viewMatrix;
-
-extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
-extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
+extern GLfloat skyColor[]; 
+extern GLfloat cloudColor[]; 
 extern GLuint noise_texture;
-
 extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -270,8 +266,8 @@ int initializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_TERRIAN
 	// displacementmap_depth = 15.0f;
-	// displacementmap_depth = 1.5f;
-	displacementmap_depth = 3.0f;
+	displacementmap_depth = 2.0f;
+	// displacementmap_depth = 3.0f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
@@ -863,7 +859,10 @@ void displayScene10_Billboarding(int godRays = 1)
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
 	
+	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+
 	// code
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -939,6 +938,9 @@ void displayScene10_Billboarding(int godRays = 1)
 void updateScene10_AdbhutRas(void)
 {
 	// Code
+	cameraEyeZ -= 0.05f;
+	cameraCenterZ -= 0.05f;
+
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
 

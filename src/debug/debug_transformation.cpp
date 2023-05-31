@@ -125,7 +125,7 @@ void debug_tranformation(void)
 				if('y' == charPressed)
 					tf_r.y += tf_Speed;
 				else
-					tf_r.y += tf_Speed;
+					tf_r.y -= tf_Speed;
 				LOG("Y rotation changed to %.02ff\n", tf_r.y);
 				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
@@ -152,7 +152,7 @@ void debug_tranformation(void)
 				if('z' == charPressed)
 					tf_r.z += tf_Speed;
 				else
-					tf_r.z += tf_Speed;
+					tf_r.z -= tf_Speed;
 				LOG("Z rotation changed to %.02ff\n", tf_r.z);
 				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
