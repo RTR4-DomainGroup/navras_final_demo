@@ -254,8 +254,8 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 5.0f;
 
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/diffuse.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/render.png";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/1diffuse1.png";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/1disp.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
@@ -542,7 +542,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 proj_matrix = mat4::identity();
 
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -1.0f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translate(0.0f, -0.5f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
@@ -594,6 +594,9 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
 #endif // DEBUG - ENABLE_FOG
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
 
@@ -605,6 +608,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_BLEND);
 
 	glUseProgram(0);
 #endif // ENABLE_TERRIAN
