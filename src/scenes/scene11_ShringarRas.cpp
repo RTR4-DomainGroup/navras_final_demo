@@ -184,6 +184,10 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
 STATIC_MODEL treemodel_11;
+
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
 DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
@@ -194,7 +198,8 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 // Camera angle for rotation
-extern GLfloat cameraAngle; // = 0.0f;
+GLfloat cameraAngle_shringar = 90.0f; // = 0.0f;
+GLfloat cameraRadius_shringar = 18.0f;
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
@@ -297,7 +302,9 @@ void setCameraScene11_ShringarRas(void)
 {
 	if (isInitialDisplayScene11_ShringarRas == true)
 	{
-		setCamera(0.75f, 2.0f, -10.0f, 0.75f, 0.01f, -12.5f, 0.0f, -1.0f, 0.0f);
+		setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+		//setCamera(0.00, 0.00, -12.50, 0.00f, 0.00f, -18.50f, 0.0f, 0.0f, 1.0f);
 		isInitialDisplayScene11_ShringarRas = false;
 	}
 }
@@ -317,8 +324,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	mat4 rotateX = mat4::identity();
 
+
+	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -759,7 +769,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
+		scaleMatrix = vmath::scale(180.0f, 1.0f, 180.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
 
@@ -778,7 +788,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
-		glUniform1f(waterUniform.uniform_waveStrength, 0.0f);
+		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
 		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
@@ -887,6 +897,28 @@ void displayScene11_Billboarding(int godRays = 1)
 void updateScene11_ShringarRas(void)
 {
 	// Code
+#ifdef ENABLE_CAMERA_ANIMATION
+	////lookAt([0.00, 5.75, -17.25], [0.00, 5.75, -23.25][0.00, 1.00, 0.00])
+	//cameraEyeZ = preciselerp(cameraEyeZ, -17.25f, 0.005f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, -23.25f, 0.005f);
+
+	//cameraEyeY = impreciselerp(cameraEyeY, 5.75f, 0.005f);
+	//cameraCenterY = impreciselerp(cameraCenterY, 5.75f, 0.005f);
+
+	cameraAngle_shringar += 0.14f;
+	if (cameraAngle_shringar >= 270.0f)
+		cameraAngle_shringar = 270.0f;
+	//cameraAngle_shringar = preciselerp(cameraAngle_shringar, 270.f, 0.07f);
+
+	cameraRadius_shringar -= 0.020f;
+	if (cameraRadius_shringar <= 2.0f)
+		cameraRadius_shringar = 2.0f;
+	//cameraRadius_shringar = preciselerp(cameraRadius_shringar, 2.0f, 0.018f);
+
+	cameraEyeY = preciselerp(cameraEyeY, 0.4f, 0.0025f);
+
+#endif
+
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
 
