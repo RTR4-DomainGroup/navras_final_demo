@@ -113,6 +113,9 @@ extern mat4 viewMatrix;
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
 extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
 
+GLfloat skyColorForVeerRas[] = { 0.3f, 0.3f, 0.5f, 0.0f };
+GLfloat cloudColorForVeerRas[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+
 extern GLuint noise_texture;
 
 extern GLfloat angleCube;
@@ -331,8 +334,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
 
 		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
 		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
 		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
