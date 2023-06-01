@@ -10,14 +10,14 @@
 #include "../../inc/shaders/FSQuadShader.h"
 
 // billboarding config
-#define BB_X_MIN (-30.0f)
-#define BB_X_MAX (30.0f)
+#define BB_X_MIN (-40.0f)
+#define BB_X_MAX (40.0f)
 
 // #define BB_Y_MIN (-3.0f)
 // #define BB_Y_MAX (3.0f)
 
-#define BB_Z_MIN (-50.0f)
-#define BB_Z_MAX (70.0f)
+#define BB_Z_MIN (-60.0f)
+#define BB_Z_MAX (80.0f)
 
 #define BB_NO_OF_INSTANCES 1000
 
@@ -269,7 +269,7 @@ void setCameraScene10(void)
 {
 	if (isInitialDisplay_Scene10AdbhutRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.00f, -0.70f, 20.60f, 0.00f, -0.70f, 14.60f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplay_Scene10AdbhutRas = false;
 	}
 }
@@ -625,8 +625,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ farmhouse Model ------
-	translationMatrix = vmath::translate(17.50f, -3.5f, -25.25f);
-	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	translationMatrix = vmath::translate(17.50f, -3.4f, -25.25f);
+	scaleMatrix = vmath::scale(0.7f, 0.7f, 0.7f);
 	rotationMatrix = vmath::rotate(-59.25f, 0.0f, 1.0f, 0.0f);
 
 	// usage type 1 
@@ -833,8 +833,8 @@ void displayScene10_Billboarding(int godRays = 1)
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
 
-	translationMatrix = vmath::translate(-3.50f, -3.10f, -34.25f);
-	scaleMatrix *= vmath::scale(0.50f, 0.50f, 0.50f);
+	translationMatrix = vmath::translate(-3.50f, -3.10f, -20.25f);
+	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -862,8 +862,8 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-5.00f, -3.10f, -34.25f);
-	scaleMatrix *= vmath::scale(0.50f, 0.50f, 0.50f);
+	translationMatrix = vmath::translate(-5.00f, -3.10f, -20.25f);
+	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -890,7 +890,7 @@ void updateScene10_AdbhutRas(void)
 {
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
-	speedVector.x = 0.0;
+	speedVector.x = 0.02;
 	// update_transformations(NULL, NULL, NULL, &speedVector);
 	cameraEyeZ -= speedVector.x;
 	cameraCenterZ -= speedVector.x;
