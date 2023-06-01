@@ -159,7 +159,7 @@ void debug_tranformation(void)
 			break;
 		case 'p':
 			LOG("\n");
-			LOG("lookAt([%.02f, %.02f, %.02f], [%.02f, %.02f, %.02f] [%.02f, %.02f, %.02f])\n", 
+			LOG("lookAt(%.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff)\n", 
 				cameraEyeX, cameraEyeY, cameraEyeZ, 
 				cameraCenterX, cameraCenterY, cameraCenterZ, 
 				cameraUpX, cameraUpY, cameraUpZ);
