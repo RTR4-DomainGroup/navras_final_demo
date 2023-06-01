@@ -1,9 +1,9 @@
 #pragma once
 extern "C"
 {
-    #include "ffmpeg/include/libavcodec/avcodec.h"
-    #include "ffmpeg/include/libavformat/avformat.h"
-    #include "ffmpeg/include/libswscale/swscale.h"
+    #include "libavcodec/avcodec.h"
+    #include "libavformat/avformat.h"
+    #include "libswscale/swscale.h"
     #include <inttypes.h>
 }
 

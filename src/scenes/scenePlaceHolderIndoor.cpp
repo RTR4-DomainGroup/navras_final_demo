@@ -113,7 +113,7 @@ void displayScene_PlaceHolderIndoor(void)
 	// Here The Game STarts
 
 	// set camera
-	setCamera();
+	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();

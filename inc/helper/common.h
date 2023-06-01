@@ -99,7 +99,8 @@ struct TextureVariables {
 
 #define ZeroMemory(a, b)  memset(a, 0, b)
 
-
+#define TRUE true
+#define FALSE false
 
 #elif _WIN32
 
@@ -134,6 +135,8 @@ int log_close();
 
 char* currentDateTime(char* log_buffer);
 char* vararg2string(const char* format, ...);
+
+// #define __FILENAME__ (realpath(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 
 #define LOG(format, ...) \

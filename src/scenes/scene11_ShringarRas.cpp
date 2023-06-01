@@ -183,8 +183,7 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL rockModel_11;
-STATIC_MODEL streetLightModel_11;
+STATIC_MODEL treemodel_11;
 DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
@@ -213,22 +212,10 @@ static GLfloat materialShininess = 128.0f;
 
 float distance11;
 
+bool isInitialDisplayScene11_ShringarRas = true;
+
 int initializeScene11_ShringarRas(void)
 {
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
 
 	// external debugging varaible
 	tf_t = { -1.5f, -1.0f, 0.0f }; // tree pos 
@@ -242,7 +229,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
-	loadStaticModel("res/models/tree_shringar/palmTree.obj", &streetLightModel_11);
+	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -306,6 +293,15 @@ int initializeScene11_ShringarRas(void)
 	return 0;
 }
 
+void setCameraScene11_ShringarRas(void)
+{
+	if (isInitialDisplayScene11_ShringarRas == true)
+	{
+		setCamera(0.75f, 2.0f, -10.0f, 0.75f, 0.01f, -12.5f, 0.0f, -1.0f, 0.0f);
+		isInitialDisplayScene11_ShringarRas = false;
+	}
+}
+
 void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
 
 	// Code
@@ -322,7 +318,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -364,7 +360,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 			cameraEyeY -= distance11;
 			cameraCenterY -= distance11;
-			setCamera();
+			displayCamera();
 			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
@@ -640,9 +636,20 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
-	// ------ Rock Model ------
-	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	// ------ TREE Model ------
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(0.25f, 0.55f, -17.0f);
+	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
+
+	update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
@@ -666,28 +673,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	//drawStaticModel(rockModel_11);
-
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(4.0f, 1.0f, 0.0f);
-	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
-
-	modelMatrix = translationMatrix * scaleMatrix;
-
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-
-	drawStaticModel(streetLightModel_11);
+	drawStaticModel(treemodel_11);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -730,8 +716,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.025f, -12.85f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.0008f, 0.0008f, 0.0008f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
@@ -792,8 +778,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
-		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
-		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.3f, 0.5f, 1.0));
+		glUniform1f(waterUniform.uniform_waveStrength, 0.0f);
+		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
 
@@ -817,7 +803,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		cameraEyeY += distance11;
 		cameraCenterY += distance11;
-		setCamera();
+		displayCamera();
 		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	}
 
@@ -928,8 +914,7 @@ void uninitializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&rockModel_11);
-	unloadStaticModel(&streetLightModel_11);
+	unloadStaticModel(&treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 
