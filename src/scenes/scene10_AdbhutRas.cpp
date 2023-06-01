@@ -648,7 +648,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ adbhutmanModel Model ------
-	translationMatrix = vmath::translate( -4.90f, -3.5f, -14.88f);
+	translationMatrix = vmath::translate( -4.60f, -3.5f, -14.88f);
 	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 	rotationMatrix = vmath::rotate(72.45f, 0.0f, 1.0f, 0.0f);
 

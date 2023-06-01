@@ -65,33 +65,33 @@ time_t now;
 time_t then;
 
 int time_scene1 = 5;
-//int time_scene2 = 20;
-//int time_scene3 = 40;
-//int time_scene4 = 40;
-//int time_scene5 = 40;
-//int time_scene6 = 40;
-//int time_scene7 = 40;
-//int time_scene8 = 40;
-//int time_scene9 = 40;
-//int time_scene10 = 40;
-//int time_scene11 = 40;
-//int time_scene12 = 40;
-//int time_scene13 = 40;
-//int time_scene14 = 40;
+int time_scene2 = 40;
+int time_scene3 = 40;
+int time_scene4 = 40;
+int time_scene5 = 40;
+int time_scene6 = 40;
+int time_scene7 = 40;
+int time_scene8 = 40;
+int time_scene9 = 40;
+int time_scene10 = 40;
+int time_scene11 = 40;
+int time_scene12 = 40;
+int time_scene13 = 40;
+int time_scene14 = 40;
 
-int time_scene2 = 4;
-int time_scene3 = 4;
-int time_scene4 = 4;
-int time_scene5 = 4;
-int time_scene6 = 4;
-int time_scene7 = 4;
-int time_scene8 = 4;
-int time_scene9 = 4;
-int time_scene10 = 4;
-int time_scene11 = 4;
-int time_scene12 = 4;
-int time_scene13 = 4;
-int time_scene14 = 4;
+//int time_scene2 = 4;
+//int time_scene3 = 4;
+//int time_scene4 = 4;
+//int time_scene5 = 4;
+//int time_scene6 = 4;
+//int time_scene7 = 4;
+//int time_scene8 = 4;
+//int time_scene9 = 4;
+//int time_scene10 = 4;
+//int time_scene11 = 4;
+//int time_scene12 = 4;
+//int time_scene13 = 4;
+//int time_scene14 = 4;
 
 // Audio
 static bool audioFlag = true;
@@ -557,7 +557,7 @@ int initializeNavras(void) {
 	scenePush(SCENE08_BIBHATSA_RAS);
 	
 	scenePush(SCENE07_RAUDRA_RAS);
-	scenePush(SCENE06_BHAYANK_RAS);
+	//scenePush(SCENE06_BHAYANK_RAS);
 	//scenePush(SCENE05_KARUN_RAS);
 
 #endif
@@ -774,7 +774,12 @@ void updateNavras(void)
 	} 
 
 	// Call Scenes Update Here
-	if (currentScene == SCENE09_VEER_RAS)
+	if (currentScene == SCENE02_EARTH_AND_SPACE)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene02_EarthAndSpace();
+	}
+	else if (currentScene == SCENE09_VEER_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene09_VeerRas();

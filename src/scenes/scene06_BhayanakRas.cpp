@@ -146,7 +146,7 @@ int initializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid.obj", &rockModel);
+	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 
 	if (LoadGLTexture_UsingSOIL(&texture_bhayanakMask, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
 	{
