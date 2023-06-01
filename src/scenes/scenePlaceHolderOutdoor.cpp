@@ -620,7 +620,10 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
+		else
+			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
 
 		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
 		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);

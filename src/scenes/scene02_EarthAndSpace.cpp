@@ -50,7 +50,7 @@ extern mat4 perspectiveProjectionMatrix;
 
 #ifdef ENABLE_STARFIELD
 // Variables For Starfieldx
-extern GLuint texture_star; 
+extern GLuint texture_star;
 extern double deltaTime;
 extern struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
@@ -89,10 +89,13 @@ static GLfloat materialShininess = 128.0f;
 
 bool isInitialDisplayScene02_EarthAndSpace = true;
 
+GLfloat cameraRadiusEarthAndSpace = 6.0f;
+GLfloat cameraAngleEarthAndSpace = 90.0f;
+
 //float distance10;
 
 int initializeScene02_EarthAndSpace(void)
-{   
+{
 	// Code.
 	// initializeCamera(&camera);
 
@@ -153,7 +156,7 @@ void setCameraScene02_EarthAndSpace(void)
 {
 	if (isInitialDisplayScene02_EarthAndSpace == true)
 	{
-		setCamera(200.0f, 0.0f, 6.0f, 200.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene02_EarthAndSpace = false;
 	}
 }
@@ -171,17 +174,17 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
+	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
 
-	if (actualDepthQuadScene == 0) 
+	if (actualDepthQuadScene == 0)
 	{
 		finalViewMatrix = viewMatrix;
-	} 
-	else if(actualDepthQuadScene == 1) 
+	}
+	else if (actualDepthQuadScene == 1)
 	{
 
 		finalViewMatrix = mat4::identity();
@@ -194,10 +197,10 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
 		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
 #endif // ENABLE_SHADOW
-	
+
 	}
 
-	if (actualDepthQuadScene == 0) 
+	if (actualDepthQuadScene == 0)
 	{
 
 #ifdef ENABLE_STARFIELD
@@ -229,8 +232,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		rotationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(-0.5f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(500.0f, 300.0f, 500.0f);
+		translationMatrix = vmath::translate(-200.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(800.0f, 500.0f, 500.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -264,10 +267,10 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		rotationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(200.0f, -3.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(1.5f, 1.5f, 1.5f);
 		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
-		rotationMatrix = vmath::rotate(angleSphere, 0.0f, 1.0f, 0.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 		rotationMatrix = rotationMatrix * rotationMatrix_x;
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
@@ -349,6 +352,12 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 
 void updateScene02_EarthAndSpace(void)
 {
+#ifdef ENABLE_CAMERA_ANIMATION
+	cameraAngleEarthAndSpace += 0.005f;
+	if (cameraAngleEarthAndSpace > 120.0f)
+		cameraAngleEarthAndSpace = 120.0f;
+#endif // ENABLE_CAMERA_ANIMATION
+
 	// Code
 	angleSphere = angleSphere + 0.2f;
 	if (angleSphere >= 360.0f)
