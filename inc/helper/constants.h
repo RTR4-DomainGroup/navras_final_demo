@@ -105,7 +105,7 @@ static const char *szAudios[] = {
 #define ENABLE_CAMERA_ANIMATION
 
 //#define ENABLE_SINGLE_SCENE
-#define ENABLE_AUDIO
+//#define ENABLE_AUDIO
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
@@ -114,7 +114,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
-//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
+//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
