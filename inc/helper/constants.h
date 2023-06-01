@@ -100,7 +100,7 @@ static const char *szAudios[] = {
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
 #define ENABLE_DYNAMIC_MODELS
-
+//#define ENABLE_CAMERA_ANIMATION
 
 #define ENABLE_SINGLE_SCENE
 //#define ENABLE_AUDIO

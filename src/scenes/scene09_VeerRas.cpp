@@ -589,6 +589,7 @@ void updateScene09_VeerRas(void)
 
 	/*[15.75, 6.85, -17.20], [-21.01, -75.48, -359.39]*/
 
+#ifdef ENABLE_CAMERA_ANIMATION
 	if (isCameraRotation == false)
 	{
 		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
@@ -623,6 +624,7 @@ void updateScene09_VeerRas(void)
 		if (cameraAngle > 10.0f && continueCameraRotation == false)
 			stopCameraRotation = true;
 	}
+#endif // ENABLE_CAMERA_ANIMATION
 }
 
 void uninitializeScene09_VeerRas(void)
