@@ -199,7 +199,7 @@ void displayScene5_karun(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_karunMask);
 	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
-		displayQuad();
+		//displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
     // ------ Desk Model ------
