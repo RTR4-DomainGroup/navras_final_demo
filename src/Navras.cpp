@@ -691,7 +691,7 @@ void displayNavras(void)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
 
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
@@ -711,8 +711,8 @@ void displayNavras(void)
 	{
 		audio(SCENE10_ADBHUT_RAS);
 
-		isGodRequired = true;
-		isWaterRequired = true;
+		isGodRequired = false;
+		isWaterRequired = false;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
