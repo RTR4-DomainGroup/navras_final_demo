@@ -184,7 +184,7 @@ GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
 #endif // ENABLE_GODRAYS
 
 // Camera angle for rotation
-GLfloat cameraAngle = 0.0f;
+//GLfloat cameraAngle = 100.0f;
 GLfloat dispersal = 0.1875f;
 GLfloat haloWidth = 0.45f;
 GLfloat intensity = 1.5f;
@@ -295,8 +295,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 
 	//
-	waterReflectionFrameBufferDetails.textureWidth = 1280;
-	waterReflectionFrameBufferDetails.textureHeight = 720;
+	waterReflectionFrameBufferDetails.textureWidth = 1920;
+	waterReflectionFrameBufferDetails.textureHeight = 1080;
 
 	if (waterCreateFBO(&waterReflectionFrameBufferDetails) == GL_FALSE) {
 
@@ -310,8 +310,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	}
 
-	waterRefractionFrameBufferDetails.textureWidth = 1280;
-	waterRefractionFrameBufferDetails.textureHeight = 720;
+	waterRefractionFrameBufferDetails.textureWidth = 1920;
+	waterRefractionFrameBufferDetails.textureHeight = 1080;
 
 	if (waterCreateFBO(&waterRefractionFrameBufferDetails) == GL_FALSE) {
 
@@ -747,9 +747,9 @@ void updateScene_PlaceHolderOutdoor(void)
 	// update camera using lerp
 	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
-	cameraAngle = cameraAngle + 0.5f;
+	/*cameraAngle = cameraAngle + 0.5f;
 	if (cameraAngle >= 360.0f)
-		cameraAngle -= 360.0f;
+		cameraAngle -= 360.0f;*/
 }
 
 void uninitializeScene_PlaceHolderOutdoor(void)

@@ -61,17 +61,19 @@
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
     "audio1.wav",
-    "audio1.wav",
-    "audio2.wav", 
-    "audio1.wav",
-    "audio2.wav", 
-    "audio1.wav", 
-    "audio3.wav", 
-    "audio2.wav",
-    "audio1.wav",
-    "audio2.wav",
-    "audio1.wav",
+    "Scene02_EarthAndSpace_40_seconds.wav",
+    "\0",
+    "\0",
+    "Scene05_KarunRas_40_seconds_new.wav", 
+    "Scene06_BhayanakRas_40_seconds.wav",
+    "Scene07_RoudraRas_40_seconds.wav", 
+    "Kkl_cut_2.wav", 
+    "Scene09-VeerRas_40_seconds.wav", 
+    "Scene10_AdbhutRas_40_seconds.wav",
+    "Scene11_ShringarRas_new_40_seconds.wav",
     "Scene12_HasyaRas_40_seconds.wav",
+    "Scene13_ShantRas_40_seconds.wav",
+    "Scene14_Particle_40_seconds.wav",
     "audio1.wav",
     "audio3.wav",
 };
@@ -99,8 +101,8 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
-#define ENABLE_DYNAMIC_MODELS
-
+//#define ENABLE_DYNAMIC_MODELS
+//#define ENABLE_CAMERA_ANIMATION
 
 #define ENABLE_SINGLE_SCENE
 //#define ENABLE_AUDIO

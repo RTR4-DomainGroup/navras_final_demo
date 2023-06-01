@@ -88,7 +88,7 @@ void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat rad
 	// code
 	float angleRadian = angle * M_PI / 180.0f;
 	cameraEyeX = centerX + (radius * cos(angleRadian));
-	cameraEyeY = centerY;
+	//cameraEyeY = centerY;
 	cameraEyeZ = centerZ + (radius * sin(angleRadian));
 
 	cameraCenterX = centerX;

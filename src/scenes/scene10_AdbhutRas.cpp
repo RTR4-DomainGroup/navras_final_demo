@@ -195,6 +195,10 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
 static STATIC_MODEL farmhouseModel;
+
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
 
 #endif // ENABLE_STATIC_MODELS

@@ -70,6 +70,13 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
 GLfloat angleSphere;
 
+#ifdef ENABLE_DYNAMIC_MODELS
+static DYNAMIC_MODEL skeletonModel;
+#endif // ENABLE_STATIC_MODELS
+
+//static struct TextureVariables terrainTextureVariables;
+//static float displacementmap_depth;
+
 static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -146,7 +153,7 @@ void setCameraScene02_EarthAndSpace(void)
 {
 	if (isInitialDisplayScene02_EarthAndSpace == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(200.0f, 0.0f, 6.0f, 200.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene02_EarthAndSpace = false;
 	}
 }
@@ -216,62 +223,14 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.skyFogColorUniform, 1, GL_FALSE, skyFogColor);
 		glUniform1i(adsEarthAndSpaceUniform.godrays_blackpass_sphere, 0);
 
-		// Earth
-		translationMatrix = vmath::translate(3.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
-		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
-		rotationMatrix = vmath::rotate(angleSphere, 0.0f, 1.0f, 0.0f);
-		rotationMatrix = rotationMatrix * rotationMatrix_x;
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_earth);
-		//glUniform1i(fboEarthAndSpace.textureSamplerUniform_diffuse, 0);
-
-		float color[3] = { 0.0f, 0.0f, 0.0f };
-		if (godRays == 1)
-		{
-			color[0] = 1.0f;
-			color[1] = 1.0f;
-			color[2] = 1.0f;
-		}
-		displaySphere(color);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-
 		// Cube
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(-2.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(500.0f, 200.0f, 500.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboEarthAndSpace.frameBufferTexture);
-		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
-
-		displayCube();
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		// Sun
-		translationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-
-		translationMatrix = vmath::translate(10.0f, 25.0f, -50.0f);					// glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
+		translationMatrix = vmath::translate(-0.5f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(500.0f, 300.0f, 500.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -293,11 +252,92 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture_sun);
-		glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
+		glBindTexture(GL_TEXTURE_2D, fboEarthAndSpace.frameBufferTexture);
+		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
 
-		displaySphere(color);
+		displayCube();
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		// Earth
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(200.0f, -3.0f, -6.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		rotationMatrix = vmath::rotate(angleSphere, 0.0f, 1.0f, 0.0f);
+		rotationMatrix = rotationMatrix * rotationMatrix_x;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		if (actualDepthQuadScene == 1)
+		{
+			glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 0);
+			glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 1);
+			glUniformMatrix4fv(adsEarthAndSpaceUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		}
+		else
+		{
+			glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 1);
+			glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 0);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+		}
+
+		glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_earth);
+		//glUniform1i(fboEarthAndSpace.textureSamplerUniform_diffuse, 0);
+
+		float color[3] = { 0.0f, 0.0f, 0.0f };
+		if (godRays == 1)
+		{
+			color[0] = 1.0f;
+			color[1] = 1.0f;
+			color[2] = 1.0f;
+		}
+		displaySphere(color);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//// Sun
+		//translationMatrix = mat4::identity();
+		//modelMatrix = mat4::identity();
+		//rotationMatrix = mat4::identity();
+		//scaleMatrix = mat4::identity();
+
+		//translationMatrix = vmath::translate(200.0f, 20.0f, -50.0f);					// glTranslatef() is replaced by this line.
+		////scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
+		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		//glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		//if (actualDepthQuadScene == 1)
+		//{
+		//	glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 0);
+		//	glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 1);
+		//	glUniformMatrix4fv(adsEarthAndSpaceUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		//}
+		//else
+		//{
+		//	glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 1);
+		//	glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 0);
+		//	glActiveTexture(GL_TEXTURE3);
+		//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+		//}
+
+		//glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		//glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		//glActiveTexture(GL_TEXTURE0);
+		//glBindTexture(GL_TEXTURE_2D, texture_sun);
+		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
+
+		////displaySphere(color);
+		//glBindTexture(GL_TEXTURE_2D, 0);
 
 		glUseProgram(0);
 

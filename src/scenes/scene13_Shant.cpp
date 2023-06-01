@@ -52,6 +52,7 @@ static GLuint textures[4];
 static STATIC_MODEL shantRoomModel;
 #endif // ENABLE_STATIC_MODELS
 
+bool isInitialDisplayScene13_ShantRas = true;
 
 int initializeScene13_Shant(void)
 {
@@ -119,10 +120,22 @@ int initializeScene13_Shant(void)
 	return 0;
 }
 
+void setCameraScene13_ShantRas(void)
+{
+	if (isInitialDisplayScene13_ShantRas == true)
+	{
+		//setCamera(17.50f, 1.10f, -6.95f, -90.24f, 59.45f, -355.27f, 0.0f, 0.5f, 0.5f);
+		setCamera(-0.70, 0.00, -1.85, -0.70, 0.00, -7.85, 0.0f, 1.0f, 0.0f);
+		isInitialDisplayScene13_ShantRas = false;
+	}
+}
+
 
 void displayScene13_Shant(void)
 {
     // set camera
+	setCameraScene13_ShantRas();
+
 	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
