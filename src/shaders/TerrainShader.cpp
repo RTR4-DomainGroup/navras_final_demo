@@ -481,6 +481,7 @@ int initializeTerrainShader(void)
             
             /********************************************/
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
+            "if (landscape.a < 0.1) discard; \n" \
             "if (enable_godRays) \n" \
             "{ \n" \
                 "if(u_actualScene == 1) { \n" \

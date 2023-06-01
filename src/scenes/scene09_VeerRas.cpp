@@ -91,7 +91,6 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 extern float myScale; // = 1.0f;
 
 extern float noiseScale; // = 2.0f;
@@ -112,6 +111,9 @@ extern mat4 viewMatrix;
 
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
 extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
+
+GLfloat skyColorForVeerRas[] = { 0.3f, 0.3f, 0.5f, 0.0f };
+GLfloat cloudColorForVeerRas[] = { 0.8f, 0.8f, 0.8f, 0.0f };
 
 extern GLuint noise_texture;
 
@@ -150,13 +152,29 @@ bool isCameraRotation = false;
 bool continueCameraRotation = true;
 bool stopCameraRotation = false;
 
+GLuint texture_veerMask;
+
 int initializeScene09_VeerRas(void)
 {
 	// code
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/scene09_veer/man/tempVeerMan.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_veerMask, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_veerMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_veerMask Successfull = %u!!!\n", texture_veerMask);
+	}
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -195,8 +213,8 @@ void setCameraScene09_VeerRas(void)
 {
 	if (isInitialDisplayScene09_VeerRas == true)
 	{
-		//setCamera(17.50f, 1.10f, -6.95f, -90.24f, 59.45f, -355.27f, 0.0f, 0.5f, 0.5f);
-		setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f);
+		setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f); // Initial postion for camera animation
+		//setCamera(15.75f, 5.10f, -17.20f, -21.01f, -3.03f, -359.39f, 0.0f, 1.0f, 0.0f); // static camera position
 		isInitialDisplayScene09_VeerRas = false;
 	}
 }
@@ -334,8 +352,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
 
 		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
 		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
 		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
@@ -448,7 +466,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 1);
+	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
 	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
 	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
@@ -457,10 +475,12 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	//translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
+	translationMatrix = vmath::translate(15.40f, 5.00f, -19.70f);
+	scaleMatrix = vmath::scale(0.0045f, 0.0045f, 0.0045f);
+	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1)
@@ -481,6 +501,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(rockModel);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -500,8 +521,29 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-
 	drawStaticModel(streetLightModel);
+
+	// Transformations - Quad For Mask
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(10.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_veerMask);
+	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	//displayQuad();
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
 
 	if (actualDepthQuadScene == 0)
 	{
@@ -549,7 +591,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.40f, 4.99f, -19.70f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.001f, 0.001f, 0.001f));
 	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
+	// update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 

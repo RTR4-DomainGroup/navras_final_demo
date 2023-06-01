@@ -295,8 +295,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 
 	//
-	waterReflectionFrameBufferDetails.textureWidth = 1280;
-	waterReflectionFrameBufferDetails.textureHeight = 720;
+	waterReflectionFrameBufferDetails.textureWidth = 1920;
+	waterReflectionFrameBufferDetails.textureHeight = 1080;
 
 	if (waterCreateFBO(&waterReflectionFrameBufferDetails) == GL_FALSE) {
 
@@ -310,8 +310,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	}
 
-	waterRefractionFrameBufferDetails.textureWidth = 1280;
-	waterRefractionFrameBufferDetails.textureHeight = 720;
+	waterRefractionFrameBufferDetails.textureWidth = 1920;
+	waterRefractionFrameBufferDetails.textureHeight = 1080;
 
 	if (waterCreateFBO(&waterRefractionFrameBufferDetails) == GL_FALSE) {
 

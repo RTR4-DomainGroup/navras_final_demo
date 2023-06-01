@@ -65,19 +65,19 @@ time_t now;
 time_t then;
 
 int time_scene1 = 5;
-int time_scene2 = 3;
-int time_scene3 = 5;
-int time_scene4 = 5;
-int time_scene5 = 5;
-int time_scene6 = 5;
-int time_scene7 = 5;
-int time_scene8 = 5;
-int time_scene9 = 5;
-int time_scene10 = 5;
-int time_scene11 = 5;
-int time_scene12 = 5;
-int time_scene13 = 5;
-int time_scene14 = 5;
+int time_scene2 = 20;
+int time_scene3 = 40;
+int time_scene4 = 40;
+int time_scene5 = 40;
+int time_scene6 = 40;
+int time_scene7 = 40;
+int time_scene8 = 40;
+int time_scene9 = 40;
+int time_scene10 = 40;
+int time_scene11 = 40;
+int time_scene12 = 40;
+int time_scene13 = 40;
+int time_scene14 = 40;
 
 // Audio
 static bool audioFlag = true;
@@ -535,14 +535,14 @@ int initializeNavras(void) {
 
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	scenePush(SCENE12_HASYA_RAS);
+	//scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
-	scenePush(SCENE05_KARUN_RAS);
+	//scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 #endif
@@ -674,7 +674,7 @@ void displayNavras(void)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
 
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
@@ -684,7 +684,7 @@ void displayNavras(void)
 	{
 		audio(SCENE09_VEER_RAS);
 
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
