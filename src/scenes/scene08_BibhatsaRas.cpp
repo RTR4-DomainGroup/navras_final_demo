@@ -88,6 +88,10 @@ STATIC_MODEL buildingThreeModel;
 STATIC_MODEL buildingFourModel;
 STATIC_MODEL buildingFiveModel;
 STATIC_MODEL trashOneModel;
+
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
 #endif // ENABLE_STATIC_MODELS
 
@@ -107,6 +111,17 @@ int initializeScene08_BibhatsaRas(void)
 	initializeQuad();
 	initializeCube();
 	initializeCubeWithTilingTexcoords();
+
+	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaMask, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaMask);
+	}
 
 	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road\\road.jpg") == FALSE)
 	{
@@ -305,6 +320,28 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_wall);
+		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
+			displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		// Transformations - Quad For Mask
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(-0.0f, 0.0f, -5.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		depthQuadSceneCalls(actualDepthQuadScene);
+		glUniformMatrix4fv(bibhatsaRasObject.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_bibhatsaMask);
 		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 			displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
