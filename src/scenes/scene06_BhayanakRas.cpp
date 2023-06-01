@@ -190,7 +190,7 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 // Camera angle for rotation
-extern GLfloat cameraAngle; // = 0.0f;
+static GLfloat cameraAngle = 0.0f;
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
@@ -254,8 +254,9 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 	float distance;
 
+	rotateCamera(0.0f, 2.0f, -2.0f, 10.0f, cameraAngle);
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	displayCamera();
+	//displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -344,7 +345,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	// ------ Dancing Vampire Model ------
 
-		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
 
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -433,6 +434,11 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 void updateScene06_BhayanakRas(void)
 {
 	// Code
+
+	cameraAngle += 5.0f;
+	if(cameraAngle >= 360.0f)
+		cameraAngle -= 360.0f;
+
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
 
