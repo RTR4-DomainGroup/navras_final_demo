@@ -26,6 +26,10 @@
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 #endif // ENABLE_DYNAMIC_MODELS
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+#include "../../inc/effects/GaussianBlurEffect.h"
+#endif // ENABLE_GAUSSIAN_BLUR
+
 #include "../../inc/scenes/scene06_BhayanakRas.h"
 
 #define FBO_WIDTH WIN_WIDTH
@@ -91,6 +95,15 @@ static float displacementmap_depth;
 static STATIC_MODEL rockModel;
 DYNAMIC_MODEL skeletonModel_06;
 #endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_GAUSSIAN_BLUR
+// Gaussian Blur related variables
+extern struct GaussianBlurEffect gaussianBlurEffect;
+extern struct HorrizontalBlurUniform horizontalBlurUniform;
+extern struct VerticalBlurUniform verticalBlurUniform;
+extern struct FrameBufferDetails fullSceneFbo;
+extern struct FSQuadUniform fsGaussBlurQuadUniform;
+#endif // ENABLE_GAUSSIAN_BLUR
 
 extern GLfloat density; // = 0.15;
 extern GLfloat gradient; // = 0.5;
@@ -293,7 +306,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	modelMatrix = mat4::identity();
 
 	translationMatrix = vmath::translate(2.0f, 0.0f, -5.0f);
-	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -452,6 +465,12 @@ void updateScene06_BhayanakRas(void)
 void uninitializeScene06_BhayanakRas(void)
 {
 	// Code
+
+	if (texture_bhayanakMask)
+	{
+		glDeleteTextures(1, &texture_bhayanakMask);
+		texture_bhayanakMask = 0;
+	}
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
