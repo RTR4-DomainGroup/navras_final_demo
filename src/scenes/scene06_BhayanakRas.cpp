@@ -93,8 +93,11 @@ static float displacementmap_depth;
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
 static STATIC_MODEL rockModel;
-DYNAMIC_MODEL skeletonModel_06;
 #endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
+DYNAMIC_MODEL skeletonModel_06;
+#endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables
@@ -110,7 +113,7 @@ extern GLfloat gradient; // = 0.5;
 extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 // Camera angle for rotation
-extern GLfloat cameraAngle; // = 0.0f;
+static GLfloat cameraAngle = 0.0f;
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
@@ -193,8 +196,9 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 	float distance;
 
+	rotateCamera(0.0f, 2.0f, -2.0f, 10.0f, cameraAngle);
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	displayCamera();
+	//displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -273,7 +277,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
+	translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
@@ -305,7 +309,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(2.0f, 0.0f, -5.0f);
+	translationMatrix = vmath::translate(0.0f, 1.0f, -2.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 
@@ -453,6 +457,10 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 void updateScene06_BhayanakRas(void)
 {
 	// Code
+
+	cameraAngle += 5.0f;
+	if(cameraAngle >= 360.0f)
+		cameraAngle -= 360.0f;
 
 #ifdef ENABLE_WATER
 

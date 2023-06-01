@@ -125,8 +125,11 @@ static float displacementmap_depth;
 //Model variables
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
-DYNAMIC_MODEL skeletonModel;
 
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
+DYNAMIC_MODEL skeletonModel;
 #endif // ENABLE_STATIC_MODELS
 
 extern GLfloat density; // = 0.15;
