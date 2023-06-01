@@ -125,8 +125,11 @@ static float displacementmap_depth;
 //Model variables
 STATIC_MODEL rockModel;
 STATIC_MODEL streetLightModel;
-DYNAMIC_MODEL skeletonModel;
 
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
+DYNAMIC_MODEL skeletonModel;
 #endif // ENABLE_STATIC_MODELS
 
 extern GLfloat density; // = 0.15;
@@ -135,13 +138,17 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 // Camera angle for rotation
-extern GLfloat cameraAngle; // = 0.0f;
+GLfloat cameraAngle = 85.0f;
+GLfloat cameraRadius;
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
 bool isInitialDisplayScene09_VeerRas = true;
+bool isCameraRotation = false;
+bool continueCameraRotation = true;
+bool stopCameraRotation = false;
 
 int initializeScene09_VeerRas(void)
 {
@@ -159,13 +166,13 @@ int initializeScene09_VeerRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
-	 displacementmap_depth = 15.0f;
+	 displacementmap_depth = 150.0f;
 	//displacementmap_depth = 1.5f;
 
 	//terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/dm_s11_02.jpg";
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/11_Diffuse.png";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene09_Veer/11_Mountains_displacement.png";
-	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene09_Veer/11_Mountains_normal.png";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/snow_02_diff_8k.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene09_Veer/render.png";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene09_Veer/snow_02_nor_gl_8k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
 	{
@@ -188,7 +195,8 @@ void setCameraScene09_VeerRas(void)
 {
 	if (isInitialDisplayScene09_VeerRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		//setCamera(17.50f, 1.10f, -6.95f, -90.24f, 59.45f, -355.27f, 0.0f, 0.5f, 0.5f);
+		setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f);
 		isInitialDisplayScene09_VeerRas = false;
 	}
 }
@@ -208,8 +216,14 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 	mat4 rotateX = mat4::identity();
 
+	if (isCameraRotation == false || stopCameraRotation == true)
+		displayCamera();
+	else
+	{
+		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle);
+	}
+
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -530,12 +544,14 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
 	// ------ Dancing Vampire Model ------
+	// 15.50, 5.35, -19.70
+	//glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.50f, 4.76f, -19.20f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.40f, 4.99f, -19.70f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.001f, 0.001f, 0.001f));
+	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
 	if (actualDepthQuadScene == 1)
@@ -565,7 +581,53 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 void updateScene09_VeerRas(void)
 {
+	/*cameraEyeX = preciselerp(cameraEyeX, 15.50f, 0.01f);
+	cameraCenterX = preciselerp(cameraCenterX, -21.26f, 0.01f);
+	
+	cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
+	cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
+	
+	cameraEyeZ = preciselerp(cameraEyeZ, -18.45f, 0.01f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);*/
 
+	/*[15.75, 6.85, -17.20], [-21.01, -75.48, -359.39]*/
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	if (isCameraRotation == false)
+	{
+		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
+		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
+
+		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
+		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
+
+		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
+
+		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
+		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
+
+		if (cameraEyeY > 5.00f)
+		{
+			isCameraRotation = true;
+			cameraRadius = 4.00f;
+			cameraUpY = 1.0f;
+			cameraUpZ = 0.0f;
+		}
+	}
+	else if (isCameraRotation == true && continueCameraRotation == true)
+	{
+		cameraAngle += 0.3f;
+		if (cameraAngle > 360.0f)
+		{
+			continueCameraRotation = false;
+			cameraAngle -= 360.0f;
+		}
+
+		if (cameraAngle > 10.0f && continueCameraRotation == false)
+			stopCameraRotation = true;
+	}
+#endif // ENABLE_CAMERA_ANIMATION
 }
 
 void uninitializeScene09_VeerRas(void)

@@ -19,7 +19,7 @@
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../inc/scenes/scene02_EarthAndSpace.h"
-#include "../inc/scenes/scene5_karun.h"
+#include "../inc/scenes/scene05_karun.h"
 #include "../inc/scenes/scene06_BhayanakRas.h"
 #include "../inc/scenes/scene07_Raudra.h"
 #include "../inc/scenes/scene08_BibhatsaRas.h"
@@ -75,7 +75,7 @@ int time_scene8 = 5;
 int time_scene9 = 5;
 int time_scene10 = 5;
 int time_scene11 = 5;
-int time_scene12 = 40;
+int time_scene12 = 5;
 int time_scene13 = 5;
 int time_scene14 = 5;
 
