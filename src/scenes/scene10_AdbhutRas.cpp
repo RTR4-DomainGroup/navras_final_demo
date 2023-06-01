@@ -13,8 +13,8 @@
 #define BB_X_MIN (-30.0f)
 #define BB_X_MAX (30.0f)
 
-#define BB_Y_MIN (-3.0f)
-#define BB_Y_MAX (3.0f)
+// #define BB_Y_MIN (-3.0f)
+// #define BB_Y_MAX (3.0f)
 
 #define BB_Z_MIN (-50.0f)
 #define BB_Z_MAX (70.0f)
@@ -79,15 +79,11 @@
 #define FBO_HEIGHT WIN_HEIGHT
 
 
-
-extern GLfloat whiteSphere[]; // = {1.0f, 1.0f, 1.0f};
-extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
 extern TEXTURE texture_flower;
 
 extern struct ADSUniform sceneOutdoorADSStaticUniform;
 extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
-extern struct FSQuadUniform fsqUniform;
 
 #ifdef ENABLE_TERRIAN
 extern struct TerrainUniform terrainUniform;
@@ -150,7 +146,6 @@ extern int windowHeight;
 extern float myScale; 
 
 extern float noiseScale; 
-extern bool noiseScaleIncrement; 
 
 extern GLfloat skyColor[]; 
 extern GLfloat cloudColor[]; 
@@ -271,6 +266,8 @@ int initializeScene10_AdbhutRas(void)
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
+	// terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/1.jpg"; // albedo, color, diffuse, base color, are one and same
+	// terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/2.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
@@ -310,6 +307,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotationMatrix_z = mat4::identity();
 
 	mat4 finalViewMatrix = mat4::identity();
+	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -563,6 +561,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
+	rotationAngles.x = displacementmap_depth;
+	// update_transformations(NULL, NULL, NULL, &rotationAngles);
 	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
@@ -638,7 +638,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	// usage type 2
-	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 	rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	rotationMatrix_z = vmath::rotate(rotationAngles.z, 1.0f, 0.0f, 1.0f);
@@ -800,6 +799,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
+		update_transformations(&translationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix;
 
 		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -938,8 +938,8 @@ void displayScene10_Billboarding(int godRays = 1)
 void updateScene10_AdbhutRas(void)
 {
 	// Code
-	cameraEyeZ -= 0.05f;
-	cameraCenterZ -= 0.05f;
+	cameraEyeZ -= tf_Speed;
+	cameraCenterZ -= tf_Speed;
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
@@ -962,6 +962,7 @@ void uninitializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
+	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
 #endif // ENABLE_STATIC_MODELS
@@ -973,5 +974,4 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
-
 
