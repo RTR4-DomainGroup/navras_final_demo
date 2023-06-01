@@ -61,17 +61,19 @@
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
     "audio1.wav",
-    "audio1.wav",
-    "audio2.wav", 
-    "audio1.wav",
-    "audio2.wav", 
-    "audio1.wav", 
-    "audio3.wav", 
-    "audio2.wav",
-    "audio1.wav",
-    "audio2.wav",
-    "audio1.wav",
+    "Scene02_EarthAndSpace_40_seconds.wav",
+    "\0",
+    "\0",
+    "Scene05_KarunRas_40_seconds_new.wav", 
+    "Scene06_BhayanakRas_40_seconds.wav",
+    "Scene07_RoudraRas_40_seconds.wav", 
+    "Kkl_cut_2.wav", 
+    "Scene09-VeerRas_40_seconds.wav", 
+    "Scene10_AdbhutRas_40_seconds.wav",
+    "Scene11_ShringarRas_new_40_seconds.wav",
     "Scene12_HasyaRas_40_seconds.wav",
+    "Scene13_ShantRas_40_seconds.wav",
+    "Scene14_Particle_40_seconds.wav",
     "audio1.wav",
     "audio3.wav",
 };
@@ -114,7 +116,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
 //#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
-//#define CURRENT_SCENE SCENE09_VEER_RAS              // Veer Ras 
+//#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
 //#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
