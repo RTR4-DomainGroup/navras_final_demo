@@ -303,10 +303,6 @@ int initializeNavras(void) {
     }
 	
 
-	currentScene = CURRENT_SCENE;
-	// currentScene = scenePop();
-	LOG("current scene changed: %d\n", currentScene);
-
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
@@ -320,6 +316,10 @@ int initializeNavras(void) {
 	}
 
 #ifdef ENABLE_SINGLE_SCENE
+
+	currentScene = CURRENT_SCENE;
+	// currentScene = scenePop();
+	LOG("current scene changed: %d\n", currentScene);
 
 	// SCENE02
 	if (
@@ -544,6 +544,9 @@ int initializeNavras(void) {
 	scenePush(SCENE06_BHAYANK_RAS);
 	//scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
+
+	currentScene = scenePop();
+	LOG("current scene changed: %d\n", currentScene);
 
 #endif
 
@@ -795,11 +798,11 @@ void updateNavras(void)
 
 }
 
-void sceneTime(int sceneTime){
+void sceneTime(int scenetime){
 
 	// Code
 #ifndef ENABLE_SINGLE_SCENE
-	if (now == (then + sceneTime))
+	if (now == (then + scenetime))
 	{
 		then = time(NULL);
 		currentScene = scenePop();
