@@ -759,7 +759,12 @@ void updateNavras(void)
 	} 
 
 	// Call Scenes Update Here
-	if (currentScene == SCENE09_VEER_RAS)
+	if (currentScene == SCENE02_EARTH_AND_SPACE)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene02_EarthAndSpace();
+	}
+	else if (currentScene == SCENE09_VEER_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene09_VeerRas();
