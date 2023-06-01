@@ -94,6 +94,7 @@ static DYNAMIC_MODEL skeletonModel;
 GLuint texture_road;
 GLuint texture_footpath;
 GLuint texture_wall;
+GLuint texture_bibhatsaMask;
 
 bool isInitialDisplayScene08_BibhatsaRas = true;
 
