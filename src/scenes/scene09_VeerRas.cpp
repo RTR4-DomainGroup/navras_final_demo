@@ -541,7 +541,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_veerMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
-	displayQuad();
+	//displayQuad();
 	//glBindTexture(GL_TEXTURE_2D, 0);
 
 

@@ -343,7 +343,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_bibhatsaMask);
 		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
-			displayQuad();
+			//displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Transformations - To Draw Footpath Left Side
