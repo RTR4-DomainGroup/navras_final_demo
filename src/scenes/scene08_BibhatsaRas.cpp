@@ -88,12 +88,17 @@ STATIC_MODEL buildingThreeModel;
 STATIC_MODEL buildingFourModel;
 STATIC_MODEL buildingFiveModel;
 STATIC_MODEL trashOneModel;
+
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
 #endif // ENABLE_STATIC_MODELS
 
 GLuint texture_road;
 GLuint texture_footpath;
 GLuint texture_wall;
+GLuint texture_bibhatsaMask;
 
 bool isInitialDisplayScene08_BibhatsaRas = true;
 

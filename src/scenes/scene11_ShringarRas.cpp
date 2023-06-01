@@ -185,6 +185,10 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 //Model variables
 STATIC_MODEL rockModel_11;
 STATIC_MODEL streetLightModel_11;
+
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
 DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
