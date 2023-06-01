@@ -125,7 +125,7 @@ void debug_tranformation(void)
 				if('y' == charPressed)
 					tf_r.y += tf_Speed;
 				else
-					tf_r.y += tf_Speed;
+					tf_r.y -= tf_Speed;
 				LOG("Y rotation changed to %.02ff\n", tf_r.y);
 				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
@@ -152,14 +152,14 @@ void debug_tranformation(void)
 				if('z' == charPressed)
 					tf_r.z += tf_Speed;
 				else
-					tf_r.z += tf_Speed;
+					tf_r.z -= tf_Speed;
 				LOG("Z rotation changed to %.02ff\n", tf_r.z);
 				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'p':
 			LOG("\n");
-			LOG("lookAt([%.02f, %.02f, %.02f], [%.02f, %.02f, %.02f] [%.02f, %.02f, %.02f])\n", 
+			LOG("lookAt(%.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff)\n", 
 				cameraEyeX, cameraEyeY, cameraEyeZ, 
 				cameraCenterX, cameraCenterY, cameraCenterZ, 
 				cameraUpX, cameraUpY, cameraUpZ);
@@ -168,11 +168,11 @@ void debug_tranformation(void)
 			LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			break;
 		case '+':
-			tf_Speed += 0.1f;
+			tf_Speed += 0.02f;
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
 			break;
 		case '-':
-			tf_Speed -= 0.05f;
+			tf_Speed -= 0.01f;
 			if(tf_Speed < 0)
 				tf_Speed = 0.0f;
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
@@ -274,7 +274,7 @@ void debug_tranformation(void)
 }
 
 
-void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMatrix, vmath::mat4* rotationMatrix, TRANFORM* rotationAngles) 
+void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMatrix, vmath::mat4* rotationMatrix, TRANFORM* vector) 
 {
 	static bool firstCall = 1;
 
@@ -316,8 +316,8 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 			tf_t = {(*translationMatrix)[3][0], (*translationMatrix)[3][1], (*translationMatrix)[3][2]}; // pos
 		if(scaleMatrix)
 			tf_s = {(*scaleMatrix)[0][0], (*scaleMatrix)[1][0], (*scaleMatrix)[2][2]}; // tree scale
-		if(rotationAngles)
-			tf_r = {rotationAngles->x, rotationAngles->y, rotationAngles->z}; // tree rotate
+		if(vector)
+			tf_r = {vector->x, vector->y, vector->z}; // tree rotate
 		else
 			tf_r = {0.0f, 0.0f, 0.0f};
 		tf_Speed = 0.25f;
@@ -335,10 +335,12 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 	mat4 rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
 	if(rotationMatrix)
 		*rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	if(vector)
+		*vector = tf_r;
 }
 
 
-void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMatrix, glm::mat4* rotationMatrix, TRANFORM* rotationAngles)
+void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMatrix, glm::mat4* rotationMatrix, TRANFORM* vector)
 {
 	static bool firstCall = 1;
 
@@ -380,8 +382,8 @@ void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMa
 			tf_t = { (*translationMatrix)[3][0], (*translationMatrix)[3][1], (*translationMatrix)[3][2] }; // pos
 		if (scaleMatrix)
 			tf_s = { (*scaleMatrix)[0][0], (*scaleMatrix)[1][0], (*scaleMatrix)[2][2] }; // tree scale
-		if (rotationAngles)
-			tf_r = { rotationAngles->x, rotationAngles->y, rotationAngles->z }; // tree rotate
+		if (vector)
+			tf_r = { vector->x, vector->y, vector->z }; // tree rotate
 		else
 			tf_r = { 0.0f, 0.0f, 0.0f };
 		tf_Speed = 0.25f;

@@ -10,14 +10,14 @@
 #include "../../inc/shaders/FSQuadShader.h"
 
 // billboarding config
-#define BB_X_MIN (-30.0f)
-#define BB_X_MAX (30.0f)
+#define BB_X_MIN (-40.0f)
+#define BB_X_MAX (40.0f)
 
-#define BB_Y_MIN (-3.0f)
-#define BB_Y_MAX (3.0f)
+// #define BB_Y_MIN (-3.0f)
+// #define BB_Y_MAX (3.0f)
 
-#define BB_Z_MIN (-50.0f)
-#define BB_Z_MAX (70.0f)
+#define BB_Z_MIN (-60.0f)
+#define BB_Z_MAX (80.0f)
 
 #define BB_NO_OF_INSTANCES 1000
 
@@ -47,14 +47,6 @@
 #include "../../inc/effects/TerrainEffect.h"
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_STARFIELD
-#include "../../inc/effects/StarfieldEffect.h"
-#endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_SKYBOX
-#include "../../inc/effects/SkyboxEffect.h"
-#endif // ENABLE_SKYBOX
-
 #ifdef ENABLE_CLOUD_NOISE
 #include "../../inc/effects/CloudEffect.h"
 #endif // ENABLE_CLOUD_NOISE
@@ -79,15 +71,11 @@
 #define FBO_HEIGHT WIN_HEIGHT
 
 
-
-extern GLfloat whiteSphere[]; // = {1.0f, 1.0f, 1.0f};
-extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
 extern TEXTURE texture_flower;
 
 extern struct ADSUniform sceneOutdoorADSStaticUniform;
 extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
-extern struct FSQuadUniform fsqUniform;
 
 #ifdef ENABLE_TERRIAN
 extern struct TerrainUniform terrainUniform;
@@ -131,34 +119,21 @@ extern AtmosphericVariables atmosVariables;
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
-extern mat4 viewmatrixDepth;
 extern mat4 lightSpaceMatrix;
-extern mat4 perspectiveProjectionDepth;
 #endif // ENABLE_SHADOW
 
 extern GLfloat waterHeight; // = 0.0f;
 extern GLfloat moveFactor; // = 0.0f;
 extern GLfloat planeReflection[]; // = { 0.0f, 1.0f, 0.0f, -waterHeight };
 extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight };
-extern struct FrameBufferDetails fboBlackPass;
-extern struct FrameBufferDetails fboColorPass;
-extern struct FrameBufferDetails fboGodRayPass;
 
-extern int windowWidth;
-extern int windowHeight;
+extern float myScale; 
 
-extern float myScale; // = 1.0f;
+extern float noiseScale; 
 
-extern float noiseScale; // = 2.0f;
-extern bool noiseScaleIncrement; // = true;
-
-extern mat4 viewMatrix;
-
-extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
-extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
+extern GLfloat skyColor[]; 
+extern GLfloat cloudColor[]; 
 extern GLuint noise_texture;
-
 extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -182,20 +157,12 @@ extern GLfloat gradient; // = 0.5;
 extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
-// Camera angle for rotation
-extern GLfloat cameraAngle; // = 0.0f;
-extern GLfloat dispersal; // = 0.1875f;
-extern GLfloat haloWidth; // = 0.45f;
-extern GLfloat intensity; // = 1.5f;
-extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
-
-
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
 static STATIC_MODEL farmhouseModel;
-
+static STATIC_MODEL adbhutmanModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -233,6 +200,7 @@ int initializeScene10_AdbhutRas(void)
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
+	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -274,11 +242,13 @@ int initializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_TERRIAN
 	// displacementmap_depth = 15.0f;
-	// displacementmap_depth = 1.5f;
-	displacementmap_depth = 3.0f;
+	// displacementmap_depth = 3.0f;
+	displacementmap_depth = 0.5f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
+	// terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/1.jpg"; // albedo, color, diffuse, base color, are one and same
+	// terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/2.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
@@ -299,7 +269,7 @@ void setCameraScene10(void)
 {
 	if (isInitialDisplay_Scene10AdbhutRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.00f, -0.70f, 20.60f, 0.00f, -0.70f, 14.60f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplay_Scene10AdbhutRas = false;
 	}
 }
@@ -318,6 +288,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotationMatrix_z = mat4::identity();
 
 	mat4 finalViewMatrix = mat4::identity();
+	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -343,11 +314,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 #endif // ENABLE_SHADOW
 	
 	}
-
-	//lightPosition[0] = cameraEyeX;
-	//lightPosition[1] = cameraEyeY;
-	//lightPosition[2] = cameraEyeZ;
-
 
 	if (recordWaterReflectionRefraction == true) {
 
@@ -476,55 +442,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glDisable(GL_TEXTURE_3D);
 
 #endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_STARFIELD
-
-		sceneStarfieldUniform = useStarfieldShader();
-
-		float time = (float)deltaTime;
-
-		time = time * 0.05f;
-		time = time - floor(time);
-
-		// Transformations
-		translationMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
-		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
-		glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
-		displayStarfield(texture_star);
-		glUseProgram(0);
-
-#endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_SKYBOX
-
-		sceneSkyBoxUniform = useSkyboxShader();
-
-		// Transformations
-		translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(sceneSkyBoxUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneSkyBoxUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneSkyBoxUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		displaySkybox(texture_skybox);
-		glUseProgram(0);
-#endif // ENABLE_SKYBOX
 	}
 
 #ifdef ENABLE_TERRIAN
@@ -543,10 +460,11 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	//normal mapping
 
-
-	translationMatrix = vmath::translate(0.0f, -2.0f, -20.0f);
+	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
 	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
+	// rotationAngles.x = displacementmap_depth;
+	// update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	viewMatrix = finalViewMatrix;
@@ -642,17 +560,15 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(18.90f, 0.12f, -40.00f);
+	translationMatrix = vmath::translate(-6.80f, -3.5f, -15.88f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	// usage type 2
-	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 	rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	rotationMatrix_z = vmath::rotate(rotationAngles.z, 1.0f, 0.0f, 1.0f);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
-	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -686,11 +602,11 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Tree Model ------
-	translationMatrix = vmath::translate(18.90f, 0.12f, -40.00f);
-	scaleMatrix = vmath::scale(0.31f, 0.31f, 0.31f);
+	translationMatrix = vmath::translate( -5.40f, -3.5f, -14.95f);
+	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
 
 	// usage type 1 
-	// update_transformations(&translationMatrix) ;
+	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -709,12 +625,11 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ farmhouse Model ------
-	translationMatrix = vmath::translate(-7.75f, 0.60f, -17.00f);
-	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
-	// rotationMatrix = mat4::identity();
+	translationMatrix = vmath::translate(17.50f, -3.4f, -25.25f);
+	scaleMatrix = vmath::scale(0.7f, 0.7f, 0.7f);
+	rotationMatrix = vmath::rotate(-59.25f, 0.0f, 1.0f, 0.0f);
 
 	// usage type 1 
-	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -722,6 +637,29 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(farmhouseModel);
+
+	// adbhutmanModel
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ adbhutmanModel Model ------
+	translationMatrix = vmath::translate( -4.90f, -3.5f, -14.88f);
+	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+	rotationMatrix = vmath::rotate(72.45f, 0.0f, 1.0f, 0.0f);
+
+	// usage type 1 
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(adbhutmanModel);
 
 	if (actualDepthQuadScene == 0) {
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -804,7 +742,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
+		translationMatrix = vmath::translate(0.00f, -4.01f, -20.00f);
 
 		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
@@ -866,8 +804,12 @@ void displayScene10_Billboarding(int godRays = 1)
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();
 	
+	mat4 modelMatrix = mat4::identity();
+	mat4 viewMatrix = mat4::identity();
+	
+	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+
 	// code
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -890,10 +832,11 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
-	translationMatrix = vmath::translate(1.5f, -3.5f, -25.0f);
 
+	translationMatrix = vmath::translate(-3.50f, -3.10f, -20.25f);
+	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-	// update_transformations(&translationMatrix) ;
+	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -919,7 +862,10 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, -3.5f, -25.0f);
+	translationMatrix = vmath::translate(-5.00f, -3.10f, -20.25f);
+	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
+
+	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -943,11 +889,16 @@ void displayScene10_Billboarding(int godRays = 1)
 void updateScene10_AdbhutRas(void)
 {
 	// Code
+	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
+	speedVector.x = 0.02;
+	// update_transformations(NULL, NULL, NULL, &speedVector);
+	cameraEyeZ -= speedVector.x;
+	cameraCenterZ -= speedVector.x;
+
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
-	debug_tranformation();
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -964,6 +915,7 @@ void uninitializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
+	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
 #endif // ENABLE_STATIC_MODELS
@@ -975,5 +927,3 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
-
-
