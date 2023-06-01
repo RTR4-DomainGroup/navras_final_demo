@@ -464,7 +464,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
 	// rotationAngles.x = displacementmap_depth;
-	update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
+	// update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	viewMatrix = finalViewMatrix;
@@ -832,10 +832,11 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
-	translationMatrix = vmath::translate(1.5f, -3.1f, -25.0f);
 
+	translationMatrix = vmath::translate(-3.50f, -3.10f, -34.25f);
+	scaleMatrix *= vmath::scale(0.50f, 0.50f, 0.50f);
 
-	// update_transformations(&translationMatrix) ;
+	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -861,7 +862,10 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-1.5f, -3.5f, -25.0f);
+	translationMatrix = vmath::translate(-5.00f, -3.10f, -34.25f);
+	scaleMatrix *= vmath::scale(0.50f, 0.50f, 0.50f);
+
+	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -895,7 +899,6 @@ void updateScene10_AdbhutRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
-	debug_tranformation();
 }
 
 void uninitializeScene10_AdbhutRas(void)
