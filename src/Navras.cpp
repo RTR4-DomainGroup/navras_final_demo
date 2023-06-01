@@ -684,7 +684,7 @@ void displayNavras(void)
 	{
 		audio(SCENE09_VEER_RAS);
 
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
