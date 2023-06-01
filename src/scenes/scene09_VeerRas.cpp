@@ -91,7 +91,6 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-
 extern float myScale; // = 1.0f;
 
 extern float noiseScale; // = 2.0f;
@@ -150,6 +149,8 @@ bool isCameraRotation = false;
 bool continueCameraRotation = true;
 bool stopCameraRotation = false;
 
+GLuint texture_veerMask;
+
 int initializeScene09_VeerRas(void)
 {
 	// code
@@ -157,6 +158,20 @@ int initializeScene09_VeerRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_veerMask, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_veerMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_veerMask Successfull = %u!!!\n", texture_veerMask);
+	}
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -481,6 +496,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(rockModel);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -500,8 +516,29 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-
 	drawStaticModel(streetLightModel);
+
+	// Transformations - Quad For Mask
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(10.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_veerMask);
+	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	displayQuad();
+	//glBindTexture(GL_TEXTURE_2D, 0);
+
 
 	if (actualDepthQuadScene == 0)
 	{
