@@ -203,7 +203,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			}
 		}
 	}
-	LOG("Calling first.join() .....\n ");
+	
 	#ifdef ENABLE_MULTI_THREADING
 	first.join();
 	#endif
