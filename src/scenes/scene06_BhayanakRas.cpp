@@ -146,7 +146,7 @@ int initializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid.obj", &rockModel);
 
 	if (LoadGLTexture_UsingSOIL(&texture_bhayanakMask, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
 	{
@@ -175,7 +175,7 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0f, 2.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
 }

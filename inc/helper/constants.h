@@ -102,10 +102,10 @@ static const char *szAudios[] = {
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
 //#define ENABLE_DYNAMIC_MODELS
-//#define ENABLE_CAMERA_ANIMATION
+#define ENABLE_CAMERA_ANIMATION
 
 //#define ENABLE_SINGLE_SCENE
-//#define ENABLE_AUDIO
+#define ENABLE_AUDIO
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation

@@ -836,7 +836,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	translationMatrix = vmath::translate(-3.50f, -3.10f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -865,7 +865,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	translationMatrix = vmath::translate(-5.00f, -3.10f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
