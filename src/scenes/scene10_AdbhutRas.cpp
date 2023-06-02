@@ -10,16 +10,16 @@
 #include "../../inc/shaders/FSQuadShader.h"
 
 // billboarding config
-#define BB_X_MIN (-40.0f)
-#define BB_X_MAX (40.0f)
+#define BB_X_MIN (-50.0f)
+#define BB_X_MAX (50.0f)
 
 // #define BB_Y_MIN (-3.0f)
 // #define BB_Y_MAX (3.0f)
 
-#define BB_Z_MIN (-60.0f)
-#define BB_Z_MAX (80.0f)
+#define BB_Z_MIN (-70.0f)
+#define BB_Z_MAX (90.0f)
 
-#define BB_NO_OF_INSTANCES 1000
+#define BB_NO_OF_INSTANCES 1500
 
 // #define X_INCREMENT 2.5f
 // #define Y_INCREMENT 0.8f
@@ -890,7 +890,7 @@ void updateScene10_AdbhutRas(void)
 {
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
-	speedVector.x = 0.02;
+	speedVector.x = 0.04;
 	// update_transformations(NULL, NULL, NULL, &speedVector);
 	cameraEyeZ -= speedVector.x;
 	cameraCenterZ -= speedVector.x;

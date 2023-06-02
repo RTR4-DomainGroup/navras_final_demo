@@ -10,6 +10,7 @@
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../../inc/Navras.h"
 
 
 #ifdef ENABLE_WATER
@@ -192,8 +193,7 @@ GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
 typedef void(*SET_CAMERA) (void);
 
-typedef void (* DISPLAY_PASSES) (int,bool,bool,bool,int);
-
+typedef void (* DISPLAY_PASSES) (int, bool,bool,bool,int);
 
 int initializeScene_PlaceHolderOutdoor(void)
 {
@@ -620,7 +620,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+		if(SCENE02_EARTH_AND_SPACE == getCurrentScene())
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
 		else
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);

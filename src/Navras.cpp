@@ -89,6 +89,13 @@ bool sceneFadeOut = false;
 
 extern AtmosphericVariables atmosVariables;
 
+void QuitApplication(void);
+
+scene_types_t  getCurrentScene(void)
+{
+	return (currentScene);
+}
+
 int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// Function Declarations
@@ -533,7 +540,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	scenePush(MAX_SCENES);
+	// scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	//scenePush(SCENE12_HASYA_RAS);
@@ -743,6 +750,7 @@ void displayNavras(void)
 		audio(SCENE_INVALID);
 		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
+		QuitApplication();
 	}
 
 }
@@ -801,7 +809,6 @@ void updateNavras(void)
 	updateMouseMovement();
 
 	debug_tranformation();
-
 }
 
 void sceneTime(int scenetime){
@@ -844,9 +851,11 @@ void uninitializeNavras(void) {
 	// Function Declarations
 
 	// Code
+	LOG("Enter\n");
 
 	// audio
 	uninitializeAudio();
+	LOG("Audio uninitialized\n");
 
 #ifdef ENABLE_SINGLE_SCENE
 	// only single scene pushed
@@ -865,10 +874,12 @@ void uninitializeNavras(void) {
 	uninitializeScene02_EarthAndSpace();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene_PlaceHolderOutdoor();
+	LOG("All scenes uninitialized\n");
 
 
 	//uninitialize all shaders
 	uninitializeAllShaders();
+	LOG("All shaders uninitialized\n");
 
 }
 

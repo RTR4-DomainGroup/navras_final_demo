@@ -212,6 +212,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	return((int)msg.wParam);
 }
 
+void QuitApplication(void)
+{
+	PostQuitMessage(0);
+}
+
 // CAllBack Function
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
@@ -301,6 +306,7 @@ int initialize(void)
 	// variable declarations
 	PIXELFORMATDESCRIPTOR pfd;
 	int iPixelFormatIndex;
+
 	// code
 	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 
@@ -574,6 +580,7 @@ void uninitialize(void)
 		ToggleFullscreen();
 	}
 
+	LOG("Enter\n");
 	uninitializeNavras();
 	if(wglGetCurrentContext() == ghrc)
 	{
