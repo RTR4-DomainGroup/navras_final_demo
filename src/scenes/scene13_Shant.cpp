@@ -10,6 +10,9 @@
 #include "../../inc/scenes/scene13_Shant.h"
 #include "../../inc/debug/debug_transformation.h"
 
+#ifdef ENABLE_EROSION
+#include "../../inc/effects/ErosionEffect.h"
+#endif // ENABLE_EROSION
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
@@ -51,6 +54,17 @@ static GLuint textures[4];
 #ifdef ENABLE_STATIC_MODELS
 static STATIC_MODEL shantRoomModel;
 #endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_EROSION
+struct ErosionNoiseUniform sceneErosionNoiseUniform;
+GLuint noise_texture_eroded;
+GLuint texture_Marble_Shant;
+float myScale_erosion = 0.5f;
+float noiseScale_erosion = 2.0f;
+bool offsetIncrement = true;
+GLfloat offset[] = { 0.48f, 0.48f, 0.48f };
+#endif // ENABLE_EROSION
+
 
 bool isInitialDisplayScene13_ShantRas = true;
 
@@ -114,6 +128,31 @@ int initializeScene13_Shant(void)
     // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
 	tf_Speed = 0.05f;
 //	glEnable(GL_TEXTURE_2D);
+
+#ifdef ENABLE_EROSION
+
+	if (LoadGLTexture_UsingSOIL(&texture_Marble_Shant, TEXTURE_DIR"marble.bmp") == GL_FALSE) {
+		//uninitialize();
+		LOG("LoadGLTexture FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble_Shant);
+	}
+
+	noise_texture_eroded = initializeErosion();
+	if (noise_texture_eroded == 0)
+	{
+		LOG("initializeErosion() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeErosion() Successfull!!!\n");
+	}
+#endif // ENABLE_EROSION
+
 
 	return 0;
 }
@@ -208,10 +247,89 @@ void displayScene13_Shant(void)
 	drawStaticModel(shantRoomModel);
 	// ################################### BUILDING ONE ###################################  
 
-
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
     #endif 
+
+#ifdef ENABLE_EROSION
+
+	glEnable(GL_TEXTURE_3D);
+	sceneErosionNoiseUniform = useErosionNoiseShader();
+
+	translationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -7.0f);
+
+	modelMatrix = translationMatrix;
+
+	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient);
+	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse);
+	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition);
+
+	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient);
+	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse);
+	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess);
+
+	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset);
+	//glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+	//glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
+	//glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
+	//glUniform1i(sceneErosionNoiseUniform.uniform_enable_godRays, godRays);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_Marble_Shant);
+	glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
+	glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
+
+	displayQuad();
+
+	// Unuse the shaderProgramObject
+	glUseProgram(0);
+
+	glDisable(GL_TEXTURE_3D);
+#endif // ENABLE_EROSION
+}
+
+void updateScene13_ShantRas(void)
+{
+#ifdef ENABLE_EROSION
+	// update Cloud
+	//updateErosion(offsetIncrement, offset, 0.1f);
+
+	if (offsetIncrement == true)
+	{
+		offset[0] = offset[0] + 0.1f;
+		offset[1] = offset[1] + 0.1f;
+		offset[2] = offset[2] + 0.1f;
+		if (offset[2] > 0.48f)
+		{
+			offsetIncrement = false;
+		}
+	}
+	else
+	{
+		offset[0] = offset[0] - 0.1f;
+		offset[1] = offset[1] - 0.1f;
+		offset[2] = offset[2] - 0.1f;
+		if (offset[2] < 0.17f)
+		{
+			offsetIncrement = true;
+		}
+	}
+
+#endif // ENABLE_EROSION
+
 }
 
 void uninitializeScene13_Shant(void)
@@ -239,5 +357,13 @@ void uninitializeScene13_Shant(void)
 		glDeleteTextures(1, &texture_side);
 		texture_side = 0;
 	}
+#ifdef ENABLE_EROSION
+	uninitializeErosion();
+	if (noise_texture_eroded)
+	{
+		glDeleteTextures(1, &noise_texture_eroded);
+		noise_texture_eroded = 0;
+	}
+#endif // ENABLE_EROSION
 }
 

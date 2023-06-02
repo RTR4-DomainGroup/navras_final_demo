@@ -105,7 +105,7 @@ static const char *szAudios[] = {
 //#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 
-//#define ENABLE_SINGLE_SCENE
+#define ENABLE_SINGLE_SCENE
 //#define ENABLE_AUDIO
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 

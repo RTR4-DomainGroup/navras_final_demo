@@ -20,7 +20,7 @@ GLuint initializeErosion(void)
 	//noise_texture = CreateNoise3D();
 
 	GLuint texture_id = 0;
-	//texture_id = CreateNoise3D();
+	texture_id = CreateNoise3D();
 
 	return(texture_id);
 }

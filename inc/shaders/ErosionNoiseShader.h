@@ -19,7 +19,7 @@ struct ErosionNoiseUniform
 
 	// extra to be use later for configuration
 	GLuint scaleUniform;
-	GLuint noiseScaleUniform;
+	//GLuint noiseScaleUniform;
 
 	GLuint noiseSamplerUniform;
 	GLuint textureSamplerUniform;
@@ -27,7 +27,7 @@ struct ErosionNoiseUniform
 	// uniform specifically for erosion
 	GLuint offsetUniform;
 
-	GLuint uniform_enable_godRays;
+	//GLuint uniform_enable_godRays;
 };
 
 int intializeErosionNoiseShader(void);

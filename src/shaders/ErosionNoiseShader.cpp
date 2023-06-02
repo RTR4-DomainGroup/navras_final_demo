@@ -183,6 +183,8 @@ int intializeErosionNoiseShader(void)
 	erosionNoiseUniform.viewMatrixUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_viewMatrix");
 	erosionNoiseUniform.projectionMatrixUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_projectionMatrix");
 
+	erosionNoiseUniform.textureSamplerUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_textureSampler");
+
 	erosionNoiseUniform.laUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_la");
 	erosionNoiseUniform.ldUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_ld");
 	erosionNoiseUniform.lsUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_ls");
@@ -197,14 +199,14 @@ int intializeErosionNoiseShader(void)
 	erosionNoiseUniform.offsetUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_offset");
 
 	erosionNoiseUniform.scaleUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_scale");
-	erosionNoiseUniform.noiseScaleUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_noiseScale");
-	erosionNoiseUniform.uniform_enable_godRays = glGetUniformLocation(erosionNoiseShaderProgramObject, "enable_godRays");
+	
+	//erosionNoiseUniform.uniform_enable_godRays = glGetUniformLocation(erosionNoiseShaderProgramObject, "enable_godRays");
 
-	glUseProgram(erosionNoiseShaderProgramObject);
+	//glUseProgram(erosionNoiseShaderProgramObject);
 	// some code may come here
-	glUniform1i(erosionNoiseUniform.noiseSamplerUniform, 0);
+	//glUniform1i(erosionNoiseUniform.noiseSamplerUniform, 1);
 
-	glUseProgram(0);
+	//glUseProgram(0);
 
 	return(0);
 }
