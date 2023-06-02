@@ -115,8 +115,6 @@ int initializeScene13_Shant(void)
 	tf_Speed = 0.05f;
 //	glEnable(GL_TEXTURE_2D);
 
-
-
 	return 0;
 }
 
