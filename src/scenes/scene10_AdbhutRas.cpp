@@ -463,8 +463,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
 	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
-	// rotationAngles.x = displacementmap_depth;
-	// update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
+	rotationAngles.y = displacementmap_depth;
+	update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	viewMatrix = finalViewMatrix;
@@ -489,7 +489,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	// glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	glUniform1f(terrainUniform.uniform_dmap_depth, rotationAngles.y);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
@@ -891,7 +892,7 @@ void updateScene10_AdbhutRas(void)
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
 	speedVector.x = 0.04;
-	// update_transformations(NULL, NULL, NULL, &speedVector);
+	update_transformations(NULL, NULL, NULL, &speedVector);
 	cameraEyeZ -= speedVector.x;
 	cameraCenterZ -= speedVector.x;
 

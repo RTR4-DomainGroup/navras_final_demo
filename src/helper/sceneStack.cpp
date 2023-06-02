@@ -35,7 +35,7 @@ void scenePush(scene_types_t scene)
 scene_types_t scenePop ()
 {
     scene_types_t scene = SCENE_INVALID;
-    if((head-1) >= 0) {
+    if(head >= 0) {
         scene = sceneStack[head];
         LOG("scene %d poped, stack Head: %d !!!\n", scene, head);
         sceneStack[head] = SCENE_INVALID;

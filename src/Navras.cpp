@@ -324,142 +324,93 @@ int initializeNavras(void) {
 
 #ifdef ENABLE_SINGLE_SCENE
 
-	currentScene = CURRENT_SCENE;
-	// currentScene = scenePop();
+	switch (CURRENT_SCENE) {
+		case SCENE02_EARTH_AND_SPACE:
+			if(initializeScene02_EarthAndSpace() != 0)
+			{
+				LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE05_KARUN_RAS:
+			if(initializeScene5_karun() != 0)
+			{
+				LOG("initializeScene5_karun() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE06_BHAYANK_RAS:
+			if(initializeScene06_BhayanakRas() != 0)
+			{
+				LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE07_RAUDRA_RAS:
+			if(	initializeScene07_Raudra() != 0)
+			{
+				LOG("initializeScene7_Raudra() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE08_BIBHATSA_RAS:
+			if(		initializeScene08_BibhatsaRas() != 0)
+			{
+				LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE09_VEER_RAS:
+			if(initializeScene09_VeerRas() != 0)
+			{
+				LOG("initializeScene09_VeerRas() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE10_ADBHUT_RAS:
+			if(	initializeScene10_AdbhutRas() != 0)
+			{
+				LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE11_SHRINGAR_RAS:
+			if(initializeScene11_ShringarRas() != 0)
+			{
+				LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE12_HASYA_RAS:
+			if(initializeScene12_Hasya() != 0)
+			{
+				LOG("initializeScene12_Hasya() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE13_SHANT_RAS:
+			if(initializeScene13_Shant() != 0)
+			{
+				LOG("initializeScene13_Shant() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		case SCENE14_PARTICLE:
+			if(initializeParticle() != 0)
+			{
+				LOG("initializeParticle() FAILED !!!\n");
+				return (-8);
+			}
+			break;	
+		default:
+			LOG("invalid scene %d !!!\n", CURRENT_SCENE);
+			return (-8);
+	}
+
+	scenePush(CURRENT_SCENE);
+
+	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
-
-	// SCENE02
-	if (
-		SCENE02_EARTH_AND_SPACE == currentScene &&
-		initializeScene02_EarthAndSpace() != 0)
-	{
-		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-		return (-8);
-	}
-	else if(SCENE02_EARTH_AND_SPACE == currentScene){
-		scenePush(SCENE02_EARTH_AND_SPACE);
-	}
-
-	// SCENE05
-	if (
-		SCENE05_KARUN_RAS == currentScene &&
-		initializeScene5_karun() != 0)
-	{
-		LOG("initializeScene5_karun() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE05_KARUN_RAS == currentScene) {
-		scenePush(SCENE05_KARUN_RAS);
-	}
-
-	// SCENE06
-	if (
-		SCENE06_BHAYANK_RAS == currentScene &&
-		initializeScene06_BhayanakRas() != 0)
-	{
-		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE06_BHAYANK_RAS == currentScene) {
-		scenePush(SCENE06_BHAYANK_RAS);
-	}
-
-	// SCENE07
-	if (
-		SCENE07_RAUDRA_RAS == currentScene &&
-		initializeScene07_Raudra() != 0)
-	{
-		LOG("initializeScene7_Raudra() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE07_RAUDRA_RAS == currentScene) {
-		scenePush(SCENE07_RAUDRA_RAS);
-	}
-
-	// SCENE08
-	if (
-		SCENE08_BIBHATSA_RAS == currentScene && 
-		initializeScene08_BibhatsaRas() != 0)
-	{
-		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE08_BIBHATSA_RAS == currentScene) {
-		scenePush(SCENE08_BIBHATSA_RAS);
-	}
-
-	// SCENE09
-	if (
-		SCENE09_VEER_RAS == currentScene && 
-		initializeScene09_VeerRas() != 0)
-	{
-		LOG("initializeScene09_VeerRas() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE09_VEER_RAS == currentScene) {
-		scenePush(SCENE09_VEER_RAS);
-	}
-
-	// SCENE10
-	if (
-		SCENE10_ADBHUT_RAS == currentScene &&
-		initializeScene10_AdbhutRas() != 0)
-	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE10_ADBHUT_RAS == currentScene) {
-		scenePush(SCENE10_ADBHUT_RAS);
-	}
-
-	// SCENE11
-	if (
-		SCENE11_SHRINGAR_RAS == currentScene &&
-		initializeScene11_ShringarRas() != 0)
-	{
-		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
-        return (-8);
-	}
-	else if (SCENE11_SHRINGAR_RAS == currentScene) {
-		scenePush(SCENE11_SHRINGAR_RAS);
-	}
-
-	// SCENE12
-	if(
-		SCENE12_HASYA_RAS == currentScene && 
-		initializeScene12_Hasya() != 0)
-	{
-		LOG("initializeScene12_Hasya() FAILED !!!\n");
-        return (-8);
-	}
-	else if (SCENE12_HASYA_RAS == currentScene) {
-		scenePush(SCENE12_HASYA_RAS);
-	}
-
-	// SCENE13
-	if (
-		SCENE13_SHANT_RAS == currentScene && 
-		initializeScene13_Shant() != 0)
-	{
-		LOG("initializeScene13_Shant() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE13_SHANT_RAS == currentScene) {
-		scenePush(SCENE13_SHANT_RAS);
-	}
-
-	// SCENE14
-	if (
-		SCENE14_PARTICLE == currentScene &&
-		initializeParticle() != 0)
-	{
-		LOG("initializeParticle() FAILED !!!\n");
-		return (-8);
-	}
-	else if (SCENE14_PARTICLE == currentScene) {
-		scenePush(SCENE14_PARTICLE);
-	}
-
 
 #else
 
@@ -551,6 +502,7 @@ int initializeNavras(void) {
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
 	//scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
@@ -860,6 +812,12 @@ void uninitializeNavras(void) {
 #ifdef ENABLE_SINGLE_SCENE
 	// only single scene pushed
 	currentScene = scenePop();
+#else
+	while (SCENE_INVALID != currentScene)
+	{
+		currentScene = scenePop();
+	}
+	
 #endif // !ENABLE_SINGLE_SCENE
 
 	//uninitialize all scenes
