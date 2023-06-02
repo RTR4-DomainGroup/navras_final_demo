@@ -13,6 +13,7 @@
 
 #include "../inc/shaders/FSQuadShader.h"
 #include "../inc/shaders/ParticleShader.h"
+#include "../inc/shaders/FontShader.h"
 
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
@@ -27,6 +28,8 @@
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene12_Hasya.h"
 #include "../inc/scenes/scene13_Shant.h"
+#include "../inc/scenes/fontRendering.h"
+
 #include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
@@ -41,7 +44,7 @@ bool gbPlayback = false;
 
 mat4 perspectiveProjectionMatrix;
 
-// framebuffer related variables
+// framebuffer related variables	
 int windowWidth;
 int windowHeight;
 
@@ -322,6 +325,15 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
+	// SCENE0
+	if (
+		SCENE00_AMC_BANNER == currentScene &&
+		initializeFont() != 0)
+	{
+		LOG("initializeFont() FAILED !!!\n");
+		return (-8);
+	}
+
 	// SCENE02
 	if (
 		SCENE02_EARTH_AND_SPACE == currentScene &&
@@ -519,13 +531,7 @@ void displayNavras(void)
 	// Call Scenes Display Here
 	if(currentScene == SCENE00_AMC_BANNER)
 	{
-#ifdef ENABLE_VIDEO_RENDER
-		extern struct FSQuadUniform fsqUniform;
-
-		fsqUniform = useFSQuadShader();
-		displayVideoEffect(&fsqUniform);
-		glUseProgram(0);
-#endif	
+		displayFont();
 	}
 	else if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
