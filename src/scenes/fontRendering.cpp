@@ -167,7 +167,7 @@ void displayFont(void) {
 	mat4 rotationMatrix = mat4::identity();
 	
 
-	translationMatrix = translate(-10.0f, 0.0f, -50.0f);
+	translationMatrix = translate(0.0f, 0.0f, -50.0f);
 	//scaleMatrix = scale(0.1f, 0.1f, 0.1f);
 	//rotationMatrix = rotate(angleC, 1.0f, 1.0f, 1.0f);
 	modelViewMtrix = translationMatrix; //* scaleMatrix * rotationMatrix;
@@ -177,8 +177,8 @@ void displayFont(void) {
 
 
 
-	RenderText("Sampla Project", 0.0f, 0.0f, 0.1f, vec4(1.0f, 0.8f, 0.2f, 1.0));
-	//RenderText("(C) LearnOpenGL.com", 0.0f, 0.0f, 0.5f, vec4(0.3, 0.7f, 0.9f,1.0));
+	RenderText("ASTROMEDICOMP", -20.0f, 0.0f, 0.1f, vec4(1.0f, 0.8f, 0.2f, 1.0));
+	RenderText("Presents....", 10.0f, -3.0f, 0.05f, vec4(0.3, 0.7f, 0.9f,1.0));
 
 	// Unuse the shader program object
 	glUseProgram(0);
