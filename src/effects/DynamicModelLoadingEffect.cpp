@@ -761,7 +761,7 @@ unsigned int DynamicModel::TextureFromFile(const char* path, const string& direc
 
     if (data)
     {
-        LOG("SUCCESS : texture directory = %s\n", directory.c_str());
+        //LOG("SUCCESS : texture directory = %s\n", directory.c_str());
         LOG("SUCCESS : texture filename = %s\n", filename.c_str());
 
         GLenum format;
@@ -789,7 +789,7 @@ unsigned int DynamicModel::TextureFromFile(const char* path, const string& direc
     }
     else
     {
-        LOG("ERROR : texture directory = %s\n", directory.c_str());
+        //LOG("ERROR : texture directory = %s\n", directory.c_str());
         LOG("ERROR: texture filename = %s\n", filename.c_str());
         //MessageBox(NULL, TEXT("Texture not loaded"), TEXT("ERROR"), MB_OK);
         SOIL_free_image_data(data);

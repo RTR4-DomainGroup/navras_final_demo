@@ -553,10 +553,10 @@ int initialize(void)
 }
 
 
-void set_title(char* title)
+void set_title(const char* const title)
 {
     char str[255] = {};
-    sprintf(str, "PAA: %s", title);
+    sprintf(str, "%s", title);
     XStoreName(display, window, str);
 }
 

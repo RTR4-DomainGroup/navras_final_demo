@@ -14,6 +14,10 @@
 #include "../../inc/scenes/scene07_Raudra.h"
 #include "../../inc/debug/debug_transformation.h"
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+#include "../../inc/effects/GaussianBlurEffect.h"
+#endif // ENABLE_GAUSSIAN_BLUR
+
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
@@ -23,6 +27,15 @@ extern int windowHeight;
 
 //GLfloat angleCube;
 
+#ifdef ENABLE_GAUSSIAN_BLUR
+// Gaussian Blur related variables
+extern struct GaussianBlurEffect gaussianBlurEffect;
+extern struct HorrizontalBlurUniform horizontalBlurUniform;
+extern struct VerticalBlurUniform verticalBlurUniform;
+extern struct FrameBufferDetails fullSceneFbo;
+extern struct FSQuadUniform fsGaussBlurQuadUniform;
+#endif // ENABLE_GAUSSIAN_BLUR
+
 extern mat4 perspectiveProjectionMatrix;
 
 static struct ADSUniform sceneIndoorADSUniform;
@@ -31,15 +44,15 @@ extern GLfloat density;
 extern GLfloat gradient;
 extern GLfloat skyFogColor[];
 
-static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+GLfloat lightAmbient_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightDiffuse_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightSpecular_raudra[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat lightPosition_raudra[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialShininess = 128.0f;
+GLfloat materialAmbient_raudra[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat materialDiffuse_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialSpecular_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialShininess_raudra = 128.0f;
 
 static GLuint texture_ceiling;
 static GLuint texture_floor;
@@ -55,6 +68,11 @@ STATIC_MODEL shelfModel;
 static STATIC_MODEL pencilModel;
 
 static GLuint textures[4];
+
+GLuint texture_raudraMask;
+bool isInitialDisplayScene07_RaudraRas = true;
+
+
 int initializeScene07_Raudra(void)
 {
 #ifdef ENABLE_STATIC_MODELS
@@ -65,7 +83,18 @@ int initializeScene07_Raudra(void)
 	//load models
 	initializeDeskInstancePositions();
 	
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room\\ceiling.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_raudraMask, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE) 
+	{
+		uninitializeScene07_Raudra();
+		LOG("LoadGLTexture FAILED in Raudra for Raudra Mask !!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture Successfull for Raudra Mask = %u!!!\n", texture_raudraMask);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room/ceiling.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
 		return(-1);
@@ -74,7 +103,8 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room\\floor.jpg") == FALSE) {
+
+	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Room/floor.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in floor Raudra!!!\n");
 		return(-1);
@@ -83,7 +113,7 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room\\back.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Room/back.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in backwall Raudra!!!\n");
 		return(-1);
@@ -92,7 +122,7 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room\\sidewall.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Room/sidewall.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for sidewall Raudra!!!\n");
 		return(-1);
@@ -102,7 +132,7 @@ int initializeScene07_Raudra(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_blackboard, TEXTURE_DIR"Roudra\\blackboard.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_blackboard, TEXTURE_DIR"Roudra/blackboard.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for blackboard Raudra!!!\n");
 		return(-1);
@@ -112,7 +142,7 @@ int initializeScene07_Raudra(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_blackboard);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_failed, TEXTURE_DIR"Roudra\\failed.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_failed, TEXTURE_DIR"Roudra/failed.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for Marksheet Raudra!!!\n");
 		return(-1);
@@ -122,7 +152,7 @@ int initializeScene07_Raudra(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_failed);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_door, TEXTURE_DIR"Roudra\\door.jpg") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_door, TEXTURE_DIR"Roudra/door.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED for Door Raudra!!!\n");
 		return(-1);
@@ -143,7 +173,7 @@ int initializeScene07_Raudra(void)
 
 	loadStaticModel("res/models/pencil/Pencil.fbx", &pencilModel);
 	// external debugging varaible
-    tf_t = {2.0f, 0.0f, -3.35f}; // tree pos 
+    tf_t = {1.8f, -0.4f, -1.1f}; // tree pos 
     // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
     // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
 	tf_Speed = 0.05f;
@@ -217,10 +247,20 @@ void initializeShelfInstancePositions(void)
 	loadStaticModelInstanced("res/models/shelf/Shelf.fbx", &shelfModel, NO_OF_INSTANCES_SHELF, tmpPositions);
 }
 
+void setCameraScene07_RaudraRas(void)
+{
+	if (isInitialDisplayScene07_RaudraRas == true)
+	{
+		setCamera(2.00f, 0.00f, 1.45f, 2.00f, 0.00f, -1.75f, 0.0f, 1.0f, 0.0f);
+		isInitialDisplayScene07_RaudraRas = false;
+	}
+}
+
+
 void displayScene07_Raudra(void)
 {
     // set camera
-	setCamera();
+	setCameraScene07_RaudraRas();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -232,6 +272,7 @@ void displayScene07_Raudra(void)
 	mat4 viewMatrix = mat4::identity();
 	
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	displayCamera();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	
@@ -240,14 +281,14 @@ void displayScene07_Raudra(void)
 	sceneIndoorADSUniform = useADSShader();
 
 	glUniform1i(sceneIndoorADSUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneIndoorADSUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneIndoorADSUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneIndoorADSUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneIndoorADSUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneIndoorADSUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneIndoorADSUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneIndoorADSUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneIndoorADSUniform.materialShininessUniform, materialShininess);
+	glUniform4fv(sceneIndoorADSUniform.laUniform, 1, lightAmbient_raudra);
+	glUniform4fv(sceneIndoorADSUniform.ldUniform, 1, lightDiffuse_raudra);
+	glUniform4fv(sceneIndoorADSUniform.lsUniform, 1, lightSpecular_raudra);
+	glUniform4fv(sceneIndoorADSUniform.lightPositionUniform, 1, lightPosition_raudra);
+	glUniform4fv(sceneIndoorADSUniform.kaUniform, 1, materialAmbient_raudra);
+	glUniform4fv(sceneIndoorADSUniform.kdUniform, 1, materialDiffuse_raudra);
+	glUniform4fv(sceneIndoorADSUniform.ksUniform, 1, materialSpecular_raudra);
+	glUniform1f(sceneIndoorADSUniform.materialShininessUniform, materialShininess_raudra);
 
 	glUniform1i(sceneIndoorADSUniform.fogEnableUniform, 0);
 	glUniform1f(sceneIndoorADSUniform.densityUniform, density);
@@ -270,7 +311,29 @@ void displayScene07_Raudra(void)
 	//glEnable(GL_TEXTURE_2D);
 	
 	displayRoom(textures);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
+	// Transformations For Mask Quad
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(2.0f, 0.0f, -2.0f);
+	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_raudraMask);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
+		//displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -279,12 +342,14 @@ void displayScene07_Raudra(void)
 	rotationMatrix_x = mat4::identity();
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
-	translationMatrix = vmath::translate(1.0f, 0.0f, 1.395f);
+	translationMatrix = vmath::translate(1.0f, 0.0f, 1.49f);
 	scaleMatrix = vmath::scale(2.0f, 1.0f, 1.0f);
 	modelMatrix = translationMatrix * scaleMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_blackboard);
+	glBindTexture(GL_TEXTURE_2D, texture_blackboard);	
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -301,7 +366,7 @@ void displayScene07_Raudra(void)
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_door);
+	glBindTexture(GL_TEXTURE_2D, texture_door);	
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -314,19 +379,18 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-
-	translationMatrix = vmath::translate(1.75f, -1.0f, -7.0f);
+	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	translationMatrix = vmath::translate(1.85f, -0.85f, -9.55f);
 	//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	modelMatrix = translationMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModelInstanced(deskModel, NO_OF_INSTANCES_DESK);
-
 	// ------ Shelf Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -354,9 +418,8 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 	drawStaticModelInstanced(shelfModel, NO_OF_INSTANCES_SHELF);
-
+	// LOG("Display drawStaticModelInstanced Finished.....\n ");
 
 	// ------ Pencil Model ------
 	translationMatrix = mat4::identity();
@@ -367,8 +430,8 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
+	translationMatrix = vmath::translate(1.85f, -0.385f, -1.10f);
+	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
 	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
@@ -379,7 +442,7 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
+	
 	drawStaticModel(pencilModel);
 
 	// ------ Failed Texture ------
@@ -391,7 +454,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.8f, -0.54f, -1.1f);
+	translationMatrix = vmath::translate(1.9f, -0.395f, -1.12f);
 	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
 	scaleMatrix = vmath::scale(0.15f, 0.12f, 0.2f);
 	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -405,7 +468,7 @@ void displayScene07_Raudra(void)
 	glBindTexture(GL_TEXTURE_2D, texture_failed);
 	displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
-
+	
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
@@ -416,6 +479,13 @@ void uninitializeScene07_Raudra(void)
 {
     //UNINIT models
 	unloadStaticModel(&deskModel);
+
+	if (texture_raudraMask)
+	{
+		glDeleteTextures(1, &texture_raudraMask);
+		texture_raudraMask = 0;
+	}
+
 	if (texture_ceiling)
 	{
 		glDeleteTextures(1, &texture_ceiling);

@@ -2,7 +2,7 @@
 
 typedef enum {
     SCENE_INVALID = -1,
-    SCENE00_AMC_BANNER,         // Loading AMC banner 
+    SCENE00_AMC_BANNER,
     SCENE01_DOMAIN_LOGO,        // Domain Logo animation
     SCENE02_EARTH_AND_SPACE,    // Earth and Space 
     SCENE03_LUCY,               // Lucy

@@ -9,6 +9,7 @@
 GLuint vao_Cube;
 GLuint vbo_Cube;
 GLuint vao_invertedNormalCube;
+GLuint vao_Cube_TilingTexcoords;
 
 
 // Cubemap
@@ -20,8 +21,10 @@ GLuint vao_pyramid;
 GLuint vbo_pyramid;
 
 // quad
-GLuint vao_quad; 
+GLuint vao_quad;
+GLuint vao_quad_video; 
 GLuint vbo_quad;
+GLuint vbo_quad_video;
 
 // instanced quads
 GLuint vao_quadInstanced; 
@@ -89,6 +92,77 @@ void initializeCube(void)
 	// vao_Cube
 	glGenVertexArrays(1, &vao_Cube);
 	glBindVertexArray(vao_Cube);
+
+	glGenBuffers(1, &vbo_Cube);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_Cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubePNT), cubePNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
+	
+	// Position
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(0));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_POSITION);
+
+
+	// Normal
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_NORMAL);
+
+	// TexCoord
+	glVertexAttribPointer(DOMAIN_ATTRIBUTE_TEXTURE0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(DOMAIN_ATTRIBUTE_TEXTURE0);
+
+	glBindVertexArray(0);
+    
+}
+
+void initializeCubeWithTilingTexcoords(void)
+{
+    const GLfloat cubePNT[] = 
+    {
+                                                //PNT
+        // positions                       //normals                   //texture
+
+        // Top face                          // Top face              // Top face
+        1.0f, 1.0f, -1.0f,               0.0f, 1.0f, 0.0f,            20.0f,20.0f,
+        -1.0f, 1.0f, -1.0f,              0.0f, 1.0f, 0.0f,            0.0f,20.0f,
+        -1.0f, 1.0f, 1.0f,               0.0f, 1.0f, 0.0f,            0.0f,0.0f,
+        1.0f, 1.0f, 1.0f,                0.0f, 1.0f, 0.0f,            20.0f,0.0f,
+
+        // Bottom face                      // Bottom face            // Bottom face
+        1.0f, -1.0f, -1.0f,             0.0f, -1.0f, 0.0f,            20.0f,20.0f,
+        -1.0f, -1.0f, -1.0f,            0.0f, -1.0f, 0.0f,            0.0f,20.0f,
+        -1.0f, -1.0f, 1.0f,             0.0f, -1.0f, 0.0f,            0.0f,0.0f,
+        1.0f, -1.0f, 1.0f,              0.0f, -1.0f, 0.0f,            20.0f,0.0f,
+
+        // Front face                       // Front face             // Front face
+        1.0f, 1.0f, 1.0f,               0.0f, 0.0f, 1.0f,             20.0f,20.0f,
+        -1.0f, 1.0f, 1.0f,              0.0f, 0.0f, 1.0f,             0.0f,20.0f,
+        -1.0f, -1.0f, 1.0f,             0.0f, 0.0f, 1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, 1.0f,              0.0f, 0.0f, 1.0f,             20.0f,0.0f,
+
+        // Back face                       // Back face              // Back face
+        1.0f, 1.0f, -1.0f,              0.0f, 0.0f, -1.0f,             20.0f,20.0f,
+        -1.0f, 1.0f, -1.0f,             0.0f, 0.0f, -1.0f,             0.0f,20.0f,
+        -1.0f, -1.0f, -1.0f,            0.0f, 0.0f, -1.0f,             0.0f,0.0f,
+        1.0f, -1.0f, -1.0f,             0.0f, 0.0f, -1.0f,             20.0f,0.0f,
+
+        // Right face                    	// Right face              // Right face
+        1.0f, 1.0f, -1.0f,             1.0f, 0.0f, 0.0f,               20.0f,20.0f,
+        1.0f, 1.0f, 1.0f,              1.0f, 0.0f, 0.0f,               0.0f,20.0f,
+        1.0f, -1.0f, 1.0f,             1.0f, 0.0f, 0.0f,               0.0f,0.0f,
+        1.0f, -1.0f, -1.0f,            1.0f, 0.0f, 0.0f,               20.0f,0.0f,
+
+        // Left face                      // Left face                // Left face
+        -1.0f, 1.0f, 1.0f,             -1.0f, 0.0f, 0.0f,              20.0f,20.0f,
+        -1.0f, 1.0f, -1.0f,            -1.0f, 0.0f, 0.0f,              0.0f,20.0f,
+        -1.0f, -1.0f, -1.0f,           -1.0f, 0.0f, 0.0f,              0.0f,0.0f,
+        -1.0f, -1.0f, 1.0f,            -1.0f, 0.0f, 0.0f,              20.0f,0.0f
+        
+    };
+
+        // VAO AND VBO RELATED CODE
+	// vao_Cube
+	glGenVertexArrays(1, &vao_Cube_TilingTexcoords);
+	glBindVertexArray(vao_Cube_TilingTexcoords);
 
 	glGenBuffers(1, &vbo_Cube);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_Cube);
@@ -437,7 +511,6 @@ void initializeWaterQuad(void)
 
 }
 
-
 void initializeQuadForVideo(void)
 {
     const GLfloat quadPNT[] = 
@@ -454,11 +527,15 @@ void initializeQuadForVideo(void)
 
         // VAO AND VBO RELATED CODE
 	// vao_Cube
-	glGenVertexArrays(1, &vao_quad);
-	glBindVertexArray(vao_quad);
-
-	glGenBuffers(1, &vbo_quad);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad);
+	
+	LOG("Initialize Mohit Success.  \n");
+	glGenVertexArrays(1, &vao_quad_video);
+	glBindVertexArray(vao_quad_video);
+	LOG("Initialize Mohit UnSuccess.  \n");
+	glGenBuffers(1, &vbo_quad_video);
+	
+	LOG("Initialize vbo_quad_video Success.  \n");
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad_video);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
 	// Position
@@ -559,6 +636,21 @@ void displayCube(void)
 	glBindVertexArray(0);
 }
 
+void displayCubeWithTilingTexcoords(void)
+{
+    // Code
+    glBindVertexArray(vao_Cube_TilingTexcoords);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 4, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 8, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 12, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 16, 4);
+	glDrawArrays(GL_TRIANGLE_FAN, 20, 4);
+
+	glBindVertexArray(0);
+}
+
 void displayRoom(GLuint* roomWalls)
 {
     // Code
@@ -615,6 +707,16 @@ void displayQuad(void)
 {
     // Code
     glBindVertexArray(vao_quad);
+
+	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+	glBindVertexArray(0);
+}
+
+void displayVideoQuad(void)
+{
+    // Code
+    glBindVertexArray(vao_quad_video);
 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
@@ -737,6 +839,21 @@ void uninitializeQuad(void)
 	}
 }
 
+void uninitializeVideoQuad(void)
+{
+    // Code
+    if (vbo_quad_video) {
+
+		glDeleteBuffers(1, &vbo_quad_video);
+		vbo_quad_video = 0;
+	}
+
+	if (vao_quad_video) {
+
+		glDeleteVertexArrays(1, &vao_quad_video);
+		vao_quad_video = 0;
+	}
+}
 void uninitializeInstancedQuads(void)
 {
     if (vbo_texcoords) {

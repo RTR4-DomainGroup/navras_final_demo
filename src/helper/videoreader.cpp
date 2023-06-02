@@ -136,27 +136,28 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
 bool video_reader_close(VideoReaderState* state)
 {
     if (state)
-    {
-        if (state->swsScaleContext)
-        {
-            sws_freeContext(state->swsScaleContext);
-        }
-        if (state->avFormatContext)
-        {
-            avformat_close_input(&state->avFormatContext);
-        }
-        if (state->avFormatContext)
-        {
-            avformat_free_context(state->avFormatContext);
-        }
+    {        
         if (state->avFrame)
         {
-            av_frame_free(&state->avFrame);
+            av_frame_unref(state->avFrame);
+            av_frame_free(&(state->avFrame));
+            state->avFrame = NULL;
         }
-            
-        
-        av_packet_free(&state->avPacket);
-        avcodec_free_context(&state->avCodecContext);
+        if (state->avPacket)
+        {
+            av_packet_free(&(state->avPacket));
+            state->avPacket = NULL;
+        }
+        if (state->avCodecContext)
+        {
+            avcodec_free_context(&(state->avCodecContext));
+            state->avCodecContext = NULL;
+        }
+        if (state->avFormatContext)
+        {
+            avformat_close_input(&(state->avFormatContext));
+            state->avFormatContext = NULL;
+        }
     }
 
     return true;
