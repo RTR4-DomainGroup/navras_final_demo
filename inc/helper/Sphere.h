@@ -2,7 +2,6 @@
 #define __SPHERE_H__
 
 #include <stdlib.h>
-#include <GL/GL.h>
 
 #include "vmath.h"
 #include "common.h"
@@ -190,7 +189,7 @@ public:
         }
         // draw
 
-        glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f, 1.0f, 1.0f));
+        //glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f, 1.0f, 1.0f));
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo_index);
         glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_SHORT, 0);
 

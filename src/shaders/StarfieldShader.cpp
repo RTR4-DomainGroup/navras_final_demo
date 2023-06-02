@@ -4,7 +4,6 @@ GLuint shaderProgramObj_starfield;
 
 struct StarfieldUniform starfieldUniform;
 
-
 int initializeStarfieldShader(void)
 {
     // Code
@@ -76,6 +75,7 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			return(-1);
 			}
 		}
 	}
@@ -96,7 +96,10 @@ int initializeStarfieldShader(void)
 		"{ \n"																			\
 			"if (enable_godRays) \n" \
 			"{" \
-				"FragColor = a_color_out * texture(u_textureSampler, gl_PointCoord); \n"	\
+				"vec4 tex = texture(u_textureSampler, gl_PointCoord); \n" \
+				"if(tex.a<0.1) \n" \
+					"discard; \n" \
+				"FragColor = tex; \n"	\
 			"}" \
 			"else" \
 			"{\n" \
@@ -140,6 +143,7 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			return(-1);
 			}
 		}
 	}
@@ -183,6 +187,8 @@ int initializeStarfieldShader(void)
 				free(log);
 				// ***** Exit The Application Due To Error In Shader ***** //
 				uninitializeStarfieldShader();
+    			return(-1);
+
 			}
 		}
 	}
@@ -226,5 +232,4 @@ void uninitializeStarfieldShader(void)
 		glDeleteProgram(shaderProgramObj_starfield);
 		shaderProgramObj_starfield = 0;
     }
-    
 }

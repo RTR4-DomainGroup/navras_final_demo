@@ -10,7 +10,7 @@ GLuint initializeCloud(void)
 	GLuint CreateNoise3D(void);
 
 	// code
-	initializeQuad();
+	initializeSphere(1.0f, 60.0f, 60.0f);
 
 	// BLENDING
 	//glEnable(GL_BLEND);
@@ -74,7 +74,8 @@ void updateErode(bool offsetIncrement, GLfloat offset[3], float iterator)
 void uninitializeCloud(void)
 {
 	// code
-	uninitializeQuad();
+	uninitializeSphere();
+
 	uninitializeNoiseTexture();
 	/*if (noise_texture)
 	{

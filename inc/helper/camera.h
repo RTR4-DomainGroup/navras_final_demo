@@ -27,7 +27,19 @@ extern GLfloat cameraUpZ;
 
 extern Camera camera;
 
-void setCamera(void);
+//void initializeCamera(Camera*);
+void setCamera(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+
+void displayCamera(void);
+//void setCamera(Camera*);
 
 GLfloat impreciselerp(GLfloat, GLfloat, GLfloat);
 GLfloat preciselerp(GLfloat, GLfloat, GLfloat);
+
+void rotateCamera(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+void resetCamera(void);
+
+
+//void rotateCamera(Camera, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+
+//void uninitializeCamera(Camera*);

@@ -6,8 +6,14 @@
 
 // Open GL headers
 #include <GL/glew.h>
-#include<gl\wglew.h>
 #include <GL/gl.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include "../helper/assimp_glm_helpers.h"
+#include "../debug/debug_transformation.h"
 
 #include "resources.h"
 #include "vmath.h"
@@ -24,6 +30,8 @@ enum {
 	DOMAIN_ATTRIBUTE_TEXTURE0,
 	DOMAIN_ATTRIBUTE_TANGENT,
 	DOMAIN_ATTRIBUTE_BITANGENT,
+	DOMAIN_ATTRIBUTE_BONE_ID,
+	DOMAIN_ATTRIBUTE_BONE_WEIGHT
 };
 
 struct TextureVariables {
@@ -35,12 +43,12 @@ struct TextureVariables {
 	GLuint roughness;
 	GLuint displacement;
 
-	char* albedoPath;
-	char* normalPath;
-	char* aoPath;
-	char* metallicPath;
-	char* roughnessPath;
-	char* displacementPath;
+	const char* albedoPath;
+	const char* normalPath;
+	const char* aoPath;
+	const char* metallicPath;
+	const char* roughnessPath;
+	const char* displacementPath;
 
 };
 
@@ -63,6 +71,7 @@ struct TextureVariables {
 #define TEXTURE_DIR   "res/textures/"
 
 #define AUDIO_DIR     "res/audios/"
+#define PATH_SEPARATOR '/'
 
 #define VK_NUMPAD0 XK_KP_0
 #define VK_NUMPAD1 XK_KP_1
@@ -75,6 +84,7 @@ struct TextureVariables {
 #define VK_NUMPAD8 XK_KP_8
 #define VK_NUMPAD9 XK_KP_9
 
+#define VK_SPACE XK_space     
 #define VK_HOME  XK_Home     
 #define VK_END   XK_End      
 #define VK_LEFT  XK_Left     
@@ -84,6 +94,13 @@ struct TextureVariables {
 #define VK_PRIOR XK_Prior //XK_Page_Up
 #define VK_NEXT  XK_Next // XK_Page_Down
 
+#define WM_KEYDOWN 999
+#define WM_CHAR 998
+
+#define ZeroMemory(a, b)  memset(a, 0, b)
+
+#define TRUE true
+#define FALSE false
 
 #elif _WIN32
 
@@ -92,13 +109,14 @@ struct TextureVariables {
 #include <Windows.h>
 #include <strsafe.h>
 
-#define TEXTURE_DIR "res\\textures\\"
-#define AUDIO_DIR "res\\audios\\"
+#define TEXTURE_DIR "res/textures/"
+#define AUDIO_DIR "res/audios/"
 
-// #define PATH_SEPARATOR '\\'
-#define PATH_SEPARATOR '/'
+
+#define PATH_SEPARATOR '\\'
 
 #else
+// no platform supported like mac
 
 #endif
 
@@ -118,9 +136,9 @@ int log_close();
 char* currentDateTime(char* log_buffer);
 char* vararg2string(const char* format, ...);
 
-// #define LOG(print_buff) \
-// 	log_printf_novararg( __FILE__, __FUNCTION__, __LINE__,  vararg2string(print_buff))
+// #define __FILENAME__ (realpath(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
 
 #define LOG(format, ...) \
-	log_printf(__FILE__, __FUNCTION__, __LINE__, format,  ##__VA_ARGS__)
+	log_printf(__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
 	

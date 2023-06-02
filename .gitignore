@@ -3,9 +3,12 @@ res
 
 *.obj
 *.exe
+*.ilk
+*.pdb
 Log.txt
 
 .vs/
+build/
 .vscode/
+out/
 *.zip
-

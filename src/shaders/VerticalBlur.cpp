@@ -71,6 +71,8 @@ int initialize_verticalBlur()
                 LOG("Vertical Blur vertex Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
+                uninitialize_verticalBlurShader();
+                return(-1);
             }
         }
     }
@@ -142,6 +144,8 @@ int initialize_verticalBlur()
                 LOG("Vertical blur Fragment Shader Compilation Log: %s\n", log);
                 free(log);
                 log = NULL;
+                uninitialize_verticalBlurShader();
+                return(-1);
             }
         }
     }
@@ -180,6 +184,9 @@ int initialize_verticalBlur()
                 glGetProgramInfoLog(shaderProgram_verticalBlur, infoLogLength, &written, log);
                 LOG("Horrizontal Blur Shader Program Link Log: %s\n", log);
                 free(log);
+                log = NULL;
+                uninitialize_verticalBlurShader();
+                return(-1);
             }
         }
     }    

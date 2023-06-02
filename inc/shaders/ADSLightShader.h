@@ -9,9 +9,13 @@ struct ADSUniform
     GLuint viewMatrixUniform;
     GLuint projectionMatrixUniform;
 
-    GLuint textureSamplerUniform;
+    GLuint textureSamplerUniform_diffuse;
 
-    // lIght
+    //normal mapping
+    GLuint viewpositionUniform;
+    GLuint textureSamplerUniform_normal;
+
+    // light
     GLuint laUniform;
     GLuint ldUniform;
     GLuint lsUniform;
@@ -23,6 +27,15 @@ struct ADSUniform
     GLuint materialShininessUniform;
 
     GLuint lightingEnableUniform;
+
+    GLuint lightSpaceMatrixUniform;
+    GLuint shadowMapSamplerUniform;
+    GLuint depthTextureSamplerUniform;
+    GLuint actualSceneUniform;
+    GLuint depthSceneUniform;
+    GLuint depthQuadSceneUniform;
+    GLuint nearUniform;
+    GLuint farUniform;
 
     GLuint densityUniform;
     GLuint gradientUniform;
@@ -36,5 +49,6 @@ struct ADSUniform
 
 int initializeADSShader(void);
 struct ADSUniform useADSShader(void);
+GLuint getADSShaderProgramObject(void);
 void uninitializeADSShader(void);
 
