@@ -100,7 +100,7 @@ void displayStarfield(GLuint texture)
 float updateStarfield(float time)
 {
 	// Code
-	time = time + 0.0025;
+	time = time + 0.0005;
 	return time;
 }
 
