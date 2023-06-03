@@ -349,7 +349,7 @@ int initializeNavras(void) {
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 	//Depth Related Changes
 	glClearDepth(1.0f);
@@ -492,6 +492,11 @@ void updateNavras(void)
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		updateScene_PlaceHolderIndoor();
+	}
+	
+	else if (currentScene == SCENE5_KARUN_RAS)
+	{
+		updateScene5_karun();
 	}
 
 	// camera movement related updates

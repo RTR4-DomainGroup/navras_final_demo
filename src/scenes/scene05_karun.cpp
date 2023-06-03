@@ -39,10 +39,15 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
+GLuint texture_withParent;
+GLuint texture_onlyChild;
 GLuint texture_kidroom_ceiling;
 GLuint texture_kidroom_floor;
 GLuint texture_kidroom_side;
 GLuint texture_kidroom_back;
+
+//blending variables
+GLfloat blendingValue = 0.0f;
 
 //Model variables
 STATIC_MODEL tableModel;
@@ -56,7 +61,14 @@ int initializeScene5_karun(void)
 {
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
+	loadStaticModel("res/models/scene05-karunras/room/KidRoom_34Normals.obj", &tableModel); //done
+	//loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.fbx", &tableModel); //done
+	//loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &tableModel); //done
+	//loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.obj", &tableModel); //done
+	//loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &tableModel); //done
+	//loadStaticModel("res/models/kid-table/kidTable.obj", &tableModel); //done
+	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &tableModel); //change scale
+	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &tableModel);
 
 	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room\\scene5Room\\ceiling.png") == FALSE) {
 		//uninitialize();
@@ -103,6 +115,29 @@ int initializeScene5_karun(void)
 	textures_kidroom[2] = (GLuint)texture_kidroom_back;
 	textures_kidroom[3] = (GLuint)texture_kidroom_side;
 //	glEnable(GL_TEXTURE_2D);
+
+	initializeQuad();
+	if (LoadGLTexture_UsingSOIL(&texture_withParent, TEXTURE_DIR"Scene5-karunRas\\withParents.png") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_withParent FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_withParent Successfull = %u!!!\n", texture_withParent);
+	}
+	if (LoadGLTexture_UsingSOIL(&texture_onlyChild, TEXTURE_DIR"Scene5-karunRas\\onlychild.png") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_onlyChild FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_onlyChild Successfull = %u!!!\n", texture_onlyChild);
+	}
+
 	return 0;
 }
 
@@ -158,7 +193,7 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//glEnable(GL_TEXTURE_2D);
 	
-	displayRoom(textures_kidroom);
+	//displayRoom(textures_kidroom);
 
 
     // ------ Desk Model ------
@@ -170,12 +205,15 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	//translatevalues.x = 1.799999 , translatevalues.y = -1.000000, translatevalues.z = -3.299998 
-	translationMatrix = vmath::translate(1.799999f, -1.000000f, -3.299998f);
+	//translatevalues.x = 1.650000 , translatevalues.y = -1.000000, translatevalues.z = -2.500001  
+	translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
 	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
 	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
-	scaleMatrix = vmath::scale(0.5f, 0.4f, 0.35f);
-	//rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+	//scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
+	//LOG(" scale.x = %f , scale.y = %f, scale.z = %f \n", tf_s.x, tf_s.y, tf_s.z);
+	//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
 	modelMatrix = translationMatrix * scaleMatrix ;
 
@@ -185,11 +223,63 @@ void displayScene5_karun(void)
 
 	drawStaticModel(tableModel);
 
+	//**************QUAD*********************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+ 
+	//translatevalues.x = 2.750000, translatevalues.y = 0.100000, translatevalues.z = 0.799998
+	//translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
+	translationMatrix = vmath::translate(2.750000f, 0.100000f, 0.799998f);
+	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
+	//scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
+	//LOG(" scale.x = %f , scale.y = %f, scale.z = %f \n", tf_s.x, tf_s.y, tf_s.z);
+	//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	
+
+	glUniform1f(sceneIndoorADSUniform.blendingUniform, blendingValue);
+	glUniform1i(sceneIndoorADSUniform.uniform_enable_blending, 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_withParent);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform1, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture_onlyChild);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform2, 1);
+	
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUniform1i(sceneIndoorADSUniform.uniform_enable_blending, 0);
+
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
     #endif 
 }
+
+void updateScene5_karun(void)
+{
+	blendingValue += 0.005f;
+	if (blendingValue >= 1.0f)
+	{
+		blendingValue = 0.0f;
+	}
+}
+
 
 void uninitializeScene5_karun(void)
 {
@@ -214,6 +304,11 @@ void uninitializeScene5_karun(void)
 	{
 		glDeleteTextures(1, &texture_kidroom_side);
 		texture_kidroom_side = 0;
+	}
+	if (texture_withParent)
+	{
+		glDeleteTextures(1, &texture_withParent);
+		texture_withParent = 0;
 	}
 	
 }

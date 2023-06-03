@@ -17,3 +17,4 @@ struct scene5_variables
 int initializeScene5_karun(void);
 void displayScene5_karun(void);
 void uninitializeScene5_karun(void);
+void updateScene5_karun(void);
