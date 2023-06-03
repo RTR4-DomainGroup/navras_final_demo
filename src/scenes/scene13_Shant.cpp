@@ -62,7 +62,8 @@ GLuint texture_Marble_Shant;
 float myScale_erosion = 0.5f;
 float noiseScale_erosion = 2.0f;
 bool offsetIncrement = true;
-GLfloat offset[] = { 0.48f, 0.48f, 0.48f };
+GLfloat offset_ras_1[] = { 0.48f, 0.48f, 0.48f };
+GLfloat offset_ras_2[] = { 0.48f, 0.48f, 0.48f };
 #endif // ENABLE_EROSION
 
 
@@ -256,10 +257,11 @@ void displayScene13_Shant(void)
 	glEnable(GL_TEXTURE_3D);
 	sceneErosionNoiseUniform = useErosionNoiseShader();
 
+	// ras_1
 	translationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -7.0f);
+	translationMatrix = vmath::translate(0.0f, 0.0f, -8.0f);
 
 	modelMatrix = translationMatrix;
 
@@ -278,7 +280,46 @@ void displayScene13_Shant(void)
 	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess);
 
 	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
-	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_1);
+	//glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+	//glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
+	//glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
+	//glUniform1i(sceneErosionNoiseUniform.uniform_enable_godRays, godRays);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_Marble_Shant);
+	glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
+	glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
+
+	displayQuad();
+
+	// ras_2
+	translationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(-3.0f, 0.0f, -8.0f);
+
+	modelMatrix = translationMatrix;
+
+	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient);
+	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse);
+	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular);
+	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition);
+
+	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient);
+	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse);
+	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess);
+
+	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_2);
 	//glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
 	//glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
 	//glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
@@ -305,13 +346,17 @@ void updateScene13_ShantRas(void)
 {
 #ifdef ENABLE_EROSION
 	// update Cloud
-	//updateErosion(offsetIncrement, offset, 0.1f);
+	if (offset_ras_1[0] <= 0.48f)
+		updateErosion(offsetIncrement, offset_ras_1, 0.001f);
 
-	if (offsetIncrement == true)
+	if (offset_ras_1[0] <= 0.33f)
+		updateErosion(offsetIncrement, offset_ras_2, 0.001f);
+
+	/*if (offsetIncrement == true)
 	{
-		offset[0] = offset[0] + 0.1f;
-		offset[1] = offset[1] + 0.1f;
-		offset[2] = offset[2] + 0.1f;
+		offset[0] = offset[0] + 0.001f;
+		offset[1] = offset[1] + 0.001f;
+		offset[2] = offset[2] + 0.001f;
 		if (offset[2] > 0.48f)
 		{
 			offsetIncrement = false;
@@ -319,14 +364,14 @@ void updateScene13_ShantRas(void)
 	}
 	else
 	{
-		offset[0] = offset[0] - 0.1f;
-		offset[1] = offset[1] - 0.1f;
-		offset[2] = offset[2] - 0.1f;
+		offset[0] = offset[0] - 0.001f;
+		offset[1] = offset[1] - 0.001f;
+		offset[2] = offset[2] - 0.001f;
 		if (offset[2] < 0.17f)
 		{
 			offsetIncrement = true;
 		}
-	}
+	}*/
 
 #endif // ENABLE_EROSION
 

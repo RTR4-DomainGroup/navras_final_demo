@@ -28,7 +28,7 @@ GLuint initializeErosion(void)
 void updateErosion(bool offsetIncrement, float offset[3], float iterator)
 {
 	// code
-	if (offsetIncrement == true)
+	/*if (offsetIncrement == true)
 	{
 		offset[0] = offset[0] + iterator;
 		offset[1] = offset[1] + iterator;
@@ -38,14 +38,17 @@ void updateErosion(bool offsetIncrement, float offset[3], float iterator)
 			offsetIncrement = false;
 		}
 	}
-	else
+	else*/
 	{
 		offset[0] = offset[0] - iterator;
 		offset[1] = offset[1] - iterator;
 		offset[2] = offset[2] - iterator;
 		if (offset[2] < 0.17f)
 		{
-			offsetIncrement = true;
+			offset[0] = 0.17f;
+			offset[1] = 0.17f;
+			offset[2] = 0.17f;
+			/*offsetIncrement = true;*/
 		}
 	}
 }

@@ -793,6 +793,10 @@ void updateNavras(void)
 	{
 		updateScene_PlaceHolderIndoor();
 	}
+	else if (currentScene == SCENE13_SHANT_RAS)
+	{
+		updateScene13_ShantRas();
+	}
 
 	// camera movement related updates
 	updateMouseMovement();
