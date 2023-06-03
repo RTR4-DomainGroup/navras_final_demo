@@ -182,11 +182,21 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
+// Camera angle for rotation
+static GLfloat cameraAngle = 85.0f;
+static GLfloat cameraRadius;
+
+static bool isCameraRotation = false;
+static bool continueCameraRotation = true;
+static bool stopCameraRotation = false;
+
 float distance10;
 
 bool isInitialDisplay_Scene10AdbhutRas = true;
 
 GLuint texture_adbhutMask;
+
+mat4 finalViewMatrix = mat4::identity();
 
 int initializeScene10_AdbhutRas(void)
 {
@@ -303,12 +313,16 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	mat4 finalViewMatrix = mat4::identity();
 	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
 
 
+	if (isCameraRotation == false || stopCameraRotation == true)
+		displayCamera();
+	else
+	{
+		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle);
+	}
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	displayCamera();
 	//setCamera(&camera);
 
 
@@ -474,8 +488,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = mat4::identity();
 	viewMatrix = mat4::identity();
 
-	//normal mapping
 
+	//normal mapping
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
 	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
@@ -844,9 +858,9 @@ void displayScene10_Billboarding(int godRays = 1)
 	mat4 rotationMatrix = mat4::identity();
 	
 	mat4 modelMatrix = mat4::identity();
-	mat4 viewMatrix = mat4::identity();
+	//mat4 viewMatrix = mat4::identity();
 	
-	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	//viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
 	// code
 	glEnable(GL_BLEND);
@@ -855,7 +869,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	billboardingEffectUniform = useBillboardingShader();
 
 	// send to shader
-	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	// instanced quads with grass texture
@@ -929,9 +943,47 @@ void updateScene10_AdbhutRas(void)
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
 	speedVector.x = 0.04;
-	update_transformations(NULL, NULL, NULL, &speedVector);
-	cameraEyeZ -= speedVector.x;
-	cameraCenterZ -= speedVector.x;
+	// update_transformations(NULL, NULL, NULL, &speedVector);
+	// cameraEyeZ -= speedVector.x;
+	// cameraCenterZ -= speedVector.x;
+
+	
+#ifdef ENABLE_CAMERA_ANIMATION
+	if (isCameraRotation == false)
+	{
+		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
+		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
+
+		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
+		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
+
+		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
+
+		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
+		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
+
+		if (cameraEyeY > 5.00f)
+		{
+			isCameraRotation = true;
+			cameraRadius = 4.00f;
+			cameraUpY = 1.0f;
+			cameraUpZ = 0.0f;
+		}
+	}
+	else if (isCameraRotation == true && continueCameraRotation == true)
+	{
+		cameraAngle += 0.3f;
+		if (cameraAngle > 360.0f)
+		{
+			continueCameraRotation = false;
+			cameraAngle -= 360.0f;
+		}
+
+		if (cameraAngle > 10.0f && continueCameraRotation == false)
+			stopCameraRotation = true;
+	}
+#endif // ENABLE_CAMERA_ANIMATION
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
