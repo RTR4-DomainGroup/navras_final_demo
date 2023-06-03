@@ -1,7 +1,7 @@
 #pragma once
 #include "../helper/common.h"
 
-struct CloudNoiseUniform
+struct ErosionNoiseUniform
 {
 	GLuint modelMatrixUniform;
 	GLuint viewMatrixUniform;
@@ -19,21 +19,17 @@ struct CloudNoiseUniform
 
 	// extra to be use later for configuration
 	GLuint scaleUniform;
-	GLuint noiseScaleUniform;
+	//GLuint noiseScaleUniform;
 
 	GLuint noiseSamplerUniform;
 	GLuint textureSamplerUniform;
-	GLuint skyColorUniform;
-	GLuint cloudColorUniform;
-	GLuint uniform_enable_godRays;
 
-	// eroded uniforms
+	// uniform specifically for erosion
 	GLuint offsetUniform;
 
-	// cloud or eroded switch
-	GLuint cloudErodeToggleUniform;
+	//GLuint uniform_enable_godRays;
 };
 
-int intializeCloudNoiseShader(void);
-struct CloudNoiseUniform useCloudNoiseShader(void);
-void uninitializeCloudNoiseShader(void);
+int intializeErosionNoiseShader(void);
+struct ErosionNoiseUniform useErosionNoiseShader(void);
+void uninitializeErosionNoiseShader(void);

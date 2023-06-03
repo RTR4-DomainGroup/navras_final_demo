@@ -16,6 +16,9 @@
 #ifdef ENABLE_STARFIELD
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
+#ifdef ENABLE_DYNAMIC_MODELS
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
+#endif // ENABLE_DYNAMIC_MODELS
 
 #include "../../inc/scenes/scene02_EarthAndSpace.h"
 

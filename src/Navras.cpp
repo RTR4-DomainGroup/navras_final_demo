@@ -501,14 +501,14 @@ int initializeNavras(void) {
 	LOG("initializeScene13_Shant() DONE !!!\n");
 
 	// // SCENE14
-	if (initializeParticle() != 0)
-	{
-		LOG("initializeParticle() FAILED !!!\n");
-		return (-8);
-	}
+	// if (initializeParticle() != 0)
+	// {
+	// 	LOG("initializeParticle() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
 	// scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);
+	//scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
@@ -772,6 +772,10 @@ void updateNavras(void)
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		updateScene_PlaceHolderIndoor();
+	}
+	else if (currentScene == SCENE13_SHANT_RAS)
+	{
+		updateScene13_ShantRas();
 	}
 
 	// camera movement related updates
