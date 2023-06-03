@@ -188,7 +188,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
 			}
 
 		}

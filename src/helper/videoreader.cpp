@@ -115,20 +115,22 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
         break;    
     }
 
-    state->swsScaleContext = sws_getContext(state->width, state->height, state->avCodecContext->pix_fmt, 
-                                state->width, state->height, AV_PIX_FMT_RGB0, SWS_BILINEAR, NULL, NULL, NULL);
-    
     if (!state->swsScaleContext)
     {
-        LOG("Failed to get scale context.\n");
-        return false;
+        state->swsScaleContext = sws_getContext(state->width, state->height, state->avCodecContext->pix_fmt, 
+                                    state->width, state->height, AV_PIX_FMT_RGB0, SWS_BILINEAR, NULL, NULL, NULL);
+        
+        if (!state->swsScaleContext)
+        {
+            LOG("Failed to get scale context.\n");
+            return false;
+        }
     }
-    
     uint8_t* dest[4] = { frame_buffer, NULL, NULL, NULL };
     int dest_lineSize[4] = {state->width * 4, 0, 0, 0 };
     sws_scale(state->swsScaleContext, state->avFrame->data, state->avFrame->linesize, 0, state->avFrame->height, dest, dest_lineSize);
     //av_frame_free(&state->avFrame);
-    sws_freeContext(state->swsScaleContext);
+    //sws_freeContext(state->swsScaleContext);
     return true;
 
 }
