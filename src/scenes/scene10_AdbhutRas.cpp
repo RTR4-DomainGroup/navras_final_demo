@@ -19,7 +19,7 @@
 #define BB_Z_MIN (-70.0f)
 #define BB_Z_MAX (90.0f)
 
-#define BB_NO_OF_INSTANCES 1500
+#define BB_NO_OF_INSTANCES 5000
 
 // #define X_INCREMENT 2.5f
 // #define Y_INCREMENT 0.8f
@@ -817,15 +817,15 @@ void displayScene10_Billboarding(int godRays = 1)
 
 	billboardingEffectUniform = useBillboardingShader();
 
-	// instanced quads with grass texture
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-
 	// send to shader
 	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	// instanced quads with grass texture
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
 
 	/// Grass
 	if (texture_grass.height > texture_grass.width)
@@ -837,7 +837,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	translationMatrix = vmath::translate(-3.50f, -3.10f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
