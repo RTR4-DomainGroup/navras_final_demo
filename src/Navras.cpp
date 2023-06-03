@@ -500,15 +500,15 @@ int initializeNavras(void) {
 
 	LOG("initializeScene13_Shant() DONE !!!\n");
 
-	 // SCENE14
-	 if (initializeParticle() != 0)
-	 {
-	 	LOG("initializeParticle() FAILED !!!\n");
-	 	return (-8);
-	 }
+	//  // SCENE14
+	//  if (initializeParticle() != 0)
+	//  {
+	//  	LOG("initializeParticle() FAILED !!!\n");
+	//  	return (-8);
+	//  }
 
-	// scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);
+	// // scenePush(MAX_SCENES);
+	// scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
@@ -764,6 +764,11 @@ void updateNavras(void)
 		updateScene_PlaceHolderOutdoor();
 		updateScene06_BhayanakRas();
 	}
+	else if (currentScene == SCENE07_RAUDRA_RAS)
+	{
+		updateScene07_RaudraRas();
+	}
+
 	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();

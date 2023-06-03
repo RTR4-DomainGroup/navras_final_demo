@@ -479,6 +479,16 @@ void displayScene07_Raudra(void)
     #endif 
 }
 
+void updateScene07_RaudraRas(void)
+{
+	// Code
+#ifdef ENABLE_CAMERA_ANIMATION
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.1f, 0.0001f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -3.10f, 0.0001f);
+#endif // ENABLE_CAMERA_ANIMATION
+
+}
+
 void uninitializeScene07_Raudra(void)
 {
     //UNINIT models

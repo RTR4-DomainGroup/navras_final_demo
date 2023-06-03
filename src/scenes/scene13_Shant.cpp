@@ -112,7 +112,7 @@ int initializeScene13_Shant(void)
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11_new.obj", &shantRoomModel);
 
 	initializeQuad();
 
