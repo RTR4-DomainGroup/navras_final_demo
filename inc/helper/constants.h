@@ -106,9 +106,9 @@ static const char *szAudios[] = {
 //#define ENABLE_DYNAMIC_MODELS
 //#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
-#define ENABLE_MASKSQUADS
+//#define ENABLE_MASKSQUADS
 
-//#define ENABLE_SINGLE_SCENE
+#define ENABLE_SINGLE_SCENE
 //#define ENABLE_AUDIO
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
@@ -124,7 +124,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
 //#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
-#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
+//#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
 

@@ -10,7 +10,6 @@
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
-#include "../../inc/Navras.h"
 
 
 #ifdef ENABLE_WATER
@@ -193,7 +192,8 @@ GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
 
 typedef void(*SET_CAMERA) (void);
 
-typedef void (* DISPLAY_PASSES) (int, bool,bool,bool,int);
+typedef void (* DISPLAY_PASSES) (int,bool,bool,bool,int);
+
 
 int initializeScene_PlaceHolderOutdoor(void)
 {
@@ -358,12 +358,12 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_STARFIELD
 
-	fboEarthAndSpace.textureWidth = FBO_WIDTH;
-	fboEarthAndSpace.textureHeight = FBO_HEIGHT;
+	fboEarthAndSpace.textureWidth = 3840;
+	fboEarthAndSpace.textureHeight = 2160;
 
 	createFBO(&fboEarthAndSpace);
 
-	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
+	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield\\Star.png") != 0)
 	{
 		LOG("initializeStarfield() FAILED!!!\n");
 		return(-1);
@@ -396,7 +396,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_BILLBOARDING
 	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower2.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/grass.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);
@@ -620,7 +620,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		if(SCENE02_EARTH_AND_SPACE == getCurrentScene())
+		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
 		else
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
