@@ -196,13 +196,7 @@ int initializeScene10_AdbhutRas(void)
 	// Code.
 	// initializeCamera(&camera);
 
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
-	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
-	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
-	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
-
+#ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
 	if (LoadGLTexture_UsingSOIL(&texture_adbhutMask, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
@@ -210,13 +204,19 @@ int initializeScene10_AdbhutRas(void)
 		//uninitialize();
 		LOG("LoadGLTexture for texture_adbhutMask FAILED!!!\n");
 		return(-1);
-}
+	}
 	else
 	{
 		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutMask);
 	}
+#endif
 
-
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
+	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
+	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -678,6 +678,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	drawStaticModel(adbhutmanModel);
 
+#ifdef ENABLE_MASKSQUADS
 	// Quad For Mask
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -697,6 +698,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glBindTexture(GL_TEXTURE_2D, texture_adbhutMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
 	displayQuad();
+#endif // ENABLE_MASKSQUADS
 
 	if (actualDepthQuadScene == 0) 
 	{
@@ -957,11 +959,13 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
 
+#ifdef ENABLE_MASKSQUADS
 	if (texture_adbhutMask)
 	{
 		glDeleteTextures(1, &texture_adbhutMask);
 		texture_adbhutMask = 0;
 	}
+#endif // ENABLE_MASKSQUADS
 
 #endif // ENABLE_STATIC_MODELS
 

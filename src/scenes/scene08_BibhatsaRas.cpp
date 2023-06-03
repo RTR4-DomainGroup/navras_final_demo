@@ -107,11 +107,8 @@ int initializeScene08_BibhatsaRas(void)
     // Code.
 	// initializeCamera(&camera);
 
-#ifdef ENABLE_STARFIELD
+#ifdef ENABLE_MASKSQUADS
 	initializeQuad();
-	initializeCube();
-	initializeCubeWithTilingTexcoords();
-
 	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaMask, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
 	{
 		//uninitialize();
@@ -122,6 +119,12 @@ int initializeScene08_BibhatsaRas(void)
 	{
 		LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaMask);
 	}
+#endif
+
+#ifdef ENABLE_STARFIELD
+	initializeQuad();
+	initializeCube();
+	initializeCubeWithTilingTexcoords();
 
 	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road\\road.jpg") == FALSE)
 	{
@@ -324,6 +327,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 			displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
+#ifdef ENABLE_MASKSQUADS
 		// Transformations - Quad For Mask
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
@@ -345,6 +349,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
 			displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
 		// Transformations - To Draw Footpath Left Side
 		translationMatrix = mat4::identity();
@@ -726,6 +731,15 @@ void updateScene08_BibhatsaRas(void)
 
 void uninitializeScene08_BibhatsaRas(void)
 {
+
+#ifdef ENABLE_MASKSQUADS
+	if (texture_bibhatsaMask)
+	{
+		glDeleteTextures(1, &texture_bibhatsaMask);
+		texture_bibhatsaMask = 0;
+	}
+#endif
+
 	if (texture_wall)
 	{
 		glDeleteTextures(1, &texture_wall);
