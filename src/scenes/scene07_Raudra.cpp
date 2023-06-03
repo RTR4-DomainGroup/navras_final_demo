@@ -29,11 +29,11 @@ extern int windowHeight;
 
 #ifdef ENABLE_GAUSSIAN_BLUR
 // Gaussian Blur related variables
-extern struct GaussianBlurEffect gaussianBlurEffect;
-extern struct HorrizontalBlurUniform horizontalBlurUniform;
-extern struct VerticalBlurUniform verticalBlurUniform;
-extern struct FrameBufferDetails fullSceneFbo;
-extern struct FSQuadUniform fsGaussBlurQuadUniform;
+static struct GaussianBlurEffect gaussianBlurEffect;
+static struct HorrizontalBlurUniform horizontalBlurUniform;
+static struct VerticalBlurUniform verticalBlurUniform;
+static struct FrameBufferDetails fullSceneFbo;
+static struct FSQuadUniform fsGaussBlurQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
 
 extern mat4 perspectiveProjectionMatrix;
@@ -63,9 +63,9 @@ static GLuint texture_failed;
 static GLuint texture_door;
 
 //Model variables
-static STATIC_MODEL deskModel;
+STATIC_MODEL deskModelRaudra;
 STATIC_MODEL shelfModel;
-static STATIC_MODEL pencilModel;
+STATIC_MODEL pencilModelRaudra;
 
 static GLuint textures[4];
 
@@ -171,7 +171,7 @@ int initializeScene07_Raudra(void)
 	textures[2] = (GLuint)texture_back;
 	textures[3] = (GLuint)texture_side;
 
-	loadStaticModel("res/models/pencil/Pencil.fbx", &pencilModel);
+	loadStaticModel("res/models/pencil/Pencil.fbx", &pencilModelRaudra);
 	// external debugging varaible
     tf_t = {1.8f, -0.4f, -1.1f}; // tree pos 
     // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
@@ -218,7 +218,7 @@ void initializeDeskInstancePositions(void)
     }
 
 	vector<float> tmpPositions {instance_positions, instance_positions + (NO_OF_INSTANCES_DESK * 3)};
-	loadStaticModelInstanced("res/models/desk/desk.obj", &deskModel, NO_OF_INSTANCES_DESK, tmpPositions);
+	loadStaticModelInstanced("res/models/desk/desk.obj", &deskModelRaudra, NO_OF_INSTANCES_DESK, tmpPositions);
 }
 
 void initializeShelfInstancePositions(void)
@@ -332,7 +332,7 @@ void displayScene07_Raudra(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_raudraMask);
 	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
-		//displayQuad();
+		displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	translationMatrix = mat4::identity();
@@ -390,7 +390,7 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModelInstanced(deskModel, NO_OF_INSTANCES_DESK);
+	drawStaticModelInstanced(deskModelRaudra, NO_OF_INSTANCES_DESK);
 	// ------ Shelf Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -443,7 +443,7 @@ void displayScene07_Raudra(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	
-	drawStaticModel(pencilModel);
+	drawStaticModel(pencilModelRaudra);
 
 	// ------ Failed Texture ------
 	translationMatrix = mat4::identity();
@@ -478,7 +478,7 @@ void displayScene07_Raudra(void)
 void uninitializeScene07_Raudra(void)
 {
     //UNINIT models
-	unloadStaticModel(&deskModel);
+	unloadStaticModel(&deskModelRaudra);
 
 	if (texture_raudraMask)
 	{

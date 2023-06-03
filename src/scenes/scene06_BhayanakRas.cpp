@@ -175,7 +175,7 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0f, 2.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
 }
@@ -322,7 +322,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_bhayanakMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
-	//displayQuad();
+	displayQuad();
 	//glBindTexture(GL_TEXTURE_2D, 0);
 
 	if (actualDepthQuadScene == 0)

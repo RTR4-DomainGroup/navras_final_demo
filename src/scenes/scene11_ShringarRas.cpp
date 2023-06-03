@@ -219,6 +219,8 @@ float distance11;
 
 bool isInitialDisplayScene11_ShringarRas = true;
 
+GLuint texture_shringarMask;
+
 int initializeScene11_ShringarRas(void)
 {
 
@@ -235,6 +237,21 @@ int initializeScene11_ShringarRas(void)
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
+
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shringarMask FAILED!!!\n");
+		return(-1);
+}
+	else
+	{
+		LOG("LoadGLTexture texture_shringarMask Successfull = %u!!!\n", texture_shringarMask);
+	}
+
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -659,7 +676,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	translationMatrix = vmath::translate(0.25f, 0.55f, -17.0f);
 	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, NULL);
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
@@ -685,7 +702,28 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	drawStaticModel(treemodel_11);
 
-	if (actualDepthQuadScene == 0) {
+	// Transformations - Quad For Mask
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(5.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_shringarMask);
+	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	displayQuad();
+
+	if (actualDepthQuadScene == 0) 
+	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -947,6 +985,13 @@ void uninitializeScene11_ShringarRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&treemodel_11);
+
+	if (texture_shringarMask)
+	{
+		glDeleteTextures(1, &texture_shringarMask);
+		texture_shringarMask = 0;
+	}
+
 #endif // ENABLE_STATIC_MODELS
 
 
