@@ -157,11 +157,8 @@ GLuint texture_veerMask;
 int initializeScene09_VeerRas(void)
 {
 	// code
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/scene09_veer/man/tempVeerMan.obj", &rockModel);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 
+#ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
 	if (LoadGLTexture_UsingSOIL(&texture_veerMask, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
@@ -174,7 +171,12 @@ int initializeScene09_VeerRas(void)
 	{
 		LOG("LoadGLTexture texture_veerMask Successfull = %u!!!\n", texture_veerMask);
 	}
+#endif // ENABLE_MASKSQUADS
 
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	loadStaticModel("res/models/scene09_veer/man/tempVeerMan.obj", &rockModel);
+	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -523,6 +525,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 	drawStaticModel(streetLightModel);
 
+#ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -542,7 +545,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glBindTexture(GL_TEXTURE_2D, texture_veerMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
 		displayQuad();
-	//glBindTexture(GL_TEXTURE_2D, 0);
+#endif // ENABLE_MASKSQUADS
 
 
 	if (actualDepthQuadScene == 0)
@@ -675,6 +678,14 @@ void updateScene09_VeerRas(void)
 void uninitializeScene09_VeerRas(void)
 {
 	// Code
+#ifdef ENABLE_MASKSQUADS
+	if (texture_veerMask)
+	{
+		glDeleteTextures(1, &texture_veerMask);
+		texture_veerMask = 0;
+	}
+#endif
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&rockModel);

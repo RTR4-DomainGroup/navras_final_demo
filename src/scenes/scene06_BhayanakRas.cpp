@@ -144,9 +144,8 @@ int initializeScene06_BhayanakRas(void)
     // Code.
 	// initializeCamera(&camera);
 
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+#ifdef ENABLE_MASKSQUADS
+	initializeQuad();
 
 	if (LoadGLTexture_UsingSOIL(&texture_bhayanakMask, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
 	{
@@ -158,6 +157,12 @@ int initializeScene06_BhayanakRas(void)
 	{
 		LOG("LoadGLTexture Successfull Mask Bhayanak Ras = %u!!!\n", texture_bhayanakMask);
 	}
+
+#endif // ENABLE_MASKSQUADS
+
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -303,6 +308,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	drawStaticModel(rockModel);
 
+#ifdef ENABLE_MASKSQUADS
 	// Transformations For Mask Quad
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
@@ -323,7 +329,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glBindTexture(GL_TEXTURE_2D, texture_bhayanakMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
 	displayQuad();
-	//glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
 	if (actualDepthQuadScene == 0)
 	{
@@ -474,11 +480,13 @@ void uninitializeScene06_BhayanakRas(void)
 {
 	// Code
 
+#ifdef ENABLE_MASKSQUADS
 	if (texture_bhayanakMask)
 	{
 		glDeleteTextures(1, &texture_bhayanakMask);
 		texture_bhayanakMask = 0;
 	}
+#endif
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models

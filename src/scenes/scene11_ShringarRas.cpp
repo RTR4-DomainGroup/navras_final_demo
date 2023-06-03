@@ -233,11 +233,7 @@ int initializeScene11_ShringarRas(void)
     // Code.
 	// initializeCamera(&camera);
 
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
-	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
-
+#ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
 	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
@@ -245,13 +241,17 @@ int initializeScene11_ShringarRas(void)
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarMask FAILED!!!\n");
 		return(-1);
-}
+	}
 	else
 	{
 		LOG("LoadGLTexture texture_shringarMask Successfull = %u!!!\n", texture_shringarMask);
 	}
+#endif
 
-
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
+	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -702,6 +702,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	drawStaticModel(treemodel_11);
 
+#ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -721,6 +722,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glBindTexture(GL_TEXTURE_2D, texture_shringarMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
 	displayQuad();
+#endif // ENABLE_MASKQ
 
 	if (actualDepthQuadScene == 0) 
 	{
@@ -982,16 +984,17 @@ void uninitializeScene11_ShringarRas(void)
 	uninitializeTerrain(&terrainTextureVariables);
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_STATIC_MODELS
-	//UNINIT models
-	unloadStaticModel(&treemodel_11);
-
+#ifdef ENABLE_MASKSQUADS
 	if (texture_shringarMask)
 	{
 		glDeleteTextures(1, &texture_shringarMask);
 		texture_shringarMask = 0;
 	}
+#endif
 
+#ifdef ENABLE_STATIC_MODELS
+	//UNINIT models
+	unloadStaticModel(&treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 
