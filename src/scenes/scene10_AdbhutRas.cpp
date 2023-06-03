@@ -10,16 +10,16 @@
 #include "../../inc/shaders/FSQuadShader.h"
 
 // billboarding config
-#define BB_X_MIN (-40.0f)
-#define BB_X_MAX (40.0f)
+#define BB_X_MIN (-50.0f)
+#define BB_X_MAX (50.0f)
 
 // #define BB_Y_MIN (-3.0f)
 // #define BB_Y_MAX (3.0f)
 
-#define BB_Z_MIN (-60.0f)
-#define BB_Z_MAX (80.0f)
+#define BB_Z_MIN (-70.0f)
+#define BB_Z_MAX (90.0f)
 
-#define BB_NO_OF_INSTANCES 1000
+#define BB_NO_OF_INSTANCES 5000
 
 // #define X_INCREMENT 2.5f
 // #define Y_INCREMENT 0.8f
@@ -196,13 +196,7 @@ int initializeScene10_AdbhutRas(void)
 	// Code.
 	// initializeCamera(&camera);
 
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
-	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
-	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
-	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
-
+#ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
 	if (LoadGLTexture_UsingSOIL(&texture_adbhutMask, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
@@ -210,13 +204,19 @@ int initializeScene10_AdbhutRas(void)
 		//uninitialize();
 		LOG("LoadGLTexture for texture_adbhutMask FAILED!!!\n");
 		return(-1);
-}
+	}
 	else
 	{
 		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutMask);
 	}
+#endif
 
-
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
+	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
+	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -479,8 +479,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
 	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
-	// rotationAngles.x = displacementmap_depth;
-	// update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
+	rotationAngles.y = displacementmap_depth;
+	update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	viewMatrix = finalViewMatrix;
@@ -505,7 +505,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	// glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	glUniform1f(terrainUniform.uniform_dmap_depth, rotationAngles.y);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
@@ -677,6 +678,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	drawStaticModel(adbhutmanModel);
 
+#ifdef ENABLE_MASKSQUADS
 	// Quad For Mask
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -696,6 +698,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glBindTexture(GL_TEXTURE_2D, texture_adbhutMask);
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
 	displayQuad();
+#endif // ENABLE_MASKSQUADS
 
 	if (actualDepthQuadScene == 0) 
 	{
@@ -853,15 +856,15 @@ void displayScene10_Billboarding(int godRays = 1)
 
 	billboardingEffectUniform = useBillboardingShader();
 
-	// instanced quads with grass texture
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-
 	// send to shader
 	glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	// instanced quads with grass texture
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
 
 	/// Grass
 	if (texture_grass.height > texture_grass.width)
@@ -873,7 +876,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	translationMatrix = vmath::translate(-3.50f, -3.10f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -899,7 +902,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-5.00f, -3.10f, -20.25f);
+	translationMatrix = vmath::translate(-5.00f, -3.05f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
 	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
@@ -927,8 +930,8 @@ void updateScene10_AdbhutRas(void)
 {
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
-	speedVector.x = 0.02;
-	// update_transformations(NULL, NULL, NULL, &speedVector);
+	speedVector.x = 0.04;
+	update_transformations(NULL, NULL, NULL, &speedVector);
 	cameraEyeZ -= speedVector.x;
 	cameraCenterZ -= speedVector.x;
 
@@ -956,11 +959,13 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
 
+#ifdef ENABLE_MASKSQUADS
 	if (texture_adbhutMask)
 	{
 		glDeleteTextures(1, &texture_adbhutMask);
 		texture_adbhutMask = 0;
 	}
+#endif // ENABLE_MASKSQUADS
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -971,3 +976,5 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
+
+
