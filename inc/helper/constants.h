@@ -72,8 +72,10 @@ static const char *szAudios[] = {
     "Scene10_AdbhutRas_40_seconds.wav",
     "Scene11_ShringarRas_new_40_seconds.wav",
     "Scene12_HasyaRas_40_seconds.wav",
-    "Scene13_ShantRas_40_seconds.wav",
-    "Scene14_Particle_40_seconds.wav",
+    "\0",
+    "\0",
+    /*"Scene13_ShantRas_40_seconds.wav",
+    "Scene14_Particle_40_seconds.wav",*/
     "audio1.wav",
     "audio3.wav",
 };
@@ -114,7 +116,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
-//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
+//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 // #define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
