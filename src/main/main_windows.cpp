@@ -207,8 +207,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 	#ifdef ENABLE_MULTI_THREADING
 	first.join();
 	#endif
+	
+	uninitialize();
 	return((int)msg.wParam);
+}
 
+void QuitApplication(void)
+{
+	PostQuitMessage(0);
 }
 
 // CAllBack Function
@@ -300,6 +306,7 @@ int initialize(void)
 	// variable declarations
 	PIXELFORMATDESCRIPTOR pfd;
 	int iPixelFormatIndex;
+
 	// code
 	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 
@@ -573,6 +580,7 @@ void uninitialize(void)
 		ToggleFullscreen();
 	}
 
+	LOG("Enter\n");
 	uninitializeNavras();
 	if(wglGetCurrentContext() == ghrc)
 	{
