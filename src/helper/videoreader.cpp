@@ -138,7 +138,11 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
 bool video_reader_close(VideoReaderState* state)
 {
     if (state)
-    {        
+    {
+        if (state->swsScaleContext)
+        {
+            sws_freeContext(state->swsScaleContext);
+        }        
         if (state->avFrame)
         {
             av_frame_unref(state->avFrame);
