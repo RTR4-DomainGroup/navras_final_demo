@@ -267,9 +267,9 @@ int initializeScene10_AdbhutRas(void)
 #endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_TERRIAN
-	// displacementmap_depth = 15.0f;
+	displacementmap_depth = 15.0f;
 	// displacementmap_depth = 3.0f;
-	displacementmap_depth = 0.5f;
+	// displacementmap_depth = 0.5f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_disp_2k.jpg";
@@ -491,10 +491,9 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	//normal mapping
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
-	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
-	rotationAngles.y = displacementmap_depth;
-	update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
+	// rotationAngles.y = displacementmap_depth;
+	// update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	viewMatrix = finalViewMatrix;
@@ -519,8 +518,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
 	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
 
-	// glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
-	glUniform1f(terrainUniform.uniform_dmap_depth, rotationAngles.y);
+	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
+	// glUniform1f(terrainUniform.uniform_dmap_depth, rotationAngles.y);
 	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
 	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
 	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
@@ -800,7 +799,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
-		modelMatrix = translationMatrix * scaleMatrix;
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
