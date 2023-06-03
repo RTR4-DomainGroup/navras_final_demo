@@ -189,7 +189,7 @@ int initializeScene09_VeerRas(void)
 
 	//terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/dm_s11_02.jpg";
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene09_Veer/snow_02_diff_8k.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene09_Veer/render.png";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene09_Veer/render1.png";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene09_Veer/snow_02_nor_gl_8k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
