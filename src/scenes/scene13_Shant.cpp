@@ -85,6 +85,19 @@ GLuint texture_shantRas;
 
 GLuint textures_masks[9];
 
+GLfloat offset_ras[9][3] = 
+{
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f },
+	{ 0.48f, 0.48f, 0.48f }
+};
+
 int initializeScene13_Shant(void)
 {
 #ifdef ENABLE_STATIC_MODELS
@@ -339,36 +352,6 @@ void displayScene13_Shant(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
-	
-
-	float angle = 0.0;
-
-	for (int i = 0; i < 9; i++)
-	{
-		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		
-		float xPos = cos(angle * M_PI / 180.0);
-		float yPos = sin(angle * M_PI / 180.0);
-
-		translationMatrix = vmath::translate(xPos - 0.87f, yPos, -5.0f);
-		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textures_masks[i]);
-		glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		angle = angle + 22.5f;
-	}
 
 	// ################################### ROOM ###################################  
 	translationMatrix = mat4::identity();
@@ -394,96 +377,155 @@ void displayScene13_Shant(void)
 	// ################################### ROOM ###################################  
 
 	glUseProgram(0);
-	//glDisable(GL_TEXTURE_2D);
-    #endif 
+
+	glDisable(GL_TEXTURE_3D);
+	glDisable(GL_TEXTURE_2D);
+    
+#endif 
 
 #ifdef ENABLE_EROSION
 
+	//glEnable(GL_TEXTURE_3D);
+	//sceneErosionNoiseUniform = useErosionNoiseShader();
+
+	//// ras_1
+	//translationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+
+	//translationMatrix = vmath::translate(0.0f, 0.0f, -8.0f);
+
+	//modelMatrix = translationMatrix;
+
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas);
+	//glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas);
+
+	//glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas);
+	//glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas);
+
+	//glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_1);
+	////glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+	////glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
+	////glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
+	////glUniform1i(sceneErosionNoiseUniform.uniform_enable_godRays, godRays);
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture_Marble_Shant);
+	//glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
+
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
+	//glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
+
+	//displayQuad();
+
+	//// ras_2
+	//translationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+
+	//translationMatrix = vmath::translate(-3.0f, 0.0f, -8.0f);
+
+	//modelMatrix = translationMatrix;
+
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas);
+	//glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas);
+
+	//glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas);
+	//glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas);
+	//glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas);
+
+	//glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_2);
+	////glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+	////glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
+	////glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
+	////glUniform1i(sceneErosionNoiseUniform.uniform_enable_godRays, godRays);
+
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, texture_Marble_Shant);
+	//glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
+
+	//glActiveTexture(GL_TEXTURE1);
+	//glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
+	//glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
+
+	//displayQuad();
+
+	//// Unuse the shaderProgramObject
+	//glUseProgram(0);
+
+	float angle = 0.0;
+
 	glEnable(GL_TEXTURE_3D);
+	glEnable(GL_TEXTURE_2D);
 	sceneErosionNoiseUniform = useErosionNoiseShader();
 
-	// ras_1
-	translationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
+	for (int i = 0; i < 9; i++)
+	{
+		translationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -8.0f);
+		float xPos = 1.5f * cos(angle * M_PI / 180.0);
+		float yPos = 1.5f * sin(angle * M_PI / 180.0);
 
-	modelMatrix = translationMatrix;
+		translationMatrix = vmath::translate(xPos - 0.87f, yPos - 0.5f, -5.0f);
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		//glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas);
-	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas);
-	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas);
+		glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas);
 
-	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
-	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_1);
-	//glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
-	//glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
-	//glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
-	//glUniform1i(sceneErosionNoiseUniform.uniform_enable_godRays, godRays);
+		glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas);
+		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_Marble_Shant);
-	glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras[i]);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
-	glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textures_masks[i]);
+		glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
 
-	displayQuad();
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
+		glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
 
-	// ras_2
-	translationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
 
-	translationMatrix = vmath::translate(-3.0f, 0.0f, -8.0f);
-
-	modelMatrix = translationMatrix;
-
-	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas);
-	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas);
-
-	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas);
-	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas);
-	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas);
-
-	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
-	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_2);
-	//glUniform3fv(sceneErosionNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
-	//glUniform3fv(sceneErosionNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
-	//glUniform1f(sceneErosionNoiseUniform.noiseScaleUniform, noiseScale_erosion);
-	//glUniform1i(sceneErosionNoiseUniform.uniform_enable_godRays, godRays);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_Marble_Shant);
-	glUniform1i(sceneErosionNoiseUniform.textureSamplerUniform, 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
-	glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
-
-	displayQuad();
-
-	// Unuse the shaderProgramObject
+		angle = angle + 22.5f;
+	}
 	glUseProgram(0);
-
 	glDisable(GL_TEXTURE_3D);
+
 #endif // ENABLE_EROSION
 }
 
@@ -491,32 +533,18 @@ void updateScene13_ShantRas(void)
 {
 #ifdef ENABLE_EROSION
 	// update Cloud
-	if (offset_ras_1[0] <= 0.48f)
-		updateErosion(offsetIncrement, offset_ras_1, 0.001f);
+	//if (offset_ras_1[0] <= 0.48f)
+	//	updateErosion(offsetIncrement, offset_ras_1, 0.001f);
 
-	if (offset_ras_1[0] <= 0.33f)
-		updateErosion(offsetIncrement, offset_ras_2, 0.001f);
+	//if (offset_ras_1[0] <= 0.33f)
+	//	updateErosion(offsetIncrement, offset_ras_2, 0.001f);
 
-	/*if (offsetIncrement == true)
+	updateErosion(offsetIncrement, offset_ras[0], 0.001f);
+	for (int i = 0; i < 9; i++)
 	{
-		offset[0] = offset[0] + 0.001f;
-		offset[1] = offset[1] + 0.001f;
-		offset[2] = offset[2] + 0.001f;
-		if (offset[2] > 0.48f)
-		{
-			offsetIncrement = false;
-		}
+		if (offset_ras[i][0] <= 0.33f)
+			updateErosion(offsetIncrement, offset_ras[i + 1], 0.001f);
 	}
-	else
-	{
-		offset[0] = offset[0] - 0.001f;
-		offset[1] = offset[1] - 0.001f;
-		offset[2] = offset[2] - 0.001f;
-		if (offset[2] < 0.17f)
-		{
-			offsetIncrement = true;
-		}
-	}*/
 
 #endif // ENABLE_EROSION
 
