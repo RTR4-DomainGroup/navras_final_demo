@@ -332,7 +332,7 @@ void displayScene07_Raudra(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_raudraMask);
 	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
-		//displayQuad();
+		displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	translationMatrix = mat4::identity();

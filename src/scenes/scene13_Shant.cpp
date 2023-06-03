@@ -312,7 +312,7 @@ void displayScene13_Shant(void)
 		float xPos = cos(angle * M_PI / 180.0);
 		float yPos = sin(angle * M_PI / 180.0);
 
-		translationMatrix = vmath::translate(xPos, yPos, -5.0f);
+		translationMatrix = vmath::translate(xPos - 0.87f, yPos, -5.0f);
 		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -325,6 +325,7 @@ void displayScene13_Shant(void)
 		glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
+
 		angle = angle + 22.5f;
 	}
 
