@@ -10,6 +10,8 @@
 #include "../../inc/scenes/scene13_Shant.h"
 #include "../../inc/debug/debug_transformation.h"
 
+#define _USE_MATH_DEFINES 1
+#include <math.h>		// for PI
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
@@ -27,15 +29,15 @@ extern GLfloat density;
 extern GLfloat gradient;
 extern GLfloat skyFogColor[];
 
-static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+static GLfloat lightAmbient_shantRas[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse_shantRas[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular_shantRas[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition_shantRas[] = { 10.0f, 10.0f, 0.0f, 1.0f };
 
-static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialShininess = 128.0f;
+static GLfloat materialAmbient_shantRas[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialDiffuse_shantRas[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular_shantRas[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess_shantRas = 128.0f;
 
 static GLuint texture_ceiling;
 static GLuint texture_floor;
@@ -54,6 +56,19 @@ static STATIC_MODEL shantRoomModel;
 
 bool isInitialDisplayScene13_ShantRas = true;
 
+// Mask Textures
+GLuint texture_karunRas;
+GLuint texture_bhayanakRas;
+GLuint texture_raudraRas;
+GLuint texture_bibhatsaRas;
+GLuint texture_veerRas;
+GLuint texture_adbhutRas;
+GLuint texture_shringarRas;
+GLuint texture_hasyaRas;
+GLuint texture_shantRas;
+
+GLuint textures_masks[9];
+
 int initializeScene13_Shant(void)
 {
 #ifdef ENABLE_STATIC_MODELS
@@ -61,7 +76,118 @@ int initializeScene13_Shant(void)
 
 	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
 
-//	//load models
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_bhayanakRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_bhayanakRas Successfull = %u!!!\n", texture_bhayanakRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks\\KarunMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_karunRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_karunRas Successfull = %u!!!\n", texture_karunRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_raudraRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_raudraRas Successfull = %u!!!\n", texture_raudraRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_veerRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_veerRas Successfull = %u!!!\n", texture_veerRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_adbhutRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks\\HasyaMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_hasyaRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_hasyaRas Successfull = %u!!!\n", texture_hasyaRas);
+	}
+
+	if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks\\ShantMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shantRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_shantRas Successfull = %u!!!\n", texture_shantRas);
+	}
+
+	textures_masks[0] = (GLuint)texture_karunRas;
+	textures_masks[1] = (GLuint)texture_bhayanakRas;
+	textures_masks[2] = (GLuint)texture_raudraRas;
+	textures_masks[3] = (GLuint)texture_bibhatsaRas;
+	textures_masks[4] = (GLuint)texture_veerRas;
+	textures_masks[5] = (GLuint)texture_adbhutRas;
+	textures_masks[6] = (GLuint)texture_shringarRas;
+	textures_masks[7] = (GLuint)texture_hasyaRas;
+	textures_masks[8] = (GLuint)texture_shantRas;
+
+	//	//load models
 //	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
 //		uninitializeScene13_Shant();
 //		LOG("LoadGLTexture FAILED in Shanta!!!\n");
@@ -115,8 +241,6 @@ int initializeScene13_Shant(void)
 	tf_Speed = 0.05f;
 //	glEnable(GL_TEXTURE_2D);
 
-
-
 	return 0;
 }
 
@@ -156,14 +280,14 @@ void displayScene13_Shant(void)
 	sceneIndoorADSUniform = useADSShader();
 
 	glUniform1i(sceneIndoorADSUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneIndoorADSUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneIndoorADSUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneIndoorADSUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneIndoorADSUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneIndoorADSUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneIndoorADSUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneIndoorADSUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneIndoorADSUniform.materialShininessUniform, materialShininess);
+	glUniform4fv(sceneIndoorADSUniform.laUniform, 1, lightAmbient_shantRas);
+	glUniform4fv(sceneIndoorADSUniform.ldUniform, 1, lightDiffuse_shantRas);
+	glUniform4fv(sceneIndoorADSUniform.lsUniform, 1, lightSpecular_shantRas);
+	glUniform4fv(sceneIndoorADSUniform.lightPositionUniform, 1, lightPosition_shantRas);
+	glUniform4fv(sceneIndoorADSUniform.kaUniform, 1, materialAmbient_shantRas);
+	glUniform4fv(sceneIndoorADSUniform.kdUniform, 1, materialDiffuse_shantRas);
+	glUniform4fv(sceneIndoorADSUniform.ksUniform, 1, materialSpecular_shantRas);
+	glUniform1f(sceneIndoorADSUniform.materialShininessUniform, materialShininess_shantRas);
 
 	glUniform1i(sceneIndoorADSUniform.fogEnableUniform, 0);
 	glUniform1f(sceneIndoorADSUniform.densityUniform, density);
@@ -176,18 +300,35 @@ void displayScene13_Shant(void)
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 	
 
-	//translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
-	//scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
-	//modelMatrix = translationMatrix * scaleMatrix;
+	float angle = 0.0;
 
-	//glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	//glEnable(GL_TEXTURE_2D);
-	
-	//displayRoom(textures);
+	for (int i = 0; i < 9; i++)
+	{
+		translationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		
+		float xPos = cos(angle * M_PI / 180.0);
+		float yPos = sin(angle * M_PI / 180.0);
 
-	// ################################### BUILDING ONE ###################################  
+		translationMatrix = vmath::translate(xPos, yPos, -5.0f);
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textures_masks[i]);
+		glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		angle = angle + 22.5f;
+	}
+
+	// ################################### ROOM ###################################  
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -208,8 +349,7 @@ void displayScene13_Shant(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(shantRoomModel);
-	// ################################### BUILDING ONE ###################################  
-
+	// ################################### ROOM ###################################  
 
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
@@ -221,6 +361,53 @@ void uninitializeScene13_Shant(void)
     //UNINIT models
 	unloadStaticModel(&shantRoomModel);
 	//unloadStaticModel(&deskModel);
+
+	if (texture_shantRas)
+	{
+		glDeleteTextures(1, &texture_shantRas);
+		texture_shantRas = 0;
+	}
+	if (texture_hasyaRas)
+	{
+		glDeleteTextures(1, &texture_hasyaRas);
+		texture_hasyaRas = 0;
+	}
+	if (texture_shringarRas)
+	{
+		glDeleteTextures(1, &texture_shringarRas);
+		texture_shringarRas = 0;
+	}
+	if (texture_adbhutRas)
+	{
+		glDeleteTextures(1, &texture_adbhutRas);
+		texture_adbhutRas = 0;
+	}
+	if (texture_veerRas)
+	{
+		glDeleteTextures(1, &texture_veerRas);
+		texture_veerRas = 0;
+	}
+	if (texture_bibhatsaRas)
+	{
+		glDeleteTextures(1, &texture_bibhatsaRas);
+		texture_bibhatsaRas = 0;
+	}
+	if (texture_raudraRas)
+	{
+		glDeleteTextures(1, &texture_raudraRas);
+		texture_raudraRas = 0;
+	}
+	if (texture_bhayanakRas)
+	{
+		glDeleteTextures(1, &texture_bhayanakRas);
+		texture_bhayanakRas = 0;
+	}
+	if (texture_karunRas)
+	{
+		glDeleteTextures(1, &texture_karunRas);
+		texture_karunRas = 0;
+	}
+
 	if (texture_ceiling)
 	{
 		glDeleteTextures(1, &texture_ceiling);
