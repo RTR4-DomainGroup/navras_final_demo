@@ -70,7 +70,6 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
-
 extern TEXTURE texture_grass;
 extern TEXTURE texture_flower;
 
@@ -187,6 +186,8 @@ float distance10;
 
 bool isInitialDisplay_Scene10AdbhutRas = true;
 
+GLuint texture_adbhutMask;
+
 int initializeScene10_AdbhutRas(void)
 {
 	// Function Declarations
@@ -201,6 +202,21 @@ int initializeScene10_AdbhutRas(void)
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
 	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
+
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_adbhutMask, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_adbhutMask FAILED!!!\n");
+		return(-1);
+}
+	else
+	{
+		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutMask);
+	}
+
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -662,7 +678,28 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	drawStaticModel(adbhutmanModel);
 
-	if (actualDepthQuadScene == 0) {
+	// Quad For Mask
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	translationMatrix = vmath::translate(2.0f, 1.0f, -3.0f);
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(72.45f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_adbhutMask);
+	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	displayQuad();
+
+	if (actualDepthQuadScene == 0) 
+	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -919,6 +956,13 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
+
+	if (texture_adbhutMask)
+	{
+		glDeleteTextures(1, &texture_adbhutMask);
+		texture_adbhutMask = 0;
+	}
+
 #endif // ENABLE_STATIC_MODELS
 
 
