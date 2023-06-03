@@ -75,15 +75,8 @@ bool isInitialDisplayScene07_RaudraRas = true;
 
 int initializeScene07_Raudra(void)
 {
-#ifdef ENABLE_STATIC_MODELS
-	// function declarations
-	void initializeDeskInstancePositions(void);
-	void initializeShelfInstancePositions(void);
-
-	//load models
-	initializeDeskInstancePositions();
-	
-	if (LoadGLTexture_UsingSOIL(&texture_raudraMask, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE) 
+//#ifdef ENABLE_MASKSQUADS
+	if (LoadGLTexture_UsingSOIL(&texture_raudraMask, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE)
 	{
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in Raudra for Raudra Mask !!!\n");
@@ -93,7 +86,16 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture Successfull for Raudra Mask = %u!!!\n", texture_raudraMask);
 	}
+//#endif // ENABLE_MASKSQUADS
 
+#ifdef ENABLE_STATIC_MODELS
+	// function declarations
+	void initializeDeskInstancePositions(void);
+	void initializeShelfInstancePositions(void);
+
+	//load models
+	initializeDeskInstancePositions();
+	
 	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room/ceiling.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
@@ -313,6 +315,7 @@ void displayScene07_Raudra(void)
 	displayRoom(textures);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+#ifdef ENABLE_MASKSQUADS
 	// Transformations For Mask Quad
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
@@ -334,6 +337,7 @@ void displayScene07_Raudra(void)
 	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
 		displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -480,11 +484,13 @@ void uninitializeScene07_Raudra(void)
     //UNINIT models
 	unloadStaticModel(&deskModelRaudra);
 
+#ifdef ENABLE_MASKSQUADS
 	if (texture_raudraMask)
 	{
 		glDeleteTextures(1, &texture_raudraMask);
 		texture_raudraMask = 0;
 	}
+#endif
 
 	if (texture_ceiling)
 	{
