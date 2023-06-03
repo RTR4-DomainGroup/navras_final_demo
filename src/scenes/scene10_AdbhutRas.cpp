@@ -649,7 +649,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix_z = mat4::identity();
 
 	// ------ adbhutmanModel Model ------
-	translationMatrix = vmath::translate( -4.90f, -3.5f, -14.88f);
+	translationMatrix = vmath::translate( -4.60f, -3.5f, -14.88f);
 	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 	rotationMatrix = vmath::rotate(72.45f, 0.0f, 1.0f, 0.0f);
 
@@ -866,7 +866,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	translationMatrix = vmath::translate(-5.00f, -3.10f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	// send to shader
@@ -928,3 +928,5 @@ void uninitializeScene10_AdbhutRas(void)
 	//uninitializeCamera(&camera);
 
 }
+
+
