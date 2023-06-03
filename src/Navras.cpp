@@ -346,6 +346,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
+
 	// SCENE02
 	if (
 		SCENE02_EARTH_AND_SPACE == currentScene &&
@@ -661,7 +662,7 @@ void displayNavras(void)
 	now = time(NULL);
 #endif // !ENABLE_SINGLE_SCENE
 
-	// Call Scenes Display Here
+	// Call Scenes Display Here	
 	if(currentScene == SCENE00_AMC_BANNER)
 	{
 		displayFont();
