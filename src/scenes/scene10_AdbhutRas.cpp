@@ -863,7 +863,7 @@ void displayScene10_Billboarding(int godRays = 1)
 	else
 		scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-	translationMatrix = vmath::translate(-5.00f, -3.10f, -20.25f);
+	translationMatrix = vmath::translate(-5.00f, -3.05f, -20.25f);
 	scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
 	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
