@@ -282,11 +282,11 @@ int initializeNavras(void) {
 	// Here starts OpenGL code
     // GLEW initialization
     // codes related to PP requires Core profile
-    if(glewInit() != GLEW_OK)
-    {
-        LOG("Error: glewInit() failed\n");
-        return (-5);
-    }
+    // if(glewInit() != GLEW_OK)
+    // {
+    //     LOG("Error: glewInit() failed\n");
+    //     return (-5);
+    // }
 
 	// // Print OpenGLInfo
 	// printGLInfo();
@@ -512,7 +512,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE12
+	// // SCENE12
 	if (initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene12_Hasya() FAILED !!!\n");
@@ -526,17 +526,19 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE14
-	if (initializeParticle() != 0)
-	{
-		LOG("initializeParticle() FAILED !!!\n");
-		return (-8);
-	}
+	LOG("initializeScene13_Shant() DONE !!!\n");
+
+	// // SCENE14
+	// if (initializeParticle() != 0)
+	// {
+	// 	LOG("initializeParticle() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
 	scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);
+	//scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	//scenePush(SCENE12_HASYA_RAS);
+	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
