@@ -5,6 +5,7 @@
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
+#include "../../inc/shaders/ErosionNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
 #include "../inc/shaders/WaterShader.h"
@@ -19,7 +20,7 @@ bool initAllShaders(void)
 {
     // Variable Declarations
 
-    // Code
+    // // Code
     if (initializeFSQuadShader() != 0)
     {
         return false;
@@ -45,10 +46,10 @@ bool initAllShaders(void)
         return false;
     }
     
-    if(initializeFSQuadShader() != 0)
-    {
-        return false;
-    }
+    // if(initializeFSQuadShader() != 0)
+    // {
+    //     return false;
+    // }
 
     if (initializeGodraysShader() != 0)
     {
@@ -61,6 +62,11 @@ bool initAllShaders(void)
     }
 
     if(intializeCloudNoiseShader() != 0)
+    {
+        return false;
+    }
+
+    if(intializeErosionNoiseShader() != 0)
     {
         return false;
     }

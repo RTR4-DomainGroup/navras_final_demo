@@ -29,16 +29,17 @@ extern float cameraCounterUpDownWays;
 void debug_tranformation(void)
 {
 	// local trnasformation
-	static TRANFORM l_tsl; // local translation
-	static TRANFORM l_scl; // local scale
-	static TRANFORM l_rot; // local rotation
-	static GLfloat ltf_R, ltf_Speed;
+	static TRANFORM ltf_t; // local translation
+	static TRANFORM ltf_s; // local scale
+	static TRANFORM ltf_r; // local rotation
+	static GLfloat ltf_Speed;
 	static GLboolean firstCall = GL_TRUE;
 	if(firstCall)
 	{
-		l_tsl = tf_t;  
-		l_scl = tf_s;  
-		l_rot = tf_r; 
+		ltf_t = tf_t;  
+		ltf_s = tf_s;  
+		ltf_r = tf_r; 
+		ltf_Speed = tf_Speed;
 		firstCall = GL_FALSE;
 	}
 
@@ -49,24 +50,31 @@ void debug_tranformation(void)
 
 		switch(charPressed)
 		{
-		case 't':
+		case 't': // translate
+			translateMode = scaleMode = rotateMode = cameraMode = false;
 			translateMode = translateMode ? false : true;
+			LOG("switched to translation mode\n");
 			break;
-		case 's':
+		case 's': // scale or cameraZ 
 			if(cameraMode)
 			{
-				cameraEyeZ = cameraEyeZ + 0.25f;
-				cameraCenterZ = cameraCenterZ + 0.25f;
+				cameraEyeZ = cameraEyeZ + tf_Speed;
+				cameraCenterZ = cameraCenterZ + tf_Speed;
 			}
 			else {
+				LOG("switched to scale mode\n");
+				translateMode = scaleMode = rotateMode = cameraMode = false;
 				scaleMode = scaleMode ? false : true;
 			}
 			break;
-		case 'r':
+		case 'r': // rotate or camera reset
 			if(cameraMode)
 				resetCamera();
-			else	
+			else	{
+				LOG("switched to rotation mode\n");
+				translateMode = scaleMode = rotateMode = cameraMode = false;
 				rotateMode = rotateMode ? false : true;
+			}
 			break;
 		case 'x':
 		case 'X':
@@ -76,6 +84,7 @@ void debug_tranformation(void)
 				else
 					tf_t.x -= tf_Speed;
 				LOG("X translation changed to %.02ff\n", tf_t.x);
+				LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			}
 			if(scaleMode) {
 				if('x' == charPressed)
@@ -83,6 +92,7 @@ void debug_tranformation(void)
 				else
 					tf_s.x -= tf_Speed;
 				LOG("X scale changed to %.02ff\n", tf_s.x);
+				LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 			}
 			if(rotateMode) {
 				if('x' == charPressed)
@@ -90,6 +100,7 @@ void debug_tranformation(void)
 				else
 					tf_r.x -= tf_Speed;
 				LOG("X rotation changed to %.02ff\n", tf_r.x);
+				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'y':
@@ -100,6 +111,7 @@ void debug_tranformation(void)
 				else
 					tf_t.y -= tf_Speed;
 				LOG("Y translation changed to %.02ff\n", tf_t.y);
+				LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			}
 			if(scaleMode) {
 				if('y' == charPressed)
@@ -107,13 +119,15 @@ void debug_tranformation(void)
 				else
 					tf_s.y -= tf_Speed;
 				LOG("Y transform changed to %.02ff\n", tf_s.y);
+				LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 			}
 			if(rotateMode) {
 				if('y' == charPressed)
-					tf_r.y = 1.0;
+					tf_r.y += tf_Speed;
 				else
-					tf_r.y = 0.0f;
+					tf_r.y -= tf_Speed;
 				LOG("Y rotation changed to %.02ff\n", tf_r.y);
+				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'z':
@@ -124,6 +138,7 @@ void debug_tranformation(void)
 				else
 					tf_t.z -= tf_Speed;
 				LOG("Z translation changed to %.02ff\n", tf_t.z);
+				LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			}
 			if(scaleMode) {
 				if('z' == charPressed)
@@ -131,52 +146,57 @@ void debug_tranformation(void)
 				else
 					tf_s.z -= tf_Speed;
 				LOG("Z scale changed to %.02ff\n", tf_s.z);
+				LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 			}
 			if(rotateMode) {
 				if('z' == charPressed)
-					tf_r.z = 1.0;
+					tf_r.z += tf_Speed;
 				else
-					tf_r.z = 0.0f;
+					tf_r.z -= tf_Speed;
 				LOG("Z rotation changed to %.02ff\n", tf_r.z);
+				LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			}
 			break;
 		case 'p':
 			LOG("\n");
-			LOG("lookAt([%f, %f, %f], [%f, %f, %f] [%f, %f, %f])\n", 
+			LOG("lookAt(%.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff)\n", 
 				cameraEyeX, cameraEyeY, cameraEyeZ, 
 				cameraCenterX, cameraCenterY, cameraCenterZ, 
 				cameraUpX, cameraUpY, cameraUpZ);
 			LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 			LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
-			LOG("Rotation is (%.02ff) %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
+			LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
 			break;
 		case '+':
-			tf_Speed += 0.04f;
-			if(tf_Speed < 0)
-				tf_Speed = 0.0f;
+			tf_Speed += 0.02f;
+			LOG("TF speed changed to %.02ff\n", tf_Speed);
 			break;
 		case '-':
-			tf_Speed -= 0.02f;
+			tf_Speed -= 0.01f;
 			if(tf_Speed < 0)
 				tf_Speed = 0.0f;
+			LOG("TF speed changed to %.02ff\n", tf_Speed);
 			break;
 		// case 'c':
 		// 	tf_t.x = tf_t.y = tf_t.z = tf_R = tf_Speed = 0.0f;
 		// 	break;
-		case 'C':
-			tf_t = l_tsl;  
-			tf_s = l_scl;  
-			tf_r = l_rot; 
+		case 'T':
+			tf_t = ltf_t;  
+			tf_s = ltf_s;  
+			tf_r = ltf_r; 
+			tf_Speed = ltf_Speed;
 			break;
 		case 'c':
+			LOG("switched to camera mode\n");
+			// translateMode = scaleMode = rotateMode = cameraMode = false;
 			cameraMode = cameraMode ? false : true; 
 			break;
 		case 'W':
 		case 'w':
 			if(cameraMode)
 			{
-				cameraEyeZ = cameraEyeZ - 0.25f;
-				cameraCenterZ = cameraCenterZ - 0.25f;
+				cameraEyeZ = cameraEyeZ - tf_Speed;
+				cameraCenterZ = cameraCenterZ - tf_Speed;
 			}
 			break;
 
@@ -184,32 +204,32 @@ void debug_tranformation(void)
 		case 'a':
 			if(cameraMode)
 			{
-				cameraEyeX = cameraEyeX - 0.25f;
-				cameraCenterX = cameraCenterX - 0.25f;
+				cameraEyeX = cameraEyeX - tf_Speed;
+				cameraCenterX = cameraCenterX - tf_Speed;
 			}
 			break;
 		case 'D':
 		case 'd':
 			if(cameraMode)
 			{
-				cameraEyeX = cameraEyeX + 0.25f;
-				cameraCenterX = cameraCenterX + 0.25f;
+				cameraEyeX = cameraEyeX + tf_Speed;
+				cameraCenterX = cameraCenterX + tf_Speed;
 			}
 			break;
 		case 'Q':
 		case 'q':
 			if(cameraMode)
 			{
-				cameraEyeY = cameraEyeY - 0.25f;
-				cameraCenterY = cameraCenterY - 0.25f;
+				cameraEyeY = cameraEyeY - tf_Speed;
+				cameraCenterY = cameraCenterY - tf_Speed;
 			}
 			break;
 		case 'E':
 		case 'e':
 			if(cameraMode)
 			{
-				cameraEyeY = cameraEyeY + 0.25f;
-				cameraCenterY = cameraCenterY + 0.25f;
+				cameraEyeY = cameraEyeY + tf_Speed;
+				cameraCenterY = cameraCenterY + tf_Speed;
 			}
 			break;
 		default:
@@ -217,14 +237,6 @@ void debug_tranformation(void)
 			break;
 		}
 
-		if(GL_TRUE == charHandled)
-		{
-			if(ltf_Speed != tf_Speed)
-			{
-				ltf_Speed = tf_Speed;
-				LOG("TF speed changed to %.02ff\n", ltf_Speed);
-			}
-		}
 		charPressed = 0;
 	}
 
@@ -262,26 +274,132 @@ void debug_tranformation(void)
 }
 
 
-void update_transformations(vmath::mat4& translationMatrix, vmath::mat4& scaleMatrix, vmath::mat4& rotationMatrix) 
+void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMatrix, vmath::mat4* rotationMatrix, TRANFORM* vector) 
 {
 	static bool firstCall = 1;
 
 	// external debugging varaible
 	if(firstCall) {
-		tf_t = {translationMatrix[0][0], translationMatrix[1][1], translationMatrix[2][2]}; // tree pos
-		tf_s = {scaleMatrix[0][0], scaleMatrix[1][1], scaleMatrix[2][2]}; // tree scale
-		tf_r = {rotationMatrix[0][0], rotationMatrix[1][1], rotationMatrix[2][2]}; // tree rotate
-		tf_Speed = 0.05f;
+		// update tf_* variables only at first calls, later those will update based on events  
+		// LOG("Translation Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2], translationMatrix[0][3],
+		// translationMatrix[0][0], translationMatrix[0][1], translationMatrix[1][2], translationMatrix[1][3],
+		// translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2], translationMatrix[2][3],
+		// translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2], translationMatrix[3][3]
+		// );
+		// LOG("scale Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[0][2], scaleMatrix[0][3],
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[1][2], scaleMatrix[1][3],
+		// scaleMatrix[2][0], scaleMatrix[2][1], scaleMatrix[2][2], scaleMatrix[2][3],
+		// scaleMatrix[3][0], scaleMatrix[3][1], scaleMatrix[3][2], scaleMatrix[3][3]
+		// );
+		// LOG("rotation Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2], rotationMatrix[0][3],
+		// rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[1][2], rotationMatrix[1][3],
+		// rotationMatrix[2][0], rotationMatrix[2][1], rotationMatrix[2][2], rotationMatrix[2][3],
+		// rotationMatrix[3][0], rotationMatrix[3][1], rotationMatrix[3][2], rotationMatrix[3][3]
+		// );
+
+		if(translationMatrix)
+			tf_t = {(*translationMatrix)[3][0], (*translationMatrix)[3][1], (*translationMatrix)[3][2]}; // pos
+		if(scaleMatrix)
+			tf_s = {(*scaleMatrix)[0][0], (*scaleMatrix)[1][0], (*scaleMatrix)[2][2]}; // tree scale
+		if(vector)
+			tf_r = {vector->x, vector->y, vector->z}; // tree rotate
+		else
+			tf_r = {0.0f, 0.0f, 0.0f};
+		tf_Speed = 0.25f;
 		firstCall = 0;
 	}
 
-	translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	if(translationMatrix)
+		*translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
 	// scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
-	scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+	// explicitely performing all cordinate scale with same factor, to keep same ratio
+	if(scaleMatrix)
+		*scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
 	mat4 rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
 	mat4 rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);
 	mat4 rotationMatrix_z = vmath::rotate(tf_r.z, 1.0f, 0.0f, 1.0f);
-	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	if(rotationMatrix)
+		*rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	if(vector)
+		*vector = tf_r;
 }
 
+
+void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMatrix, glm::mat4* rotationMatrix, TRANFORM* vector)
+{
+	static bool firstCall = 1;
+
+	// external debugging varaible
+	if (firstCall) {
+		// update tf_* variables only at first calls, later those will update based on events  
+		// LOG("Translation Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// translationMatrix[0][0], translationMatrix[0][1], translationMatrix[0][2], translationMatrix[0][3],
+		// translationMatrix[0][0], translationMatrix[0][1], translationMatrix[1][2], translationMatrix[1][3],
+		// translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2], translationMatrix[2][3],
+		// translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2], translationMatrix[3][3]
+		// );
+		// LOG("scale Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[0][2], scaleMatrix[0][3],
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[1][2], scaleMatrix[1][3],
+		// scaleMatrix[2][0], scaleMatrix[2][1], scaleMatrix[2][2], scaleMatrix[2][3],
+		// scaleMatrix[3][0], scaleMatrix[3][1], scaleMatrix[3][2], scaleMatrix[3][3]
+		// );
+		// LOG("rotation Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[0][2], rotationMatrix[0][3],
+		// rotationMatrix[0][0], rotationMatrix[0][1], rotationMatrix[1][2], rotationMatrix[1][3],
+		// rotationMatrix[2][0], rotationMatrix[2][1], rotationMatrix[2][2], rotationMatrix[2][3],
+		// rotationMatrix[3][0], rotationMatrix[3][1], rotationMatrix[3][2], rotationMatrix[3][3]
+		// );
+
+		if (translationMatrix)
+			tf_t = { (*translationMatrix)[3][0], (*translationMatrix)[3][1], (*translationMatrix)[3][2] }; // pos
+		if (scaleMatrix)
+			tf_s = { (*scaleMatrix)[0][0], (*scaleMatrix)[1][0], (*scaleMatrix)[2][2] }; // tree scale
+		if (vector)
+			tf_r = { vector->x, vector->y, vector->z }; // tree rotate
+		else
+			tf_r = { 0.0f, 0.0f, 0.0f };
+		tf_Speed = 0.25f;
+		firstCall = 0;
+	}
+
+	if (translationMatrix)
+		*translationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(tf_t.x, tf_t.y, tf_t.z));
+	// scaleMatrix = glm::scale(tf_s.x, tf_s.y, tf_s.z);
+	// explicitely performing all cordinate scale with same factor, to keep same ratio
+	if (scaleMatrix)
+		*scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(tf_s.x, tf_s.x, tf_s.x));
+	glm::mat4 rotationMatrix_x = glm::rotate(glm::mat4(1.0f), tf_r.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::mat4 rotationMatrix_y = glm::rotate(glm::mat4(1.0f), tf_r.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotationMatrix_z = glm::rotate(glm::mat4(1.0f), tf_r.z, glm::vec3(0.0f, 0.0f, 1.0f));
+	if (rotationMatrix)
+		*rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+}
 

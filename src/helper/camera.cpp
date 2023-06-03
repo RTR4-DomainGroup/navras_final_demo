@@ -25,7 +25,22 @@ void initializeCamera(Camera* camera)
 	camera = (Camera*)malloc(sizeof(Camera));
 }
 
-void setCamera(void)
+void setCamera(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ)
+{
+	cameraEyeX = eyeX;
+	cameraEyeY = eyeY;
+	cameraEyeZ = eyeZ;
+
+	cameraCenterX = centerX;
+	cameraCenterY = centerY;
+	cameraCenterZ = centerZ;
+
+	cameraUpX = upX;
+	cameraUpY = upY;
+	cameraUpZ = upZ;
+}
+
+void displayCamera(void)
 {
 	camera.eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
 	camera.center = { cameraCenterX, cameraCenterY, cameraCenterZ };
@@ -73,7 +88,7 @@ void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat rad
 	// code
 	float angleRadian = angle * M_PI / 180.0f;
 	cameraEyeX = centerX + (radius * cos(angleRadian));
-	cameraEyeY = centerY;
+	//cameraEyeY = centerY;
 	cameraEyeZ = centerZ + (radius * sin(angleRadian));
 
 	cameraCenterX = centerX;

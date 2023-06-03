@@ -64,8 +64,11 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-	    "    vec4 pos = (a_position + a_instancePosition); \n" \
-			
+			"vec4 pos = (a_position + a_instancePosition); \n" \
+
+			"vec4 worldPos; \n" \
+			"worldPos = u_modelMatrix * pos; \n" \
+
 			"mat3 TBN; \n" \
 			"if (u_actualScene == 1) \n" \
 			"{ \n" \
@@ -75,7 +78,7 @@ int initializeADSShader(void)
 				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
 				"viewerVector = vec3(-eyeCoordinates); \n" \
 				"vs_out.FragPos = u_modelMatrix * pos; \n" \
-				
+					
 				//Normal Mapping
 				"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
 		        "vec3 N = normalize(normalMatrix_nm * a_normal); \n" \
@@ -96,7 +99,6 @@ int initializeADSShader(void)
 				"a_texcoord_out = a_texcoord;\n" \
 
 			"} \n" \
-			
 
 			"if(u_depthScene == 1) { \n" \
 
@@ -244,7 +246,7 @@ int initializeADSShader(void)
 			"if (enable_godRays == 1) \n" \
 			"{\n" \
 				"if(u_actualScene == 1) { \n" \
-					"vec4 phong_ads_light; \n" \
+					"vec4 phong_ads_light = vec4(1.0, 1.0, 1.0, 1.0); \n" \
 
 					"vec4 texColor = texture(texture_diffuse, a_texcoord_out); \n"		\
 					
@@ -455,7 +457,6 @@ void uninitializeADSShader(void)
 			glDetachShader(adsShaderProgramObject, shaderObjects[i]);
 			glDeleteShader(shaderObjects[i]);
 			shaderObjects[i] = 0;
-
 		}
 
 		free(shaderObjects);

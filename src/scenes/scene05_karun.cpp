@@ -9,7 +9,7 @@
 #include "../../inc/effects/GodraysEffect.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
-#include "../../inc/scenes/scene5_karun.h"
+#include "../../inc/scenes/scene05_karun.h"
 #include "../../inc/debug/debug_transformation.h"
 
 
@@ -24,6 +24,7 @@ extern int windowHeight;
 extern mat4 perspectiveProjectionMatrix;
 
 static struct ADSUniform sceneIndoorADSUniform;
+GLuint texture_karunMask;
 
 extern GLfloat density;
 extern GLfloat gradient;
@@ -59,6 +60,22 @@ scene5_variables translatevalues;
 
 int initializeScene5_karun(void)
 {
+
+#ifdef ENABLE_MASKSQUADS
+	if (LoadGLTexture_UsingSOIL(&texture_karunMask, TEXTURE_DIR"Masks\\KarunMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture FAILED in Mask Karun Ras!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture Successfull Mask Karun Ras = %u!!!\n", texture_karunMask);
+	}
+
+
+#endif // ENABLE_MASKSQUADS
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/scene05-karunras/room/KidRoom_34Normals.obj", &tableModel); //done
@@ -70,36 +87,43 @@ int initializeScene5_karun(void)
 	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &tableModel); //change scale
 	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &tableModel);
 
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room\\scene5Room\\ceiling.png") == FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room/scene5Room/ceiling.png") == FALSE)
+	{
 		//uninitialize();
-		LOG("LoadGLTexture FAILED in Raudra!!!\n");
+		LOG("LoadGLTexture FAILED in Karun Ras!!!\n");
 		return(-1);
 	}
 	else
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_ceiling);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_floor, TEXTURE_DIR"Room\\floor.jpg") == FALSE) {
+	
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_floor, TEXTURE_DIR"Room/floor.jpg") == FALSE) 
+	{
 		//uninitialize();
-		LOG("LoadGLTexture FAILED in floor Raudra!!!\n");
+		LOG("LoadGLTexture FAILED in floor Karun Ras!!!\n");
 		return(-1);
 	}
 	else
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_floor);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room\\scene5Room\\frontwall2.png") == FALSE) {
+	
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room/scene5Room/frontwall2.png") == FALSE) 
+	{
 		//uninitialize();
-		LOG("LoadGLTexture FAILED in back Raudra!!!\n");
+		LOG("LoadGLTexture FAILED in back Karun Ras!!!\n");
 		return(-1);
 	}
 	else
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_back);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room\\scene5Room\\sidewalls.png") == FALSE) {
+	
+	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room/scene5Room/sidewalls.png") == FALSE) 
+	{
 		//uninitialize();
-		LOG("LoadGLTexture FAILED in sidewall Raudra!!!\n");
+		LOG("LoadGLTexture FAILED in sidewall Karun Ras!!!\n");
 		return(-1);
 	}
 	else
@@ -109,6 +133,7 @@ int initializeScene5_karun(void)
 	//loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
 #endif
 	initializeInvertedNormalCube();
+	initializeQuad();
 
 	textures_kidroom[0] = (GLuint)texture_kidroom_ceiling;
 	textures_kidroom[1] = (GLuint)texture_kidroom_floor;
@@ -144,7 +169,7 @@ int initializeScene5_karun(void)
 void displayScene5_karun(void)
 {
     // set camera
-	setCamera();
+	displayCamera();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -191,10 +216,33 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	//glEnable(GL_TEXTURE_2D);
-	
-	//displayRoom(textures_kidroom);
+	//glEnable(GL_TEXTURE_2D);	
+	displayRoom(textures_kidroom);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
+#ifdef ENABLE_MASKSQUADS
+	// Transformations For Mask Quad
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(0.0f, 0.0f, -5.0f);
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_karunMask);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
+		displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+#endif // ENABLE_MASKSQUADS
 
     // ------ Desk Model ------
 	translationMatrix = mat4::identity();
@@ -285,6 +333,15 @@ void uninitializeScene5_karun(void)
 {
     //UNINIT models
 	unloadStaticModel(&tableModel);
+
+#ifdef ENABLE_MASKSQUADS
+	if (texture_karunMask)
+	{
+		glDeleteTextures(1, &texture_karunMask);
+		texture_karunMask = 0;
+	}
+#endif
+
 	if (texture_kidroom_ceiling)
 	{
 		glDeleteTextures(1, &texture_kidroom_ceiling);

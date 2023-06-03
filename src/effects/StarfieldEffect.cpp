@@ -92,6 +92,7 @@ void displayStarfield(GLuint texture)
 		glDrawArrays(GL_POINTS, 0, NUM_STARS);
 	glBindVertexArray(0);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_BLEND);
 
 }
@@ -99,7 +100,7 @@ void displayStarfield(GLuint texture)
 float updateStarfield(float time)
 {
 	// Code
-	time = time + 0.00025;
+	time = time + 0.0005;
 	return time;
 }
 
