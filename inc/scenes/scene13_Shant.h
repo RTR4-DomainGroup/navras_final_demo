@@ -6,4 +6,5 @@
 
 int initializeScene13_Shant(void);
 void displayScene13_Shant(void);
+void updateScene13_ShantRas(void);
 void uninitializeScene13_Shant(void);
