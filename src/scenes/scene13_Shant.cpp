@@ -65,13 +65,6 @@ GLuint texture_Marble_Shant;
 float myScale_erosion = 0.5f;
 float noiseScale_erosion = 2.0f;
 bool offsetIncrement = true;
-GLfloat offset_ras_1[] = { 0.48f, 0.48f, 0.48f };
-GLfloat offset_ras_2[] = { 0.48f, 0.48f, 0.48f };
-#endif // ENABLE_EROSION
-
-
-bool isInitialDisplayScene13_ShantRas = true;
-
 // Mask Textures
 GLuint texture_karunRas;
 GLuint texture_bhayanakRas;
@@ -85,7 +78,7 @@ GLuint texture_shantRas;
 
 GLuint textures_masks[9];
 
-GLfloat offset_ras[9][3] = 
+GLfloat offset_ras[9][3] =
 {
 	{ 0.48f, 0.48f, 0.48f },
 	{ 0.48f, 0.48f, 0.48f },
@@ -97,6 +90,22 @@ GLfloat offset_ras[9][3] =
 	{ 0.48f, 0.48f, 0.48f },
 	{ 0.48f, 0.48f, 0.48f }
 };
+
+bool isMaskQuadEnabled[9] = { true, true, true, true, true, true, true, true, true };
+
+static GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular_shantRas_mask[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition_shantRas_mask[] = { 10.0f, 10.0f, 10.0f, 1.0f };
+
+static GLfloat materialAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess_shantRas_mask = 128.0f;
+#endif // ENABLE_EROSION
+
+
+bool isInitialDisplayScene13_ShantRas = true;
 
 int initializeScene13_Shant(void)
 {
@@ -206,6 +215,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_shantRas Successfull = %u!!!\n", texture_shantRas);
 	}
 
+#ifdef ENABLE_EROSION
 	textures_masks[0] = (GLuint)texture_karunRas;
 	textures_masks[1] = (GLuint)texture_bhayanakRas;
 	textures_masks[2] = (GLuint)texture_raudraRas;
@@ -215,6 +225,7 @@ int initializeScene13_Shant(void)
 	textures_masks[6] = (GLuint)texture_shringarRas;
 	textures_masks[7] = (GLuint)texture_hasyaRas;
 	textures_masks[8] = (GLuint)texture_shantRas;
+#endif // ENABLE_EROSION
 
 	//	//load models
 //	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Shanta\\ceiling.jpg") == FALSE) {
@@ -497,15 +508,15 @@ void displayScene13_Shant(void)
 		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas);
-		glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas);
-		glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas);
-		glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+		glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
 
-		glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas);
-		glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas);
-		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas);
-		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas);
+		glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
 
 		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras[i]);
@@ -518,7 +529,8 @@ void displayScene13_Shant(void)
 		glBindTexture(GL_TEXTURE_3D, noise_texture_eroded);
 		glUniform1i(sceneErosionNoiseUniform.noiseSamplerUniform, 1);
 
-		displayQuad();
+		if (isMaskQuadEnabled[i])
+			displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		angle = angle + 22.5f;
@@ -544,8 +556,9 @@ void updateScene13_ShantRas(void)
 	{
 		if (offset_ras[i][0] <= 0.33f)
 			updateErosion(offsetIncrement, offset_ras[i + 1], 0.001f);
+		if (offset_ras[i][0] <= 0.17f)
+			isMaskQuadEnabled[i] = false;
 	}
-
 #endif // ENABLE_EROSION
 
 }
