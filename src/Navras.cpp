@@ -501,11 +501,11 @@ int initializeNavras(void) {
 	LOG("initializeScene13_Shant() DONE !!!\n");
 
 	// // SCENE14
-	// if (initializeParticle() != 0)
-	// {
-	// 	LOG("initializeParticle() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	if (initializeParticle() != 0)
+	{
+		LOG("initializeParticle() FAILED !!!\n");
+		return (-8);
+	}
 
 	// scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
