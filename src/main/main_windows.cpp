@@ -565,7 +565,16 @@ void update(void)
 	// function declarations
 
 	// code
-	updateNavras();
+	if (gTaskFinished.load())
+	{
+		updateNavras();
+	}
+	else
+	{
+		updateVideoEffect();
+	}
+	
+	
 }
 
 void uninitialize(void)

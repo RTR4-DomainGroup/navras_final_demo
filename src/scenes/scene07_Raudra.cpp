@@ -483,8 +483,8 @@ void updateScene07_RaudraRas(void)
 {
 	// Code
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraEyeZ = preciselerp(cameraEyeZ, 0.1f, 0.0001f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -3.10f, 0.0001f);
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.1f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -3.10f, 0.002f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 }

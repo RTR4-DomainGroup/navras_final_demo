@@ -27,8 +27,8 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
     for (int i = 0; i < state->avFormatContext->nb_streams; i++)
     {
         avCodecParams = state->avFormatContext->streams[i]->codecpar;
+        
         avCodec = avcodec_find_decoder(avCodecParams->codec_id);
-
         if (!avCodec)
         {
             continue;
@@ -111,14 +111,15 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
             LOG("Failed to Decode AV Packet.\n");
             return false;
         }
+        
         av_packet_unref(state->avPacket);
         break;    
     }
-
+    
     if (!state->swsScaleContext)
     {
         state->swsScaleContext = sws_getContext(state->width, state->height, state->avCodecContext->pix_fmt, 
-                                    state->width, state->height, AV_PIX_FMT_RGB0, SWS_BILINEAR, NULL, NULL, NULL);
+                                    state->width, state->height, AV_PIX_FMT_RGBA, SWS_BILINEAR, NULL, NULL, NULL);
         
         if (!state->swsScaleContext)
         {
