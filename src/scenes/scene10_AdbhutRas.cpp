@@ -799,7 +799,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+		// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);

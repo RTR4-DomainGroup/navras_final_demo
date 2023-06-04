@@ -10,6 +10,7 @@
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../../inc/Navras.h"
 
 
 #ifdef ENABLE_WATER
@@ -396,7 +397,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_BILLBOARDING
 	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/grass.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower2.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);
@@ -620,7 +621,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+		if(getCurrentScene() == SCENE02_EARTH_AND_SPACE)
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
 		else
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
