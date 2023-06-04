@@ -73,9 +73,9 @@ int initializeSSAOShader(void)
         "																		\n" \
         "out vec4 color;														\n" \
         "																		\n" \
-        "float ssao_level = 1.0;										\n" \
-        "float object_level = 2.0;										\n" \
-        "float ssao_radius = 5.0;										\n" \
+        "float ssao_level = 0.30;										\n" \
+        "float object_level = 1.50;										\n" \
+        "float ssao_radius = 10.0;										\n" \
         "bool weight_by_angle = true;									\n" \
         "uint point_count = 8;											\n" \
         "bool randomize_points = true;									\n" \

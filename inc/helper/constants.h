@@ -107,6 +107,8 @@ static const char *szAudios[] = {
 //#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
+#define ENABLE_SSAO
+
 
 #define ENABLE_SINGLE_SCENE
 //#define ENABLE_AUDIO

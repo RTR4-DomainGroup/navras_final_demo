@@ -104,6 +104,7 @@ int initializeScene_PlaceHolderIndoor(void)
 	{
 		LOG("ssaoCreateFBO() Successfull for Shadow!!!\n");
 	}
+	initializeSSAO();
 
 #endif // ENABLE_SSAO
 
@@ -156,10 +157,13 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 
-	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
+	//glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
 	displayPasses();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	displaySSAO(&ssaoFrameBufferDetails);
+
 
 #endif // ENABLE_SSAO
 
@@ -169,7 +173,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	//perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
@@ -368,6 +372,13 @@ void uninitializeScene_PlaceHolderIndoor(void)
 	uninitializeCube();
 
 #endif // ENABLE_ADSLIGHT
+
+#ifdef ENABLE_SSAO
+	uninitializeSSAO();
+#endif // ENABLE_SSAO
+
+
+
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models

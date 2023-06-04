@@ -47,7 +47,7 @@ extern GLfloat skyFogColor[];
 GLfloat lightAmbient_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular_raudra[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition_raudra[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+GLfloat lightPosition_raudra[] = { 50.0f, 50.0f, 50.0f, 1.0f };
 
 GLfloat materialAmbient_raudra[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
