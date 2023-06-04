@@ -16,6 +16,9 @@
 #ifdef ENABLE_STARFIELD
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
+#ifdef ENABLE_DYNAMIC_MODELS
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
+#endif // ENABLE_DYNAMIC_MODELS
 
 #include "../../inc/scenes/scene02_EarthAndSpace.h"
 
@@ -173,8 +176,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	//rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
-	displayCamera();
+	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
+	//displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
 

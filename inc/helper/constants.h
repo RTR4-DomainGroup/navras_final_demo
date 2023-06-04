@@ -83,7 +83,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-//#define ENABLE_MULTI_THREADING
+#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -103,13 +103,13 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
-//#define ENABLE_DYNAMIC_MODELS
-//#define ENABLE_CAMERA_ANIMATION
+#define ENABLE_DYNAMIC_MODELS
+#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
 
-#define ENABLE_SINGLE_SCENE
-//#define ENABLE_AUDIO
+//#define ENABLE_SINGLE_SCENE
+#define ENABLE_AUDIO
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
@@ -121,7 +121,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
-//#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
+// #define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
 //#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras

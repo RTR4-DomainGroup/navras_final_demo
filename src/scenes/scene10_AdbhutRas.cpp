@@ -931,7 +931,7 @@ void updateScene10_AdbhutRas(void)
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
 	speedVector.x = 0.04;
-	update_transformations(NULL, NULL, NULL, &speedVector);
+	//update_transformations(NULL, NULL, NULL, &speedVector);
 	cameraEyeZ -= speedVector.x;
 	cameraCenterZ -= speedVector.x;
 
