@@ -116,7 +116,7 @@ int initializeScene13_Shant(void)
 
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks/BhayanakMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bhayanakRas FAILED!!!\n");
@@ -127,7 +127,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_bhayanakRas Successfull = %u!!!\n", texture_bhayanakRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks/BibhatsaMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
@@ -138,7 +138,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks\\KarunMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks/KarunMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_karunRas FAILED!!!\n");
@@ -149,7 +149,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_karunRas Successfull = %u!!!\n", texture_karunRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks/RaudraMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_raudraRas FAILED!!!\n");
@@ -160,7 +160,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_raudraRas Successfull = %u!!!\n", texture_raudraRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks/VeerMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_veerRas FAILED!!!\n");
@@ -171,7 +171,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_veerRas Successfull = %u!!!\n", texture_veerRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks/AdbhutMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_adbhutRas FAILED!!!\n");
@@ -182,7 +182,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
@@ -193,7 +193,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks\\HasyaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_hasyaRas FAILED!!!\n");
@@ -204,7 +204,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_hasyaRas Successfull = %u!!!\n", texture_hasyaRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks\\ShantMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks/ShantMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shantRas FAILED!!!\n");
