@@ -35,7 +35,7 @@ int initializeVideoEffect(const char* videoFile)
         LOG("Couldn't load video frame.\n");
         return -2;
     }    
-    
+    LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
     LOG("Frame Width = %d.\nFrame Height = %d.\n", frameWidth, frameHeight);
    
 
@@ -56,9 +56,11 @@ void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
     //     LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
     //     myFlag = false;
     // }   
-    LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
+    //LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
+    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_frame);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frameWidth, frameHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, frame_data);
     glUniform1i(fsvqUniform->textureSamplerUniform1, 0);
     glUniform1i(fsvqUniform->textureSamplerUniform2, 1);  
     displayVideoQuad();
