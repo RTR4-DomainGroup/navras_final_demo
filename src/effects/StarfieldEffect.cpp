@@ -2,7 +2,7 @@
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
 
-#define NUM_STARS 15000
+#define NUM_STARS 5000
 
 GLuint star_vao;						// Vertex Array Object
 GLuint star_buffer;						// Vertex Buffer Object
