@@ -936,8 +936,8 @@ void displayScene10_Billboarding(int godRays = 1)
 
 	glUseProgram(0);
 	glDisable(GL_BLEND);
-
 }
+
 #endif // ENABLE_BILLBOARDING	
 
 void updateScene10_AdbhutRas(void)

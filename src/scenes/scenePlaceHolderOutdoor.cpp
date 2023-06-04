@@ -507,7 +507,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
 		displayPasses(1, true, true, false, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	#endif // ENABLE_SHADOW
+#endif // ENABLE_SHADOW
 
 		//////////////////////////////////////////////////////////////
 		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);

@@ -34,6 +34,7 @@ int initializeBillboardingShader(void)
     "    vec4 pos = (a_position + a_instancePosition); \n" \
     "    if(1 == u_billboarding) \n" \
     "    {\n" \
+	// change x pos of only two top vertices (0, 1) of a quad ::
     "	    if(gl_VertexID < 2){  \n" \
 	"		    pos.x += sin( float(gl_InstanceID) + (float(u_fTime) * 0.005) ) * 0.5; \n" \
 	"	    } \n" \
