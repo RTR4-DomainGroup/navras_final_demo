@@ -115,7 +115,7 @@ typedef struct _STATIC_MODEL
 }STATIC_MODEL;
 
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
+unsigned int TextureFromFile(const string& filepath);
 void loadStaticModel(const char* path, STATIC_MODEL* staticModel);
 void loadStaticModelInstanced(const char* path, STATIC_MODEL* staticModel, int numInstance, vector<float> instancePositions);
 void drawStaticModel(STATIC_MODEL staticModel);

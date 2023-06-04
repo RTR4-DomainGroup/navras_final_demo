@@ -32,7 +32,7 @@ struct FSVQuadUniform videoUniform;
 // OpenGL Libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
 // By law it not mandatory that is should before OpenGL
-#pragma comment(lib, "GLEW32.lib") 
+#pragma comment(lib, "GLEW32.lib")
 #pragma comment(lib, "OpenGL32.lib")
 #pragma comment(lib, "SOIL/lib/SOIL.lib")
 #pragma comment(lib, "AL/lib/OpenAL32.lib")
@@ -203,12 +203,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			}
 		}
 	}
-	LOG("Calling first.join() .....\n ");
+	
 	#ifdef ENABLE_MULTI_THREADING
 	first.join();
 	#endif
+	
+	uninitialize();
 	return((int)msg.wParam);
+}
 
+void QuitApplication(void)
+{
+	PostQuitMessage(0);
 }
 
 // CAllBack Function
@@ -300,6 +306,7 @@ int initialize(void)
 	// variable declarations
 	PIXELFORMATDESCRIPTOR pfd;
 	int iPixelFormatIndex;
+
 	// code
 	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 
@@ -492,7 +499,7 @@ void ToggleFullscreen(void) {
 
 }
 
-void set_title(char* title)
+void set_title(const char* const title)
 {
 	TCHAR str[MAX_LOG_LENGTH] = {};
 
@@ -573,6 +580,7 @@ void uninitialize(void)
 		ToggleFullscreen();
 	}
 
+	LOG("Enter\n");
 	uninitializeNavras();
 	if(wglGetCurrentContext() == ghrc)
 	{

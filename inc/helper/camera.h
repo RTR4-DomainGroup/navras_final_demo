@@ -28,7 +28,9 @@ extern GLfloat cameraUpZ;
 extern Camera camera;
 
 //void initializeCamera(Camera*);
-void setCamera(void);
+void setCamera(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+
+void displayCamera(void);
 //void setCamera(Camera*);
 
 GLfloat impreciselerp(GLfloat, GLfloat, GLfloat);

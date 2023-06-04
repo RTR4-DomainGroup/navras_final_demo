@@ -183,8 +183,11 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL rockModel_11;
-STATIC_MODEL streetLightModel_11;
+STATIC_MODEL treemodel_11;
+
+#endif // ENABLE_STATIC_MODELS
+
+#ifdef ENABLE_DYNAMIC_MODELS
 DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
@@ -195,7 +198,8 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 // Camera angle for rotation
-extern GLfloat cameraAngle; // = 0.0f;
+GLfloat cameraAngle_shringar = 90.0f; // = 0.0f;
+GLfloat cameraRadius_shringar = 18.0f;
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
@@ -213,22 +217,12 @@ static GLfloat materialShininess = 128.0f;
 
 float distance11;
 
+bool isInitialDisplayScene11_ShringarRas = true;
+
+GLuint texture_shringarMask;
+
 int initializeScene11_ShringarRas(void)
 {
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
 
 	// external debugging varaible
 	tf_t = { -1.5f, -1.0f, 0.0f }; // tree pos 
@@ -239,10 +233,25 @@ int initializeScene11_ShringarRas(void)
     // Code.
 	// initializeCamera(&camera);
 
+#ifdef ENABLE_MASKSQUADS
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shringarMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_shringarMask Successfull = %u!!!\n", texture_shringarMask);
+	}
+#endif
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel_11);
+	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -252,11 +261,11 @@ int initializeScene11_ShringarRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
-	displacementmap_depth = 10.0f;
+	displacementmap_depth = 5.0f;
 
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_diff_2k.jpg";
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_disp_2k.jpg";
-	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/coast_sand_rocks_02_nor_gl_2k.jpg";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/1diffuse1.png";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/1disp.jpg";
+	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0)
 	{
@@ -306,6 +315,17 @@ int initializeScene11_ShringarRas(void)
 	return 0;
 }
 
+void setCameraScene11_ShringarRas(void)
+{
+	if (isInitialDisplayScene11_ShringarRas == true)
+	{
+		setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+		//setCamera(0.00, 0.00, -12.50, 0.00f, 0.00f, -18.50f, 0.0f, 0.0f, 1.0f);
+		isInitialDisplayScene11_ShringarRas = false;
+	}
+}
+
 void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0) {
 
 	// Code
@@ -321,8 +341,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	mat4 rotateX = mat4::identity();
 
+
+	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	setCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -364,7 +387,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
 			cameraEyeY -= distance11;
 			cameraCenterY -= distance11;
-			setCamera();
+			displayCamera();
 			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 			//setCamera(&camera);
@@ -543,7 +566,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 proj_matrix = mat4::identity();
 
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -0.1f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translate(0.0f, -0.5f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
@@ -595,6 +618,9 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
 #endif // DEBUG - ENABLE_FOG
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
 
@@ -606,6 +632,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_BLEND);
 
 	glUseProgram(0);
 #endif // ENABLE_TERRIAN
@@ -637,9 +664,20 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
-	// ------ Rock Model ------
-	translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+	// ------ TREE Model ------
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(0.25f, 0.55f, -17.0f);
+	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
@@ -663,30 +701,32 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	//drawStaticModel(rockModel_11);
+	drawStaticModel(treemodel_11);
 
+#ifdef ENABLE_MASKSQUADS
+	// Transformations - Quad For Mask
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+	modelMatrix = mat4::identity();
 
-	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-
-	modelMatrix = translationMatrix * scaleMatrix;
+	translationMatrix = vmath::translate(5.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_shringarMask);
+	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	displayQuad();
+#endif // ENABLE_MASKQ
 
-	drawStaticModel(streetLightModel_11);
-
-	if (actualDepthQuadScene == 0) {
+	if (actualDepthQuadScene == 0) 
+	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -727,8 +767,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.025f, -12.85f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.0008f, 0.0008f, 0.0008f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
@@ -770,7 +810,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
+		scaleMatrix = vmath::scale(180.0f, 1.0f, 180.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
 
@@ -790,7 +830,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
 		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
-		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.3f, 0.5f, 1.0));
+		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
 
@@ -814,7 +854,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		cameraEyeY += distance11;
 		cameraCenterY += distance11;
-		setCamera();
+		displayCamera();
 		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	}
 
@@ -898,6 +938,28 @@ void displayScene11_Billboarding(int godRays = 1)
 void updateScene11_ShringarRas(void)
 {
 	// Code
+#ifdef ENABLE_CAMERA_ANIMATION
+	////lookAt([0.00, 5.75, -17.25], [0.00, 5.75, -23.25][0.00, 1.00, 0.00])
+	//cameraEyeZ = preciselerp(cameraEyeZ, -17.25f, 0.005f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, -23.25f, 0.005f);
+
+	//cameraEyeY = impreciselerp(cameraEyeY, 5.75f, 0.005f);
+	//cameraCenterY = impreciselerp(cameraCenterY, 5.75f, 0.005f);
+
+	cameraAngle_shringar += 0.14f;
+	if (cameraAngle_shringar >= 270.0f)
+		cameraAngle_shringar = 270.0f;
+	//cameraAngle_shringar = preciselerp(cameraAngle_shringar, 270.f, 0.07f);
+
+	cameraRadius_shringar -= 0.020f;
+	if (cameraRadius_shringar <= 2.0f)
+		cameraRadius_shringar = 2.0f;
+	//cameraRadius_shringar = preciselerp(cameraRadius_shringar, 2.0f, 0.018f);
+
+	cameraEyeY = preciselerp(cameraEyeY, 0.4f, 0.0025f);
+
+#endif
+
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
 
@@ -923,10 +985,17 @@ void uninitializeScene11_ShringarRas(void)
 	uninitializeTerrain(&terrainTextureVariables);
 #endif // ENABLE_TERRIAN
 
+#ifdef ENABLE_MASKSQUADS
+	if (texture_shringarMask)
+	{
+		glDeleteTextures(1, &texture_shringarMask);
+		texture_shringarMask = 0;
+	}
+#endif
+
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&rockModel_11);
-	unloadStaticModel(&streetLightModel_11);
+	unloadStaticModel(&treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 

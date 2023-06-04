@@ -184,32 +184,19 @@ GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
 #endif // ENABLE_GODRAYS
 
 // Camera angle for rotation
-GLfloat cameraAngle = 0.0f;
+//GLfloat cameraAngle = 100.0f;
 GLfloat dispersal = 0.1875f;
 GLfloat haloWidth = 0.45f;
 GLfloat intensity = 1.5f;
 GLfloat distortion[] = { 0.94f, 0.97f, 1.0f };
+
+typedef void(*SET_CAMERA) (void);
 
 typedef void (* DISPLAY_PASSES) (int,bool,bool,bool,int);
 
 
 int initializeScene_PlaceHolderOutdoor(void)
 {
-	// Function Declarations
-
-	// set Camera location
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
-
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
-
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
-
     // Code.
 	// initializeCamera(&camera);
 
@@ -308,8 +295,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 
 	//
-	waterReflectionFrameBufferDetails.textureWidth = 1280;
-	waterReflectionFrameBufferDetails.textureHeight = 720;
+	waterReflectionFrameBufferDetails.textureWidth = 1920;
+	waterReflectionFrameBufferDetails.textureHeight = 1080;
 
 	if (waterCreateFBO(&waterReflectionFrameBufferDetails) == GL_FALSE) {
 
@@ -323,8 +310,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	}
 
-	waterRefractionFrameBufferDetails.textureWidth = 1280;
-	waterRefractionFrameBufferDetails.textureHeight = 720;
+	waterRefractionFrameBufferDetails.textureWidth = 1920;
+	waterRefractionFrameBufferDetails.textureHeight = 1080;
 
 	if (waterCreateFBO(&waterRefractionFrameBufferDetails) == GL_FALSE) {
 
@@ -371,12 +358,12 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_STARFIELD
 
-	fboEarthAndSpace.textureWidth = FBO_WIDTH;
-	fboEarthAndSpace.textureHeight = FBO_HEIGHT;
+	fboEarthAndSpace.textureWidth = 3840;
+	fboEarthAndSpace.textureHeight = 2160;
 
 	createFBO(&fboEarthAndSpace);
 
-	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
+	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield\\Star.png") != 0)
 	{
 		LOG("initializeStarfield() FAILED!!!\n");
 		return(-1);
@@ -428,7 +415,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	return 0;
 }
 
-void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodRequired, bool isWaterRequired, bool isGaussianBlurRequired)
+void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displayPasses, bool isGodRequired, bool isWaterRequired, bool isGaussianBlurRequired)
 {
 	// Function Declarations
 	void displayGodRays(int, int);
@@ -436,8 +423,10 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 	// Code
 	// Here The Game STarts
 	// set cameraa
-
 	setCamera();
+
+
+	displayCamera();
 	//setCamera(&camera);
 
 	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
@@ -631,7 +620,10 @@ void displayScene_PlaceHolderOutdoor(DISPLAY_PASSES displayPasses, bool isGodReq
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
+		else
+			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
 
 		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
 		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
@@ -758,9 +750,9 @@ void updateScene_PlaceHolderOutdoor(void)
 	// update camera using lerp
 	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
-	cameraAngle = cameraAngle + 0.5f;
+	/*cameraAngle = cameraAngle + 0.5f;
 	if (cameraAngle >= 360.0f)
-		cameraAngle -= 360.0f;
+		cameraAngle -= 360.0f;*/
 }
 
 void uninitializeScene_PlaceHolderOutdoor(void)

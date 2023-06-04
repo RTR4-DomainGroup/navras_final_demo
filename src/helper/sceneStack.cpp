@@ -17,14 +17,14 @@
 
 
 static scene_types_t sceneStack[MAX_SCENES];
-static int head = 0;
-static int curr = 0;
+static int head = -1;
+static int curr = -1;
 
 void scenePush(scene_types_t scene)
 {
     if(head < (int)MAX_SCENES) {    
-        sceneStack[head] = scene;
-        head++;
+        sceneStack[++head] = scene;
+        LOG("scene %d pushed, stack Head: %d !!!\n", scene, head);
         curr = head;
     }
     else {
@@ -34,15 +34,17 @@ void scenePush(scene_types_t scene)
 
 scene_types_t scenePop ()
 {
-    if((head-1) >= 0) {
-        head--;
-        curr = head;
-        sceneStack[head+1] = SCENE_INVALID;
+    scene_types_t scene = SCENE_INVALID;
+    if(head >= 0) {
+        scene = sceneStack[head];
+        LOG("scene %d poped, stack Head: %d !!!\n", scene, head);
+        sceneStack[head] = SCENE_INVALID;
+        curr = --head;
     }
     else {
         LOG("scene stack underflow: %d !!!\n", head);
     }
-    return sceneStack[head];
+    return scene;
 }
 
 
