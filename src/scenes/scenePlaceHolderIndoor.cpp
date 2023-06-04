@@ -6,11 +6,14 @@
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/framebuffer.h"
 #include "../../inc/helper/texture_loader.h"
+#include "../../inc/helper/ssaoframebuffer.h"
 
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/BillboardingShader.h"
+#include "../../inc/shaders/SSAOShader.h"
+
 
 #include "../../inc/effects/videoEffect.h"
 #include "../../inc/effects/TerrainEffect.h"
@@ -22,6 +25,8 @@
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
+#include "../../inc/effects/SSAOEffect.h"
+
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
@@ -32,6 +37,9 @@
 
 extern int windowWidth;
 extern int windowHeight;
+
+// SSAO variable
+SSAOFrameBufferStruct ssaoFrameBufferDetails;
 
 //GLfloat angleCube;
 
@@ -83,7 +91,23 @@ int initializeScene_PlaceHolderIndoor(void)
 	}
 
 #endif // ENABLE_ADSLIGHT
-	
+
+
+#ifdef ENABLE_SSAO
+
+	if (ssaoCreateFBO(&ssaoFrameBufferDetails) == GL_FALSE) 
+	{
+		LOG("ssaoCreateFBO() For Shadow FAILED!!!\n");
+		return(-1);
+	}
+	else 
+	{
+		LOG("ssaoCreateFBO() Successfull for Shadow!!!\n");
+	}
+
+#endif // ENABLE_SSAO
+
+
 // #ifdef ENABLE_STATIC_MODELS
 // 	//load models
 // 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
@@ -103,14 +127,14 @@ int initializeScene_PlaceHolderIndoor(void)
 	return 0;
 }
 
-void displayScene_PlaceHolderIndoor(void)
+void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR displayPasses)
 {
 	// Function Declarations
-	void displayPasses(int,bool,bool,bool);
 	void displayGodRays(int, int);
 
 	// Code
 	// Here The Game STarts
+	setCamera();
 
 	// set camera
 	displayCamera();
@@ -126,6 +150,18 @@ void displayScene_PlaceHolderIndoor(void)
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 
+#ifdef ENABLE_SSAO
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
+	glViewport(0, 0, WIN_WIDTH, WIN_HEIGHT);
+	displayPasses();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+#endif // ENABLE_SSAO
 
 	//Default Frame Buffer
 	

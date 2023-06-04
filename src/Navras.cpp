@@ -644,7 +644,8 @@ void displayNavras(void)
 	{
 		audio(SCENE07_RAUDRA_RAS);
 
-		displayScene07_Raudra();
+		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra);
+
 		sceneTime(time_scene7);
 	}
 	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
@@ -708,10 +709,10 @@ void displayNavras(void)
 		displayParticle();
 		sceneTime(time_scene14);
 	}
-	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
-	{
-		displayScene_PlaceHolderIndoor();
-	}
+	//else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	//{
+	//	displayScene_PlaceHolderIndoor();
+	//}
 	else
 	{
 		audio(SCENE_INVALID);

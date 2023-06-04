@@ -262,7 +262,7 @@ void setCameraScene07_RaudraRas(void)
 void displayScene07_Raudra(void)
 {
     // set camera
-	setCameraScene07_RaudraRas();
+	//setCameraScene07_RaudraRas();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
