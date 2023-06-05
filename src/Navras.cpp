@@ -604,9 +604,12 @@ void displayNavras(void)
 	void resize(int, int);
 
 	// Code
+	LOG("Enter");
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifndef ENABLE_SINGLE_SCENE
+#ifdef ENABLE_SINGLE_SCENE
+	// no time 
+#else // not ENABLE_SINGLE_SCENE
 	if (timeFlag == true) {
 		then = time(NULL);
 		timeFlag = false;
@@ -672,6 +675,8 @@ void displayNavras(void)
 	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
+		
+		LOG("Enter");
 
 		isGodRequired = true;
 		isWaterRequired = true;
