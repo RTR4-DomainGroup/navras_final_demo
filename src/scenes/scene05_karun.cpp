@@ -51,12 +51,16 @@ GLuint texture_kidroom_back;
 GLfloat blendingValue = 0.0f;
 
 //Model variables
-STATIC_MODEL tableModel;
+STATIC_MODEL roomModel;
+STATIC_MODEL colorPencilModel;
 
 GLuint textures_kidroom[4];
 
 //values
 scene5_variables translatevalues;
+
+bool isInitialDisplayScene05_karun = true;
+
 
 int initializeScene5_karun(void)
 {
@@ -78,14 +82,15 @@ int initializeScene5_karun(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/scene05-karunras/room/KidRoom_34Normals.obj", &tableModel); //done
-	//loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.fbx", &tableModel); //done
-	//loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &tableModel); //done
-	//loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.obj", &tableModel); //done
-	//loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &tableModel); //done
-	//loadStaticModel("res/models/kid-table/kidTable.obj", &tableModel); //done
-	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &tableModel); //change scale
-	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &tableModel);
+	loadStaticModel("res/models/scene05-karunras/room/KidRoom_34Normals.obj", &roomModel); //done
+	////loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.fbx", &roomModel); 
+	//loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &roomModel); //done
+	//loadStaticModel("res/models/scene05-karunras/colorpencil/pencil1obj.obj", &colorPencilModel); //done
+	//loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &roomModel);
+	//loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &roomModel); //done
+	//loadStaticModel("res/models/kid-table/kidTable.obj", &roomModel); //done
+	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &roomModel); //change scale
+	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &roomModel);
 
 	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room/scene5Room/ceiling.png") == FALSE)
 	{
@@ -166,10 +171,20 @@ int initializeScene5_karun(void)
 	return 0;
 }
 
+void setCameraScene05_karun(void)
+{
+	if (isInitialDisplayScene05_karun == true)
+	{
+		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
+		setCamera(6.70f, 0.10f, -1.95f, 6.00f, 0.03f, -1.24f, 0.00f, 1.00f, 0.00f);
+		isInitialDisplayScene05_karun = false;
+	}
+}
+
 void displayScene5_karun(void)
 {
     // set camera
-	displayCamera();
+	setCameraScene05_karun();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -180,6 +195,7 @@ void displayScene5_karun(void)
 	mat4 rotationMatrix_z = mat4::identity();
 	mat4 viewMatrix = mat4::identity();
 
+	displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -217,7 +233,7 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//glEnable(GL_TEXTURE_2D);	
-	displayRoom(textures_kidroom);
+	//displayRoom(textures_kidroom);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef ENABLE_MASKSQUADS
@@ -244,7 +260,7 @@ void displayScene5_karun(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 #endif // ENABLE_MASKSQUADS
 
-    // ------ Desk Model ------
+    // ------ Room Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -269,7 +285,35 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(tableModel);
+	drawStaticModel(roomModel);
+
+    //// ------ colorPencil Model ------
+	//translationMatrix = mat4::identity();
+	//rotationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+	//scaleMatrix = mat4::identity();
+	//rotationMatrix_x = mat4::identity();
+	//rotationMatrix_y = mat4::identity();
+	//rotationMatrix_z = mat4::identity();
+	//
+	////translatevalues.x = 1.650000 , translatevalues.y = -1.000000, translatevalues.z = -2.500001  
+	//translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
+	////translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
+	////LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
+	////scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
+	////LOG(" scale.x = %f , scale.y = %f, scale.z = %f \n", tf_s.x, tf_s.y, tf_s.z);
+	////scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+	//rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	//modelMatrix = translationMatrix * scaleMatrix ;
+	//
+	//glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//
+	////drawStaticModel(colorPencilModel);
 
 	//**************QUAD*********************
 	translationMatrix = mat4::identity();
@@ -282,15 +326,12 @@ void displayScene5_karun(void)
  
 	//translatevalues.x = 2.750000, translatevalues.y = 0.100000, translatevalues.z = 0.799998
 	//translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
-	translationMatrix = vmath::translate(2.750000f, 0.100000f, 0.799998f);
-	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
-	//scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
-	//LOG(" scale.x = %f , scale.y = %f, scale.z = %f \n", tf_s.x, tf_s.y, tf_s.z);
-	//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
-	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
-	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix;
+	translationMatrix = vmath::translate(2.75f, -0.15f, 0.80f);
+	scaleMatrix = vmath::scale(0.48f, 0.00f, 2.25f);
+	rotationMatrix = vmath::rotate(0.18f, 86.50f, 0.00f, 0.00f);
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -326,13 +367,45 @@ void updateScene5_karun(void)
 	{
 		blendingValue = 0.0f;
 	}
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	// setCamera(6.70f, 0.10f, -1.95f, 6.00f, 0.03f, -1.24f, 0.00f, 1.00f, 0.00f);
+	// lookAt   (4.10f, 0.50f, -0.40f, -287.50f, -106.39f, 216.66f, 0.00f, 1.00f, 0.00f)
+
+	//cameraEyeX = preciselerp(cameraEyeX, 4.10f, 0.001f);
+	//cameraEyeY = preciselerp(cameraEyeY, 0.50f, 0.001f);
+	//cameraEyeZ = preciselerp(cameraEyeZ, -0.40f, 0.001);
+
+	//cameraCenterX = preciselerp(cameraCenterX, -287.50f, 0.001f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, 216.66f, 0.001f);
+
+	//if (cameraEyeX <= 5.00f)
+	//	cameraCenterY = preciselerp(cameraCenterY, -106.39f, 0.001f);
+
+
+	// lookAt   (3.45f, 0.60f, -0.05f, 2.89f, -0.03f, 0.49f, 0.00f, 1.00f, 0.00f)
+	// lookAt   (3.55f, 0.70f, -0.00f, -260.29f, -270.46f, 237.59f, 0.00f, 1.00f, 0.00f)
+
+	cameraEyeX = preciselerp(cameraEyeX, 3.55f, 0.001f);
+	cameraEyeY = preciselerp(cameraEyeY, 0.70f, 0.001f);
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.0f, 0.001);
+
+	cameraCenterX = preciselerp(cameraCenterX, -260.29f, 0.001f);
+	cameraCenterZ = preciselerp(cameraCenterZ, 237.59f, 0.001f);
+
+	if (cameraEyeX <= 5.00f)
+		cameraCenterY = preciselerp(cameraCenterY, -270.46f, 0.001f);
+
+#endif // ENABLE_CAMERA_ANIMATION
+
 }
 
 
 void uninitializeScene5_karun(void)
 {
     //UNINIT models
-	unloadStaticModel(&tableModel);
+	unloadStaticModel(&roomModel);
+	unloadStaticModel(&colorPencilModel);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_karunMask)

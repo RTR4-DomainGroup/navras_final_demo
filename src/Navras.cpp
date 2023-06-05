@@ -530,7 +530,7 @@ int initializeNavras(void) {
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	//Depth Related Changes
 	glClearDepth(1.0f);
@@ -626,7 +626,7 @@ void displayNavras(void)
 	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
 	{
 		audio(SCENE05_KARUN_RAS);
-		
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 		displayScene5_karun();
 		sceneTime(time_scene5);
 	}
@@ -777,7 +777,7 @@ void updateNavras(void)
 	}
 
 	
-	else if (currentScene == SCENE5_KARUN_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
 		updateScene5_karun();
 	}
