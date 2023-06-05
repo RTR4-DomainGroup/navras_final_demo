@@ -922,47 +922,9 @@ void updateScene10_AdbhutRas(void)
 	// Code
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
 	speedVector.x = 0.04;
-	// update_transformations(NULL, NULL, NULL, &speedVector);
-	// cameraEyeZ -= speedVector.x;
-	// cameraCenterZ -= speedVector.x;
-
-	
-// #ifdef ENABLE_CAMERA_ANIMATION
-// 	if (isCameraRotation == false)
-// 	{
-// 		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
-// 		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
-
-// 		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
-// 		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
-
-// 		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
-// 		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
-
-// 		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
-// 		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
-
-// 		if (cameraEyeY > 5.00f)
-// 		{
-// 			isCameraRotation = true;
-// 			cameraRadius = 4.00f;
-// 			cameraUpY = 1.0f;
-// 			cameraUpZ = 0.0f;
-// 		}
-// 	}
-// 	else if (isCameraRotation == true && continueCameraRotation == true)
-// 	{
-// 		cameraAngle += 0.3f;
-// 		if (cameraAngle > 360.0f)
-// 		{
-// 			continueCameraRotation = false;
-// 			cameraAngle -= 360.0f;
-// 		}
-
-// 		if (cameraAngle > 10.0f && continueCameraRotation == false)
-// 			stopCameraRotation = true;
-// 	}
-// #endif // ENABLE_CAMERA_ANIMATION
+	//update_transformations(NULL, NULL, NULL, &speedVector);
+	cameraEyeZ -= speedVector.x;
+	cameraCenterZ -= speedVector.x;
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;

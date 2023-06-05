@@ -528,13 +528,10 @@ void initializeQuadForVideo(void)
         // VAO AND VBO RELATED CODE
 	// vao_Cube
 	
-	LOG("Initialize Mohit Success.  \n");
 	glGenVertexArrays(1, &vao_quad_video);
 	glBindVertexArray(vao_quad_video);
-	LOG("Initialize Mohit UnSuccess.  \n");
 	glGenBuffers(1, &vbo_quad_video);
 	
-	LOG("Initialize vbo_quad_video Success.  \n");
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_quad_video);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadPNT), quadPNT, GL_STATIC_DRAW); // sizeof(PNT) is nothing but 8 * 24 * sizeof(float) or 264*sizeof(float)
 	
@@ -584,7 +581,8 @@ void initializePyramid(void)
     
     };
 
-        // VAO AND VBO RELATED CODE
+    
+	// VAO AND VBO RELATED CODE
 	// vao_Cube
 	glGenVertexArrays(1, &vao_pyramid);
 	glBindVertexArray(vao_pyramid);
