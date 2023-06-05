@@ -57,6 +57,8 @@ glXCreateContextAttribsARBProc glXCreateContextAttribsARB = NULL;
 GLXFBConfig glxFBConfig; 
 GLXContext glxContext;
 
+Bool gbDone = False;
+
 // DefaultScreen *defaultScreen = NULL;
 int main(void)
 {
@@ -105,7 +107,6 @@ int main(void)
         GLX_DOUBLEBUFFER, True,
         None // XLib style 0 / null termination 
     };
-    Bool bDone = False;
 
 
     // code
@@ -287,7 +288,7 @@ int main(void)
     }
 
     // message loop
-    while(bDone == False)
+    while(gbDone == False)
     {
         // XPending - PeekMessage in Windows - only when there is message
         while(XPending(display))
@@ -344,7 +345,7 @@ int main(void)
                 switch(keySym)
                 {
                 case XK_Escape:
-                    bDone = True;
+                    gbDone = True;
                     break;
                 default:
                     eventHandlerNavras(WM_KEYDOWN, keySym);
@@ -395,7 +396,7 @@ int main(void)
                 bActiveWindow = False;
                 break;
             case 33:
-                bDone = True;
+                gbDone = True;
                 break;
             } // switch
         } // while XPending
@@ -412,6 +413,11 @@ int main(void)
     uninitialize();
 
     return (0);
+}
+
+void QuitApplication(void)
+{
+	gbDone = True;
 }
 
 void toggleFullscreen(void)

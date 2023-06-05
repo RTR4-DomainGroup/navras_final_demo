@@ -19,7 +19,7 @@ GLubyte* Noise3DTexPtr;
 #define at2(rx, ry) ( rx * q[0] + ry * q[1] )
 #define at3(rx, ry, rz) ( rx * q[0] + ry * q[1] + rz * q[2] )
 
-static void initNoise();
+void initNoise();
 
 static int p[MAXB + MAXB + 2];
 static double g3[MAXB + MAXB + 2][3];
