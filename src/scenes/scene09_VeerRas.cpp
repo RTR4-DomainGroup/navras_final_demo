@@ -142,6 +142,7 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 // Camera angle for rotation
 GLfloat cameraAngle = 85.0f;
 GLfloat cameraRadius;
+
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
@@ -151,6 +152,7 @@ bool isInitialDisplayScene09_VeerRas = true;
 bool isCameraRotation = false;
 bool continueCameraRotation = true;
 bool stopCameraRotation = false;
+int cameraRotationCount = 0;
 
 GLuint texture_veerMask;
 
@@ -640,19 +642,22 @@ void updateScene09_VeerRas(void)
 #ifdef ENABLE_CAMERA_ANIMATION
 	if (isCameraRotation == false)
 	{
-		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
-		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
+		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.007f);
+		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.007f);
 
-		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
-		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
+		//cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.005f);
+		cameraEyeY = preciselerp(cameraEyeY, 6.5f, 0.007f);
+		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.007f);
 
-		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.007f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.007f);
 
-		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
-		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
+		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.0005f);
+		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.0005f);
 
-		if (cameraEyeY > 5.00f)
+		// lookAt(16.19f, 5.71f, -14.07f, -38.36f, 13.19f, -357.79f, 0.00f, 0.55f, 0.45f)
+		if (cameraEyeY > 6.2f)
+		//if (cameraEyeZ > -14.07f)
 		{
 			isCameraRotation = true;
 			cameraRadius = 4.00f;
@@ -662,15 +667,21 @@ void updateScene09_VeerRas(void)
 	}
 	else if (isCameraRotation == true && continueCameraRotation == true)
 	{
-		cameraAngle += 0.3f;
-		if (cameraAngle > 360.0f)
+		cameraEyeY = 6.5f;
+		cameraAngle += 0.2f;
+		
+		if (cameraAngle > 360.0f && cameraRotationCount == 0)
 		{
-			continueCameraRotation = false;
 			cameraAngle -= 360.0f;
+			cameraRotationCount++;
 		}
 
-		if (cameraAngle > 10.0f && continueCameraRotation == false)
-			stopCameraRotation = true;
+		if (cameraAngle >= 85.0f && cameraRotationCount == 1)
+			continueCameraRotation = false;
+	}
+	else
+	{
+		stopCameraRotation = true;
 	}
 #endif // ENABLE_CAMERA_ANIMATION
 }
