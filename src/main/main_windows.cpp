@@ -565,6 +565,7 @@ void update(void)
 	// function declarations
 
 	// code
+#ifdef ENABLE_MULTI_THREADING
 	if (gTaskFinished.load())
 	{
 		updateNavras();
@@ -573,6 +574,11 @@ void update(void)
 	{
 		updateVideoEffect();
 	}
+#else
+	updateNavras();
+#endif // ENABLE_MULTI_THREADING
+
+	
 	
 	
 }
