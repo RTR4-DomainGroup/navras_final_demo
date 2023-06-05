@@ -291,16 +291,16 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 		// translationMatrix[2][0], translationMatrix[2][1], translationMatrix[2][2], translationMatrix[2][3],
 		// translationMatrix[3][0], translationMatrix[3][1], translationMatrix[3][2], translationMatrix[3][3]
 		// );
-		LOG("scale Matrix \n"
-		"%.02ff %.02ff %.02ff %.02ff \n"
-		"%.02ff %.02ff %.02ff %.02ff \n"
-		"%.02ff %.02ff %.02ff %.02ff \n"
-		"%.02ff %.02ff %.02ff %.02ff \n", 
-		scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[0][2], scaleMatrix[0][3],
-		scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[1][2], scaleMatrix[1][3],
-		scaleMatrix[2][0], scaleMatrix[2][1], scaleMatrix[2][2], scaleMatrix[2][3],
-		scaleMatrix[3][0], scaleMatrix[3][1], scaleMatrix[3][2], scaleMatrix[3][3]
-		);
+		// LOG("scale Matrix \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n"
+		// "%.02ff %.02ff %.02ff %.02ff \n", 
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[0][2], scaleMatrix[0][3],
+		// scaleMatrix[0][0], scaleMatrix[0][1], scaleMatrix[1][2], scaleMatrix[1][3],
+		// scaleMatrix[2][0], scaleMatrix[2][1], scaleMatrix[2][2], scaleMatrix[2][3],
+		// scaleMatrix[3][0], scaleMatrix[3][1], scaleMatrix[3][2], scaleMatrix[3][3]
+		// );
 		// LOG("rotation Matrix \n"
 		// "%.02ff %.02ff %.02ff %.02ff \n"
 		// "%.02ff %.02ff %.02ff %.02ff \n"
@@ -328,8 +328,8 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 		*translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
 	if(scaleMatrix) {
 		// explicitely performing all cordinate scale with same factor, to keep same ratio
-		*scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
-		// *scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
+		// *scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
+		*scaleMatrix = vmath::scale(tf_s.x, tf_s.x, tf_s.x);
 	}
 	mat4 rotationMatrix_x = vmath::rotate(tf_r.x, 1.0f, 0.0f, 0.0f);
 	mat4 rotationMatrix_y = vmath::rotate(tf_r.y, 0.0f, 1.0f, 0.0f);

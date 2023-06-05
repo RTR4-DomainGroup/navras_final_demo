@@ -345,11 +345,12 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	
 	}
 
+#ifdef ENABLE_WATER
+
 	if (recordWaterReflectionRefraction == true) {
 
-#ifdef ENABLE_WATER
 		waterUniform = useWaterShader();
-
+		
 		if (isReflection == true) {
 			distance10 = 2.0f * (cameraEyeY - waterHeight);
 			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
@@ -361,13 +362,53 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 			//setCamera(&camera);
 			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		}
-
-		if (isReflection == false) {
+		else {
 			glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
 			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		}
-#endif // ENABLE_WATER
 	}
+
+	if(waterDraw == true){
+		waterUniform = useWaterShader();
+		
+		translationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(0.00f, -4.01f, -20.00f);
+		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
+
+		// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
+
+		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
+
+		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
+		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.3f, 0.5f, 1.0));
+
+		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
+
+		displayWater();
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glUseProgram(0);
+    }
+
+#endif // ENABLE_WATER	
 
 	if (actualDepthQuadScene == 0) {
 
@@ -486,7 +527,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	rotationMatrix = mat4::identity();
 
 	modelMatrix = mat4::identity();
-	viewMatrix = mat4::identity();
+	// viewMatrix = mat4::identity();
 
 
 	//normal mapping
@@ -496,13 +537,12 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	// update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
-	viewMatrix = finalViewMatrix;
-
+	// viewMatrix = finalViewMatrix;
 	mv_matrix = finalViewMatrix * modelMatrix;
 	proj_matrix = perspectiveProjectionMatrix;
 
 	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	glUniform3fv(terrainUniform.laUniform, 1, lightAmbient);
@@ -588,7 +628,10 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
 
-	//glUniform1i(sceneOutdoorADSStaticUniform.)
+    // once for all static models drawing
+ 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
 	// ------ Rock Model ------
 	translationMatrix = vmath::translate(-6.80f, -3.5f, -15.88f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -618,9 +661,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	}
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 	drawStaticModel(rockModel);
 
 	translationMatrix = mat4::identity();
@@ -640,8 +680,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(treeModel);
 
@@ -663,8 +701,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(farmhouseModel);
 
@@ -686,8 +722,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(adbhutmanModel);
 
@@ -704,8 +738,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_adbhutMask);
@@ -753,6 +785,8 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
@@ -778,57 +812,11 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	}
 
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
 
 	glUseProgram(0);
 
 #endif
-
-#ifdef ENABLE_WATER
-	if(waterDraw == true){
-		waterUniform = useWaterShader();
-
-		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		translationMatrix = vmath::translate(0.00f, -4.01f, -20.00f);
-
-		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
-
-		// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
-
-		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
-
-		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
-		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.3f, 0.5f, 1.0));
-
-		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
-
-		displayWater();
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
-    }
-
-#endif // ENABLE_WATER
 
 #ifdef ENABLE_BILLBOARDING	
 	if (actualDepthQuadScene == 0) { // 0 - Actual Scene, 1 - Depth scene
@@ -837,17 +825,6 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		displayScene10_Billboarding(godRays);	
 	}
 #endif // ENABLE_BILLBOARDING
-
-#ifdef ENABLE_WATER
-	if (isReflection == true) {
-
-		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		cameraEyeY += distance10;
-		cameraCenterY += distance10;
-		displayCamera();
-		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	}
-#endif
 
 }
 
@@ -950,42 +927,42 @@ void updateScene10_AdbhutRas(void)
 	// cameraCenterZ -= speedVector.x;
 
 	
-#ifdef ENABLE_CAMERA_ANIMATION
-	if (isCameraRotation == false)
-	{
-		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
-		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
+// #ifdef ENABLE_CAMERA_ANIMATION
+// 	if (isCameraRotation == false)
+// 	{
+// 		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
+// 		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
 
-		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
-		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
+// 		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
+// 		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
 
-		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
+// 		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
+// 		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
 
-		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
-		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
+// 		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
+// 		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
 
-		if (cameraEyeY > 5.00f)
-		{
-			isCameraRotation = true;
-			cameraRadius = 4.00f;
-			cameraUpY = 1.0f;
-			cameraUpZ = 0.0f;
-		}
-	}
-	else if (isCameraRotation == true && continueCameraRotation == true)
-	{
-		cameraAngle += 0.3f;
-		if (cameraAngle > 360.0f)
-		{
-			continueCameraRotation = false;
-			cameraAngle -= 360.0f;
-		}
+// 		if (cameraEyeY > 5.00f)
+// 		{
+// 			isCameraRotation = true;
+// 			cameraRadius = 4.00f;
+// 			cameraUpY = 1.0f;
+// 			cameraUpZ = 0.0f;
+// 		}
+// 	}
+// 	else if (isCameraRotation == true && continueCameraRotation == true)
+// 	{
+// 		cameraAngle += 0.3f;
+// 		if (cameraAngle > 360.0f)
+// 		{
+// 			continueCameraRotation = false;
+// 			cameraAngle -= 360.0f;
+// 		}
 
-		if (cameraAngle > 10.0f && continueCameraRotation == false)
-			stopCameraRotation = true;
-	}
-#endif // ENABLE_CAMERA_ANIMATION
+// 		if (cameraAngle > 10.0f && continueCameraRotation == false)
+// 			stopCameraRotation = true;
+// 	}
+// #endif // ENABLE_CAMERA_ANIMATION
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
