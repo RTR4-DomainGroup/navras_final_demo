@@ -230,10 +230,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	case WM_SETFOCUS:
 		gbActiveWindow = TRUE;
+		eventHandlerNavras(iMsg, wParam);
 		break;
 
 	case WM_KILLFOCUS:
 		gbActiveWindow = FALSE;
+		eventHandlerNavras(iMsg, wParam);
 		break;
 
 	case WM_ERASEBKGND:

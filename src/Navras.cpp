@@ -123,6 +123,12 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// Code
 	switch (iMsg) {
+	case WM_SETFOCUS:
+		togglePlayback();
+		break;
+	case WM_KILLFOCUS:
+		togglePlayback();
+		break;		
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_SPACE:
@@ -604,7 +610,6 @@ void displayNavras(void)
 	void resize(int, int);
 
 	// Code
-	LOG("Enter");
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 #ifdef ENABLE_SINGLE_SCENE
@@ -676,8 +681,6 @@ void displayNavras(void)
 	{
 		audio(SCENE10_ADBHUT_RAS);
 		
-		LOG("Enter");
-
 		isGodRequired = true;
 		isWaterRequired = true;
 		isGaussianBlurRequired = false;
