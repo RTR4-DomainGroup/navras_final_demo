@@ -188,7 +188,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
 			}
 
 		}
@@ -203,12 +202,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 			}
 		}
 	}
-	LOG("Calling first.join() .....\n ");
+	
 	#ifdef ENABLE_MULTI_THREADING
 	first.join();
 	#endif
+	
+	uninitialize();
 	return((int)msg.wParam);
+}
 
+void QuitApplication(void)
+{
+	PostQuitMessage(0);
 }
 
 // CAllBack Function
@@ -300,6 +305,7 @@ int initialize(void)
 	// variable declarations
 	PIXELFORMATDESCRIPTOR pfd;
 	int iPixelFormatIndex;
+
 	// code
 	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 
@@ -559,7 +565,22 @@ void update(void)
 	// function declarations
 
 	// code
+#ifdef ENABLE_MULTI_THREADING
+	if (gTaskFinished.load())
+	{
+		updateNavras();
+	}
+	else
+	{
+		updateVideoEffect();
+	}
+#else
 	updateNavras();
+#endif // ENABLE_MULTI_THREADING
+
+	
+	
+	
 }
 
 void uninitialize(void)
@@ -573,6 +594,7 @@ void uninitialize(void)
 		ToggleFullscreen();
 	}
 
+	LOG("Enter\n");
 	uninitializeNavras();
 	if(wglGetCurrentContext() == ghrc)
 	{

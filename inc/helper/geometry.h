@@ -2,6 +2,7 @@
 
 void initializeCube(void);
 void initializeInvertedNormalCube(void);
+void initializeCubeWithTilingTexcoords(void);
 void initializeCubemap(void);
 void initializeQuad(void);
 void initializeInstancedQuad(int numInstances, GLfloat* instancePositions);
@@ -17,6 +18,7 @@ void initializeTriangle(void );
 
 void displayGeometry(void);
 void displayCube(void);
+void displayCubeWithTilingTexcoords(void);
 void displayRoom(GLuint*);
 void displayCubemap(void);
 void displaySphere(GLfloat*);
