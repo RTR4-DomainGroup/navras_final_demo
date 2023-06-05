@@ -89,6 +89,18 @@ STATIC_MODEL buildingFourModel;
 STATIC_MODEL buildingFiveModel;
 STATIC_MODEL trashOneModel;
 
+//4 June Models
+STATIC_MODEL pileOfTrash;
+STATIC_MODEL canTrash1;
+STATIC_MODEL canTrash2;
+STATIC_MODEL canTrash3;
+STATIC_MODEL cigarette1;
+STATIC_MODEL cigarette2;
+STATIC_MODEL plasticBottleTrash1;
+STATIC_MODEL plasticBottleTrash2;
+STATIC_MODEL plasticBottleTrash3;
+STATIC_MODEL container;
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -172,6 +184,20 @@ int initializeScene08_BibhatsaRas(void)
 	loadStaticModel("res/models/scene08-beebhatsa/bld4/Building4_new.obj", &buildingFourModel);
 	loadStaticModel("res/models/scene08-beebhatsa/bld5/Building5.obj", &buildingFiveModel);
 	loadStaticModel("res/models/scene08-beebhatsa/trash1/trashCan1.obj", &trashOneModel);
+
+	// 4 June Models
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/1/untitled.obj", &pileOfTrash);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/1.obj", &canTrash1);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/2.obj", &canTrash2);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/3.obj", &canTrash3);
+
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/3/1.obj", &cigarette1);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/3/2.obj", &cigarette2);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/1.obj", &plasticBottleTrash1);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/2.obj", &plasticBottleTrash2);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/3.obj", &plasticBottleTrash3);
+
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/5/Container.obj", &container);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -631,6 +657,167 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		drawStaticModel(buildingFiveModel);
 		// ################################### BUILDING SEVEN ###################################  
 
+		// ################################### Trash Pile ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(11.0f, -5.0f, -20.0f);
+		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(pileOfTrash);
+		// ################################### Trash Pile ###################################  
+
+		// ################################### CAN TRASH 1 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(11.0f, -5.0f, -22.0f);
+		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(canTrash1);
+		// ################################### CAN TRASH 1 ###################################  
+
+		// ################################### CAN TRASH 2 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(13.0f, -5.0f, -17.0f);
+		scaleMatrix = vmath::scale(25.0f, 25.0f, 25.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(canTrash2);
+		// ################################### CAN TRASH 2 ###################################  
+
+		// ################################### CAN TRASH 3 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(12.0f, -5.0f, -15.0f);
+		scaleMatrix = vmath::scale(8.0f, 8.0f, 8.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(canTrash3);
+		// ################################### CAN TRASH 3 ###################################  
+
+		// ################################### Cigarette 1 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(2.0f, -5.0f, -3.0f);
+		scaleMatrix = vmath::scale(10.0f, 10.0f, 10.0f);
+		rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(cigarette1);
+		// ################################### Cigarette 1 ###################################  
+
+		// ################################### Cigarette 2 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(2.0f, -5.0f, -5.0f);
+		scaleMatrix = vmath::scale(10.0f, 10.0f, 10.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(cigarette2);
+		// ################################### Cigarette 2 ###################################  
+
+		// ################################### Container ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(2.0f, -5.0f, -10.0f);
+		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(container);
+		// ################################### Container ###################################  
+
 		if (actualDepthQuadScene == 0)
 		{
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -762,6 +949,21 @@ void uninitializeScene08_BibhatsaRas(void)
 	//UNINIT models
 	unloadStaticModel(&manModel);
 	unloadStaticModel(&streetLightModel);
+
+	// Unloading 4 June Models
+
+	unloadStaticModel(&container);
+
+	unloadStaticModel(&plasticBottleTrash3);
+	unloadStaticModel(&plasticBottleTrash2);
+	unloadStaticModel(&plasticBottleTrash1);
+	unloadStaticModel(&cigarette2);
+	unloadStaticModel(&cigarette1);
+	
+	unloadStaticModel(&canTrash3);
+	unloadStaticModel(&canTrash2);
+	unloadStaticModel(&canTrash1);
+	unloadStaticModel(&pileOfTrash);
 
 	// Unloading Building Models
 	unloadStaticModel(&trashOneModel);
