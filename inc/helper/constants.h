@@ -104,14 +104,14 @@ static const char *szAudios[] = {
 //#define ENABLE_DYNAMIC_MODELS
 //#define ENABLE_CAMERA_ANIMATION
 
-#define ENABLE_SINGLE_SCENE
+// #define ENABLE_SINGLE_SCENE
 //#define ENABLE_AUDIO
 
 #define ENABLE_FONT_RENDERING
 
-#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
+// #define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
-//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 

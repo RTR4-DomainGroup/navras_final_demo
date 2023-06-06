@@ -1,6 +1,8 @@
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+#include <time.h>
+
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
 #include "../../inc/helper/common.h"
@@ -8,6 +10,8 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/FontShader.h"
+#include "../../inc/scenes/fontRendering.h"
 
 #ifdef ENABLE_SHADOW
 #include "../../inc/helper/shadowframebuffer.h"
@@ -92,12 +96,28 @@ bool isInitialDisplayScene02_EarthAndSpace = true;
 GLfloat cameraRadiusEarthAndSpace = 6.0f;
 GLfloat cameraAngleEarthAndSpace = 90.0f;
 
+GLfloat alpha = 0.0f;
+
+// Time
+bool timeFlagEarth = true;
+time_t nowEarth;
+time_t thenEarth;
+
+extern time_t now;
+extern time_t then;
+
 //float distance10;
 
 int initializeScene02_EarthAndSpace(void)
 {
 	// Code.
 	// initializeCamera(&camera);
+
+	if(initializeFont() != 0)
+	{
+		LOG("initializeFont() FAILED in initializeScene02_EarthAndSpace in scene02_EarthAndSpace.cpp !!!\n");
+		return (-8);
+	}
 
 #ifdef ENABLE_ADSLIGHT
 	// Texture
@@ -164,6 +184,59 @@ void setCameraScene02_EarthAndSpace(void)
 void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0)
 {
 	// Code
+
+	// Time
+	// if (timeFlagEarth == true) {
+	// 	thenEarth = time(NULL);
+	// 	timeFlagEarth = false;
+	// }
+	// nowEarth = time(NULL);
+
+	// if(nowEarth >= thenEarth + 30)
+	// {
+	// 	glEnable(GL_CULL_FACE);
+	// 	glEnable(GL_BLEND);
+	// 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// 	vec4 textColor = vec4(0.3, 0.7, 0.9,alpha);
+	// 	displayFont("Presenting", vec3(-20.0f, 3.0f, -50.0f), 0.05f, textColor);
+	// 	textColor = vec4(1.0f, 0.8f, 0.2f,alpha);
+	// 	displayFont("NAVRAS", vec3(-20.0f, -7.0f, -50.0f), 0.2f, textColor);
+
+	// 	glDisable(GL_CULL_FACE);
+	// 	glDisable(GL_BLEND);
+
+	// 	// update
+	// 	alpha = alpha+0.001;
+	// 	if(alpha>=1.0)
+	// 	{
+	// 		alpha = 1.0f;
+	// 	}
+	// }
+
+	if(now >= then + 23)
+	{
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		vec4 textColor = vec4(0.3, 0.7, 0.9,alpha);
+		displayFont("Presenting", vec3(-20.0f, -3.0f, -50.0f), 0.05f, textColor);
+		textColor = vec4(1.0f, 0.8f, 0.2f,alpha);
+		displayFont("NAVRAS", vec3(-20.0f, -11.0f, -50.0f), 0.2f, textColor);
+
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+
+		// update
+		alpha = alpha+0.0005;
+		if(alpha>=1.0)
+		{
+			alpha = 1.0f;
+		}
+	}
+
+
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -174,7 +247,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
+	// rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
+	displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
 
@@ -342,11 +416,15 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		////displaySphere(color);
 		//glBindTexture(GL_TEXTURE_2D, 0);
 
+
+
 		glUseProgram(0);
 
 #endif // ENABLE_STARFIELD
 
 	}
+
+	
 
 }
 

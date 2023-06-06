@@ -33,7 +33,7 @@ struct Character {
 std::map<GLchar, Character> Characters;
 
 
-int initializeFont(void) {
+int initializeFont() {
 	
 	// FreeType
     // --------
@@ -47,7 +47,6 @@ int initializeFont(void) {
 
 	// find path to font
     std::string font_name = "res/fonts/arial.ttf";
-	// std::string font_name = "arial.ttf";
     if (font_name.empty())
     {
         LOG("ERROR::FREETYPE: Failed to load font_name");
@@ -131,9 +130,9 @@ int initializeFont(void) {
 
 	// OpenGL state
     // ------------
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glEnable(GL_CULL_FACE);
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	// Depth Related Changes (for 3D)
@@ -149,36 +148,41 @@ int initializeFont(void) {
 	return(0);
 }
 
-void displayFont(void) {
+void displayFont(std::string text, vec3 fontTranslate, float fontScale, vec4 fontColor) 
+{
 
     void RenderText(std::string, float, float, float, vec4);
 
 	// Code
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Use the shader program object
     fontUniforms = useFontShader();
 
+    LOG("in font display() !!!\n");
 
-	mat4 modelViewMtrix = mat4::identity();
+	mat4 modelViewMatrix = mat4::identity();
 	mat4 translationMatrix = mat4::identity();
 	mat4 modelViewProjectionMatrix = mat4::identity();
+    mat4 modelMatrix = mat4::identity();
+    mat4 viewMatrix = mat4::identity();
+    modelViewMatrix = viewMatrix * modelMatrix;
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
 	
 
-	translationMatrix = translate(0.0f, 0.0f, -50.0f);
+	translationMatrix = translate(fontTranslate);
 	//scaleMatrix = scale(0.1f, 0.1f, 0.1f);
 	//rotationMatrix = rotate(angleC, 1.0f, 1.0f, 1.0f);
-	modelViewMtrix = translationMatrix; //* scaleMatrix * rotationMatrix;
-	modelViewProjectionMatrix = perspectiveProjectionMatrix * modelViewMtrix;
+	modelViewMatrix = translationMatrix; //* scaleMatrix * rotationMatrix;
+	modelViewProjectionMatrix = perspectiveProjectionMatrix * modelViewMatrix;
 
 	glUniformMatrix4fv(fontUniforms.uniform_mvp_matrix, 1, GL_FALSE, modelViewProjectionMatrix);
 
 
-
-	RenderText("ASTROMEDICOMP", -20.0f, 0.0f, 0.1f, vec4(1.0f, 0.8f, 0.2f, 1.0));
-	RenderText("Presents....", 10.0f, -3.0f, 0.05f, vec4(0.3, 0.7f, 0.9f,1.0));
+    RenderText(text, 0.0f, 0.0f, fontScale, fontColor);
+	// RenderText("ASTROMEDICOMP", 0.0f, 0.0f, 0.1f, fontColor);
+	//RenderText("Presents....", 10.0f, -3.0f, 0.05f, vec4(0.3, 0.7f, 0.9f,1.0));
 
 	// Unuse the shader program object
 	glUseProgram(0);

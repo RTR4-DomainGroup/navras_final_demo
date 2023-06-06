@@ -338,13 +338,21 @@ int initializeNavras(void) {
 #ifdef ENABLE_SINGLE_SCENE
 
 	// SCENE0
-	if (
-		SCENE00_AMC_BANNER == currentScene &&
-		initializeFont() != 0)
-	{
-		LOG("initializeFont() FAILED !!!\n");
-		return (-8);
-	}
+	// if (
+	// 	SCENE00_AMC_BANNER == currentScene &&
+	// 	initializeFont() != 0)
+	// {
+	// 	LOG("initializeFont() FAILED !!!\n");
+	// 	return (-8);
+	// }
+
+	// #ifdef ENABLE_FONT_RENDERING
+	// 	if(initializeFont() != 0)
+	// 	{
+	// 		LOG("initializeFont() FAILED !!!\n");
+	// 		return (-8);
+	// 	}
+	// #endif // ENABLE_FONT_RENDERING
 
 
 	// SCENE02
@@ -644,9 +652,9 @@ void displayNavras(void)
 	void sceneTime(int);
 	void audio(int);
 	
-	bool isGodRequired = false;
+	bool isGodRequired = true;
 	bool isWaterRequired = false;
-	bool isGaussianBlurRequired = false;
+	bool isGaussianBlurRequired = true;
 
 	// Function declarations
 	void resize(int, int);
@@ -663,17 +671,25 @@ void displayNavras(void)
 #endif // !ENABLE_SINGLE_SCENE
 
 	// Call Scenes Display Here	
-	if(currentScene == SCENE00_AMC_BANNER)
-	{
-		displayFont();
-	}
-	else if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
+	// if(currentScene == SCENE00_AMC_BANNER)
+	// {
+	// 	displayFont();
+	// }
+	// else 
+	if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = false;
-		isGaussianBlurRequired = false;
+		if(now >= then+20)
+		{
+			isGaussianBlurRequired = true;
+		}
+		else
+		{
+			isGaussianBlurRequired = false;
+		}
 		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
