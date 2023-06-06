@@ -53,6 +53,7 @@ GLfloat blendingValue = 0.0f;
 //Model variables
 STATIC_MODEL roomModel;
 STATIC_MODEL colorPencilModel;
+STATIC_MODEL boyModel;
 
 GLuint textures_kidroom[4];
 
@@ -82,11 +83,11 @@ int initializeScene5_karun(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/scene05-karunras/room/KidRoom_34Normals.obj", &roomModel); //done
+	loadStaticModel("res/models/scene05-karunras/room/new/karunRoomNew1.obj", &roomModel); //done
 	////loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.fbx", &roomModel); 
 	//loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &roomModel); //done
 	//loadStaticModel("res/models/scene05-karunras/colorpencil/pencil1obj.obj", &colorPencilModel); //done
-	//loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &roomModel);
+	loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &boyModel);
 	//loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &roomModel); //done
 	//loadStaticModel("res/models/kid-table/kidTable.obj", &roomModel); //done
 	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &roomModel); //change scale
@@ -287,6 +288,33 @@ void displayScene5_karun(void)
 
 	drawStaticModel(roomModel);
 
+
+	//***********BOY********************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+    translationMatrix = vmath::translate(-0.37f, -2.26f, -1.27f);
+	scaleMatrix = vmath::scale(1.40f, 1.40f, 1.40f);
+	//scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+	rotationMatrix_x = vmath::rotate(4.80f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(36.18f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-0.30f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(boyModel);
+
     //// ------ colorPencil Model ------
 	//translationMatrix = mat4::identity();
 	//rotationMatrix = mat4::identity();
@@ -315,6 +343,7 @@ void displayScene5_karun(void)
 	//
 	////drawStaticModel(colorPencilModel);
 
+
 	//**************QUAD*********************
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -326,11 +355,11 @@ void displayScene5_karun(void)
  
 	//translatevalues.x = 2.750000, translatevalues.y = 0.100000, translatevalues.z = 0.799998
 	//translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
-	translationMatrix = vmath::translate(2.75f, -0.15f, 0.80f);
-	scaleMatrix = vmath::scale(0.48f, 0.00f, 2.25f);
-	rotationMatrix = vmath::rotate(0.18f, 86.50f, 0.00f, 0.00f);
+	translationMatrix = vmath::translate(0.13f, -1.73f, -1.04f);
+	scaleMatrix = vmath::scale(0.54f, 0.54f, 0.54f);
+	rotationMatrix = vmath::rotate(89.45f, 1.0f, 0.00f, 0.00f);
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
-	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -406,6 +435,7 @@ void uninitializeScene5_karun(void)
     //UNINIT models
 	unloadStaticModel(&roomModel);
 	unloadStaticModel(&colorPencilModel);
+	unloadStaticModel(&boyModel);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_karunMask)
