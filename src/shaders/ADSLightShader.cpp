@@ -35,6 +35,7 @@ int initializeADSShader(void)
 		"uniform int u_fogEnable; \n" \
 
 		"uniform int u_actualScene; \n" \
+		"uniform int u_isInstanceEnabled; \n" \
 		"uniform int u_depthScene; \n" \
 		"uniform int u_depthQuadScene; \n" \
 
