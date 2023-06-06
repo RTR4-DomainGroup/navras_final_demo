@@ -177,7 +177,8 @@ void setCameraScene05_karun(void)
 	if (isInitialDisplayScene05_karun == true)
 	{
 		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
-		setCamera(6.70f, 0.10f, -1.95f, 6.00f, 0.03f, -1.24f, 0.00f, 1.00f, 0.00f);
+		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
+		setCamera(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene05_karun = false;
 	}
 }
@@ -415,15 +416,29 @@ void updateScene5_karun(void)
 	// lookAt   (3.45f, 0.60f, -0.05f, 2.89f, -0.03f, 0.49f, 0.00f, 1.00f, 0.00f)
 	// lookAt   (3.55f, 0.70f, -0.00f, -260.29f, -270.46f, 237.59f, 0.00f, 1.00f, 0.00f)
 
-	cameraEyeX = preciselerp(cameraEyeX, 3.55f, 0.001f);
-	cameraEyeY = preciselerp(cameraEyeY, 0.70f, 0.001f);
-	cameraEyeZ = preciselerp(cameraEyeZ, 0.0f, 0.001);
+	//cameraEyeX = preciselerp(cameraEyeX, 3.55f, 0.001f);
+	//cameraEyeY = preciselerp(cameraEyeY, 0.70f, 0.001f);
+	//cameraEyeZ = preciselerp(cameraEyeZ, 0.0f, 0.001);
 
-	cameraCenterX = preciselerp(cameraCenterX, -260.29f, 0.001f);
-	cameraCenterZ = preciselerp(cameraCenterZ, 237.59f, 0.001f);
+	//cameraCenterX = preciselerp(cameraCenterX, -260.29f, 0.001f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, 237.59f, 0.001f);
 
-	if (cameraEyeX <= 5.00f)
-		cameraCenterY = preciselerp(cameraCenterY, -270.46f, 0.001f);
+	//if (cameraEyeX <= 5.00f)
+	//	cameraCenterY = preciselerp(cameraCenterY, -270.46f, 0.001f);
+
+	// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f) (source)
+	// lookAt(1.05f, -1.10f, -2.00f, 0.40f, -1.58f, -1.41f, 0.00f, 1.00f, 0.00f) (target)
+	// lookAt(1.20f, -1.05f, -1.90f, 0.51f, -1.52f, -1.36f, 0.00f, 1.00f, 0.00f) (target2)
+
+	cameraEyeX = preciselerp(cameraEyeX, 1.05f, 0.001f);
+	cameraEyeY = preciselerp(cameraEyeY, -1.10f, 0.001f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -2.00f, 0.001);
+
+	cameraCenterX = preciselerp(cameraCenterX, 0.40f, 0.08f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -1.41f, 0.08f);
+
+	//if (cameraEyeX <= 4.8f)
+		cameraCenterY = preciselerp(cameraCenterY, -1.58f, 0.08f);
 
 #endif // ENABLE_CAMERA_ANIMATION
 
