@@ -273,6 +273,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse_bhayanak);
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular_bhayanak);
 	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess_bhayanak);
+	glUniform1i(sceneOutdoorADSStaticUniform.instancingEnabled, 0);
 
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);

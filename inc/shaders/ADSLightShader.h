@@ -44,6 +44,7 @@ struct ADSUniform
     GLuint uniform_enable_godRays;
 
     GLuint godrays_blackpass_sphere;
+    GLuint instancingEnabled;
 
 };
 

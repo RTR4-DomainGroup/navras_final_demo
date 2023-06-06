@@ -474,6 +474,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
 	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneOutdoorADSStaticUniform.instancingEnabled, 0);
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
@@ -536,7 +537,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
+	glUniform1i(sceneOutdoorADSDynamicUniform.instancingEnabled, 0);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);

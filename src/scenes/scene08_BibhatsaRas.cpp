@@ -297,7 +297,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.kdUniform, 1, GL_FALSE, materialDiffuse_bibhatsa);
 		glUniformMatrix4fv(bibhatsaRasObject.ksUniform, 1, GL_FALSE, materialSpecular_bibhatsa);
 		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess_bibhatsa);		
-
+		glUniform1i(bibhatsaRasObject.instancingEnabled, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_road);
 		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
@@ -368,7 +368,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1i(bibhatsaRasObject.uniform_enable_godRays, godRays);
-
+		glUniform1i(bibhatsaRasObject.instancingEnabled, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_footpath);
 		glUniform1i(bibhatsaRasObject.textureSamplerUniform_diffuse, 0);
@@ -424,7 +424,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
-
+		glUniform1i(bibhatsaRasObject.instancingEnabled, 0);
 		//glUniform1i(sceneOutdoorADSStaticUniform.)
 		// ------ Man Model ------
 		translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);
@@ -666,7 +666,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
 		glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
-
 		// ------ Dancing Vampire Model ------
 
 		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));

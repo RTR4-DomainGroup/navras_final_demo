@@ -62,10 +62,20 @@ int initializeADSShader(void)
 		"out vec3 a_fragPosNM_out; \n" \
 		"uniform vec3 viewPosition; \n"	\
 
+		"uniform int u_isInstanced; \n" \
+
 		"void main(void) \n" \
 		"{ \n" \
-			"vec4 pos = (a_position + a_instancePosition); \n" \
-
+			"vec4 pos;" \
+			"if (u_isInstanced == 1)"
+			"{"
+				"pos = (a_position + a_instancePosition); \n" \
+			"}"
+			"else"
+			"{"
+				"pos = a_position; \n" \
+			"}"
+			
 			"vec4 worldPos; \n" \
 			"worldPos = u_modelMatrix * pos; \n" \
 
@@ -392,6 +402,7 @@ int initializeADSShader(void)
 	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
 	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
 	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
+	adsUniform.instancingEnabled = glGetUniformLocation(adsShaderProgramObject, "u_isInstanced");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);

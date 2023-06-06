@@ -574,6 +574,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
 	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneOutdoorADSStaticUniform.instancingEnabled, 0);
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------

@@ -172,7 +172,7 @@ void displayScene5_karun(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
-	
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
 	scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);

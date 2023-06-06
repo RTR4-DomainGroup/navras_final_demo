@@ -257,7 +257,7 @@ void setCameraScene07_RaudraRas(void)
 {
 	if (isInitialDisplayScene07_RaudraRas == true)
 	{
-		setCamera(2.00f, 0.00f, 1.45f, 2.00f, 0.00f, -1.75f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.00f, 0.00f, 1.45f, 0.00f, 0.00f, -1.75f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene07_RaudraRas = false;
 	}
 }
@@ -276,7 +276,8 @@ void displayScene07_Raudra(void)
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 	mat4 viewMatrix = mat4::identity();
-	
+	TRANFORM rotationAngles = {0.0f, 0.0f, 0.0f};
+
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	displayCamera();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -305,10 +306,11 @@ void displayScene07_Raudra(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 	
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
-	scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
+	scaleMatrix = vmath::scale(2.0f, 1.0f, 2.5f);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -350,8 +352,9 @@ void displayScene07_Raudra(void)
 	rotationMatrix_x = mat4::identity();
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
-	translationMatrix = vmath::translate(1.0f, 0.0f, 1.49f);
-	scaleMatrix = vmath::scale(2.0f, 1.0f, 1.0f);
+	
+	translationMatrix = vmath::translate(0.0f, 0.0f, 1.485f);
+	//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 	modelMatrix = translationMatrix * scaleMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -368,8 +371,8 @@ void displayScene07_Raudra(void)
 	rotationMatrix_x = mat4::identity();
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
-	translationMatrix = vmath::translate(0.01f, -0.375f, 0.95f);
-	scaleMatrix = vmath::scale(0.01f, 1.2f, 1.0f);
+	translationMatrix = vmath::translate(-1.95f, -0.5f, 0.95f);
+	scaleMatrix = vmath::scale(0.009f, 0.5f, 0.25f);
 	rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -383,17 +386,16 @@ void displayScene07_Raudra(void)
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+	
 
 	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	translationMatrix = vmath::translate(1.85f, -0.85f, -9.55f);
+	translationMatrix = vmath::translate(-0.40f, -0.8f, -6.5f);
 	//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-
+	//rotationAngles.y = 180;
+	
 	modelMatrix = translationMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 1);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -409,7 +411,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_z = mat4::identity();
 
 
-	translationMatrix = vmath::translate(3.50f, 0.0f, -3.35f);
+	translationMatrix = vmath::translate(1.50f, 0.0f, -3.35f);
 	scaleMatrix = vmath::scale(0.075f, 0.1f, 0.075f);
 	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 	rotationMatrix_y = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
@@ -438,7 +440,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.85f, -0.385f, -1.10f);
+	translationMatrix = vmath::translate(0.5f, -0.385f, -1.10f);
 	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
 	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -446,7 +448,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -462,15 +464,15 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.85f, -0.385f, -1.10f);
+	translationMatrix = vmath::translate(0.00f, 0.8f, 0.40f);
 	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
-	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
-	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+	rotationMatrix_y = vmath::rotate(360.0f, 0.0f, 1.0f, 0.0f);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-
+	
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -486,7 +488,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.9f, -0.395f, -1.12f);
+	translationMatrix = vmath::translate(0.5f, -0.395f, -1.12f);
 	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
 	scaleMatrix = vmath::scale(0.15f, 0.12f, 0.2f);
 	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -494,7 +496,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_failed);

@@ -581,6 +581,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform.instancingEnabled, 0);
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);

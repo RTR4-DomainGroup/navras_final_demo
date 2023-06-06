@@ -661,6 +661,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
 	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneOutdoorADSStaticUniform.instancingEnabled, 0);
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ TREE Model ------

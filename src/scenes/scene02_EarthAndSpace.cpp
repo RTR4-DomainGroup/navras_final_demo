@@ -221,6 +221,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glUniform1f(adsEarthAndSpaceUniform.materialShininessUniform, materialShininess);
 
 		glUniform1i(adsEarthAndSpaceUniform.uniform_enable_godRays, godRays);
+		glUniform1i(adsEarthAndSpaceUniform.instancingEnabled, 0);
 
 		glUniform1f(adsEarthAndSpaceUniform.gradientUniform, gradient);
 		glUniform1f(adsEarthAndSpaceUniform.densityUniform, density);

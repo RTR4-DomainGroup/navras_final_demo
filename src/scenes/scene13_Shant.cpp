@@ -363,6 +363,7 @@ void displayScene13_Shant(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 
 	// ################################### ROOM ###################################  
 	translationMatrix = mat4::identity();

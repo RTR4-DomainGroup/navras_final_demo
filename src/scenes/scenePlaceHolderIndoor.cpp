@@ -160,6 +160,7 @@ void displayScene_PlaceHolderIndoor(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.instancingEnabled, 0);
 
 	//For Normal Mapping
 	glUniform4fv(sceneIndoorADSUniform.viewpositionUniform, 1, camera.eye);
