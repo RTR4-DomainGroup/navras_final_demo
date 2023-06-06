@@ -582,6 +582,12 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
 		float color[3] = {1.0f, 1.0f, 1.0f};
+		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+		{
+			color[0] = 1.0f;
+			color[1] = 0.6f;
+			color[2] = 0.01f;
+		}
 		//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);
 		glUseProgram(0);
@@ -621,9 +627,11 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+		{
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
-		else
-			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+		}
+		// else
+		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
 
 		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
 		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);

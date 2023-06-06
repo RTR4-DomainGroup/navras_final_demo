@@ -91,7 +91,7 @@ static GLfloat materialShininess = 128.0f;
 
 bool isInitialDisplayScene02_EarthAndSpace = true;
 
-GLfloat cameraRadiusEarthAndSpace = 6.0f;
+GLfloat cameraRadiusEarthAndSpace = 4.0f;
 GLfloat cameraAngleEarthAndSpace = 90.0f;
 
 //float distance10;
