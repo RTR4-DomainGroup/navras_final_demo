@@ -267,12 +267,12 @@ int initializeScene10_AdbhutRas(void)
 #endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_TERRIAN
-	displacementmap_depth.y = 15.0f;
+	displacementmap_depth.y = 8.0f;
 	// displacementmap_depth = 3.0f;
 	// displacementmap_depth = 0.5f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg"; // albedo, color, diffuse, base color, are one and same
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/test1.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/test2.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
@@ -376,7 +376,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		translationMatrix = vmath::translate(0.00f, -4.01f, -20.00f);
 		scaleMatrix = vmath::scale(80.0f, 1.0f, 80.0f);
 
-		// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -917,11 +917,13 @@ void displayScene10_Billboarding(int godRays = 1)
 void updateScene10_AdbhutRas(void)
 {
 	// Code
+#ifdef ENABLE_CAMERA_ANIMATION
 	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
 	speedVector.x = 0.04;
 	//update_transformations(NULL, NULL, NULL, &speedVector);
 	cameraEyeZ -= speedVector.x;
 	cameraCenterZ -= speedVector.x;
+#endif
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 1;
