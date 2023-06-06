@@ -13,3 +13,4 @@ extern TRANFORM tf_t; // translation
 extern TRANFORM tf_s; // scale
 extern TRANFORM tf_r; // rotation
 extern GLfloat tf_Speed; // transformation speed
+extern int tf_Object;

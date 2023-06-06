@@ -10,6 +10,7 @@ TRANFORM tf_t; // translation
 TRANFORM tf_s; // scale
 TRANFORM tf_r; // rotation
 GLfloat tf_Speed = 0.05f; // transformation speed
+int tf_Object = 0; // transformation object
 
 
 static bool translateMode = false;
@@ -17,9 +18,14 @@ static bool scaleMode = false;
 static bool rotateMode = false;
 static bool cameraMode = false;
 
+static bool updateFirstCall = true;
+static bool debugFirstCall = true;
+
 // extern these variables in your WndProc 
 extern GLbyte charPressed;
 extern GLuint keyPressed;
+
+extern GLuint numPressed;
 
 // extern
 // camera related variables for movement in scene during debugging
@@ -33,14 +39,13 @@ void debug_tranformation(void)
 	static TRANFORM ltf_s; // local scale
 	static TRANFORM ltf_r; // local rotation
 	static GLfloat ltf_Speed;
-	static GLboolean firstCall = GL_TRUE;
-	if(firstCall)
+	if(debugFirstCall)
 	{
 		ltf_t = tf_t;  
 		ltf_s = tf_s;  
 		ltf_r = tf_r; 
 		ltf_Speed = tf_Speed;
-		firstCall = GL_FALSE;
+		debugFirstCall = false;
 	}
 
 	// code
@@ -185,6 +190,7 @@ void debug_tranformation(void)
 			tf_s = ltf_s;  
 			tf_r = ltf_r; 
 			tf_Speed = ltf_Speed;
+			tf_Object = 0;
 			break;
 		case 'c':
 			LOG("switched to camera mode\n");
@@ -232,6 +238,21 @@ void debug_tranformation(void)
 				cameraCenterY = cameraCenterY + tf_Speed;
 			}
 			break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			LOG("Num key pressed %c \n", charPressed, charPressed);
+			tf_Object = charPressed - '0';
+			updateFirstCall = true;
+			LOG("Object selected %d \n", tf_Object);
+			break;
 		default:
 			charHandled = GL_FALSE;
 			break;
@@ -265,7 +286,6 @@ void debug_tranformation(void)
 			cameraCenterZ = cos(cameraCounterSideWays) * 360.0f;
 			cameraCounterSideWays -= 0.025f;
 			break;
-		
 		default:
 			break;
 		}
@@ -276,10 +296,9 @@ void debug_tranformation(void)
 
 void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMatrix, vmath::mat4* rotationMatrix, TRANFORM* vector) 
 {
-	static bool firstCall = 1;
 
 	// external debugging varaible
-	if(firstCall) {
+	if(updateFirstCall) {
 		// update tf_* variables only at first calls, later those will update based on events  
 		// LOG("Translation Matrix \n"
 		// "%.02ff %.02ff %.02ff %.02ff \n"
@@ -321,7 +340,8 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 		else
 			tf_r = {0.0f, 0.0f, 0.0f};
 		tf_Speed = 0.25f;
-		firstCall = 0;
+		updateFirstCall = false;
+		debugFirstCall = true;
 	}
 
 	if(translationMatrix)
@@ -343,10 +363,8 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 
 void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMatrix, glm::mat4* rotationMatrix, TRANFORM* vector)
 {
-	static bool firstCall = 1;
-
 	// external debugging varaible
-	if (firstCall) {
+	if(updateFirstCall) {
 		// update tf_* variables only at first calls, later those will update based on events  
 		// LOG("Translation Matrix \n"
 		// "%.02ff %.02ff %.02ff %.02ff \n"
@@ -388,7 +406,7 @@ void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMa
 		else
 			tf_r = { 0.0f, 0.0f, 0.0f };
 		tf_Speed = 0.25f;
-		firstCall = 0;
+		updateFirstCall = false;
 	}
 
 	if (translationMatrix)

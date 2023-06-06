@@ -574,11 +574,11 @@ void printGLInfo(void) {
 	LOG("   Number of Supported Extensions: %d \n", numExtensions);
 	LOG("   **********************************************************\n");
 
-	for (int i = 0; i < numExtensions; i++)
-	{
-		LOG("   %s \n", glGetStringi(GL_EXTENSIONS, i));
-	}
-	LOG("**********************************************************\n");
+	// for (int i = 0; i < numExtensions; i++)
+	// {
+	// 	LOG("   %s \n", glGetStringi(GL_EXTENSIONS, i));
+	// }
+	// LOG("**********************************************************\n");
 }
 
 void resizeNavras(int width, int height) {
