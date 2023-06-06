@@ -315,8 +315,8 @@ int initializeNavras(void) {
     //     return (-5);
     // }
 
-	// // Print OpenGLInfo
-	// printGLInfo();
+	// Print OpenGLInfo
+	printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -560,7 +560,7 @@ void printGLInfo(void) {
 
 	// Code
 	// ***** Writing Graphics Card Related Info in Log File  ***** //
-	LOG("\n   **********************************************************\n");
+	LOG("   **********************************************************\n");
 	LOG("   ***** Graphics Card Information Details *****\n");
 	LOG("   **********************************************************\n");
 	LOG("   OpenGL Vendor	: %s \n", glGetString(GL_VENDOR));
