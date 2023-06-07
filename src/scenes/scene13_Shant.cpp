@@ -93,6 +93,34 @@ GLfloat offset_ras[9][3] =
 
 bool isMaskQuadEnabled[9] = { true, true, true, true, true, true, true, true, true };
 
+GLfloat maskTranslationRadii[9] =
+{
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f
+};
+
+GLfloat maskScales[9] =
+{
+	0.025,
+	0.025,
+	0.025,
+	0.025,
+	0.025,
+	0.025,
+	0.025,
+	0.025,
+	0.025
+};
+
+bool masksTransformationsComplete = false;
+
 static GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular_shantRas_mask[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -112,7 +140,7 @@ int initializeScene13_Shant(void)
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11_new.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
 
 	initializeQuad();
 
@@ -490,15 +518,15 @@ void displayScene13_Shant(void)
 	{
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
+		//rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 
-		float xPos = 1.5f * cos(angle * M_PI / 180.0);
-		float yPos = 1.5f * sin(angle * M_PI / 180.0);
+		float xPos = maskTranslationRadii[i] * cos(angle * M_PI / 180.0);
+		float yPos = maskTranslationRadii[i] * sin(angle * M_PI / 180.0);
 
-		translationMatrix = vmath::translate(xPos - 0.87f, yPos - 0.5f, -5.0f);
-		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+		translationMatrix = vmath::translate(xPos - 0.765f, yPos - 0.5f, -5.0f);
+		scaleMatrix = vmath::scale(maskScales[i], maskScales[i], maskScales[i]);
+		modelMatrix = translationMatrix * scaleMatrix/* * rotationMatrix*/;
 
 		//glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -551,13 +579,40 @@ void updateScene13_ShantRas(void)
 	//if (offset_ras_1[0] <= 0.33f)
 	//	updateErosion(offsetIncrement, offset_ras_2, 0.001f);
 
-	updateErosion(offsetIncrement, offset_ras[0], 0.001f);
+	maskTranslationRadii[0] += 0.001f;
+	maskScales[0] += 0.0001f;
 	for (int i = 0; i < 9; i++)
 	{
-		if (offset_ras[i][0] <= 0.33f)
-			updateErosion(offsetIncrement, offset_ras[i + 1], 0.001f);
-		if (offset_ras[i][0] <= 0.17f)
-			isMaskQuadEnabled[i] = false;
+		if (maskTranslationRadii[i] >= 0.75f)
+		{
+			maskTranslationRadii[i + 1] += 0.001f;
+			maskScales[i + 1] += 0.0001f;
+		}
+		if (maskTranslationRadii[i] >= 1.5f)
+			maskTranslationRadii[i] = 1.5f;
+
+		if (maskTranslationRadii[8] == 1.5f)
+			masksTransformationsComplete = true;
+
+		if (maskScales[i] >= 0.125f)
+			maskScales[i] = 0.125f;
+
+		/*if (maskScales[i] >= 0.1125f)
+			maskScales[i + 1] += 0.01f;
+		if (maskScales[i] >= 0.25f)
+			maskScales[i] = 0.025f;*/
+	}
+
+	if (masksTransformationsComplete == true)
+	{
+		updateErosion(offsetIncrement, offset_ras[8], 0.001f);
+		for (int i = 8; i > -1; i--)
+		{
+			if (offset_ras[i][0] <= 0.33f)
+				updateErosion(offsetIncrement, offset_ras[i - 1], 0.001f);
+			if (offset_ras[i][0] <= 0.17f)
+				isMaskQuadEnabled[i] = false;
+		}
 	}
 #endif // ENABLE_EROSION
 
