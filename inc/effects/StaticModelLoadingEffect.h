@@ -46,6 +46,7 @@ public:
     vector<unsigned int> indices;
     vector<StaticModelTexture>      textures;
     unsigned int VAO;
+    GLuint noiseTexID;
 
     // render data 
     unsigned int VBO, VBO_Instanced, EBO;
@@ -59,6 +60,7 @@ public:
 
     // render the mesh
     void Draw();
+    void DrawCustomTex(GLuint texID, GLuint erodeTexID);
     void DrawInstanced(int );
 
     // initializes all the buffer objects/arrays
@@ -88,6 +90,7 @@ public:
 
     // draws the model, and thus all its meshes
     void Draw();
+    void DrawCustomTexture(GLuint texID, GLuint erodeTexID);
     void DrawInstanced(int numInstances);
 
     // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
@@ -119,6 +122,7 @@ unsigned int TextureFromFile(const string& filepath);
 void loadStaticModel(const char* path, STATIC_MODEL* staticModel);
 void loadStaticModelInstanced(const char* path, STATIC_MODEL* staticModel, int numInstance, vector<float> instancePositions);
 void drawStaticModel(STATIC_MODEL staticModel);
+void drawCustomTextureStaticModel(STATIC_MODEL staticModel, GLuint texID, GLuint erodeTexID);
 void drawStaticModelInstanced(STATIC_MODEL staticModel, int numInstances);
 void unloadStaticModel(STATIC_MODEL* staticModel);
 
