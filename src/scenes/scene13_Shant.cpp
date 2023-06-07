@@ -56,6 +56,7 @@ static GLuint textures[4];
 
 #ifdef ENABLE_STATIC_MODELS
 static STATIC_MODEL shantRoomModel;
+static STATIC_MODEL maskModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_EROSION
@@ -112,11 +113,12 @@ int initializeScene13_Shant(void)
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 
-	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11_new.obj", &shantRoomModel);
+	loadStaticModel("res/models/rock/rock.obj", &maskModel);
 
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks/BhayanakMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bhayanakRas FAILED!!!\n");
@@ -127,7 +129,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_bhayanakRas Successfull = %u!!!\n", texture_bhayanakRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks/BibhatsaMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
@@ -138,7 +140,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks\\KarunMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks/KarunMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_karunRas FAILED!!!\n");
@@ -149,7 +151,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_karunRas Successfull = %u!!!\n", texture_karunRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks/RaudraMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_raudraRas FAILED!!!\n");
@@ -160,7 +162,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_raudraRas Successfull = %u!!!\n", texture_raudraRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks/VeerMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_veerRas FAILED!!!\n");
@@ -171,7 +173,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_veerRas Successfull = %u!!!\n", texture_veerRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks/AdbhutMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_adbhutRas FAILED!!!\n");
@@ -182,7 +184,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
@@ -193,7 +195,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks\\HasyaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_hasyaRas FAILED!!!\n");
@@ -204,7 +206,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_hasyaRas Successfull = %u!!!\n", texture_hasyaRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks\\ShantMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks/ShantMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shantRas FAILED!!!\n");
@@ -373,7 +375,7 @@ void displayScene13_Shant(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	// ------ Streetlight Model ------
+	// ------ Room Model ------
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
@@ -385,6 +387,51 @@ void displayScene13_Shant(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(shantRoomModel);
+
+	glUseProgram(0);
+	// ################################### ROOM ###################################  
+
+	// ################################### MASK ###################################  
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	//float angle = 0.0;
+
+	glEnable(GL_TEXTURE_3D);
+	glEnable(GL_TEXTURE_2D);
+	sceneErosionNoiseUniform = useErosionNoiseShader();
+
+	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
+
+	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
+
+
+	// ------ Mask Model ------
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+
+	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+
+	drawCustomTextureStaticModel(maskModel, texture_bhayanakRas, noise_texture_eroded);
 	// ################################### ROOM ###################################  
 
 	glUseProgram(0);
@@ -567,7 +614,7 @@ void uninitializeScene13_Shant(void)
 {
     //UNINIT models
 	unloadStaticModel(&shantRoomModel);
-	//unloadStaticModel(&deskModel);
+	unloadStaticModel(&maskModel);
 
 	if (texture_shantRas)
 	{

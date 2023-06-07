@@ -188,7 +188,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
 			}
 
 		}
@@ -566,7 +565,22 @@ void update(void)
 	// function declarations
 
 	// code
+#ifdef ENABLE_MULTI_THREADING
+	if (gTaskFinished.load())
+	{
+		updateNavras();
+	}
+	else
+	{
+		updateVideoEffect();
+	}
+#else
 	updateNavras();
+#endif // ENABLE_MULTI_THREADING
+
+	
+	
+	
 }
 
 void uninitialize(void)

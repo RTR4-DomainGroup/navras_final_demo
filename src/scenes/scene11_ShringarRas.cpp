@@ -236,7 +236,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarMask FAILED!!!\n");

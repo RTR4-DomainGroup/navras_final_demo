@@ -66,6 +66,7 @@ static GLuint texture_door;
 STATIC_MODEL deskModelRaudra;
 STATIC_MODEL shelfModel;
 STATIC_MODEL pencilModelRaudra;
+STATIC_MODEL tempBoyModelRaudra;
 
 static GLuint textures[4];
 
@@ -174,6 +175,9 @@ int initializeScene07_Raudra(void)
 	textures[3] = (GLuint)texture_side;
 
 	loadStaticModel("res/models/pencil/Pencil.fbx", &pencilModelRaudra);
+	loadStaticModel("res/models/scene07_raudra/tempKarunBoy1.obj", &tempBoyModelRaudra);
+
+
 	// external debugging varaible
     tf_t = {1.8f, -0.4f, -1.1f}; // tree pos 
     // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
@@ -449,6 +453,30 @@ void displayScene07_Raudra(void)
 	
 	drawStaticModel(pencilModelRaudra);
 
+	// ------ Temp Boy Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(1.85f, -0.385f, -1.10f);
+	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
+	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(tempBoyModelRaudra);
+
 	// ------ Failed Texture ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
@@ -479,10 +507,21 @@ void displayScene07_Raudra(void)
     #endif 
 }
 
+void updateScene07_RaudraRas(void)
+{
+	// Code
+#ifdef ENABLE_CAMERA_ANIMATION
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.1f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -3.10f, 0.002f);
+#endif // ENABLE_CAMERA_ANIMATION
+
+}
+
 void uninitializeScene07_Raudra(void)
 {
     //UNINIT models
 	unloadStaticModel(&deskModelRaudra);
+	unloadStaticModel(&tempBoyModelRaudra);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_raudraMask)

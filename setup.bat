@@ -2,6 +2,6 @@ cls
 
 del ext/ res/
 
-mklink /D ext "G:\My Drive\final_demo_navras\ext"
+mklink /D ext "F:\Domainians11OneDrive\OneDrive - vd683301\final_demo_navras\ext"
 
-mklink /D res "G:\My Drive\final_demo_navras\res"
+mklink /D res "F:\Domainians11OneDrive\OneDrive - vd683301\final_demo_navras\res"

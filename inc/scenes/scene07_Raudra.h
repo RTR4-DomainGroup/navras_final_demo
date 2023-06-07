@@ -7,4 +7,5 @@
 
 int initializeScene07_Raudra(void);
 void displayScene07_Raudra(void);
+void updateScene07_RaudraRas(void);
 void uninitializeScene07_Raudra(void);

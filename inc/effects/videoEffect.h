@@ -8,4 +8,6 @@ int initializeVideoEffect(const char*);
 
 void displayVideoEffect(struct FSVQuadUniform*);
 
+void updateVideoEffect(void);
+
 void uninitializeVideoEffect(void);

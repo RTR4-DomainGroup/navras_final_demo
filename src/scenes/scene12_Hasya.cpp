@@ -110,6 +110,19 @@ int initializeScene12_Hasya(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
 	}
 
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_hasyaMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
+	}
+
 #endif
 	initializeInvertedNormalCube();
 	initializeQuad();
