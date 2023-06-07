@@ -56,13 +56,25 @@ static GLuint textures[4];
 
 #ifdef ENABLE_STATIC_MODELS
 static STATIC_MODEL shantRoomModel;
+//static STATIC_MODEL maskModel;
+
+static STATIC_MODEL maskModel_karunRas;
+static STATIC_MODEL maskModel_bhayanakRas;
+static STATIC_MODEL maskModel_raudraRas;
+static STATIC_MODEL maskModel_bibhatsaRas;
+static STATIC_MODEL maskModel_veerRas;
+static STATIC_MODEL maskModel_adbhutRas;
+static STATIC_MODEL maskModel_shringarRas;
+static STATIC_MODEL maskModel_hasyaRas;
+static STATIC_MODEL maskModel_shantRas;
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_EROSION
 struct ErosionNoiseUniform sceneErosionNoiseUniform;
 GLuint noise_texture_eroded;
 GLuint texture_Marble_Shant;
-float myScale_erosion = 0.5f;
+float myScale_erosion = 2.0f;
 float noiseScale_erosion = 2.0f;
 bool offsetIncrement = true;
 // Mask Textures
@@ -77,6 +89,8 @@ GLuint texture_hasyaRas;
 GLuint texture_shantRas;
 
 GLuint textures_masks[9];
+
+static STATIC_MODEL model_masks[9];
 
 GLfloat offset_ras[9][3] =
 {
@@ -108,15 +122,15 @@ GLfloat maskTranslationRadii[9] =
 
 GLfloat maskScales[9] =
 {
-	0.025,
-	0.025,
-	0.025,
-	0.025,
-	0.025,
-	0.025,
-	0.025,
-	0.025,
-	0.025
+	0.00125f,
+	0.00125f,
+	0.00125f,
+	0.00125f,
+	0.00125f,
+	0.00125f,
+	0.00125f,
+	0.00125f,
+	0.00125f
 };
 
 bool masksTransformationsComplete = false;
@@ -139,12 +153,122 @@ int initializeScene13_Shant(void)
 {
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
+	//loadStaticModel("res/models/rock/rock.obj", &maskModel);
+
+	loadStaticModel("res/models/masks/KarunMask.obj", &maskModel_karunRas);
+	loadStaticModel("res/models/masks/BhayanakMask.obj", &maskModel_bhayanakRas);
+	loadStaticModel("res/models/masks/RaudraMask1.obj", &maskModel_raudraRas);
+	loadStaticModel("res/models/masks/BeebhatsaMask.obj", &maskModel_bibhatsaRas);
+	loadStaticModel("res/models/masks/VeerMask.obj", &maskModel_veerRas);
+	loadStaticModel("res/models/masks/AdbhutMask.obj", &maskModel_adbhutRas);
+	loadStaticModel("res/models/masks/ShringarMask.obj", &maskModel_shringarRas);
+	loadStaticModel("res/models/masks/HasyaMask.obj", &maskModel_hasyaRas);
+	loadStaticModel("res/models/masks/ShantaMask.obj", &maskModel_shantRas);
 
 	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
 
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks/BhayanakMask.jpg") == FALSE)
+	//if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, TEXTURE_DIR"Masks/BhayanakMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_bhayanakRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_bhayanakRas Successfull = %u!!!\n", texture_bhayanakRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks/BibhatsaMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks/KarunMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_karunRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_karunRas Successfull = %u!!!\n", texture_karunRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks/RaudraMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_raudraRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_raudraRas Successfull = %u!!!\n", texture_raudraRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks/VeerMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_veerRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_veerRas Successfull = %u!!!\n", texture_veerRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks/AdbhutMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_adbhutRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_hasyaRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_hasyaRas Successfull = %u!!!\n", texture_hasyaRas);
+	//}
+
+	//if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks/ShantMask.jpg") == FALSE)
+	//{
+	//	//uninitialize();
+	//	LOG("LoadGLTexture for texture_shantRas FAILED!!!\n");
+	//	return(-1);
+	//}
+	//else
+	//{
+	//	LOG("LoadGLTexture texture_shantRas Successfull = %u!!!\n", texture_shantRas);
+	//}
+
+	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bhayanakRas FAILED!!!\n");
@@ -155,7 +279,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_bhayanakRas Successfull = %u!!!\n", texture_bhayanakRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, TEXTURE_DIR"Masks/BibhatsaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
@@ -166,7 +290,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_bibhatsaMask Successfull = %u!!!\n", texture_bibhatsaRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_karunRas, TEXTURE_DIR"Masks/KarunMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_karunRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_karunRas FAILED!!!\n");
@@ -177,7 +301,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_karunRas Successfull = %u!!!\n", texture_karunRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, TEXTURE_DIR"Masks/RaudraMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_raudraRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_raudraRas FAILED!!!\n");
@@ -188,7 +312,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_raudraRas Successfull = %u!!!\n", texture_raudraRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_veerRas, TEXTURE_DIR"Masks/VeerMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_veerRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_veerRas FAILED!!!\n");
@@ -199,7 +323,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_veerRas Successfull = %u!!!\n", texture_veerRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, TEXTURE_DIR"Masks/AdbhutMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_adbhutRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_adbhutRas FAILED!!!\n");
@@ -210,7 +334,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_adbhutRas Successfull = %u!!!\n", texture_adbhutRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
@@ -221,7 +345,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_hasyaRas FAILED!!!\n");
@@ -232,7 +356,7 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture texture_hasyaRas Successfull = %u!!!\n", texture_hasyaRas);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_shantRas, TEXTURE_DIR"Masks/ShantMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shantRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shantRas FAILED!!!\n");
@@ -253,6 +377,21 @@ int initializeScene13_Shant(void)
 	textures_masks[6] = (GLuint)texture_shringarRas;
 	textures_masks[7] = (GLuint)texture_hasyaRas;
 	textures_masks[8] = (GLuint)texture_shantRas;
+
+	LOG("Shant Ras coming here in initialize 1\n");
+
+	model_masks[0] = maskModel_karunRas;
+	model_masks[1] = maskModel_bhayanakRas;
+	model_masks[2] = maskModel_raudraRas;
+	model_masks[3] = maskModel_bibhatsaRas;
+	model_masks[4] = maskModel_veerRas;
+	model_masks[5] = maskModel_adbhutRas;
+	model_masks[6] = maskModel_shringarRas;
+	model_masks[7] = maskModel_hasyaRas;
+	model_masks[8] = maskModel_shantRas;
+
+	LOG("Shant Ras coming here in initialize 2\n");
+
 #endif // ENABLE_EROSION
 
 	//	//load models
@@ -404,7 +543,7 @@ void displayScene13_Shant(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	// ------ Streetlight Model ------
+	// ------ Room Model ------
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
@@ -416,6 +555,51 @@ void displayScene13_Shant(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(shantRoomModel);
+
+	glUseProgram(0);
+	// ################################### ROOM ###################################  
+
+	// ################################### MASK ###################################  
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	//float angle = 0.0;
+
+	glEnable(GL_TEXTURE_3D);
+	glEnable(GL_TEXTURE_2D);
+	sceneErosionNoiseUniform = useErosionNoiseShader();
+
+	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
+
+	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
+
+
+	// ------ Mask Model ------
+	//translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	//scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+	//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+
+	//drawCustomTextureStaticModel(maskModel, texture_bhayanakRas, noise_texture_eroded);
 	// ################################### ROOM ###################################  
 
 	glUseProgram(0);
@@ -535,7 +719,7 @@ void displayScene13_Shant(void)
 		//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		/*glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
@@ -562,7 +746,17 @@ void displayScene13_Shant(void)
 
 		if (isMaskQuadEnabled[i])
 			displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);*/
+
+		glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras[i]);
+
+		if (isMaskQuadEnabled[i])
+			drawCustomTextureStaticModel(model_masks[i], textures_masks[i], noise_texture_eroded);
 
 		angle = angle + 22.5f;
 	}
@@ -583,13 +777,13 @@ void updateScene13_ShantRas(void)
 	//	updateErosion(offsetIncrement, offset_ras_2, 0.001f);
 
 	maskTranslationRadii[0] += 0.001f;
-	maskScales[0] += 0.0001f;
+	maskScales[0] += 0.00001f;
 	for (int i = 0; i < 9; i++)
 	{
 		if (maskTranslationRadii[i] >= 0.433f)
 		{
 			maskTranslationRadii[i + 1] += 0.001f;
-			maskScales[i + 1] += 0.0001f;
+			maskScales[i + 1] += 0.00001f;
 		}
 		if (maskTranslationRadii[i] >= 1.3f)
 			maskTranslationRadii[i] = 1.3;
@@ -597,8 +791,10 @@ void updateScene13_ShantRas(void)
 		if (maskTranslationRadii[8] == 1.3f)
 			masksTransformationsComplete = true;
 
-		if (maskScales[i] >= 0.09375f)
-			maskScales[i] = 0.09375f;
+		//if (maskScales[i] >= 0.009375f)
+		//	maskScales[i] = 0.009375f;
+		if (maskScales[i] >= 0.005f)
+			maskScales[i] = 0.005f;
 
 		/*if (maskScales[i] >= 0.1125f)
 			maskScales[i + 1] += 0.01f;
@@ -608,11 +804,11 @@ void updateScene13_ShantRas(void)
 
 	if (masksTransformationsComplete == true)
 	{
-		updateErosion(offsetIncrement, offset_ras[8], 0.001f);
+		updateErosion(offsetIncrement, offset_ras[8], 0.0005f);
 		for (int i = 8; i > -1; i--)
 		{
 			if (offset_ras[i][0] <= 0.33f)
-				updateErosion(offsetIncrement, offset_ras[i - 1], 0.001f);
+				updateErosion(offsetIncrement, offset_ras[i - 1], 0.0005f);
 			if (offset_ras[i][0] <= 0.17f)
 				isMaskQuadEnabled[i] = false;
 		}
@@ -625,7 +821,17 @@ void uninitializeScene13_Shant(void)
 {
     //UNINIT models
 	unloadStaticModel(&shantRoomModel);
-	//unloadStaticModel(&deskModel);
+	//unloadStaticModel(&maskModel);
+
+	unloadStaticModel(&maskModel_karunRas);
+	unloadStaticModel(&maskModel_bhayanakRas);
+	unloadStaticModel(&maskModel_raudraRas);
+	unloadStaticModel(&maskModel_bibhatsaRas);
+	unloadStaticModel(&maskModel_veerRas);
+	unloadStaticModel(&maskModel_adbhutRas);
+	unloadStaticModel(&maskModel_shringarRas);
+	unloadStaticModel(&maskModel_hasyaRas);
+	unloadStaticModel(&maskModel_shantRas);
 
 	if (texture_shantRas)
 	{
