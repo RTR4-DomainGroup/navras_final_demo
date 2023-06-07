@@ -180,7 +180,7 @@ GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
 #ifdef ENABLE_GODRAYS
 // Varaiables for God Rays
 struct GodraysUniform sceneGodRaysUniform;
-GLfloat lightPosition_gr[] = {0.0f, 10.0f, -100.0f, 1.0f};
+GLfloat lightPosition_gr[] = {0.0f, 4.0f, -60.0f, 1.0f};
 #endif // ENABLE_GODRAYS
 
 // Camera angle for rotation
@@ -274,7 +274,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_GODRAYS
 	int initializeGodRays(void);
-	initializeSphere(1.0f, 60, 60);
+	initializeSphere(2.5f, 60, 60);
 	initializeGodRays();
 	initializeQuad();
 #endif // ENABLE_GODRAYS
@@ -572,6 +572,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
+		
 		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
 		modelMatrix = translationMatrix;
 		
@@ -585,10 +586,11 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
 		{
 			color[0] = 1.0f;
-			color[1] = 0.6f;
+			color[1] = 0.65f;
 			color[2] = 0.01f;
 		}
 		//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+
 		displaySphere(color);
 		glUseProgram(0);
 		
