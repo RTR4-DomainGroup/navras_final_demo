@@ -140,7 +140,7 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 // Camera angle for rotation
-GLfloat cameraAngle = 90.0f;
+GLfloat cameraAngle = 86.0f;
 GLfloat cameraRadius;
 
 extern GLfloat dispersal; // = 0.1875f;
@@ -217,7 +217,9 @@ void setCameraScene09_VeerRas(void)
 {
 	if (isInitialDisplayScene09_VeerRas == true)
 	{
-		setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f); // Initial postion for camera animation
+		//setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f); // Initial postion for camera animation
+		//setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
+		setCamera(17.50f, 3.35f, -4.70f, 15.40f, 5.00f, -19.70f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
 		//setCamera(15.75f, 5.10f, -17.20f, -21.01f, -3.03f, -359.39f, 0.0f, 1.0f, 0.0f); // static camera position
 		isInitialDisplayScene09_VeerRas = false;
 	}
@@ -642,46 +644,78 @@ void updateScene09_VeerRas(void)
 #ifdef ENABLE_CAMERA_ANIMATION
 	if (isCameraRotation == false)
 	{
-		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.002f);
-		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.002f);
+		if (cameraEyeY <= 5.77f)
+		{
+			cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.002f);
+			cameraCenterX = preciselerp(cameraCenterX, 15.40f, 0.002f);
 
-		//cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.005f);
-		cameraEyeY = preciselerp(cameraEyeY, 6.5f, 0.002f);
-		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.002f);
+			//cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.005f);
+			cameraEyeY = preciselerp(cameraEyeY, 6.5f, 0.002f);
+			cameraCenterY = preciselerp(cameraCenterY, 5.00f, 0.002f);
 
-		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.002f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.002f);
+			cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.002f);
+			cameraCenterZ = preciselerp(cameraCenterZ, -19.70f, 0.002f);
 
-		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.0002f);
-		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.0002f);
+			/*cameraUpY = preciselerp(cameraUpY, 1.0f, 0.0002f);
+			cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.0002f);*/
 
-		// lookAt(16.19f, 5.71f, -14.07f, -38.36f, 13.19f, -357.79f, 0.00f, 0.55f, 0.45f)
-		// lookAt(16.16f, 5.77f, -14.31f, -37.03f, 11.95f, -357.92f, 0.00f, 0.57f, 0.43f)
-		// 
-		// lookAt(15.34f, 6.50f, -15.70f, 15.40f, 4.99f, -19.70f, 0.00f, 1.00f, 0.00f)
-		if (cameraEyeY > 5.77f)
-		//if (cameraEyeZ > -14.07f)
+			// lookAt(16.19f, 5.71f, -14.07f, -38.36f, 13.19f, -357.79f, 0.00f, 0.55f, 0.45f)
+			// lookAt(16.16f, 5.77f, -14.31f, -37.03f, 11.95f, -357.92f, 0.00f, 0.57f, 0.43f)
+			// 
+			// lookAt(15.34f, 6.50f, -15.70f, 15.40f, 4.99f, -19.70f, 0.00f, 1.00f, 0.00f)
+		}
+		/*if (cameraEyeY > 5.77f)*/
+		else
+		{
+			/*isCameraRotation = true;
+			cameraRadius = 5.39f;
+			cameraUpY = 1.0f;
+			cameraUpZ = 0.0f;*/
+			//LOG("veer display camera lookat(%f, %f, %f, %f, %f, %f, %f, %f, %f)\n", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
+			cameraEyeX = preciselerp(cameraEyeX, 15.77f, 0.02f);
+			cameraCenterX = preciselerp(cameraCenterX, 15.40f, 0.02f);
+
+			//cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.005f);
+			cameraEyeY = preciselerp(cameraEyeY, 5.77f, 0.02f);
+			cameraCenterY = preciselerp(cameraCenterY, 4.99f, 0.02f);
+
+			cameraEyeZ = preciselerp(cameraEyeZ, -14.32f, 0.02f);
+			cameraCenterZ = preciselerp(cameraCenterZ, -19.70f, 0.02f);
+		}
+		if (cameraEyeX <= 15.90f)
 		{
 			isCameraRotation = true;
-			cameraRadius = 4.82f;
+			cameraRadius = 5.39f;
 			cameraUpY = 1.0f;
 			cameraUpZ = 0.0f;
 		}
 	}
 	else if (isCameraRotation == true && continueCameraRotation == true)
 	{
-		//cameraEyeY = 6.5f;
-		cameraEyeY = 5.77f;
-		cameraAngle += 0.3f;
-		
-		if (cameraAngle > 360.0f && cameraRotationCount == 0)
+		cameraRadius -= 0.005f;
+		if (cameraRadius <= 2.0f)
+			cameraRadius = 2.0f;
+
+		if (cameraRotationCount == 0)
 		{
-			cameraAngle -= 360.0f;
-			cameraRotationCount++;
+			//cameraEyeY = 6.5f;
+			cameraEyeY = 5.77f;
+			cameraAngle += 0.3f;
+
+			if (cameraAngle > 360.0f && cameraRotationCount == 0)
+			{
+				cameraAngle -= 360.0f;
+				cameraRotationCount++;
+			}
 		}
 
-		if (cameraAngle >= 85.0f && cameraRotationCount == 1)
-			continueCameraRotation = false;
+		if (cameraRotationCount == 1)
+		{
+			cameraAngle = preciselerp(cameraAngle, 85.0f, 0.003f);
+			/*if (cameraAngle >= 85.0f && cameraRotationCount == 1)
+				continueCameraRotation = false;*/
+		}
+		
 	}
 	else
 	{
