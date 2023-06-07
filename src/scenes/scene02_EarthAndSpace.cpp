@@ -177,8 +177,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	//rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
-	displayCamera();
+	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
+	//displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
 
@@ -361,13 +361,14 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 void updateScene02_EarthAndSpace(void)
 {
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraAngleEarthAndSpace += 0.005f;
+	cameraAngleEarthAndSpace += 0.02f;
 	if (cameraAngleEarthAndSpace > 120.0f)
 		cameraAngleEarthAndSpace = 120.0f;
+	//cameraAngleEarthAndSpace = preciselerp(cameraAngleEarthAndSpace, 120.0f, 0.00002f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 	// Code
-	angleSphere = angleSphere + 0.2f;
+	angleSphere = angleSphere + 0.02f;
 	if (angleSphere >= 360.0f)
 		angleSphere = 0.0f;
 
