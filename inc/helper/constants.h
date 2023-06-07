@@ -36,6 +36,18 @@
 #define Z_MIN_ROUDRA_SHELF (0.0f)
 #define Z_MAX (-3.0f)
 
+// Bibhatsa
+#define X_MIN_BR (-6.0f)
+#define X_MAX_BR (6.0f)
+
+#define Y_MIN_BR (-3.0f)
+#define Y_MAX_BR (0.0f)
+
+#define Z_MIN_BR (-14.5f)
+#define Z_MAX_BR (-9.0f)
+
+#define NO_OF_INSTANCES_KACHARA 200
+
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
@@ -83,7 +95,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-#define ENABLE_MULTI_THREADING
+//#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -104,12 +116,12 @@ static const char *szAudios[] = {
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
 #define ENABLE_DYNAMIC_MODELS
-#define ENABLE_CAMERA_ANIMATION
+//#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
 
 #define ENABLE_SINGLE_SCENE
-#define ENABLE_AUDIO
+//#define ENABLE_AUDIO
 
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
@@ -118,8 +130,8 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
-#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
-//#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
+//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
+#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 // #define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
