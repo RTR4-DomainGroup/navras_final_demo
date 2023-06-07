@@ -149,7 +149,7 @@ bool noiseScaleIncrement = true;
 mat4 viewMatrix;
 
 GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 0.0f };
+GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 
 GLuint noise_texture;
 

@@ -93,8 +93,8 @@ int intializeCloudNoiseShader(void)
 		"uniform vec3 u_ks;\n" \*/
 		"uniform float u_materialShininess;\n" \
 		"uniform sampler3D u_noiseSampler;\n" \
-		"uniform vec3 u_skyColor;\n" \
-		"uniform vec3 u_cloudColor;\n" \
+		"uniform vec4 u_skyColor;\n" \
+		"uniform vec4 u_cloudColor;\n" \
 		"uniform float u_noiseScale;\n" \
 		"uniform bool enable_godRays = true; \n" \
 		"out vec4 fragColor;\n" \
@@ -111,15 +111,18 @@ int intializeCloudNoiseShader(void)
 			"phong_ads_color = ambient + diffuse + specular;\n" \*/
 
 			"vec4 noisevec = texture(u_noiseSampler, MCposition * u_noiseScale);\n" \
-			"float intensity = (noisevec[0] + noisevec[1] + noisevec[2] + noisevec[3] + 0.03125) * 1.5;\n" \
+			"float intensity = (noisevec[0] + noisevec[1] + noisevec[2] + noisevec[3] + 0.03125) * 1.0;\n" \
 			/*"vec3 color = mix(skyColor, cloudColor, intensity) * light_intensity;\n" \*/
 			/*"vec3 color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \*/
-			"vec3 color = mix(u_skyColor, u_cloudColor, intensity);\n" \
+			"vec4 color = u_cloudColor * intensity;\n" \
+			/*"if(color.b == 1.0){\n" \
+			" discard; \n" \
+			"} \n" \*/
 			/*"vec3 color = u_cloudColor * intensity * phong_ads_color;\n" \*/
 			/*"vec3 color = vec3(1.0);\n" \*/
 			"if (enable_godRays) \n" \
 			"{\n" \
-				"fragColor = vec4(color, 1.0);\n" \
+				"fragColor = color;\n" \
 			"}\n"
 			"else\n" \
 			"{\n" \
