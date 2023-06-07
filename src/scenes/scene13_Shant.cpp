@@ -56,6 +56,7 @@ static GLuint textures[4];
 
 #ifdef ENABLE_STATIC_MODELS
 static STATIC_MODEL shantRoomModel;
+static STATIC_MODEL maskModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_EROSION
@@ -113,6 +114,7 @@ int initializeScene13_Shant(void)
 	// function declarations
 
 	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11_new.obj", &shantRoomModel);
+	loadStaticModel("res/models/rock/rock.obj", &maskModel);
 
 	initializeQuad();
 
@@ -373,7 +375,7 @@ void displayScene13_Shant(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	// ------ Streetlight Model ------
+	// ------ Room Model ------
 	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
@@ -385,6 +387,51 @@ void displayScene13_Shant(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(shantRoomModel);
+
+	glUseProgram(0);
+	// ################################### ROOM ###################################  
+
+	// ################################### MASK ###################################  
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	//float angle = 0.0;
+
+	glEnable(GL_TEXTURE_3D);
+	glEnable(GL_TEXTURE_2D);
+	sceneErosionNoiseUniform = useErosionNoiseShader();
+
+	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
+
+	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
+
+
+	// ------ Mask Model ------
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+
+	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+
+	drawCustomTextureStaticModel(maskModel, texture_bhayanakRas, noise_texture_eroded);
 	// ################################### ROOM ###################################  
 
 	glUseProgram(0);
@@ -567,7 +614,7 @@ void uninitializeScene13_Shant(void)
 {
     //UNINIT models
 	unloadStaticModel(&shantRoomModel);
-	//unloadStaticModel(&deskModel);
+	unloadStaticModel(&maskModel);
 
 	if (texture_shantRas)
 	{

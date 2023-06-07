@@ -488,18 +488,19 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
 
 		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+		glUniform4fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
+		glUniform4fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
 		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
 		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
+		glEnable(GL_BLEND);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_3D, noise_texture);
 
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);
+		glDisable(GL_BLEND);
 
 		glUseProgram(0);
 
