@@ -342,7 +342,10 @@ void setCameraScene13_ShantRas(void)
 	if (isInitialDisplayScene13_ShantRas == true)
 	{
 		//setCamera(17.50f, 1.10f, -6.95f, -90.24f, 59.45f, -355.27f, 0.0f, 0.5f, 0.5f);
-		setCamera(-0.70, 0.00, -1.85, -0.70, 0.00, -7.85, 0.0f, 1.0f, 0.0f);
+		//setCamera(-0.70, 0.00, -1.85, -0.70, 0.00, -7.85, 0.0f, 1.0f, 0.0f);
+		// updated initial position
+		// lookAt(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f)
+		setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene13_ShantRas = false;
 	}
 }
@@ -524,7 +527,7 @@ void displayScene13_Shant(void)
 		float xPos = maskTranslationRadii[i] * cos(angle * M_PI / 180.0);
 		float yPos = maskTranslationRadii[i] * sin(angle * M_PI / 180.0);
 
-		translationMatrix = vmath::translate(xPos - 0.765f, yPos - 0.5f, -5.0f);
+		translationMatrix = vmath::translate(xPos - 0.765f, yPos - 0.5f, -7.0f);
 		scaleMatrix = vmath::scale(maskScales[i], maskScales[i], maskScales[i]);
 		modelMatrix = translationMatrix * scaleMatrix/* * rotationMatrix*/;
 
@@ -583,19 +586,19 @@ void updateScene13_ShantRas(void)
 	maskScales[0] += 0.0001f;
 	for (int i = 0; i < 9; i++)
 	{
-		if (maskTranslationRadii[i] >= 0.75f)
+		if (maskTranslationRadii[i] >= 0.433f)
 		{
 			maskTranslationRadii[i + 1] += 0.001f;
 			maskScales[i + 1] += 0.0001f;
 		}
-		if (maskTranslationRadii[i] >= 1.5f)
-			maskTranslationRadii[i] = 1.5f;
+		if (maskTranslationRadii[i] >= 1.3f)
+			maskTranslationRadii[i] = 1.3;
 
-		if (maskTranslationRadii[8] == 1.5f)
+		if (maskTranslationRadii[8] == 1.3f)
 			masksTransformationsComplete = true;
 
-		if (maskScales[i] >= 0.125f)
-			maskScales[i] = 0.125f;
+		if (maskScales[i] >= 0.09375f)
+			maskScales[i] = 0.09375f;
 
 		/*if (maskScales[i] >= 0.1125f)
 			maskScales[i + 1] += 0.01f;
