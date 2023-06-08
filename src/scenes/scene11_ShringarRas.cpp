@@ -210,7 +210,7 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 104.0f, 103.0f, 3.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 3.0f, 1.0f };
 
 static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -692,7 +692,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
 	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, NULL);
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 

@@ -99,7 +99,7 @@ extern bool noiseScaleIncrement; // = true;
 static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 100.0f, 100.0f, 0.0f, 1.0f };
 
 static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
