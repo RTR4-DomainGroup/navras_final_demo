@@ -42,6 +42,7 @@ extern struct FSQuadUniform fsqUniform;
 
 struct ADSUniform bibhatsaRasObject;
 
+
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
@@ -88,6 +89,27 @@ STATIC_MODEL buildingThreeModel;
 STATIC_MODEL buildingFourModel;
 STATIC_MODEL buildingFiveModel;
 STATIC_MODEL trashOneModel;
+
+//4 June Models
+STATIC_MODEL pileOfTrash;
+STATIC_MODEL canTrash1;
+STATIC_MODEL canTrash2;
+STATIC_MODEL canTrash3;
+STATIC_MODEL cigarette1;
+STATIC_MODEL cigarette2;
+STATIC_MODEL plasticBottleTrash1;
+STATIC_MODEL plasticBottleTrash2;
+STATIC_MODEL plasticBottleTrash3;
+STATIC_MODEL glassContainer;
+
+STATIC_MODEL extraTrash1;
+STATIC_MODEL extraTrash2;
+STATIC_MODEL extraTrash3;
+STATIC_MODEL extraTrash4;
+STATIC_MODEL extraTrash5;
+STATIC_MODEL extraTrash6;
+STATIC_MODEL extraTrash7;
+
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -161,6 +183,17 @@ int initializeScene08_BibhatsaRas(void)
 #endif
 	
 #ifdef ENABLE_STATIC_MODELS
+
+	void initializeCiga1InstancePositions(void);
+	void initializeCiga2InstancePositions(void);
+	void initializeRedCan3InstancePositions(void);
+	void initializepileTrashInstancePositions(void);
+	
+	initializepileTrashInstancePositions();
+	initializeCiga1InstancePositions();
+	initializeCiga2InstancePositions();
+	initializeRedCan3InstancePositions();
+
 	//load models
 	loadStaticModel("res/models/scene08-beebhatsa/man/tempBeebhatsaMan.obj", &manModel);
 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
@@ -172,6 +205,28 @@ int initializeScene08_BibhatsaRas(void)
 	loadStaticModel("res/models/scene08-beebhatsa/bld4/Building4_new.obj", &buildingFourModel);
 	loadStaticModel("res/models/scene08-beebhatsa/bld5/Building5.obj", &buildingFiveModel);
 	loadStaticModel("res/models/scene08-beebhatsa/trash1/trashCan1.obj", &trashOneModel);
+
+	// 4 June Models
+	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/1/untitled.obj", &pileOfTrash);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/1.obj", &canTrash1);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/2.obj", &canTrash2);
+	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/3.obj", &canTrash3);
+
+	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/3/1.obj", &cigarette1);
+	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/3/2.obj", &cigarette2);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/1.obj", &plasticBottleTrash1);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/2.obj", &plasticBottleTrash2);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/3.obj", &plasticBottleTrash3);
+
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/11/glass.obj", &glassContainer);
+
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/1.obj", &extraTrash1);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/2.obj", &extraTrash2);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/3.obj", &extraTrash3);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/4.obj", &extraTrash4);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/1.obj", &extraTrash5);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/2.obj", &extraTrash6);
+	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/3.obj", &extraTrash7);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -183,11 +238,159 @@ int initializeScene08_BibhatsaRas(void)
 	return 0;
 }
 
+void initializepileTrashInstancePositions(void)
+{
+	LOG("Enter Bibhatsa Initialize==================== \n");
+	float instance_positions[NO_OF_INSTANCES_KACHARA * 3] = {};
+
+	for (int i = 0; i < NO_OF_INSTANCES_KACHARA; i++)
+	{
+		static GLfloat xPos = X_MIN_BR;
+		static GLfloat xMinLast = X_MIN_BR;
+		static GLfloat xMaxLast = X_MAX_BR;
+
+		static GLfloat yPos = Y_MIN_BR;
+		static GLfloat zPos = Z_MIN_BR;
+
+		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX_BR - X_MIN_BR)) + X_MIN_BR;
+		instance_positions[(i * 3) + 1] = (((GLfloat)rand() / RAND_MAX) * (Y_MAX_BR - Y_MIN_BR)) + Y_MIN_BR;
+		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR - Z_MIN_BR)) + Z_MIN_BR;
+
+		LOG("Pile Trash Instance %d Position: [%.02f %.02f %.02f]\n", i,
+			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+
+		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
+		if (xPos >= xMaxLast)
+		{
+			zPos += Z_INCREMENT;
+			if (zPos >= Z_MAX_BR)
+			{
+				break;
+			}
+			xPos = xMinLast;
+		}
+	}
+
+	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
+	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/1/untitled.obj", &pileOfTrash, NO_OF_INSTANCES_KACHARA, tmpPositions);
+}
+
+void initializeCiga1InstancePositions(void)
+{
+	LOG("Enter Bibhatsa Initialize==================== \n");
+	float instance_positions[NO_OF_INSTANCES_KACHARA * 3] = {};
+
+	for (int i = 0; i < NO_OF_INSTANCES_KACHARA; i++)
+	{
+		static GLfloat xPos = X_MIN;
+		static GLfloat xMinLast = X_MIN;
+		static GLfloat xMaxLast = X_MAX;
+
+		static GLfloat yPos = Y_MIN;
+		static GLfloat zPos = Z_MIN;
+
+		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;;
+		instance_positions[(i * 3) + 1] = 0.0f;
+		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
+
+		LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i,
+			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+
+		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
+		if (xPos >= xMaxLast)
+		{
+			zPos += Z_INCREMENT;
+			if (zPos >= Z_MAX)
+			{
+				break;
+			}
+			xPos = xMinLast;
+		}
+	}
+
+	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
+	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/3/1.obj", &cigarette1, NO_OF_INSTANCES_KACHARA, tmpPositions);
+}
+
+void initializeCiga2InstancePositions(void)
+{
+	LOG("Enter Bibhatsa Initialize==================== \n");
+	float instance_positions[NO_OF_INSTANCES_KACHARA * 3] = {};
+
+	for (int i = 0; i < NO_OF_INSTANCES_KACHARA; i++)
+	{
+		static GLfloat xPos = X_MIN;
+		static GLfloat xMinLast = X_MIN;
+		static GLfloat xMaxLast = X_MAX;
+
+		static GLfloat yPos = Y_MIN;
+		static GLfloat zPos = Z_MIN;
+
+		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;;
+		instance_positions[(i * 3) + 1] = 0.0f;
+		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
+
+		LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i,
+			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+
+		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
+		if (xPos >= xMaxLast)
+		{
+			zPos += Z_INCREMENT;
+			if (zPos >= Z_MAX)
+			{
+				break;
+			}
+			xPos = xMinLast;
+		}
+	}
+
+	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
+	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/3/2.obj", &cigarette2, NO_OF_INSTANCES_KACHARA, tmpPositions);
+}
+
+void initializeRedCan3InstancePositions(void)
+{
+	LOG("Enter Bibhatsa Initialize==================== \n");
+	float instance_positions[NO_OF_INSTANCES_KACHARA * 3] = {};
+
+	for (int i = 0; i < NO_OF_INSTANCES_KACHARA; i++)
+	{
+		static GLfloat xPos = X_MIN;
+		static GLfloat xMinLast = X_MIN;
+		static GLfloat xMaxLast = X_MAX;
+
+		static GLfloat yPos = Y_MIN;
+		static GLfloat zPos = Z_MIN;
+
+		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;;
+		instance_positions[(i * 3) + 1] = 0.0f;
+		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
+
+		LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i,
+			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+
+		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
+		if (xPos >= xMaxLast)
+		{
+			zPos += Z_INCREMENT;
+			if (zPos >= Z_MAX)
+			{
+				break;
+			}
+			xPos = xMinLast;
+		}
+	}
+
+	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
+	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/2/3.obj", &canTrash3, NO_OF_INSTANCES_KACHARA, tmpPositions);
+}
+
 void setCameraScene08(void)
 {
 	if (isInitialDisplayScene08_BibhatsaRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.00f, 0.00f, 9.50f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene08_BibhatsaRas = false;
 	}
 }
@@ -427,11 +630,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//glUniform1i(sceneOutdoorADSStaticUniform.)
 		// ------ Man Model ------
-		translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);
-		scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
+		//translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);
+		translationMatrix = vmath::translate(0.00f, -5.00f, -52.75f);
+		//scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
+		scaleMatrix = vmath::scale(0.09f, 0.00f, 0.03f);
 		rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-		modelMatrix = translationMatrix * scaleMatrix *  rotationMatrix;
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		if (actualDepthQuadScene == 1)
@@ -589,7 +795,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		drawStaticModel(buildingFiveModel);
 		// ################################### BUILDING FIVE ###################################  
 
-		// ################################### BUILDING SIX ###################################  
+		// ################################### BUNCH OF 3 DUSTBINS ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -606,16 +812,32 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		drawStaticModel(trashOneModel);
-		// ################################### BUILDING SIX ###################################  
+		// ################################### BUNCH OF 3 DUSTBINS ###################################  
+
+		// ################################### BUNCH OF 3 DUSTBINS ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(7.0f, -4.0f, -7.0f);
+		scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+
+		modelMatrix = translationMatrix * scaleMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(trashOneModel);
+		// ################################### BUNCH OF 3 DUSTBINS ###################################  
 
 		// ################################### BUILDING SEVEN ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Streetlight Model ------
 		translationMatrix = vmath::translate(-25.0f, 5.0f, -30.0f);
@@ -630,6 +852,314 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		drawStaticModel(buildingFiveModel);
 		// ################################### BUILDING SEVEN ###################################  
+
+		// ################################### Trash Pile ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Trash Pile ------
+		translationMatrix = vmath::translate(11.0f, -3.5f, -20.0f);
+		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModelInstanced(pileOfTrash, 20);
+		// ################################### Trash Pile ###################################  
+
+		// ################################### CAN TRASH 1 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(11.0f, -5.0f, -22.0f);
+		scaleMatrix = vmath::scale(30.0f, 30.0f, 30.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(canTrash1);
+		// ################################### CAN TRASH 1 ###################################  
+
+		// ################################### CAN TRASH 2 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Streetlight Model ------
+		translationMatrix = vmath::translate(13.0f, -5.0f, -17.0f);
+		scaleMatrix = vmath::scale(25.0f, 25.0f, 25.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModelInstanced(canTrash2, NO_OF_INSTANCES_KACHARA);
+		//drawStaticModel(canTrash2);
+		// ################################### CAN TRASH 2 ###################################  
+
+		// ################################### RED CAN TRASH 3 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Red Can Model ------
+		translationMatrix = vmath::translate(20.0f, -5.0f, -25.0f);
+		scaleMatrix = vmath::scale(8.0f, 8.0f, 8.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModelInstanced(canTrash3, NO_OF_INSTANCES_KACHARA);
+		// ################################### RED TRASH 3 ###################################  
+
+		// ################################### Cigarette 1 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Cigarette 1 Model ------
+		translationMatrix = vmath::translate(20.0f, -5.0f, -15.0f);
+		scaleMatrix = vmath::scale(10.0f, 10.0f, 10.0f);
+		rotationMatrix = vmath::rotate(45.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModelInstanced(cigarette1, NO_OF_INSTANCES_KACHARA);
+		// ################################### Cigarette 1 ###################################  
+
+		// ################################### Cigarette 2 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+
+		// ------ Cigarette 2 Model ------
+		translationMatrix = vmath::translate(2.5f, -5.0f, -5.0f);
+		scaleMatrix = vmath::scale(10.0f, 10.0f, 10.0f);
+		rotationMatrix = vmath::rotate(45.0f, 0.0f, 1.0f, 0.0f);
+
+		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModelInstanced(cigarette2, NO_OF_INSTANCES_KACHARA);
+		// ################################### Cigarette 2 ###################################  
+
+		// ################################### glassContainer ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Container ------
+		translationMatrix = vmath::translate(12.0f, -5.0f, -15.0f);
+		scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+		rotationMatrix = vmath::rotate(120.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(glassContainer);
+		// ################################### Container ###################################  
+
+		// ################################### Extra Trash 1 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 1 ------
+		translationMatrix = vmath::translate(-3.0f, -4.5f, -26.0f);
+		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash1);
+		// ################################### Extra Trash 1 ###################################  
+
+		// ################################### Extra Trash 2 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 2 ------
+		translationMatrix = vmath::translate(-11.5f, -2.5f, -22.0f);
+		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash2);
+		// ################################### Extra Trash 2 ###################################  
+
+		// ################################### Extra Trash 3 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 3 ------
+		translationMatrix = vmath::translate(8.0f, -4.5f, -35.0f);
+		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash3);
+		// ################################### Extra Trash 3 ###################################  
+
+		// ################################### Extra Trash 4 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 4 ------
+		translationMatrix = vmath::translate(6.0f, -4.5f, -20.0f);
+		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash4);
+		// ################################### Extra Trash 4 ###################################  
+
+		// ################################### Extra Trash 5 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 5 ------
+		translationMatrix = vmath::translate(12.0f, -4.5f, -50.0f);
+		scaleMatrix = vmath::scale(3.0f, 3.0f, 3.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash5);
+		// ################################### Extra Trash 5 ###################################  
+
+		// ################################### Extra Trash 6 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 6 ------
+		translationMatrix = vmath::translate(6.0f, -4.5f, -40.0f);
+		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash6);
+		// ################################### Extra Trash 6 ###################################  
+
+		// ################################### Extra Trash 7 ###################################  
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationMatrix_x = mat4::identity();
+		rotationMatrix_y = mat4::identity();
+		rotationMatrix_z = mat4::identity();
+
+		// ------ Trash 7 ------
+		translationMatrix = vmath::translate(4.0f, -4.5f, -25.0f);
+		scaleMatrix = vmath::scale(3.5f, 3.5f, 3.5f);
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		drawStaticModel(extraTrash7);
+		// ################################### Extra Trash 7 ###################################  
 
 		if (actualDepthQuadScene == 0)
 		{
@@ -723,8 +1253,8 @@ void updateScene08_BibhatsaRas(void)
 {
 	// Code
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraEyeZ = preciselerp(cameraEyeZ, -35.50f, 0.0002f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -41.00f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 }
@@ -762,6 +1292,29 @@ void uninitializeScene08_BibhatsaRas(void)
 	//UNINIT models
 	unloadStaticModel(&manModel);
 	unloadStaticModel(&streetLightModel);
+
+	// Unloading 4 June Models
+
+	unloadStaticModel(&extraTrash7);
+	unloadStaticModel(&extraTrash6);
+	unloadStaticModel(&extraTrash5);
+	unloadStaticModel(&extraTrash4);
+	unloadStaticModel(&extraTrash3);
+	unloadStaticModel(&extraTrash2);
+	unloadStaticModel(&extraTrash1);
+
+	unloadStaticModel(&glassContainer);
+
+	unloadStaticModel(&plasticBottleTrash3);
+	unloadStaticModel(&plasticBottleTrash2);
+	unloadStaticModel(&plasticBottleTrash1);
+	unloadStaticModel(&cigarette2);
+	unloadStaticModel(&cigarette1);
+	
+	unloadStaticModel(&canTrash3);
+	unloadStaticModel(&canTrash2);
+	unloadStaticModel(&canTrash1);
+	unloadStaticModel(&pileOfTrash);
 
 	// Unloading Building Models
 	unloadStaticModel(&trashOneModel);

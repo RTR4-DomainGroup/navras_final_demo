@@ -36,6 +36,18 @@
 #define Z_MIN_ROUDRA_SHELF (0.0f)
 #define Z_MAX (-3.0f)
 
+// Bibhatsa
+#define X_MIN_BR (-6.0f)
+#define X_MAX_BR (6.0f)
+
+#define Y_MIN_BR (-3.0f)
+#define Y_MAX_BR (0.0f)
+
+#define Z_MIN_BR (-14.5f)
+#define Z_MAX_BR (-9.0f)
+
+#define NO_OF_INSTANCES_KACHARA 200
+
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
