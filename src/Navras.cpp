@@ -517,7 +517,7 @@ int initializeNavras(void) {
 	scenePush(SCENE08_BIBHATSA_RAS);
 	
 	scenePush(SCENE07_RAUDRA_RAS);
-	//scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
 	//scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
