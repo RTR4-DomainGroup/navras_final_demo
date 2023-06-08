@@ -318,7 +318,8 @@ void setCameraScene10(void)
 {
 	if (isInitialDisplay_Scene10AdbhutRas == true)
 	{
-		setCamera(0.00f, -0.70f, 20.60f, 0.00f, -0.70f, 14.60f, 0.00f, 1.00f, 0.00f);
+		// lookAt(17.20f, -0.70f, 6.05f, -134.67f, -0.70f, -333.86f, 0.00f, 1.00f, 0.00f)
+		setCamera(17.20f, -0.70f, 6.05f, -134.67f, -0.70f, -333.86f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplay_Scene10AdbhutRas = false;
 	}
 }
@@ -1053,11 +1054,21 @@ void updateScene10_AdbhutRas(void)
 	// Code
 
 #ifdef ENABLE_CAMERA_ANIMATION
-	TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
-	speedVector.x = 0.04;
-	// update_transformations(NULL, NULL, NULL, &speedVector);
-	cameraEyeZ -= speedVector.x;
-	cameraCenterZ -= speedVector.x;
+	//TRANFORM speedVector = {0.0f, 0.0f, 0.0f};
+	//speedVector.x = 0.04;
+	//// update_transformations(NULL, NULL, NULL, &speedVector);
+	//cameraEyeZ -= speedVector.x;
+	//cameraCenterZ -= speedVector.x;
+
+	// lookAt(-17.10f, -1.40f, -33.85f, -320.07f, -1.40f, -177.19f, 0.00f, 1.00f, 0.00f)
+	cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.001f);
+	cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.001f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.001f);
+
+	cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.001f);
+	cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.001f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.001f);
+
 #endif
 
 #ifdef ENABLE_BILLBOARDING
