@@ -379,7 +379,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 	translationMatrix = vmath::translate(0.01f, -0.375f, 0.95f);
-	scaleMatrix = vmath::scale(0.01f, 1.2f, 1.0f);
+	scaleMatrix = vmath::scale(0.007f, 1.2f, 0.8f);
 	rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -450,7 +450,7 @@ void displayScene07_Raudra(void)
 
 	translationMatrix = vmath::translate(1.85f, -0.45f, -1.10f);
 	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
-	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+	scaleMatrix = vmath::scale(0.04f, 0.04f, 0.04f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
@@ -472,7 +472,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.5f, -0.9f, -1.4f);
+	translationMatrix = vmath::translate(1.45f, -0.9f, -1.4f);
 	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
 	scaleMatrix = vmath::scale(1.2f, 1.0f, 1.0f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -496,7 +496,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.9f, -0.45f, -1.12f);
+	translationMatrix = vmath::translate(1.95f, -0.45f, -1.12f);
 	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
 	scaleMatrix = vmath::scale(0.15f, 0.12f, 0.2f);
 	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -521,7 +521,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.1f, 0.0f, -3.5f);
+	translationMatrix = vmath::translate(1.1f, 0.0f, -3.475f);
 	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
 	scaleMatrix = vmath::scale(1.85f, 1.2f, 0.0f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);

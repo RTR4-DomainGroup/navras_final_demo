@@ -65,12 +65,12 @@ time_t now;
 time_t then;
 
 int time_scene1 = 5;
-int time_scene2 = 40;
-int time_scene3 = 40;
+int time_scene2 = 4;
+int time_scene3 = 4;
 int time_scene4 = 40;
 int time_scene5 = 40;
 int time_scene6 = 40;
-int time_scene7 = 40;
+int time_scene7 = 400;
 int time_scene8 = 40;
 int time_scene9 = 40;
 int time_scene10 = 40;
