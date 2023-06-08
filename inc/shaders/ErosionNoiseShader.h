@@ -32,4 +32,5 @@ struct ErosionNoiseUniform
 
 int intializeErosionNoiseShader(void);
 struct ErosionNoiseUniform useErosionNoiseShader(void);
+GLuint getErosionNoiseShaderProgramObject(void);
 void uninitializeErosionNoiseShader(void);

@@ -13,6 +13,8 @@
 
 int initializeAudio(const char* );
 
+int playSong(int);
+
 void playAudio(void);
 
 void pauseAudio(void);

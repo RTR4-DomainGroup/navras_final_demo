@@ -26,10 +26,8 @@ GLuint vao_quad_video;
 GLuint vbo_quad;
 GLuint vbo_quad_video;
 
-// instanced quads
-GLuint vao_quadInstanced; 
-GLuint vbo_quadInstanced; // PNT
-GLuint vbo_texcoords; // InstancePosition 
+
+
 
 // quad Water
 GLuint vao_water_quad;
@@ -392,7 +390,7 @@ void initializeQuad(void)
     
 }
 
-void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
+int initializeInstancedQuad(quad_instancing_buffers_t& instBuffers, int numInstances, GLfloat instancePositions[])
 {
     // const GLfloat quadPNT[] = 
     // {
@@ -405,6 +403,7 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
     //     -1.0f, -1.0f, 0.0f,           0.0f, 0.0f, 1.0f,             0.0f, 0.0f,
     //     1.0f, -1.0f, 0.0f,            0.0f, 0.0f, 1.0f,             1.0f, 0.0f,
     // };
+
 
     GLfloat square_vertices[] =
     {
@@ -425,14 +424,14 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
     GLuint offset = 0;
 
     // VAO and VBO related code
-    glGenVertexArrays(1, &vao_quadInstanced);
-    glBindVertexArray(vao_quadInstanced);
+    glGenVertexArrays(1, &instBuffers.vao_quadInstanced);
+    glBindVertexArray(instBuffers.vao_quadInstanced);
     {
         // Recording
         // tells OpenGL to use vbo (vertexBufferObject) whenever it needs the GL_ARRAY_BUFFER.
-        glGenBuffers(1, &vbo_quadInstanced);
+        glGenBuffers(1, &instBuffers.vbo_quadInstanced);
         // binding to particular type of target - buffer which holds array
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_quadInstanced);
+        glBindBuffer(GL_ARRAY_BUFFER, instBuffers.vbo_quadInstanced);
 
         glBufferData(GL_ARRAY_BUFFER, 
             sizeof(square_vertices) + 
@@ -453,9 +452,9 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 ///////////////////////////////////////////////////////////
-        glGenBuffers(1, &vbo_texcoords);
+        glGenBuffers(1, &instBuffers.vbo_texcoords);
         // binding to particular type of target - buffer which holds array
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_texcoords);
+        glBindBuffer(GL_ARRAY_BUFFER, instBuffers.vbo_texcoords);
 
         glBufferData(GL_ARRAY_BUFFER, 
             sizeof(instance_texcoords) , 
@@ -469,7 +468,7 @@ void initializeInstancedQuad(int numInstances, GLfloat instancePositions[])
     }
     // recording complete
     glBindVertexArray(0);
-
+	return (0);
 }
 
 void initializeWaterQuad(void)
@@ -721,9 +720,9 @@ void displayVideoQuad(void)
 	glBindVertexArray(0);
 }
 
-void displayInstancedQuads(int numInstances)
+void displayInstancedQuads(quad_instancing_buffers_t& instBuffers, int numInstances)
 {
-    glBindVertexArray(vao_quadInstanced);
+    glBindVertexArray(instBuffers.vao_quadInstanced);
     
     // drawing code of 12 lac lines
     glDrawArraysInstanced(
@@ -852,23 +851,24 @@ void uninitializeVideoQuad(void)
 		vao_quad_video = 0;
 	}
 }
-void uninitializeInstancedQuads(void)
+
+void uninitializeInstancedQuads(quad_instancing_buffers_t& instBuffers)
 {
-    if (vbo_texcoords) {
+    if (instBuffers.vbo_texcoords) {
 
-		glDeleteBuffers(1, &vbo_texcoords);
-		vbo_texcoords = 0;
+		glDeleteBuffers(1, &instBuffers.vbo_texcoords);
+		instBuffers.vbo_texcoords = 0;
 	}
-    if (vbo_quadInstanced) {
+    if (instBuffers.vbo_quadInstanced) {
 
-		glDeleteBuffers(1, &vbo_quadInstanced);
-		vbo_quadInstanced = 0;
+		glDeleteBuffers(1, &instBuffers.vbo_quadInstanced);
+		instBuffers.vbo_quadInstanced = 0;
 	}
 
-	if (vao_quadInstanced) {
+	if (instBuffers.vao_quadInstanced) {
 
-		glDeleteVertexArrays(1, &vao_quadInstanced);
-		vao_quadInstanced = 0;
+		glDeleteVertexArrays(1, &instBuffers.vao_quadInstanced);
+		instBuffers.vao_quadInstanced = 0;
 	}
 }
 
