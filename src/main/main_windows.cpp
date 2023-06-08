@@ -230,10 +230,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	case WM_SETFOCUS:
 		gbActiveWindow = TRUE;
+		eventHandlerNavras(iMsg, wParam);
 		break;
 
 	case WM_KILLFOCUS:
 		gbActiveWindow = FALSE;
+		eventHandlerNavras(iMsg, wParam);
 		break;
 
 	case WM_ERASEBKGND:
@@ -346,7 +348,7 @@ int initialize(void)
 	}
 
 	// make the rendering context as the current context
-	if(wglMakeCurrent(ghdc, ghrc) == FALSE)
+	if(wglMakeCurrent(ghdc, ghrc) == FALSE) // 
 	{
 		return(-4);
 	}
@@ -431,7 +433,7 @@ int initializeForVideo(void)
 	}
 
 	// make the rendering context as the current context
-	if(wglMakeCurrent(ghdc, ghrc_AMC_Video) == FALSE)
+	if(wglMakeCurrent(ghdc, ghrc_AMC_Video) == FALSE) // make video as current context
 	{
 		return(-4);
 	}
@@ -533,10 +535,10 @@ void display(void)
 
 	// code
 #ifdef ENABLE_MULTI_THREADING
-	if (!gTaskFinished.load())
+	if (!gTaskFinished.load()) // Navras init not complete yet
     {
 		videoUniform = useFSVQuadShader();
-		displayVideoEffect(&videoUniform);
+		displayVideoEffect(&videoUniform); // show video
 		glUseProgram(0);
 	}
 	else
@@ -548,7 +550,8 @@ void display(void)
 			if (ghrc)
         	{
 				glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-				wglMakeCurrent(ghdc, ghrc);
+				// make the rendering context as the current context
+				wglMakeCurrent(ghdc, ghrc); 
 			}		
 			uninitializeVideoEffect();			
 		}

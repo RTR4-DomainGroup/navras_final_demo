@@ -820,6 +820,7 @@ void updateScene13_ShantRas(void)
 void uninitializeScene13_Shant(void)
 {
     //UNINIT models
+#ifdef ENABLE_STATIC_MODELS
 	unloadStaticModel(&shantRoomModel);
 	//unloadStaticModel(&maskModel);
 
@@ -832,6 +833,7 @@ void uninitializeScene13_Shant(void)
 	unloadStaticModel(&maskModel_shringarRas);
 	unloadStaticModel(&maskModel_hasyaRas);
 	unloadStaticModel(&maskModel_shantRas);
+#endif // ENABLE_STATIC_MODELS
 
 	if (texture_shantRas)
 	{
