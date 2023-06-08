@@ -71,22 +71,22 @@ static STATIC_MODEL maskModel_shantRas;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_EROSION
-struct ErosionNoiseUniform sceneErosionNoiseUniform;
-GLuint noise_texture_eroded;
-GLuint texture_Marble_Shant;
-float myScale_erosion = 2.0f;
-float noiseScale_erosion = 2.0f;
-bool offsetIncrement = true;
+static struct ErosionNoiseUniform sceneErosionNoiseUniform;
+static GLuint noise_texture_eroded;
+static GLuint texture_Marble_Shant;
+static float myScale_erosion = 2.0f;
+static float noiseScale_erosion = 2.0f;
+static bool offsetIncrement = true;
 // Mask Textures
-GLuint texture_karunRas;
-GLuint texture_bhayanakRas;
-GLuint texture_raudraRas;
-GLuint texture_bibhatsaRas;
-GLuint texture_veerRas;
-GLuint texture_adbhutRas;
-GLuint texture_shringarRas;
-GLuint texture_hasyaRas;
-GLuint texture_shantRas;
+static GLuint texture_karunRas;
+static GLuint texture_bhayanakRas;
+static GLuint texture_raudraRas;
+static GLuint texture_bibhatsaRas;
+static GLuint texture_veerRas;
+static GLuint texture_adbhutRas;
+static GLuint texture_shringarRas;
+static GLuint texture_hasyaRas;
+static GLuint texture_shantRas;
 
 GLuint textures_masks[9];
 

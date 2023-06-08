@@ -10,6 +10,7 @@
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../../inc/effects/StaticModelLoadingEffect.h"
 
 
 #ifdef ENABLE_WATER
@@ -66,6 +67,10 @@
 #ifdef ENABLE_GAUSSIAN_BLUR
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
+
+#ifdef ENABLE_EROSION
+#include "../../inc/effects/ErosionEffect.h"
+#endif // ENABLE_EROSION
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
@@ -137,6 +142,26 @@ struct FrameBufferDetails fboColorPass;
 struct FrameBufferDetails fboGodRayPass;
 
 struct FrameBufferDetails fboEarthAndSpace;
+
+// Masks
+struct FrameBufferDetails fboMaskPass;
+static GLuint texture_shringarRas;
+static STATIC_MODEL maskModel_shringarRas;
+static GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightSpecular_shantRas_mask[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightPosition_shantRas_mask[] = { 10.0f, 10.0f, 10.0f, 1.0f };
+
+static GLfloat materialAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialSpecular_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialShininess_shantRas_mask = 128.0f;
+static struct ErosionNoiseUniform sceneErosionNoiseUniform;
+static GLuint noise_texture_eroded;
+static GLuint texture_Marble_Shant;
+static float myScale_erosion = 2.0f;
+static float noiseScale_erosion = 2.0f;
+static bool offsetIncrement = true;
 
 extern int windowWidth;
 extern int windowHeight;
@@ -412,6 +437,23 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_BILLBOARDING
 
+	fboMaskPass.textureWidth = 1920;
+	fboMaskPass.textureHeight = 1080;
+
+	createFBO(&fboMaskPass);
+
+	loadStaticModel("res/models/masks/ShringarMask.obj", &maskModel_shringarRas);
+	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, "res/models/masks/copper.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
+	}
+
 	return 0;
 }
 
@@ -508,6 +550,65 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		displayPasses(1, true, true, false, 1);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	#endif // ENABLE_SHADOW
+
+	// Masks
+	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass.frameBuffer);
+	glViewport(0, 0, (GLsizei)fboMaskPass.textureWidth, (GLsizei)fboMaskPass.textureHeight);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboMaskPass.textureWidth / fboMaskPass.textureHeight, 0.1f, 100.0f);
+	
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	mat4 rotationMatrix_x = mat4::identity();
+	mat4 rotationMatrix_y = mat4::identity();
+	mat4 rotationMatrix_z = mat4::identity();
+
+	//float angle = 0.0;
+
+	glEnable(GL_TEXTURE_3D);
+	glEnable(GL_TEXTURE_2D);
+	sceneErosionNoiseUniform = useErosionNoiseShader();
+
+	glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+	glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
+
+	glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+	glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+	glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
+
+	//glDisable(GL_BLEND);
+	// ------ Mask Model ------
+	translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+	scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
+	//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+
+	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, mat4::identity());
+	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+
+	drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded);
+	// ################################### ROOM ###################################  
+
+	glUseProgram(0);
+
+	glDisable(GL_TEXTURE_3D);
+	glDisable(GL_TEXTURE_2D);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 
 		//////////////////////////////////////////////////////////////
 		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
@@ -653,7 +754,9 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 		fsqUniform = useFSQuadShader();
+		glEnable(GL_BLEND);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
@@ -661,8 +764,25 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
+
+		/*glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glUniform1i(fsqUniform.textureSamplerUniform3, 2);*/
+
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+		//
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glDisable(GL_BLEND);
+
 		glUseProgram(0);
 	
 	}
