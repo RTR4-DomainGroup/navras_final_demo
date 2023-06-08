@@ -361,10 +361,10 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 void updateScene02_EarthAndSpace(void)
 {
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraAngleEarthAndSpace += 0.02f;
-	if (cameraAngleEarthAndSpace > 120.0f)
-		cameraAngleEarthAndSpace = 120.0f;
-	//cameraAngleEarthAndSpace = preciselerp(cameraAngleEarthAndSpace, 120.0f, 0.00002f);
+	//cameraAngleEarthAndSpace += 0.02f;
+	//if (cameraAngleEarthAndSpace > 120.0f)
+	//	cameraAngleEarthAndSpace = 120.0f;
+	cameraAngleEarthAndSpace = preciselerp(cameraAngleEarthAndSpace, 120.0f, 0.002f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 	// Code
