@@ -59,10 +59,15 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
+
+// Indoor Gaussian Blur
+bool shouldSceneRaudraMaskAppear = false;
+
 // Time
 bool timeFlag = true;
 time_t now;
 time_t then;
+
 
 int time_scene1 = 5;
 int time_scene2 = 40;
@@ -644,9 +649,11 @@ void displayNavras(void)
 	}
 	else if (now <= (then + time_scene7) && currentScene == SCENE07_RAUDRA_RAS)
 	{
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		
 		audio(SCENE07_RAUDRA_RAS);
-
-		displayScene07_Raudra();
+		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra, shouldSceneRaudraMaskAppear);
+		//displayScene07_Raudra();
 		sceneTime(time_scene7);
 	}
 	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
@@ -712,7 +719,7 @@ void displayNavras(void)
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
-		displayScene_PlaceHolderIndoor();
+		//displayScene_PlaceHolderIndoor();
 	}
 	else
 	{

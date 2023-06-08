@@ -126,7 +126,7 @@ int initializeScene08_BibhatsaRas(void)
 	initializeCube();
 	initializeCubeWithTilingTexcoords();
 
-	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road\\road.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road/road.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_road FAILED!!!\n");
@@ -137,7 +137,7 @@ int initializeScene08_BibhatsaRas(void)
 		LOG("LoadGLTexture texture_road Successfull = %u!!!\n", texture_road);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_footpath, TEXTURE_DIR"Road\\foot.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_footpath, TEXTURE_DIR"Road/foot.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_footpath FAILED!!!\n");
@@ -148,7 +148,7 @@ int initializeScene08_BibhatsaRas(void)
 		LOG("LoadGLTexture texture_footpath Successfull = %u!!!\n", texture_footpath);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_wall, TEXTURE_DIR"Bibhatsa\\wall_side.png") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_wall, TEXTURE_DIR"Bibhatsa/wall_side.png") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_wall FAILED!!!\n");
