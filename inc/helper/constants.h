@@ -36,6 +36,18 @@
 #define Z_MIN_ROUDRA_SHELF (0.0f)
 #define Z_MAX (-3.0f)
 
+// Bibhatsa
+#define X_MIN_BR (-6.0f)
+#define X_MAX_BR (6.0f)
+
+#define Y_MIN_BR (-3.0f)
+#define Y_MAX_BR (0.0f)
+
+#define Z_MIN_BR (-14.5f)
+#define Z_MAX_BR (-9.0f)
+
+#define NO_OF_INSTANCES_KACHARA 200
+
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
@@ -60,7 +72,7 @@
 // sample audios
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
-    "audio1.wav",
+    "AMC_Banner_Audio.wav",
     "Scene02_EarthAndSpace_40_seconds.wav",
     "\0",
     "\0",
@@ -83,7 +95,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-//#define ENABLE_MULTI_THREADING
+#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -103,11 +115,11 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
-// #define ENABLE_DYNAMIC_MODELS
-// #define ENABLE_CAMERA_ANIMATION
+//#define ENABLE_DYNAMIC_MODELS
+#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
-// #define ENABLE_AUDIO
+#define ENABLE_AUDIO
 
 
 #define ENABLE_SINGLE_SCENE
