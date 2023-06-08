@@ -148,7 +148,7 @@ int initializeScene08_BibhatsaRas(void)
 	initializeCube();
 	initializeCubeWithTilingTexcoords();
 
-	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road\\road.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road/road.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_road FAILED!!!\n");
@@ -159,7 +159,7 @@ int initializeScene08_BibhatsaRas(void)
 		LOG("LoadGLTexture texture_road Successfull = %u!!!\n", texture_road);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_footpath, TEXTURE_DIR"Road\\foot.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_footpath, TEXTURE_DIR"Road/foot.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_footpath FAILED!!!\n");
@@ -170,7 +170,7 @@ int initializeScene08_BibhatsaRas(void)
 		LOG("LoadGLTexture texture_footpath Successfull = %u!!!\n", texture_footpath);
 	}
 
-	if (LoadGLTexture_UsingSOIL(&texture_wall, TEXTURE_DIR"Bibhatsa\\wall_side.png") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_wall, TEXTURE_DIR"Bibhatsa/graffitiWall.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_wall FAILED!!!\n");
@@ -253,7 +253,7 @@ void initializepileTrashInstancePositions(void)
 		static GLfloat zPos = Z_MIN_BR;
 
 		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX_BR - X_MIN_BR)) + X_MIN_BR;
-		instance_positions[(i * 3) + 1] = (((GLfloat)rand() / RAND_MAX) * (Y_MAX_BR - Y_MIN_BR)) + Y_MIN_BR;
+		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR - Z_MIN_BR)) + Z_MIN_BR;
 
 		LOG("Pile Trash Instance %d Position: [%.02f %.02f %.02f]\n", i,
@@ -795,7 +795,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		drawStaticModel(buildingFiveModel);
 		// ################################### BUILDING FIVE ###################################  
 
-		// ################################### BUNCH OF 3 DUSTBINS ###################################  
+		// ################################### BUNCH OF 3 DUSTBINS LHS ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -812,9 +812,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		drawStaticModel(trashOneModel);
-		// ################################### BUNCH OF 3 DUSTBINS ###################################  
+		// ################################### BUNCH OF 3 DUSTBINS LHS ###################################  
 
-		// ################################### BUNCH OF 3 DUSTBINS ###################################  
+		// ################################### BUNCH OF 3 DUSTBINS RHS ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -831,7 +831,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		drawStaticModel(trashOneModel);
-		// ################################### BUNCH OF 3 DUSTBINS ###################################  
+		// ################################### BUNCH OF 3 DUSTBINS RHS ###################################  
 
 		// ################################### BUILDING SEVEN ###################################  
 		translationMatrix = mat4::identity();
@@ -842,7 +842,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		// ------ Streetlight Model ------
 		translationMatrix = vmath::translate(-25.0f, 5.0f, -30.0f);
 		scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
-		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+		rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -853,14 +853,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		drawStaticModel(buildingFiveModel);
 		// ################################### BUILDING SEVEN ###################################  
 
-		// ################################### Trash Pile ###################################  
+		// ################################### Trash Pile At Center ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
 		// ------ Trash Pile ------
-		translationMatrix = vmath::translate(11.0f, -3.5f, -20.0f);
+		translationMatrix = vmath::translate(22.0f, -5.0f, -20.0f);
 		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -871,9 +871,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		drawStaticModelInstanced(pileOfTrash, 20);
-		// ################################### Trash Pile ###################################  
+		// ################################### Trash Pile At Center ###################################  
 
-		// ################################### CAN TRASH 1 ###################################  
+		// ################################### CAN TRASH 1 At RHS ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -891,9 +891,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		drawStaticModel(canTrash1);
-		// ################################### CAN TRASH 1 ###################################  
+		// ################################### CAN TRASH 1  At RHS ###################################  
 
-		// ################################### CAN TRASH 2 ###################################  
+		// ################################### CAN TRASH 2 At RHS Small ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -910,9 +910,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModelInstanced(canTrash2, NO_OF_INSTANCES_KACHARA);
-		//drawStaticModel(canTrash2);
-		// ################################### CAN TRASH 2 ###################################  
+		//drawStaticModelInstanced(canTrash2, NO_OF_INSTANCES_KACHARA);
+		drawStaticModel(canTrash2);
+		// ################################### CAN TRASH 2 At RHS Small ###################################  
 
 		// ################################### RED CAN TRASH 3 ###################################  
 		translationMatrix = mat4::identity();
@@ -921,7 +921,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Red Can Model ------
-		translationMatrix = vmath::translate(20.0f, -5.0f, -25.0f);
+		translationMatrix = vmath::translate(25.0f, -5.0f, -35.0f);
 		scaleMatrix = vmath::scale(8.0f, 8.0f, 8.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -931,7 +931,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModelInstanced(canTrash3, NO_OF_INSTANCES_KACHARA);
+		drawStaticModelInstanced(canTrash3, NO_OF_INSTANCES_KACHARA/3);
 		// ################################### RED TRASH 3 ###################################  
 
 		// ################################### Cigarette 1 ###################################  
@@ -941,7 +941,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Cigarette 1 Model ------
-		translationMatrix = vmath::translate(20.0f, -5.0f, -15.0f);
+		translationMatrix = vmath::translate(25.0f, -5.0f, -25.0f);
 		scaleMatrix = vmath::scale(10.0f, 10.0f, 10.0f);
 		rotationMatrix = vmath::rotate(45.0f, 0.0f, 1.0f, 0.0f);
 
@@ -951,7 +951,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModelInstanced(cigarette1, NO_OF_INSTANCES_KACHARA);
+		drawStaticModelInstanced(cigarette1, NO_OF_INSTANCES_KACHARA/3);
 		// ################################### Cigarette 1 ###################################  
 
 		// ################################### Cigarette 2 ###################################  
@@ -972,7 +972,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModelInstanced(cigarette2, NO_OF_INSTANCES_KACHARA);
+		drawStaticModelInstanced(cigarette2, NO_OF_INSTANCES_KACHARA/3);
 		// ################################### Cigarette 2 ###################################  
 
 		// ################################### glassContainer ###################################  
@@ -980,9 +980,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Container ------
 		translationMatrix = vmath::translate(12.0f, -5.0f, -15.0f);
@@ -1008,8 +1005,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 1 ------
-		translationMatrix = vmath::translate(-3.0f, -4.5f, -26.0f);
-		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
+		translationMatrix = vmath::translate(-8.0f, -2.7f, -30.0f);
+		scaleMatrix = vmath::scale(1.75f, 1.75f, 1.75f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
@@ -1022,29 +1019,29 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		drawStaticModel(extraTrash1);
 		// ################################### Extra Trash 1 ###################################  
 
-		// ################################### Extra Trash 2 ###################################  
-		translationMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
+		//// ################################### Extra Trash 2 ###################################  
+		//translationMatrix = mat4::identity();
+		//rotationMatrix = mat4::identity();
+		//modelMatrix = mat4::identity();
+		//scaleMatrix = mat4::identity();
+		//rotationMatrix_x = mat4::identity();
+		//rotationMatrix_y = mat4::identity();
+		//rotationMatrix_z = mat4::identity();
 
-		// ------ Trash 2 ------
-		translationMatrix = vmath::translate(-11.5f, -2.5f, -22.0f);
-		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
-		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+		//// ------ Trash 2 ------
+		//translationMatrix = vmath::translate(-11.5f, -5.0f, -22.0f);
+		//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+		//rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModel(extraTrash2);
-		// ################################### Extra Trash 2 ###################################  
+		//drawStaticModel(extraTrash2);
+		//// ################################### Extra Trash 2 ###################################  
 
 		// ################################### Extra Trash 3 ###################################  
 		translationMatrix = mat4::identity();
@@ -1056,7 +1053,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 3 ------
-		translationMatrix = vmath::translate(8.0f, -4.5f, -35.0f);
+		translationMatrix = vmath::translate(8.0f, -5.0f, -35.0f);
 		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1079,7 +1076,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 4 ------
-		translationMatrix = vmath::translate(6.0f, -4.5f, -20.0f);
+		translationMatrix = vmath::translate(6.0f, -5.0f, -20.0f);
 		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1102,7 +1099,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 5 ------
-		translationMatrix = vmath::translate(12.0f, -4.5f, -50.0f);
+		translationMatrix = vmath::translate(12.0f, -5.0f, -50.0f);
 		scaleMatrix = vmath::scale(3.0f, 3.0f, 3.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1125,7 +1122,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 6 ------
-		translationMatrix = vmath::translate(6.0f, -4.5f, -40.0f);
+		translationMatrix = vmath::translate(6.0f, -5.0f, -40.0f);
 		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1148,7 +1145,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 7 ------
-		translationMatrix = vmath::translate(4.0f, -4.5f, -25.0f);
+		translationMatrix = vmath::translate(4.0f, -5.0f, -25.0f);
 		scaleMatrix = vmath::scale(3.5f, 3.5f, 3.5f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
