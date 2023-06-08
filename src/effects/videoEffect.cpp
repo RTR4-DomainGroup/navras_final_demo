@@ -5,11 +5,15 @@
 #include "../../inc/shaders/FSVQuadShader.h"
 #include "../../inc/helper/texture_loader.h"
 
+#include "../../inc/helper/audioplayer.h"
+
 
 GLuint texture_frame;
 int frameWidth, frameHeight;
 uint8_t* frame_data = NULL;
 struct VideoReaderState vr_state;
+
+bool flagAudio = true;
 
 int initializeVideoEffect(const char* videoFile)
 {
@@ -44,6 +48,12 @@ int initializeVideoEffect(const char* videoFile)
 
 void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
 {
+
+    if(flagAudio == true){
+        playSong(0);
+        flagAudio = false;
+    }
+
     // Function declaration
     static bool myFlag = true;
     // Code

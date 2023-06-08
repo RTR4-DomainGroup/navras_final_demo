@@ -664,8 +664,7 @@ void updateScene09_VeerRas(void)
 			// 
 			// lookAt(15.34f, 6.50f, -15.70f, 15.40f, 4.99f, -19.70f, 0.00f, 1.00f, 0.00f)
 		}
-		/*if (cameraEyeY > 5.77f)*/
-		else
+		else if (cameraEyeY > 5.77f)
 		{
 			/*isCameraRotation = true;
 			cameraRadius = 5.39f;
@@ -682,7 +681,7 @@ void updateScene09_VeerRas(void)
 			cameraEyeZ = preciselerp(cameraEyeZ, -14.32f, 0.02f);
 			cameraCenterZ = preciselerp(cameraCenterZ, -19.70f, 0.02f);
 		}
-		if (cameraEyeX <= 15.90f)
+		if (cameraEyeX <= 15.90f && cameraEyeY > 5.77f)
 		{
 			isCameraRotation = true;
 			cameraRadius = 5.39f;
@@ -692,7 +691,7 @@ void updateScene09_VeerRas(void)
 	}
 	else if (isCameraRotation == true && continueCameraRotation == true)
 	{
-		cameraRadius -= 0.005f;
+		cameraRadius -= 0.0005f;
 		if (cameraRadius <= 2.0f)
 			cameraRadius = 2.0f;
 

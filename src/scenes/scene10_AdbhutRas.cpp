@@ -480,7 +480,7 @@ void displayScene10_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
 
 	rotationAngles.y = displacementmap_depth;
-	update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
+	//update_transformations(&translationMatrix, NULL, NULL, &rotationAngles);
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	viewMatrix = finalViewMatrix;
