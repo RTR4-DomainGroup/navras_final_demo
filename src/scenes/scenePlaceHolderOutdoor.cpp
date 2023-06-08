@@ -512,20 +512,20 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 #endif // ENABLE_SHADOW
 
-		//////////////////////////////////////////////////////////////
-		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
-			0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		fsqUniform = useFSQuadShader();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+	//////////////////////////////////////////////////////////////
+	/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
+		0.1f, 1000.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	fsqUniform = useFSQuadShader();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	glUniform1i(fsqUniform.textureSamplerUniform1, 0);
 
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);*/
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);*/
 
 	if(!isGaussianBlurRequired && !isGodRequired) 
 	{
@@ -632,7 +632,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		if(getCurrentScene() == SCENE02_EARTH_AND_SPACE)
+		if(getCurrentScene() == SCENE02_EARTH_AND_SPACE) {
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
 		}
 		// else
