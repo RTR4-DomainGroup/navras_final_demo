@@ -162,7 +162,7 @@ int initializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/scene06_bhayanak/boytempBhayanakKid2.obj", &rockModel);
 
 #endif // ENABLE_STATIC_MODELS
 
