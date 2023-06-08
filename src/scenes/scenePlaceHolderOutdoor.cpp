@@ -588,7 +588,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
 		float color[3] = {1.0f, 1.0f, 1.0f};
-		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+		if(getCurrentScene() == SCENE02_EARTH_AND_SPACE)
 		{
 			color[0] = 1.0f;
 			color[1] = 0.65f;
