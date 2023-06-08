@@ -681,7 +681,7 @@ void updateScene09_VeerRas(void)
 			cameraEyeZ = preciselerp(cameraEyeZ, -14.32f, 0.02f);
 			cameraCenterZ = preciselerp(cameraCenterZ, -19.70f, 0.02f);
 		}
-		else if (cameraEyeX <= 15.90f)
+		if (cameraEyeX <= 15.90f && cameraEyeY > 5.77f)
 		{
 			isCameraRotation = true;
 			cameraRadius = 5.39f;
