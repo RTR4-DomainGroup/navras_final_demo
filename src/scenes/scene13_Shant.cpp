@@ -776,14 +776,14 @@ void updateScene13_ShantRas(void)
 	//if (offset_ras_1[0] <= 0.33f)
 	//	updateErosion(offsetIncrement, offset_ras_2, 0.001f);
 
-	maskTranslationRadii[0] += 0.002f;
-	maskScales[0] += 0.000007f;
+	maskTranslationRadii[0] += 0.008f;
+	maskScales[0] += 0.0001f;
 	for (int i = 0; i < 9; i++)
 	{
 		if (maskTranslationRadii[i] >= 0.433f)
 		{
-			maskTranslationRadii[i + 1] += 0.002f;
-			maskScales[i + 1] += 0.000007f;
+			maskTranslationRadii[i + 1] += 0.008f;
+			maskScales[i + 1] += 0.0001f;
 		}
 		if (maskTranslationRadii[i] >= 1.3f)
 			maskTranslationRadii[i] = 1.3;
@@ -804,11 +804,11 @@ void updateScene13_ShantRas(void)
 
 	if (masksTransformationsComplete == true)
 	{
-		updateErosion(offsetIncrement, offset_ras[8], 0.0025f);
+		updateErosion(offsetIncrement, offset_ras[8], 0.005f);
 		for (int i = 8; i > -1; i--)
 		{
 			if (offset_ras[i][0] <= 0.33f)
-				updateErosion(offsetIncrement, offset_ras[i - 1], 0.0025f);
+				updateErosion(offsetIncrement, offset_ras[i - 1], 0.005f);
 			if (offset_ras[i][0] <= 0.17f)
 				isMaskQuadEnabled[i] = false;
 		}
