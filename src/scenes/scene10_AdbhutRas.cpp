@@ -192,6 +192,8 @@ static bool stopCameraRotation = false;
 
 static int activeObject = 0;
 
+quad_instancing_buffers_t instBuffers;
+
 float distance10;
 
 bool isInitialDisplay_Scene10AdbhutRas = true;
@@ -238,32 +240,53 @@ int initializeScene10_AdbhutRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_BILLBOARDING
+	
+	
 	GLfloat instance_positions[BB_NO_OF_INSTANCES * 4] = {};
 	// generate positions per instance
+	// for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
+	// {
+	// 	instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (BB_X_MAX - BB_X_MIN)) + BB_X_MIN;
+	// 	instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (BB_Y_MAX - BB_Y_MIN)) + BB_Y_MIN;
+	// 	instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (BB_Z_MAX - BB_Z_MIN)) + BB_Z_MIN;
+	// 	instance_positions[(i*4)+3] = 1.0f;
+	// 	// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	// }
+
+	// Bhuichakkar
+	// for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
+	// {
+	// 	instance_positions[(i*4)+0] =  (i%50 * sinf(i * M_PI/180));
+	// 	instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (BB_Y_MAX - BB_Y_MIN)) + BB_Y_MIN;
+	// 	instance_positions[(i*4)+2] =  (i%50 * cosf(i * M_PI/180));
+	// 	instance_positions[(i*4)+3] = 1.0f;
+	// 	// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
+	// }
+
 	for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
 	{
-		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (BB_X_MAX - BB_X_MIN)) + BB_X_MIN;
+		instance_positions[(i*4)+0] = ((((GLfloat)rand() / RAND_MAX) * (BB_X_MAX - BB_X_MIN)) + BB_X_MIN ) + (i%10 * sinf(i * M_PI/180));
 		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (BB_Y_MAX - BB_Y_MIN)) + BB_Y_MIN;
-		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (BB_Z_MAX - BB_Z_MIN)) + BB_Z_MIN;
+		instance_positions[(i*4)+2] = ((((GLfloat)rand() / RAND_MAX) * (BB_Z_MAX - BB_Z_MIN)) + BB_Z_MIN)  + (i%10 * cosf(i * M_PI/180));
 		instance_positions[(i*4)+3] = 1.0f;
 		// LOG("Instance %d Position: [%f %f %f]\n", i, instance_positions[(i*4)+0], instance_positions[(i*4)+1], instance_positions[(i*4)+2]);
 	}
 
 	// sort z vertices
-	for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
-	{
-		for (int j = i + 1; j < BB_NO_OF_INSTANCES; ++j)
-		{
-			if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
-			{
-				auto a = instance_positions[(i*4)+2];
-				instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
-				instance_positions[(j*4)+2] = a; 
-			}
-		}
-	}
+	// for(int i = 0; i < BB_NO_OF_INSTANCES; i++)
+	// {
+	// 	for (int j = i + 1; j < BB_NO_OF_INSTANCES; ++j)
+	// 	{
+	// 		if(instance_positions[(i*4)+2] > instance_positions[(j*4)+2]) 
+	// 		{
+	// 			auto a = instance_positions[(i*4)+2];
+	// 			instance_positions[(i*4)+2] = instance_positions[(j*4)+2];
+	// 			instance_positions[(j*4)+2] = a; 
+	// 		}
+	// 	}
+	// }
 
-	initializeInstancedQuad(BB_NO_OF_INSTANCES, instance_positions);
+	initializeInstancedQuad(instBuffers, BB_NO_OF_INSTANCES, instance_positions);
 
 
 #endif // ENABLE_BILLBOARDING
@@ -608,7 +631,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate( -20.75f, -2.05f, -34.25f);
+	translationMatrix = vmath::translate(-20.75f, -2.27f, -34.25f);
 	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
 
 	// usage type 1 
@@ -650,7 +673,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(-19.94f, -2.05f, -34.25f);
+	translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
 	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 	rotationAngles = {0.0f, 99.55f, 0.0f};
 
@@ -830,6 +853,16 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		// send to shader
 		glUniformMatrix4fv(billboardingEffectUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(billboardingEffectUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
+		glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
+		glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
+		glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
+
+		/// grass
+		/// /////////////////////////
+		/// Flower on left side of river
+		/// /////////////////////////
+		/// 
 
 		// instanced quads with grass texture
 		translationMatrix = mat4::identity();
@@ -838,7 +871,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		modelMatrix = mat4::identity();
 		rotationAngles = {0.0f, 0.0f, 0.0f};
 
-		/// grass
 		// Red flower
 		if (texture_grass.height > texture_grass.width)
 			scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
@@ -846,27 +878,55 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 			scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
 
 
-		translationMatrix = vmath::translate(-2.50f, -2.15f, -22.50f);
+		translationMatrix = vmath::translate(-5.00f, -2.15f, -13.75f);
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
-		rotationAngles = { 0.50f, 18.75f, 2.00f};
+		// rotationAngles = { 0.50f, 18.75f, 2.00f};
 
+		static bool firstcall = 1;
+		if(firstcall)
+		{
+			LOG("Before update tranform\n");
+			LOG("Translation Matrix\n");
+			print_matrix(translationMatrix);
+			LOG("Scale Matrix\n");
+			print_matrix(scaleMatrix);
+			LOG("Rotation Matrix\n");
+			print_matrix(rotationMatrix);
+			LOG("Rotation Vector\n");
+			print_vector({rotationAngles.x, rotationAngles.y, rotationAngles.z, rotationAngles.w});
+		}
 		if(7 == tf_Object) // Red Flower
 			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
+		
+		if(firstcall)
+		{
+			LOG("After update tranform\n");
+			LOG("Translation Matrix\n");
+			print_matrix(translationMatrix);
+			LOG("Scale Matrix\n");
+			print_matrix(scaleMatrix);
+			LOG("Rotation Matrix\n");
+			print_matrix(rotationMatrix);
+			LOG("Rotation Vector\n");
+			print_vector({rotationAngles.x, rotationAngles.y, rotationAngles.z, rotationAngles.w});
+			firstcall = 0;
+		}
+		rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);	
+		rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
+		rotationMatrix_z = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
+		rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-		glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-		glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
-		glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-		displayInstancedQuads(BB_NO_OF_INSTANCES);  // how many instances to draw
+		displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		/// Flower
+
+		/// White Flower
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -878,7 +938,93 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		else
 			scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-		translationMatrix = vmath::translate(28.50f, -2.05f, -33.75f);
+		translationMatrix = vmath::translate(-4.75f, -1.90f, -13.50f);
+		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
+
+		if(8 == tf_Object) // White Flower
+				update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		// send to shader
+		glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_flower.id);
+		displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		/// /////////////////////////
+		/// Flower on right side of river
+		/// /////////////////////////
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		rotationAngles = {0.0f, 0.0f, 0.0f};
+
+		// Red flower
+		if (texture_grass.height > texture_grass.width)
+			scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
+		else
+			scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
+
+		translationMatrix = vmath::translate(29.50f, -2.15f, -21.70f);
+		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
+		// rotationAngles = { 0.50f, 18.75f, 2.00f};
+
+		if(7 == tf_Object) // Red Flower
+			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+
+		rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);	
+		rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
+		rotationMatrix_z = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
+		rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+		glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_grass.id);
+		displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+		/// White Flower
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		rotationAngles = {0.0f, 0.0f, 0.0f};
+		
+		if (texture_flower.height > texture_flower.width)
+			scaleMatrix = vmath::scale(texture_flower.width / (GLfloat)texture_flower.height, 1.0f, 1.0f);
+		else
+			scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
+
+		translationMatrix = vmath::translate(34.50f, -2.05f, -27.75f);
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 		rotationAngles = {0.0f, 17.0f, 0.0f};
 
@@ -889,14 +1035,10 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 		// send to shader
 		glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniform1i(billboardingEffectUniform.textureSamplerUniform, 0);
-		glUniform1i(billboardingEffectUniform.billboardingEnableUniform, 1);
-		glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
-		glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_flower.id);
-		displayInstancedQuads(BB_NO_OF_INSTANCES);  // how many instances to draw
+		displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glUseProgram(0);
@@ -928,7 +1070,7 @@ void uninitializeScene10_AdbhutRas(void)
 {
 	// Code
 #ifdef ENABLE_BILLBOARDING
-    uninitializeInstancedQuads();
+    uninitializeInstancedQuads(instBuffers);
 
 #endif // ENABLE_BILLBOARDING
 
