@@ -324,7 +324,7 @@ void setCameraScene11_ShringarRas(void)
 	if (isInitialDisplayScene11_ShringarRas == true)
 	{
 		//setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-		setCamera(0.0, 0.0f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0, 0.25f, 6.0, 0.0f, 0.25f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 		//setCamera(0.00, 0.00, -12.50, 0.00f, 0.00f, -18.50f, 0.0f, 0.0f, 1.0f);
 		isInitialDisplayScene11_ShringarRas = false;
@@ -348,11 +348,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
-	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
-	displayCamera();
+	//displayCamera();
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -570,8 +570,17 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 mv_matrix = mat4::identity();
 	vmath::mat4 proj_matrix = mat4::identity();
 
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
+	translationMatrix = translate(0.0f, -0.67f, -20.0f);
+	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
+
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -0.5f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translationMatrix * scaleMatrix);
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
@@ -623,8 +632,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
 #endif // DEBUG - ENABLE_FOG
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
@@ -637,7 +646,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
 
 	glUseProgram(0);
 #endif // ENABLE_TERRIAN
@@ -679,10 +688,10 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.25f, 0.55f, -17.0f);
+	translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
 	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
-	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+	update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
@@ -717,8 +726,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(-1.25f, 0.55f, -15.0f);
-	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
+	translationMatrix = vmath::translate(-0.06f, 0.03f, -15.0f);
+	scaleMatrix = vmath::scale(0.0065f, 0.0065f, 0.0065f);
 
 	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
@@ -756,8 +765,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.25f, 0.55f, -15.0f);
-	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
+	translationMatrix = vmath::translate(0.04f, 0.02f, -15.0f);
+	scaleMatrix = vmath::scale(0.0065f, 0.0065f, 0.0065f);
 
 	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
@@ -1034,7 +1043,7 @@ void updateScene11_ShringarRas(void)
 		cameraAngle_shringar = 270.0f;
 	//cameraAngle_shringar = preciselerp(cameraAngle_shringar, 270.f, 0.07f);
 
-	cameraRadius_shringar -= 0.020f;
+	cameraRadius_shringar -= 0.022f;
 	if (cameraRadius_shringar <= 2.0f)
 		cameraRadius_shringar = 2.0f;
 	//cameraRadius_shringar = preciselerp(cameraRadius_shringar, 2.0f, 0.018f);
