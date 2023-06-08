@@ -202,11 +202,12 @@ int intializeErosionNoiseShader(void)
 	
 	//erosionNoiseUniform.uniform_enable_godRays = glGetUniformLocation(erosionNoiseShaderProgramObject, "enable_godRays");
 
-	//glUseProgram(erosionNoiseShaderProgramObject);
+	glUseProgram(erosionNoiseShaderProgramObject);
 	// some code may come here
+	//glUniform1i(erosionNoiseUniform.textureSamplerUniform, 0);
 	//glUniform1i(erosionNoiseUniform.noiseSamplerUniform, 1);
 
-	//glUseProgram(0);
+	glUseProgram(0);
 
 	return(0);
 }
@@ -216,6 +217,11 @@ struct ErosionNoiseUniform useErosionNoiseShader(void)
 	// code
 	glUseProgram(erosionNoiseShaderProgramObject);
 	return erosionNoiseUniform;
+}
+
+GLuint getErosionNoiseShaderProgramObject(void)
+{
+	return erosionNoiseShaderProgramObject;
 }
 
 void uninitializeErosionNoiseShader(void)
