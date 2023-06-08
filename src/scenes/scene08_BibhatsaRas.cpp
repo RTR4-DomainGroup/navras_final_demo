@@ -390,7 +390,7 @@ void setCameraScene08(void)
 {
 	if (isInitialDisplayScene08_BibhatsaRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.00f, 0.00f, 9.50f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene08_BibhatsaRas = false;
 	}
 }
@@ -630,11 +630,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//glUniform1i(sceneOutdoorADSStaticUniform.)
 		// ------ Man Model ------
-		translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);
-		scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
+		//translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);
+		translationMatrix = vmath::translate(0.00f, -5.00f, -52.75f);
+		//scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
+		scaleMatrix = vmath::scale(0.09f, 0.00f, 0.03f);
 		rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-		modelMatrix = translationMatrix * scaleMatrix *  rotationMatrix;
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		if (actualDepthQuadScene == 1)
@@ -1250,8 +1253,8 @@ void updateScene08_BibhatsaRas(void)
 {
 	// Code
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraEyeZ = preciselerp(cameraEyeZ, -35.50f, 0.0002f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -41.00f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 }
