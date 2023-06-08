@@ -691,7 +691,7 @@ void updateScene09_VeerRas(void)
 	}
 	else if (isCameraRotation == true && continueCameraRotation == true)
 	{
-		cameraRadius -= 0.005f;
+		cameraRadius -= 0.0005f;
 		if (cameraRadius <= 2.0f)
 			cameraRadius = 2.0f;
 
