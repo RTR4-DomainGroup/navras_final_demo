@@ -123,6 +123,12 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// Code
 	switch (iMsg) {
+	case WM_SETFOCUS:
+		togglePlayback();
+		break;
+	case WM_KILLFOCUS:
+		togglePlayback();
+		break;		
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_SPACE:
@@ -159,74 +165,74 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			currentScene = sceneNext();
 			LOG("current scene changed: %d\n", currentScene);
 			break;	
-		case '1':
-		case '!':
-			if (wParam == '!')
-				atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
-			else
-				atmosVariables.m_Kr += 0.0001f;
-			atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
-			break;
+		// case '1':
+		// case '!':
+		// 	if (wParam == '!')
+		// 		atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
+		// 	else
+		// 		atmosVariables.m_Kr += 0.0001f;
+		// 	atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
+		// 	break;
 
-		case '2':
-		case '@':
-			if (wParam == '@')
-				atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
-			else
-				atmosVariables.m_Km += 0.0001f;
-			atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
-			break;
+		// case '2':
+		// case '@':
+		// 	if (wParam == '@')
+		// 		atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
+		// 	else
+		// 		atmosVariables.m_Km += 0.0001f;
+		// 	atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
+		// 	break;
 
-		case '3':
-		case '#':
-			if (wParam == '#')
-				atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
-			else
-				atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
-			break;
+		// case '3':
+		// case '#':
+		// 	if (wParam == '#')
+		// 		atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
+		// 	else
+		// 		atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
+		// 	break;
 
-		case '4':
-		case '$':
-			if (wParam == '$')
-				atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
-			else
-				atmosVariables.m_ESun += 0.1f;
-			break;
+		// case '4':
+		// case '$':
+		// 	if (wParam == '$')
+		// 		atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
+		// 	else
+		// 		atmosVariables.m_ESun += 0.1f;
+		// 	break;
 
-		case '5':
-		case '%':
-			if (wParam == '%')
-				atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
-			else
-				atmosVariables.m_fWavelength[0] += 0.001f;
-			atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
-			break;
+		// case '5':
+		// case '%':
+		// 	if (wParam == '%')
+		// 		atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
+		// 	else
+		// 		atmosVariables.m_fWavelength[0] += 0.001f;
+		// 	atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
+		// 	break;
 
-		case '6':
-		case '^':
-			if (wParam == '^')
-				atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
-			else
-				atmosVariables.m_fWavelength[1] += 0.001f;
-			atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
-			break;
+		// case '6':
+		// case '^':
+		// 	if (wParam == '^')
+		// 		atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
+		// 	else
+		// 		atmosVariables.m_fWavelength[1] += 0.001f;
+		// 	atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
+		// 	break;
 
-		case '7':
-		case '&':
-			if (wParam == '&')
-				atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
-			else
-				atmosVariables.m_fWavelength[2] += 0.001f;
-			atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
-			break;
+		// case '7':
+		// case '&':
+		// 	if (wParam == '&')
+		// 		atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
+		// 	else
+		// 		atmosVariables.m_fWavelength[2] += 0.001f;
+		// 	atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
+		// 	break;
 
-		case '8':
-		case '*':
-			if (wParam == '*')
-				atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
-			else
-				atmosVariables.m_fExposure += 0.1f;
-			break;
+		// case '8':
+		// case '*':
+		// 	if (wParam == '*')
+		// 		atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
+		// 	else
+		// 		atmosVariables.m_fExposure += 0.1f;
+		// 	break;
 		default:
 			// LOG("keypressed : %d\n", wParam);
 			break;
@@ -238,6 +244,7 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	}
 
+	// debug_tranformation();
 	return(0);
 }
 
@@ -309,8 +316,8 @@ int initializeNavras(void) {
     //     return (-5);
     // }
 
-	// // Print OpenGLInfo
-	// printGLInfo();
+	// Print OpenGLInfo
+	printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -554,7 +561,7 @@ void printGLInfo(void) {
 
 	// Code
 	// ***** Writing Graphics Card Related Info in Log File  ***** //
-	LOG("\n   **********************************************************\n");
+	LOG("   **********************************************************\n");
 	LOG("   ***** Graphics Card Information Details *****\n");
 	LOG("   **********************************************************\n");
 	LOG("   OpenGL Vendor	: %s \n", glGetString(GL_VENDOR));
@@ -568,11 +575,11 @@ void printGLInfo(void) {
 	LOG("   Number of Supported Extensions: %d \n", numExtensions);
 	LOG("   **********************************************************\n");
 
-	for (int i = 0; i < numExtensions; i++)
-	{
-		LOG("   %s \n", glGetStringi(GL_EXTENSIONS, i));
-	}
-	LOG("**********************************************************\n");
+	// for (int i = 0; i < numExtensions; i++)
+	// {
+	// 	LOG("   %s \n", glGetStringi(GL_EXTENSIONS, i));
+	// }
+	// LOG("**********************************************************\n");
 }
 
 void resizeNavras(int width, int height) {
@@ -606,7 +613,9 @@ void displayNavras(void)
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifndef ENABLE_SINGLE_SCENE
+#ifdef ENABLE_SINGLE_SCENE
+	// no time 
+#else // not ENABLE_SINGLE_SCENE
 	if (timeFlag == true) {
 		then = time(NULL);
 		timeFlag = false;
@@ -672,9 +681,9 @@ void displayNavras(void)
 	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
-
+		
 		isGodRequired = true;
-		isWaterRequired = false;
+		isWaterRequired = true;
 		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
@@ -787,6 +796,7 @@ void updateNavras(void)
 	updateMouseMovement();
 
 	debug_tranformation();
+
 }
 
 void sceneTime(int scenetime){

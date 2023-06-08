@@ -117,13 +117,15 @@ static const char *szAudios[] = {
 #define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
-
-//#define ENABLE_SINGLE_SCENE
 #define ENABLE_AUDIO
 
+
+#define ENABLE_SINGLE_SCENE
+
+#ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
-#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+// #define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
@@ -131,11 +133,12 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
-// #define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
+#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
 //#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
 
+#endif // ENABLE_SINGLE_SCENE
 
