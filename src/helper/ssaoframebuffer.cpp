@@ -8,17 +8,17 @@ bool ssaoCreateFBO(struct SSAOFrameBufferStruct *frameBufferDetails)
 	glGenTextures(3, frameBufferDetails->fbo_textures);
 
 	glBindTexture(GL_TEXTURE_2D, frameBufferDetails->fbo_textures[0]);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F, 2048, 2048);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB16F, frameBufferDetails->textureWidth, frameBufferDetails->textureHeight);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glBindTexture(GL_TEXTURE_2D, frameBufferDetails->fbo_textures[1]);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, 2048, 2048);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, frameBufferDetails->textureWidth, frameBufferDetails->textureHeight);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glBindTexture(GL_TEXTURE_2D, frameBufferDetails->fbo_textures[2]);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, 2048, 2048);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, frameBufferDetails->textureWidth, frameBufferDetails->textureHeight);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

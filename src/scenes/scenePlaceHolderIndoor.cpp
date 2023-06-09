@@ -95,6 +95,15 @@ int initializeScene_PlaceHolderIndoor(void)
 
 #ifdef ENABLE_SSAO
 
+
+	// framebuffer related variables
+	//int windowWidth;
+	//int windowHeight;
+
+
+	ssaoFrameBufferDetails.textureWidth = 2560;
+	ssaoFrameBufferDetails.textureHeight = 1440;
+
 	if (ssaoCreateFBO(&ssaoFrameBufferDetails) == GL_FALSE) 
 	{
 		LOG("ssaoCreateFBO() For Shadow FAILED!!!\n");
@@ -153,6 +162,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 #ifdef ENABLE_SSAO
 	
+	//glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
 	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
