@@ -80,19 +80,19 @@ int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
 
-//int time_scene2 = 4;
-//int time_scene3 = 4;
-//int time_scene4 = 4;
-//int time_scene5 = 4;
-//int time_scene6 = 4;
-//int time_scene7 = 4;
-//int time_scene8 = 4;
-//int time_scene9 = 4;
-//int time_scene10 = 4;
-//int time_scene11 = 4;
-//int time_scene12 = 4;
-//int time_scene13 = 4;
-//int time_scene14 = 4;
+//int time_scene2 = 10;
+//int time_scene3 = 10;
+//int time_scene4 = 10;
+//int time_scene5 = 10;
+//int time_scene6 = 10;
+//int time_scene7 = 10;
+//int time_scene8 = 10;
+//int time_scene9 = 10;
+//int time_scene10 = 10;
+//int time_scene11 = 10;
+//int time_scene12 = 10;
+//int time_scene13 = 10;
+//int time_scene14 = 10;
 
 // Audio
 static bool audioFlag = true;
@@ -520,7 +520,7 @@ int initializeNavras(void) {
 	 	return (-8);
 	 }
 
-	// scenePush(MAX_SCENES);
+	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	//scenePush(SCENE12_HASYA_RAS);
@@ -530,7 +530,7 @@ int initializeNavras(void) {
 	scenePush(SCENE08_BIBHATSA_RAS);
 	
 	scenePush(SCENE07_RAUDRA_RAS);
-	//scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
 	//scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 

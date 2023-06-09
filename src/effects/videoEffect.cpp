@@ -6,6 +6,7 @@
 #include "../../inc/helper/texture_loader.h"
 
 #include "../../inc/helper/audioplayer.h"
+#include "../../inc/helper/constants.h"
 
 
 GLuint texture_frame;
@@ -49,10 +50,12 @@ int initializeVideoEffect(const char* videoFile)
 void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
 {
 
+#ifdef ENABLE_AUDIO
     if(flagAudio == true){
         playSong(0);
         flagAudio = false;
     }
+ #endif
 
     // Function declaration
     static bool myFlag = true;
