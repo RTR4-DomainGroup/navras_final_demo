@@ -46,7 +46,8 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-
+// extern GLbyte charPressed;
+// extern GLuint keyPressed;
 extern bool mouseLeftClickActive;
 extern float mouseX;
 extern float mouseY;
@@ -120,7 +121,9 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// variables
 	static int songId; 
-
+    GLbyte charPressed = 0;
+    GLuint keyPressed = 0;
+	
 	// Code
 	switch (iMsg) {
 	case WM_SETFOCUS:
@@ -137,6 +140,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;
 		default:
 			// LOG("keypress : %d\n", wParam);
+			keyPressed = wParam;
+			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
 		break;
@@ -235,6 +240,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		// 	break;
 		default:
 			// LOG("keypressed : %d\n", wParam);
+			charPressed = wParam;
+			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
 		break;
@@ -244,7 +251,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	}
 
-	// debug_tranformation();
 	return(0);
 }
 
@@ -794,8 +800,6 @@ void updateNavras(void)
 
 	// camera movement related updates
 	updateMouseMovement();
-
-	debug_tranformation();
 
 }
 

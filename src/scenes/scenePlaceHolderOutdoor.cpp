@@ -534,7 +534,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		LOG("Enter\n");
 		displayPasses(1, false, false, isWaterRequired, 0);
 	}
 	else if(isGaussianBlurRequired) 
@@ -546,7 +545,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		LOG("Enter\n");
 		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
