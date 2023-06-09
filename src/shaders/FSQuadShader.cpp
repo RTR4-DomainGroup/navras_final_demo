@@ -62,7 +62,7 @@ int initializeFSQuadShader(void)
             }
         }
     }
-LOG("fragmentShaderSrcCode in initializeFSQuadShader().\n");
+
     // Fragement Shader
     const GLchar* fragmentShaderSrcCode = 
         "#version 460 core" \
@@ -129,6 +129,7 @@ LOG("fragmentShaderSrcCode in initializeFSQuadShader().\n");
         }
     }
 
+    LOG("fragmentShaderSrcCode in doen.\n");
     // Shader Program Object
     fsQuadShaderProgramObject = glCreateProgram();
     
@@ -186,7 +187,7 @@ struct FSQuadUniform useFSQuadShader(void)
 
 void uninitializeFSQuadShader(void)
 {
-    // Code
+    // Code    
     if (fsQuadShaderProgramObject)
     {
         GLsizei numAttachedShader;

@@ -5,11 +5,16 @@
 #include "../../inc/shaders/FSVQuadShader.h"
 #include "../../inc/helper/texture_loader.h"
 
+#include "../../inc/helper/audioplayer.h"
+#include "../../inc/helper/constants.h"
+
 
 GLuint texture_frame;
 int frameWidth, frameHeight;
 uint8_t* frame_data = NULL;
 struct VideoReaderState vr_state;
+
+bool flagAudio = true;
 
 int initializeVideoEffect(const char* videoFile)
 {
@@ -34,13 +39,8 @@ int initializeVideoEffect(const char* videoFile)
     {
         LOG("Couldn't load video frame.\n");
         return -2;
-    }
-    
-    if(LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data) == GL_FALSE)
-    {
-        LOG("Unable to load Texture.\n");
-        return -3;
-    }
+    }    
+    LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
     LOG("Frame Width = %d.\nFrame Height = %d.\n", frameWidth, frameHeight);
    
 
@@ -49,27 +49,45 @@ int initializeVideoEffect(const char* videoFile)
 
 void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
 {
+
+#ifdef ENABLE_AUDIO
+    if(flagAudio == true){
+        playSong(0);
+        flagAudio = false;
+    }
+ #endif
+
     // Function declaration
     static bool myFlag = true;
     // Code
-    if (&vr_state)
-    {
-        if (!video_reader_read_frame(&vr_state, frame_data))
-        {
-            LOG("Couldn't load video frame.\n");
-        }
+    // if (myFlag)
+    // {
+    //     if (!video_reader_read_frame(&vr_state, frame_data))
+    //     {
+    //         LOG("Couldn't load video frame.\n");
+    //     }
+    //     LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
+    //     myFlag = false;
+    // }   
+    //LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_frame);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frameWidth, frameHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, frame_data);
+    glUniform1i(fsvqUniform->textureSamplerUniform1, 0);
+    glUniform1i(fsvqUniform->textureSamplerUniform2, 1);  
+    displayVideoQuad();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+}
 
-        if (texture_frame)
-        {
-            LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture_frame);
-            glUniform1i(fsvqUniform->textureSamplerUniform1, 0);
-            glUniform1i(fsvqUniform->textureSamplerUniform2, 1);  
-            displayVideoQuad();
-        }
-        glBindTexture(GL_TEXTURE_2D, 0);
+void updateVideoEffect(void)
+{  
+    if (!video_reader_read_frame(&vr_state, frame_data))
+    {
+        LOG("Couldn't load video frame.\n");
     }
+    
 }
 
 void uninitializeVideoEffect(void)

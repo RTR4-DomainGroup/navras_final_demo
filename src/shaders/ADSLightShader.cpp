@@ -39,6 +39,7 @@ int initializeADSShader(void)
 		"uniform int u_depthQuadScene; \n" \
 
 		"uniform mat4 lightSpaceMatrix; \n" \
+		"uniform int u_isInstanced = 1; \n" \
 		"out VS_OUT{ \n" \
 			"vec4 FragPos; \n" \
 			"vec3 Normal; \n" \
@@ -64,8 +65,15 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-			"vec4 pos = (a_position + a_instancePosition); \n" \
-
+			"vec4 pos;\n" \
+			"if(u_isInstanced == 1)\n" \
+			"{"
+				"pos = (a_position + a_instancePosition); \n" \
+			"}"
+			"else"
+			"{"
+				"pos = a_position;\n" \
+			"}"
 			"vec4 worldPos; \n" \
 			"worldPos = u_modelMatrix * pos; \n" \
 
@@ -275,7 +283,7 @@ int initializeADSShader(void)
 			        "vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
 					
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
-					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
+					"phong_ads_light = (ambient + diffuse + specular); \n" \
 					
 					"FragColor = texColor + phong_ads_light; \n" \
 
@@ -413,6 +421,7 @@ int initializeADSShader(void)
 	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
 	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
 	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
+	adsUniform.isInstanced = glGetUniformLocation(adsShaderProgramObject, "u_isInstanced");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);
