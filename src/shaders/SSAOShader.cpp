@@ -75,7 +75,7 @@ int initializeSSAOShader(void)
         "																		\n" \
         "float ssao_level = 0.30;										\n" \
         "float object_level = 1.50;										\n" \
-        "float ssao_radius = 10.0;										\n" \
+        "float ssao_radius = 50.0;										\n" \
         "bool weight_by_angle = true;									\n" \
         "uint point_count = 8;											\n" \
         "bool randomize_points = true;									\n" \
@@ -145,7 +145,7 @@ int initializeSSAOShader(void)
         "	vec4 object_color = texture2D(sColor, P);						    \n" \
         "																		\n" \
         "	color = object_level * object_color +								\n" \
-        "		mix(vec4(0.2), vec4(ao_amount), ssao_level);					\n" \
+        "		mix(vec4(0.0), vec4(ao_amount), ssao_level);					\n" \
         "}\n";
     
      // Create the Fragment Shader object.
