@@ -125,8 +125,8 @@ extern struct FSQuadUniform fsGaussBlurQuadUniform;
 
 #ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
-extern AtmosphereUniform atmosphereUniform;
-extern AtmosphericVariables atmosVariables;
+static AtmosphereUniform atmosphereUniform_11;
+static AtmosphericVariables atmosVariables_11;
 #endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
@@ -234,6 +234,41 @@ int initializeScene11_ShringarRas(void)
 
     // Code.
 	// initializeCamera(&camera);
+
+#ifdef ENABLE_ATMOSPHERE
+
+//
+	atmosVariables_11.m_nSamples = 3;		// Number of sample rays to use in integral equation
+	atmosVariables_11.m_Kr = 0.0035f;		// Rayleigh scattering constant
+	atmosVariables_11.m_Kr4PI = atmosVariables_11.m_Kr * 4.0f * M_PI;
+	atmosVariables_11.m_Km = 0.0015f;		// Mie scattering constant
+	atmosVariables_11.m_Km4PI = atmosVariables_11.m_Km * 4.0f * M_PI;
+	atmosVariables_11.m_ESun = 20.0f;		// Sun brightness constant
+	atmosVariables_11.m_g = -0.990f;		// The Mie phase asymmetry factor
+	atmosVariables_11.m_fExposure = 2.0f;
+
+	atmosVariables_11.m_fInnerRadius = 0.0f;
+	atmosVariables_11.m_fOuterRadius = 10.0f;
+	//atmosVariables_11.m_fOuterRadius = atmosVariables_11.m_fInnerRadius + (atmosVariables_11.m_fInnerRadius * 2.5f);
+	atmosVariables_11.m_fScale = 1 / (atmosVariables_11.m_fOuterRadius - atmosVariables_11.m_fInnerRadius);
+
+	atmosVariables_11.m_fWavelength[0] = 0.650f;		// 650 nm for red
+	atmosVariables_11.m_fWavelength[1] = 0.570f;		// 570 nm for green
+	atmosVariables_11.m_fWavelength[2] = 0.475f;		// 475 nm for blue
+	atmosVariables_11.m_fWavelength4[0] = powf(atmosVariables_11.m_fWavelength[0], 4.0f);
+	atmosVariables_11.m_fWavelength4[1] = powf(atmosVariables_11.m_fWavelength[1], 4.0f);
+	atmosVariables_11.m_fWavelength4[2] = powf(atmosVariables_11.m_fWavelength[2], 4.0f);
+
+	atmosVariables_11.m_fRayleighScaleDepth = 0.25f;
+	atmosVariables_11.m_fMieScaleDepth = 0.1f;
+
+	atmosVariables_11.m_vLight = vec3(0, 0, -350);
+	atmosVariables_11.m_vLightDirection = atmosVariables_11.m_vLight / sqrtf(atmosVariables_11.m_vLight[0] * atmosVariables_11.m_vLight[0] + atmosVariables_11.m_vLight[1] * atmosVariables_11.m_vLight[1] + atmosVariables_11.m_vLight[2] * atmosVariables_11.m_vLight[2]);
+
+	//
+	initializeAtmosphere(atmosVariables_11);
+
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
@@ -348,11 +383,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
-	rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
+	//rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
-	//displayCamera();
+	displayCamera();
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -361,8 +396,6 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		finalViewMatrix = viewMatrix;
 
 	} else if(actualDepthQuadScene == 1) {
-	
-		
 
 		finalViewMatrix = mat4::identity();
 		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -419,30 +452,32 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 			//glBlendFunc(GL_ONE, GL_ONE);
 
-			atmosphereUniform = useAtmosphereShader();
+			modelMatrix = translate(0.0f, 0.0f, -20.0f) * scale(10.0f, 10.0f, 10.0f) * rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-			glUniform3f(atmosphereUniform.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
-			glUniform3f(atmosphereUniform.lightPosUniform, atmosVariables.m_vLightDirection[0], atmosVariables.m_vLightDirection[1], atmosVariables.m_vLightDirection[2]);
-			glUniform3f(atmosphereUniform.invWavelengthUniform, 1 / atmosVariables.m_fWavelength4[0], 1 / atmosVariables.m_fWavelength4[1], 1 / atmosVariables.m_fWavelength4[2]);
-			glUniform1f(atmosphereUniform.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
-			glUniform1f(atmosphereUniform.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
-			glUniform1f(atmosphereUniform.innerRadiusUniform, atmosVariables.m_fInnerRadius);
-			glUniform1f(atmosphereUniform.innerRadius2Uniform, atmosVariables.m_fInnerRadius * atmosVariables.m_fInnerRadius);
-			glUniform1f(atmosphereUniform.outerRadiusUniform, atmosVariables.m_fOuterRadius);
-			glUniform1f(atmosphereUniform.outerRadius2Uniform, atmosVariables.m_fOuterRadius * atmosVariables.m_fOuterRadius);
-			glUniform1f(atmosphereUniform.KrESunUniform, atmosVariables.m_Kr * atmosVariables.m_ESun);
-			glUniform1f(atmosphereUniform.KmESunUniform, atmosVariables.m_Km * atmosVariables.m_ESun);
-			glUniform1f(atmosphereUniform.Kr4PIUniform, atmosVariables.m_Kr4PI);
-			glUniform1f(atmosphereUniform.Km4PIUniform, atmosVariables.m_Km4PI);
-			glUniform1f(atmosphereUniform.scaleUniform, 1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius));
-			glUniform1f(atmosphereUniform.scaleDepthUniform, atmosVariables.m_fRayleighScaleDepth);
-			glUniform1f(atmosphereUniform.scaleOverScaleDepthUniform, (1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius)) / atmosVariables.m_fRayleighScaleDepth);
-			glUniform1f(atmosphereUniform.gUniform, atmosVariables.m_g);
-			glUniform1f(atmosphereUniform.g2Uniform, atmosVariables.m_g * atmosVariables.m_g);
+			atmosphereUniform_11 = useAtmosphereShader();
 
-			glUniformMatrix4fv(atmosphereUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-			glUniformMatrix4fv(atmosphereUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-			glUniformMatrix4fv(atmosphereUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniform3f(atmosphereUniform_11.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+			glUniform3f(atmosphereUniform_11.lightPosUniform, atmosVariables_11.m_vLightDirection[0], atmosVariables_11.m_vLightDirection[1], atmosVariables_11.m_vLightDirection[2]);
+			glUniform3f(atmosphereUniform_11.invWavelengthUniform, 1 / atmosVariables_11.m_fWavelength4[0], 1 / atmosVariables_11.m_fWavelength4[1], 1 / atmosVariables_11.m_fWavelength4[2]);
+			glUniform1f(atmosphereUniform_11.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+			glUniform1f(atmosphereUniform_11.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+			glUniform1f(atmosphereUniform_11.innerRadiusUniform, atmosVariables_11.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_11.innerRadius2Uniform, atmosVariables_11.m_fInnerRadius * atmosVariables_11.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_11.outerRadiusUniform, atmosVariables_11.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_11.outerRadius2Uniform, atmosVariables_11.m_fOuterRadius * atmosVariables_11.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_11.KrESunUniform, atmosVariables_11.m_Kr * atmosVariables_11.m_ESun);
+			glUniform1f(atmosphereUniform_11.KmESunUniform, atmosVariables_11.m_Km * atmosVariables_11.m_ESun);
+			glUniform1f(atmosphereUniform_11.Kr4PIUniform, atmosVariables_11.m_Kr4PI);
+			glUniform1f(atmosphereUniform_11.Km4PIUniform, atmosVariables_11.m_Km4PI);
+			glUniform1f(atmosphereUniform_11.scaleUniform, 1.0f / (atmosVariables_11.m_fOuterRadius - atmosVariables_11.m_fInnerRadius));
+			glUniform1f(atmosphereUniform_11.scaleDepthUniform, atmosVariables_11.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_11.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_11.m_fOuterRadius - atmosVariables_11.m_fInnerRadius)) / atmosVariables_11.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_11.gUniform, atmosVariables_11.m_g);
+			glUniform1f(atmosphereUniform_11.g2Uniform, atmosVariables_11.m_g * atmosVariables_11.m_g);
+
+			glUniformMatrix4fv(atmosphereUniform_11.modelMatrix, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(atmosphereUniform_11.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+			glUniformMatrix4fv(atmosphereUniform_11.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 			displayAtmosphere();
 
@@ -922,7 +957,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
-		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
+		glUniform1f(waterUniform.uniform_waveStrength, 0.01f);
 		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);

@@ -111,8 +111,8 @@ extern struct FSQuadUniform fsGaussBlurQuadUniform;
 
 #ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
-extern AtmosphereUniform atmosphereUniform;
-extern AtmosphericVariables atmosVariables;
+static AtmosphereUniform atmosphereUniform_10;
+static AtmosphericVariables atmosVariables_10;
 #endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
@@ -209,6 +209,41 @@ int initializeScene10_AdbhutRas(void)
     
 	// Code.
 	// initializeCamera(&camera);
+
+#ifdef ENABLE_ATMOSPHERE
+
+//
+	atmosVariables_10.m_nSamples = 3;		// Number of sample rays to use in integral equation
+	atmosVariables_10.m_Kr = 0.0035f;		// Rayleigh scattering constant
+	atmosVariables_10.m_Kr4PI = atmosVariables_10.m_Kr * 4.0f * M_PI;
+	atmosVariables_10.m_Km = 0.0015f;		// Mie scattering constant
+	atmosVariables_10.m_Km4PI = atmosVariables_10.m_Km * 4.0f * M_PI;
+	atmosVariables_10.m_ESun = 20.0f;		// Sun brightness constant
+	atmosVariables_10.m_g = -0.990f;		// The Mie phase asymmetry factor
+	atmosVariables_10.m_fExposure = 2.0f;
+
+	atmosVariables_10.m_fInnerRadius = 10.0f;
+	atmosVariables_10.m_fOuterRadius = 50.0f;
+	//atmosVariables_10.m_fOuterRadius = atmosVariables_10.m_fInnerRadius + (atmosVariables_10.m_fInnerRadius * 2.5f);
+	atmosVariables_10.m_fScale = 1 / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius);
+
+	atmosVariables_10.m_fWavelength[0] = 0.650f;		// 650 nm for red
+	atmosVariables_10.m_fWavelength[1] = 0.570f;		// 570 nm for green
+	atmosVariables_10.m_fWavelength[2] = 0.475f;		// 475 nm for blue
+	atmosVariables_10.m_fWavelength4[0] = powf(atmosVariables_10.m_fWavelength[0], 4.0f);
+	atmosVariables_10.m_fWavelength4[1] = powf(atmosVariables_10.m_fWavelength[1], 4.0f);
+	atmosVariables_10.m_fWavelength4[2] = powf(atmosVariables_10.m_fWavelength[2], 4.0f);
+
+	atmosVariables_10.m_fRayleighScaleDepth = 0.25f;
+	atmosVariables_10.m_fMieScaleDepth = 0.1f;
+
+	atmosVariables_10.m_vLight = vec3(0, 0, -350);
+	atmosVariables_10.m_vLightDirection = atmosVariables_10.m_vLight / sqrtf(atmosVariables_10.m_vLight[0] * atmosVariables_10.m_vLight[0] + atmosVariables_10.m_vLight[1] * atmosVariables_10.m_vLight[1] + atmosVariables_10.m_vLight[2] * atmosVariables_10.m_vLight[2]);
+
+	//
+	initializeAtmosphere(atmosVariables_10);
+
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
@@ -379,30 +414,30 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 			//glBlendFunc(GL_ONE, GL_ONE);
 
-			atmosphereUniform = useAtmosphereShader();
+			atmosphereUniform_10 = useAtmosphereShader();
 
-			glUniform3f(atmosphereUniform.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
-			glUniform3f(atmosphereUniform.lightPosUniform, atmosVariables.m_vLightDirection[0], atmosVariables.m_vLightDirection[1], atmosVariables.m_vLightDirection[2]);
-			glUniform3f(atmosphereUniform.invWavelengthUniform, 1 / atmosVariables.m_fWavelength4[0], 1 / atmosVariables.m_fWavelength4[1], 1 / atmosVariables.m_fWavelength4[2]);
-			glUniform1f(atmosphereUniform.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
-			glUniform1f(atmosphereUniform.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
-			glUniform1f(atmosphereUniform.innerRadiusUniform, atmosVariables.m_fInnerRadius);
-			glUniform1f(atmosphereUniform.innerRadius2Uniform, atmosVariables.m_fInnerRadius * atmosVariables.m_fInnerRadius);
-			glUniform1f(atmosphereUniform.outerRadiusUniform, atmosVariables.m_fOuterRadius);
-			glUniform1f(atmosphereUniform.outerRadius2Uniform, atmosVariables.m_fOuterRadius * atmosVariables.m_fOuterRadius);
-			glUniform1f(atmosphereUniform.KrESunUniform, atmosVariables.m_Kr * atmosVariables.m_ESun);
-			glUniform1f(atmosphereUniform.KmESunUniform, atmosVariables.m_Km * atmosVariables.m_ESun);
-			glUniform1f(atmosphereUniform.Kr4PIUniform, atmosVariables.m_Kr4PI);
-			glUniform1f(atmosphereUniform.Km4PIUniform, atmosVariables.m_Km4PI);
-			glUniform1f(atmosphereUniform.scaleUniform, 1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius));
-			glUniform1f(atmosphereUniform.scaleDepthUniform, atmosVariables.m_fRayleighScaleDepth);
-			glUniform1f(atmosphereUniform.scaleOverScaleDepthUniform, (1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius)) / atmosVariables.m_fRayleighScaleDepth);
-			glUniform1f(atmosphereUniform.gUniform, atmosVariables.m_g);
-			glUniform1f(atmosphereUniform.g2Uniform, atmosVariables.m_g * atmosVariables.m_g);
+			glUniform3f(atmosphereUniform_10.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+			glUniform3f(atmosphereUniform_10.lightPosUniform, atmosVariables_10.m_vLightDirection[0], atmosVariables_10.m_vLightDirection[1], atmosVariables_10.m_vLightDirection[2]);
+			glUniform3f(atmosphereUniform_10.invWavelengthUniform, 1 / atmosVariables_10.m_fWavelength4[0], 1 / atmosVariables_10.m_fWavelength4[1], 1 / atmosVariables_10.m_fWavelength4[2]);
+			glUniform1f(atmosphereUniform_10.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+			glUniform1f(atmosphereUniform_10.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+			glUniform1f(atmosphereUniform_10.innerRadiusUniform, atmosVariables_10.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_10.innerRadius2Uniform, atmosVariables_10.m_fInnerRadius * atmosVariables_10.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_10.outerRadiusUniform, atmosVariables_10.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_10.outerRadius2Uniform, atmosVariables_10.m_fOuterRadius * atmosVariables_10.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_10.KrESunUniform, atmosVariables_10.m_Kr * atmosVariables_10.m_ESun);
+			glUniform1f(atmosphereUniform_10.KmESunUniform, atmosVariables_10.m_Km * atmosVariables_10.m_ESun);
+			glUniform1f(atmosphereUniform_10.Kr4PIUniform, atmosVariables_10.m_Kr4PI);
+			glUniform1f(atmosphereUniform_10.Km4PIUniform, atmosVariables_10.m_Km4PI);
+			glUniform1f(atmosphereUniform_10.scaleUniform, 1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius));
+			glUniform1f(atmosphereUniform_10.scaleDepthUniform, atmosVariables_10.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_10.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius)) / atmosVariables_10.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_10.gUniform, atmosVariables_10.m_g);
+			glUniform1f(atmosphereUniform_10.g2Uniform, atmosVariables_10.m_g * atmosVariables_10.m_g);
 
-			glUniformMatrix4fv(atmosphereUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-			glUniformMatrix4fv(atmosphereUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-			glUniformMatrix4fv(atmosphereUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.modelMatrix, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.viewMatrix, 1, GL_FALSE, viewMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 			displayAtmosphere();
 
