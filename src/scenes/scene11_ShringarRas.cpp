@@ -184,6 +184,8 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
 STATIC_MODEL treemodel_11;
+STATIC_MODEL manModel_11;
+STATIC_MODEL womanModel_11;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -208,7 +210,7 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 3.0f, 1.0f };
 
 static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -218,6 +220,8 @@ static GLfloat materialShininess = 128.0f;
 float distance11;
 
 bool isInitialDisplayScene11_ShringarRas = true;
+
+GLuint texture_shringarMask;
 
 int initializeScene11_ShringarRas(void)
 {
@@ -231,10 +235,27 @@ int initializeScene11_ShringarRas(void)
     // Code.
 	// initializeCamera(&camera);
 
+#ifdef ENABLE_MASKSQUADS
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shringarMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_shringarMask Successfull = %u!!!\n", texture_shringarMask);
+	}
+#endif
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
+	loadStaticModel("res/models/scene11_shringar/man/tempShringrMan.obj", &manModel_11);
+	loadStaticModel("res/models/scene11_shringar/woman/tempShringarWoman.obj", &womanModel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -246,7 +267,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 5.0f;
 
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/1diffuse1.png";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/1diffuse14.png";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/1disp.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
 
@@ -302,7 +323,8 @@ void setCameraScene11_ShringarRas(void)
 {
 	if (isInitialDisplayScene11_ShringarRas == true)
 	{
-		setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		//setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0, 0.25f, 6.0, 0.0f, 0.25f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 		//setCamera(0.00, 0.00, -12.50, 0.00f, 0.00f, -18.50f, 0.0f, 0.0f, 1.0f);
 		isInitialDisplayScene11_ShringarRas = false;
@@ -326,10 +348,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
-	rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
+	//displayCamera();
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -471,18 +494,19 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
 
 		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
+		glUniform4fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
+		glUniform4fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
 		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
 		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
 		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
+		glEnable(GL_BLEND);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_3D, noise_texture);
 
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);
+		glDisable(GL_BLEND);
 
 		glUseProgram(0);
 
@@ -547,8 +571,17 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 mv_matrix = mat4::identity();
 	vmath::mat4 proj_matrix = mat4::identity();
 
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
+	translationMatrix = translate(0.0f, -0.67f, -20.0f);
+	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
+
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -0.5f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translationMatrix * scaleMatrix);
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
@@ -600,8 +633,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
 #endif // DEBUG - ENABLE_FOG
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
@@ -614,7 +647,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
 
 	glUseProgram(0);
 #endif // ENABLE_TERRIAN
@@ -656,7 +689,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.25f, 0.55f, -17.0f);
+	translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
 	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
 	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
@@ -685,7 +718,108 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	drawStaticModel(treemodel_11);
 
-	if (actualDepthQuadScene == 0) {
+	// Man
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(-0.06f, 0.03f, -15.0f);
+	scaleMatrix = vmath::scale(0.0065f, 0.0065f, 0.0065f);
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	if (actualDepthQuadScene == 1) {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+	}
+	else {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
+	}
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(manModel_11);
+
+	// Woman
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(0.04f, 0.02f, -15.0f);
+	scaleMatrix = vmath::scale(0.0065f, 0.0065f, 0.0065f);
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	if (actualDepthQuadScene == 1) {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+	}
+	else {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
+	}
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(womanModel_11);
+
+#ifdef ENABLE_MASKSQUADS
+	// Transformations - Quad For Mask
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(5.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_shringarMask);
+	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	displayQuad();
+#endif // ENABLE_MASKQ
+
+	if (actualDepthQuadScene == 0) 
+	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
@@ -910,7 +1044,7 @@ void updateScene11_ShringarRas(void)
 		cameraAngle_shringar = 270.0f;
 	//cameraAngle_shringar = preciselerp(cameraAngle_shringar, 270.f, 0.07f);
 
-	cameraRadius_shringar -= 0.020f;
+	cameraRadius_shringar -= 0.022f;
 	if (cameraRadius_shringar <= 2.0f)
 		cameraRadius_shringar = 2.0f;
 	//cameraRadius_shringar = preciselerp(cameraRadius_shringar, 2.0f, 0.018f);
@@ -943,6 +1077,14 @@ void uninitializeScene11_ShringarRas(void)
 #ifdef ENABLE_TERRIAN
 	uninitializeTerrain(&terrainTextureVariables);
 #endif // ENABLE_TERRIAN
+
+#ifdef ENABLE_MASKSQUADS
+	if (texture_shringarMask)
+	{
+		glDeleteTextures(1, &texture_shringarMask);
+		texture_shringarMask = 0;
+	}
+#endif
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models

@@ -36,6 +36,18 @@
 #define Z_MIN_ROUDRA_SHELF (0.0f)
 #define Z_MAX (-3.0f)
 
+// Bibhatsa
+#define X_MIN_BR (-6.0f)
+#define X_MAX_BR (6.0f)
+
+#define Y_MIN_BR (-3.0f)
+#define Y_MAX_BR (0.0f)
+
+#define Z_MIN_BR (-14.5f)
+#define Z_MAX_BR (-9.0f)
+
+#define NO_OF_INSTANCES_KACHARA 200
+
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
@@ -60,7 +72,7 @@
 // sample audios
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
-    "audio1.wav",
+    "AMC_Banner_Audio.wav",
     "Scene02_EarthAndSpace_40_seconds.wav",
     "\0",
     "\0",
@@ -74,6 +86,8 @@ static const char *szAudios[] = {
     "Scene12_HasyaRas_40_seconds.wav",
     "Scene13_ShantRas_40_seconds.wav",
     "Scene14_Particle_40_seconds.wav",
+    "Scene13_ShantRas_40_seconds.wav",
+    "Scene14_Particle_40_seconds.wav",
     "audio1.wav",
     "audio3.wav",
 };
@@ -81,7 +95,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-//#define ENABLE_MULTI_THREADING
+#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -102,16 +116,18 @@ static const char *szAudios[] = {
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS	
 //#define ENABLE_DYNAMIC_MODELS
-//#define ENABLE_CAMERA_ANIMATION
-
-// #define ENABLE_SINGLE_SCENE
-//#define ENABLE_AUDIO
-
+#define ENABLE_CAMERA_ANIMATION
+#define ENABLE_EROSION
+//#define ENABLE_MASKSQUADS
+#define ENABLE_AUDIO
 #define ENABLE_FONT_RENDERING
 
-// #define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner
+//#define ENABLE_SINGLE_SCENE
+
+#ifdef ENABLE_SINGLE_SCENE
+//#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
-#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+ #define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
@@ -126,4 +142,5 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
 
+#endif // ENABLE_SINGLE_SCENE
 

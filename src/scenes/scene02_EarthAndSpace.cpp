@@ -20,6 +20,9 @@
 #ifdef ENABLE_STARFIELD
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
+#ifdef ENABLE_DYNAMIC_MODELS
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
+#endif // ENABLE_DYNAMIC_MODELS
 
 #include "../../inc/scenes/scene02_EarthAndSpace.h"
 
@@ -30,7 +33,7 @@ extern GLfloat whiteSphere[]; // = {1.0f, 1.0f, 1.0f};
 extern GLuint texture_Marble;
 GLuint texture_earth;
 GLuint texture_sun;
-
+GLfloat earthAngle = 90.0f;
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
@@ -48,7 +51,6 @@ extern mat4 viewMatrix;
 
 extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
 extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
 
 extern mat4 perspectiveProjectionMatrix;
 
@@ -72,7 +74,7 @@ extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
-GLfloat angleSphere;
+GLfloat angleSphere = 90.0f;
 
 #ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
@@ -83,17 +85,17 @@ static DYNAMIC_MODEL skeletonModel;
 
 static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+static GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightPosition[] = { 0.0f, 0.0f, -15.0f, 1.0f };
 
-static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
 bool isInitialDisplayScene02_EarthAndSpace = true;
 
-GLfloat cameraRadiusEarthAndSpace = 6.0f;
+GLfloat cameraRadiusEarthAndSpace = 4.0f;
 GLfloat cameraAngleEarthAndSpace = 90.0f;
 
 GLfloat alpha = 0.0f;
@@ -181,6 +183,7 @@ void setCameraScene02_EarthAndSpace(void)
 	}
 }
 
+float anglez = 15.0f;
 void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0)
 {
 	// Code
@@ -247,8 +250,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_y = mat4::identity();
 	mat4 rotationMatrix_z = mat4::identity();
 
-	// rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
-	displayCamera();
+	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
+	//displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
 
@@ -278,17 +281,20 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	{
 
 #ifdef ENABLE_STARFIELD
-
+		
 		adsEarthAndSpaceUniform = useADSShader();
 
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.laUniform, 1, GL_FALSE, lightAmbient);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.ldUniform, 1, GL_FALSE, lightDiffuse);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.lsUniform, 1, GL_FALSE, lightSpecular);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.lightPositionUniform, 1, GL_FALSE, lightPosition);
+		glUniform4fv(adsEarthAndSpaceUniform.laUniform, 1, lightAmbient);
+		glUniform4fv(adsEarthAndSpaceUniform.ldUniform, 1, lightDiffuse);
+		glUniform4fv(adsEarthAndSpaceUniform.lsUniform, 1, lightSpecular);
+		glUniform4f(adsEarthAndSpaceUniform.lightPositionUniform, 0.0f, 0.0f, anglez, 1.0f);
+		anglez -= 0.5f;
+		//LOG("%f\n", anglez);
+		//glUniform4fv(adsEarthAndSpaceUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.kaUniform, 1, GL_FALSE, materialAmbient);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.kdUniform, 1, GL_FALSE, materialDiffuse);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.ksUniform, 1, GL_FALSE, materialSpecular);
+		glUniform4fv(adsEarthAndSpaceUniform.kaUniform, 1, materialAmbient);
+		glUniform4fv(adsEarthAndSpaceUniform.kdUniform, 1, materialDiffuse);
+		glUniform4fv(adsEarthAndSpaceUniform.ksUniform, 1, materialSpecular);
 		glUniform1f(adsEarthAndSpaceUniform.materialShininessUniform, materialShininess);
 
 		glUniform1i(adsEarthAndSpaceUniform.uniform_enable_godRays, godRays);
@@ -297,8 +303,9 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glUniform1f(adsEarthAndSpaceUniform.densityUniform, density);
 
 		glUniform1i(adsEarthAndSpaceUniform.fogEnableUniform, 0);
-		glUniformMatrix4fv(adsEarthAndSpaceUniform.skyFogColorUniform, 1, GL_FALSE, skyFogColor);
+		glUniform4fv(adsEarthAndSpaceUniform.skyFogColorUniform, 1, skyFogColor);
 		glUniform1i(adsEarthAndSpaceUniform.godrays_blackpass_sphere, 0);
+		glUniform1i(adsEarthAndSpaceUniform.isInstanced, 0);
 
 		// Cube
 		translationMatrix = mat4::identity();
@@ -306,9 +313,9 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		rotationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(-200.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(800.0f, 500.0f, 500.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+		translationMatrix = vmath::translate(-200.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+		scaleMatrix = vmath::scale(400.0f, 400.0f, 400.0f);
+		modelMatrix = translationMatrix * scaleMatrix;									// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		if (actualDepthQuadScene == 1)
@@ -342,9 +349,9 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		scaleMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(1.5f, 1.5f, 1.5f);
+		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
-		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+		rotationMatrix = vmath::rotate(angleSphere, 0.0f, 1.0f, 0.0f);
 		rotationMatrix = rotationMatrix * rotationMatrix_x;
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
@@ -431,13 +438,14 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 void updateScene02_EarthAndSpace(void)
 {
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraAngleEarthAndSpace += 0.005f;
-	if (cameraAngleEarthAndSpace > 120.0f)
-		cameraAngleEarthAndSpace = 120.0f;
+	//cameraAngleEarthAndSpace += 0.02f;
+	//if (cameraAngleEarthAndSpace > 120.0f)
+	//	cameraAngleEarthAndSpace = 120.0f;
+	cameraAngleEarthAndSpace = preciselerp(cameraAngleEarthAndSpace, 120.0f, 0.002f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 	// Code
-	angleSphere = angleSphere + 0.2f;
+	angleSphere = angleSphere + 0.02f;
 	if (angleSphere >= 360.0f)
 		angleSphere = 0.0f;
 

@@ -55,10 +55,8 @@ scene5_variables translatevalues;
 
 int initializeScene5_karun(void)
 {
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
 
+#ifdef ENABLE_MASKSQUADS
 	if (LoadGLTexture_UsingSOIL(&texture_karunMask, TEXTURE_DIR"Masks\\KarunMask.jpg") == FALSE)
 	{
 		//uninitialize();
@@ -69,6 +67,13 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture Successfull Mask Karun Ras = %u!!!\n", texture_karunMask);
 	}
+
+
+#endif // ENABLE_MASKSQUADS
+
+#ifdef ENABLE_STATIC_MODELS
+	//load models
+	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
 
 	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room/scene5Room/ceiling.png") == FALSE)
 	{
@@ -180,6 +185,7 @@ void displayScene5_karun(void)
 	displayRoom(textures_kidroom);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+#ifdef ENABLE_MASKSQUADS
 	// Transformations For Mask Quad
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
@@ -199,8 +205,9 @@ void displayScene5_karun(void)
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_karunMask);
 	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
-		//displayQuad();
+		displayQuad();
 	glBindTexture(GL_TEXTURE_2D, 0);
+#endif // ENABLE_MASKSQUADS
 
     // ------ Desk Model ------
 	translationMatrix = mat4::identity();
@@ -236,6 +243,15 @@ void uninitializeScene5_karun(void)
 {
     //UNINIT models
 	unloadStaticModel(&tableModel);
+
+#ifdef ENABLE_MASKSQUADS
+	if (texture_karunMask)
+	{
+		glDeleteTextures(1, &texture_karunMask);
+		texture_karunMask = 0;
+	}
+#endif
+
 	if (texture_kidroom_ceiling)
 	{
 		glDeleteTextures(1, &texture_kidroom_ceiling);

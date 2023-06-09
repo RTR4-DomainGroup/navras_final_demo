@@ -42,13 +42,29 @@ static GLuint texture_floor;
 static GLuint texture_side;
 static GLuint texture_back;
 
-
 //Model variables
 static STATIC_MODEL deskModel;
 
 static GLuint textures[4];
+
+GLuint texture_hasyaMask;
+
 int initializeScene12_Hasya(void)
 {
+
+#ifdef ENABLE_MASKSQUADS
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks\\HasyaMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_hasyaMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
+	}
+#endif
+
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
 	void initializeDeskInstancePositions(void);
@@ -92,6 +108,19 @@ int initializeScene12_Hasya(void)
 	else
 	{
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
+	}
+
+	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_hasyaMask FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
 	}
 
 #endif
@@ -167,6 +196,27 @@ void displayScene12_Hasya(void)
 	
 	displayRoom(textures);
 
+#ifdef ENABLE_MASKSQUADS
+	// Transformations - Quad For Mask
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(5.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
+	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_hasyaMask);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
+	displayQuad();
+#endif
 
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
@@ -177,6 +227,15 @@ void uninitializeScene12_Hasya(void)
 {
     //UNINIT models
 	unloadStaticModel(&deskModel);
+
+#ifdef ENABLE_MASKSQUADS
+	if (texture_hasyaMask)
+	{
+		glDeleteTextures(1, &texture_hasyaMask);
+		texture_hasyaMask = 0;
+	}
+#endif
+
 	if (texture_ceiling)
 	{
 		glDeleteTextures(1, &texture_ceiling);
