@@ -439,18 +439,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		rotationMatrix_y = mat4::identity();
 		rotationMatrix_z = mat4::identity();
 
-
-		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
-
-		glUniformMatrix4fv(sceneAdbhutRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneAdbhutRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneAdbhutRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
@@ -896,35 +887,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 		// rotationAngles = { 0.50f, 18.75f, 2.00f};
 
-		static bool firstcall = 1;
-		if(firstcall)
-		{
-			LOG("Before update tranform\n");
-			LOG("Translation Matrix\n");
-			print_matrix(translationMatrix);
-			LOG("Scale Matrix\n");
-			print_matrix(scaleMatrix);
-			LOG("Rotation Matrix\n");
-			print_matrix(rotationMatrix);
-			LOG("Rotation Vector\n");
-			print_vector({rotationAngles.x, rotationAngles.y, rotationAngles.z, rotationAngles.w});
-		}
-		if(7 == tf_Object) // Red Flower
-			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-		
-		if(firstcall)
-		{
-			LOG("After update tranform\n");
-			LOG("Translation Matrix\n");
-			print_matrix(translationMatrix);
-			LOG("Scale Matrix\n");
-			print_matrix(scaleMatrix);
-			LOG("Rotation Matrix\n");
-			print_matrix(rotationMatrix);
-			LOG("Rotation Vector\n");
-			print_vector({rotationAngles.x, rotationAngles.y, rotationAngles.z, rotationAngles.w});
-			firstcall = 0;
-		}
+		// if(7 == tf_Object) // Red Flower
+		// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);	
 		rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		rotationMatrix_z = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
@@ -955,8 +919,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		translationMatrix = vmath::translate(-4.75f, -1.90f, -13.50f);
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-		if(8 == tf_Object) // White Flower
-				update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+		// if(8 == tf_Object) // White Flower
+		// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -967,26 +931,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		glBindTexture(GL_TEXTURE_2D, texture_flower.id);
 		displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
 		glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 		/// /////////////////////////
@@ -1038,12 +982,12 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		else
 			scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-		translationMatrix = vmath::translate(34.50f, -2.05f, -27.75f);
+		translationMatrix = vmath::translate(33.00f, -2.05f, -27.75f);
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 		rotationAngles = {0.0f, 17.0f, 0.0f};
 
 		if(8 == tf_Object) // White Flower
-				update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -1112,6 +1056,7 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
+#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_adbhutMask)
@@ -1121,7 +1066,6 @@ void uninitializeScene10_AdbhutRas(void)
 	}
 #endif // ENABLE_MASKSQUADS
 
-#endif // ENABLE_STATIC_MODELS
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -1139,5 +1083,22 @@ void uninitializeScene10_AdbhutRas(void)
 #endif // ENABLE_CLOUD_NOISE
 
 }
+
+//////////////
+
+
+// static bool firstcall = 1;
+// if(firstcall)
+// {
+// 	LOG("Before update tranform\n");
+// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
+// }
+
+// if(firstcall)
+// {
+// 	LOG("After update tranform\n");
+// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
+// 	firstcall = 0;
+// }
 
 
