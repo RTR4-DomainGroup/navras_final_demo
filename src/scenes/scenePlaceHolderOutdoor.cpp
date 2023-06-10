@@ -45,9 +45,6 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_SKYBOX
 #include "../../inc/effects/SkyboxEffect.h"
 #endif // ENABLE_SKYBOX
@@ -86,9 +83,14 @@ struct FSQuadUniform fsqUniform;
 struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneCloudNoiseUniform;
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//struct CloudNoiseUniform sceneCloudNoiseUniform;
+// float myScale = 1.0f;
+// float noiseScale = 2.0f;
+// bool noiseScaleIncrement = true;
+// GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+// GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -142,17 +144,9 @@ struct FrameBufferDetails fboEarthAndSpace;
 extern int windowWidth;
 extern int windowHeight;
 
-float myScale = 1.0f;
-
-float noiseScale = 2.0f;
-bool noiseScaleIncrement = true;
-
 mat4 viewMatrix;
 
-GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-
-GLuint noise_texture;
+//GLuint noise_texture;
 
 GLfloat angleCube;
 
@@ -342,20 +336,20 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 #endif // ENABLE_SKYBOX
 
-#ifdef ENABLE_CLOUD_NOISE
-
-	noise_texture = initializeCloud();
-	if (noise_texture == 0)
-	{
-		LOG("initializeCloud() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeCloud() Successfull!!!\n");
-	}
-
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//
+//	noise_texture = initializeCloud();
+//	if (noise_texture == 0)
+//	{
+//		LOG("initializeCloud() FAILED!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("initializeCloud() Successfull!!!\n");
+//	}
+//
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_STARFIELD
 
@@ -750,10 +744,10 @@ void updateScene_PlaceHolderOutdoor(void)
 	deltaTime = updateStarfield(deltaTime);
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	// update Cloud
+//	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_WATER
 
@@ -804,15 +798,15 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	uninitializeAtmosphere();
 #endif // ENABLE_ATMOSPHERE
 
-#ifdef ENABLE_CLOUD_NOISE
-	
-	uninitializeCloud();
-	if (noise_texture)
-	{
-		glDeleteTextures(1, &noise_texture);
-		noise_texture = 0;
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	
+//	uninitializeCloud();
+//	if (noise_texture)
+//	{
+//		glDeleteTextures(1, &noise_texture);
+//		noise_texture = 0;
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)
