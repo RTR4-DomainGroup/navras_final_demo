@@ -46,7 +46,8 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-
+// extern GLbyte charPressed;
+// extern GLuint keyPressed;
 extern bool mouseLeftClickActive;
 extern float mouseX;
 extern float mouseY;
@@ -68,7 +69,23 @@ bool timeFlag = true;
 time_t now;
 time_t then;
 
-
+// #define SHORTS
+#ifdef SHORTS
+int time_scene1 = 5;
+int time_scene2 = 10;
+int time_scene3 = 10;
+int time_scene4 = 10;
+int time_scene5 = 10;
+int time_scene6 = 10;
+int time_scene7 = 10;
+int time_scene8 = 10;
+int time_scene9 = 10;
+int time_scene10 = 10;
+int time_scene11 = 10;
+int time_scene12 = 10;
+int time_scene13 = 10;
+int time_scene14 = 10;
+#else
 int time_scene1 = 5;
 int time_scene2 = 40;
 int time_scene3 = 40;
@@ -83,20 +100,8 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
+#endif
 
-//int time_scene2 = 10;
-//int time_scene3 = 10;
-//int time_scene4 = 10;
-//int time_scene5 = 10;
-//int time_scene6 = 10;
-//int time_scene7 = 10;
-//int time_scene8 = 10;
-//int time_scene9 = 10;
-//int time_scene10 = 10;
-//int time_scene11 = 10;
-//int time_scene12 = 10;
-//int time_scene13 = 10;
-//int time_scene14 = 10;
 
 // Audio
 static bool audioFlag = true;
@@ -125,7 +130,9 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// variables
 	static int songId; 
-
+    GLbyte charPressed = 0;
+    GLuint keyPressed = 0;
+	
 	// Code
 	switch (iMsg) {
 	case WM_SETFOCUS:
@@ -142,6 +149,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;
 		default:
 			// LOG("keypress : %d\n", wParam);
+			keyPressed = wParam;
+			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
 		break;
@@ -240,6 +249,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		// 	break;
 		default:
 			// LOG("keypressed : %d\n", wParam);
+			charPressed = wParam;
+			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
 		break;
@@ -249,7 +260,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	}
 
-	// debug_tranformation();
 	return(0);
 }
 
@@ -801,8 +811,6 @@ void updateNavras(void)
 
 	// camera movement related updates
 	updateMouseMovement();
-
-	debug_tranformation();
 
 }
 
