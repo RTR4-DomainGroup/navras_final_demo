@@ -101,7 +101,10 @@ static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
+#ifdef ENABLE_ATMOSPHERE
 extern AtmosphericVariables atmosVariables;
+extern AtmosphericVariables atmosVariables_11;
+#endif
 
 void QuitApplication(void);
 
@@ -164,75 +167,107 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		case ']':	
 			currentScene = sceneNext();
 			LOG("current scene changed: %d\n", currentScene);
-			break;	
-		// case '1':
-		// case '!':
-		// 	if (wParam == '!')
-		// 		atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
-		// 	else
-		// 		atmosVariables.m_Kr += 0.0001f;
-		// 	atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
-		// 	break;
+			break;
 
-		// case '2':
-		// case '@':
-		// 	if (wParam == '@')
-		// 		atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
-		// 	else
-		// 		atmosVariables.m_Km += 0.0001f;
-		// 	atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
-		// 	break;
+		#ifdef ENABLE_ATMOSPHERE
+		 case '1':
+		 case '!':
+		 	if (wParam == '!')
+		 		atmosVariables_11.m_Kr = max(0.0f, atmosVariables_11.m_Kr - 0.0001f);
+		 	else
+		 		atmosVariables_11.m_Kr += 0.0001f;
+		 	atmosVariables_11.m_Kr4PI = atmosVariables_11.m_Kr * 4.0f * M_PI;
+		 	break;
 
-		// case '3':
-		// case '#':
-		// 	if (wParam == '#')
-		// 		atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
-		// 	else
-		// 		atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
-		// 	break;
+		 case '2':
+		 case '@':
+		 	if (wParam == '@')
+		 		atmosVariables_11.m_Km = max(0.0f, atmosVariables_11.m_Km - 0.0001f);
+		 	else
+		 		atmosVariables_11.m_Km += 0.0001f;
+		 	atmosVariables_11.m_Km4PI = atmosVariables_11.m_Km * 4.0f * M_PI;
+		 	break;
 
-		// case '4':
-		// case '$':
-		// 	if (wParam == '$')
-		// 		atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
-		// 	else
-		// 		atmosVariables.m_ESun += 0.1f;
-		// 	break;
+		 case '3':
+		 case '#':
+		 	if (wParam == '#')
+		 		atmosVariables_11.m_g = max(-1.0f, atmosVariables_11.m_g - 0.001f);
+		 	else
+		 		atmosVariables_11.m_g = min(1.0f, atmosVariables_11.m_g + 0.001f);
+		 	break;
 
-		// case '5':
-		// case '%':
-		// 	if (wParam == '%')
-		// 		atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
-		// 	else
-		// 		atmosVariables.m_fWavelength[0] += 0.001f;
-		// 	atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
-		// 	break;
+		 case '4':
+		 case '$':
+		 	if (wParam == '$')
+		 		atmosVariables_11.m_ESun = max(0.0f, atmosVariables_11.m_ESun - 0.1f);
+		 	else
+		 		atmosVariables_11.m_ESun += 0.1f;
+		 	break;
 
-		// case '6':
-		// case '^':
-		// 	if (wParam == '^')
-		// 		atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
-		// 	else
-		// 		atmosVariables.m_fWavelength[1] += 0.001f;
-		// 	atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
-		// 	break;
+		 case '5':
+		 case '%':
+		 	if (wParam == '%')
+		 		atmosVariables_11.m_fWavelength[0] = max(0.001f, atmosVariables_11.m_fWavelength[0] -= 0.001f);
+		 	else
+		 		atmosVariables_11.m_fWavelength[0] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[0] = powf(atmosVariables_11.m_fWavelength[0], 4.0f);
+		 	break;
 
-		// case '7':
-		// case '&':
-		// 	if (wParam == '&')
-		// 		atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
-		// 	else
-		// 		atmosVariables.m_fWavelength[2] += 0.001f;
-		// 	atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
-		// 	break;
+		 case '6':
+		 case '^':
+		 	if (wParam == '^')
+		 		atmosVariables_11.m_fWavelength[1] = max(0.001f, atmosVariables_11.m_fWavelength[1] -= 0.001f);
+		 	else
+		 		atmosVariables_11.m_fWavelength[1] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[1] = powf(atmosVariables_11.m_fWavelength[1], 4.0f);
+		 	break;
 
-		// case '8':
-		// case '*':
-		// 	if (wParam == '*')
-		// 		atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
-		// 	else
-		// 		atmosVariables.m_fExposure += 0.1f;
-		// 	break;
+		 case '7':
+		 case '&':
+		 	if (wParam == '&')
+		 		atmosVariables_11.m_fWavelength[2] = max(0.001f, atmosVariables_11.m_fWavelength[2] -= 0.001f);
+		 	else
+		 		atmosVariables_11.m_fWavelength[2] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[2] = powf(atmosVariables_11.m_fWavelength[2], 4.0f);
+		 	break;
+
+		 case '8':
+		 case '*':
+		 	if (wParam == '*')
+		 		atmosVariables_11.m_fExposure = max(0.1f, atmosVariables_11.m_fExposure - 0.1f);
+		 	else
+		 		atmosVariables_11.m_fExposure += 0.1f;
+		 	break;
+
+		case '/':
+			LOG("-----------------------------------------------------------------------------------------------\n");
+			LOG("m_nSamples = %d\n", atmosVariables_11.m_nSamples);
+			LOG("m_Kr = %f\n", atmosVariables_11.m_Kr);
+			LOG("m_Kr4PI = %f\n", atmosVariables_11.m_Kr4PI);
+			LOG("m_Km = %f\n", atmosVariables_11.m_Km);
+			LOG("m_Km4PI = %f\n", atmosVariables_11.m_Km4PI);
+			LOG("m_ESun = %f\n", atmosVariables_11.m_ESun);
+			LOG("m_g = %f\n", atmosVariables_11.m_g);
+			LOG("m_fExposure = %f\n", atmosVariables_11.m_fExposure);
+			
+			LOG("m_fInnerRadius = %f\n", atmosVariables_11.m_fInnerRadius);
+			LOG("m_fOuterRadius = %f\n", atmosVariables_11.m_fOuterRadius);
+			LOG("m_fScale = %f\n", atmosVariables_11.m_fScale);
+			
+			LOG("m_fWavelength[0] = %f\n", atmosVariables_11.m_fWavelength[0]);
+			LOG("m_fWavelength[1] = %f\n", atmosVariables_11.m_fWavelength[1]);
+			LOG("m_fWavelength[2] = %f\n", atmosVariables_11.m_fWavelength[2]);
+			LOG("m_fWavelength4[0] = %f\n", atmosVariables_11.m_fWavelength4[0]);
+			LOG("m_fWavelength4[1] = %f\n", atmosVariables_11.m_fWavelength4[1]);
+			LOG("m_fWavelength4[2] = %f\n", atmosVariables_11.m_fWavelength4[2]);
+
+			LOG("m_fRayleighScaleDepth = %f\n", atmosVariables_11.m_fRayleighScaleDepth);
+			LOG("m_fMieScaleDepth = %f\n", atmosVariables_11.m_fMieScaleDepth);
+			LOG("-----------------------------------------------------------------------------------------------\n");
+			break;
+
+		#endif
+
 		default:
 			// LOG("keypressed : %d\n", wParam);
 			break;
@@ -839,7 +874,7 @@ void uninitializeNavras(void) {
 	// Function Declarations
 
 	// Code
-	LOG("Enter\n");
+	//LOG("Enter\n");
 
 	// audio
 	uninitializeAudio();

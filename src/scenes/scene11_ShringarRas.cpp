@@ -126,7 +126,7 @@ extern struct FSQuadUniform fsGaussBlurQuadUniform;
 #ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
 static AtmosphereUniform atmosphereUniform_11;
-static AtmosphericVariables atmosVariables_11;
+AtmosphericVariables atmosVariables_11;
 #endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
@@ -223,6 +223,8 @@ bool isInitialDisplayScene11_ShringarRas = true;
 
 GLuint texture_shringarMask;
 
+float varY = 100.0f;
+
 int initializeScene11_ShringarRas(void)
 {
 
@@ -248,7 +250,7 @@ int initializeScene11_ShringarRas(void)
 	atmosVariables_11.m_fExposure = 2.0f;
 
 	atmosVariables_11.m_fInnerRadius = 0.0f;
-	atmosVariables_11.m_fOuterRadius = 10.0f;
+	atmosVariables_11.m_fOuterRadius = 102.0f;
 	//atmosVariables_11.m_fOuterRadius = atmosVariables_11.m_fInnerRadius + (atmosVariables_11.m_fInnerRadius * 2.5f);
 	atmosVariables_11.m_fScale = 1 / (atmosVariables_11.m_fOuterRadius - atmosVariables_11.m_fInnerRadius);
 
@@ -262,7 +264,7 @@ int initializeScene11_ShringarRas(void)
 	atmosVariables_11.m_fRayleighScaleDepth = 0.25f;
 	atmosVariables_11.m_fMieScaleDepth = 0.1f;
 
-	atmosVariables_11.m_vLight = vec3(0, 0, -350);
+	atmosVariables_11.m_vLight = vec3(0, 2, -35);
 	atmosVariables_11.m_vLightDirection = atmosVariables_11.m_vLight / sqrtf(atmosVariables_11.m_vLight[0] * atmosVariables_11.m_vLight[0] + atmosVariables_11.m_vLight[1] * atmosVariables_11.m_vLight[1] + atmosVariables_11.m_vLight[2] * atmosVariables_11.m_vLight[2]);
 
 	//
@@ -382,6 +384,14 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 
 
+	/*atmosVariables_11.m_vLight[1] = varY;
+	atmosVariables_11.m_vLightDirection = atmosVariables_11.m_vLight / sqrtf(atmosVariables_11.m_vLight[0] * 
+										  atmosVariables_11.m_vLight[0] + atmosVariables_11.m_vLight[1] * 
+										  atmosVariables_11.m_vLight[1] + atmosVariables_11.m_vLight[2] * 
+										  atmosVariables_11.m_vLight[2]);
+	varY -= 0.05f;*/
+	//LOG("%f\n", varY);
+
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
 	//rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
@@ -452,7 +462,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 			//glBlendFunc(GL_ONE, GL_ONE);
 
-			modelMatrix = translate(0.0f, 0.0f, -20.0f) * scale(10.0f, 10.0f, 10.0f) * rotate(180.0f, 0.0f, 1.0f, 0.0f);
+			modelMatrix = translate(0.0f, 0.0f, 0.0f) * rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
 			atmosphereUniform_11 = useAtmosphereShader();
 
@@ -957,7 +967,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
-		glUniform1f(waterUniform.uniform_waveStrength, 0.01f);
+		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
 		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
