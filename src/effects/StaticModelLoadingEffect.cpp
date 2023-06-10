@@ -373,7 +373,6 @@ void StaticModel::DrawInstanced(int numInstances)
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 void StaticModel::loadModel(string const& path)
 {
-    LOG("Entry to function = %s\n", __FUNCTION__);
     LOG("obj file path = %s\n", path.c_str());
 
     // read file via ASSIMP
@@ -387,18 +386,14 @@ void StaticModel::loadModel(string const& path)
     }
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
-
-    LOG("model directory = %s\n", directory.c_str());
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
-    LOG("Exit from function = %s\n", __FUNCTION__);
 }
 
 void StaticModel::loadModelInstanced(string const& path, int numInstanced, vector<float> instacePositions)
 {
-    LOG("Entry to function = %s\n", __FUNCTION__);
     LOG("obj file path = %s\n", path.c_str());
 
     // read file via ASSIMP
@@ -413,12 +408,9 @@ void StaticModel::loadModelInstanced(string const& path, int numInstanced, vecto
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
 
-    LOG("model directory = %s\n", directory.c_str());
 
     // process ASSIMP's root node recursively
     processNodeInstanced(scene->mRootNode, scene, numInstanced, instacePositions);
-
-    LOG("Exit from function = %s\n", __FUNCTION__);
 }
 
 
