@@ -15,7 +15,13 @@ struct ADSUniform
     GLuint viewpositionUniform;
     GLuint textureSamplerUniform_normal;
 
-    // light
+    //blending
+    GLuint textureSamplerUniform1;
+    GLuint textureSamplerUniform2;
+    GLuint blendingUniform;
+    GLuint uniform_enable_blending;
+
+    // lIght
     GLuint laUniform;
     GLuint ldUniform;
     GLuint lsUniform;

@@ -68,6 +68,9 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
+#define FBO_EARTHANDSPACE_WIDTH (WIN_WIDTH * 3)  
+#define FBO_EARTHANDSPACE_HEIGHT (WIN_HEIGHT * 3)
+
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
 TEXTURE texture_grass;
@@ -353,8 +356,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_STARFIELD
 
-	fboEarthAndSpace.textureWidth = 3840;
-	fboEarthAndSpace.textureHeight = 2160;
+	fboEarthAndSpace.textureWidth = FBO_EARTHANDSPACE_WIDTH;
+	fboEarthAndSpace.textureHeight = FBO_EARTHANDSPACE_HEIGHT;
 
 	createFBO(&fboEarthAndSpace);
 
@@ -526,7 +529,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		displayPasses(1, false, false, isWaterRequired, 0);
 	}
@@ -549,6 +552,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurQuadUniform = useFSQuadShader();
+		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
@@ -571,7 +575,8 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		modelMatrix = mat4::identity();
 		
 		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
-		modelMatrix = translationMatrix;
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+		modelMatrix = translationMatrix * scaleMatrix;
 		
 		sceneOutdoorADSStaticUniform = useADSShader();
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -649,6 +654,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqUniform = useFSQuadShader();
+		glUniform1i(fsqUniform.singleTexture, 0);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
@@ -699,6 +705,7 @@ void displayGaussianBlur(void)
     horizontalBlurUniform = useHorrizontalBlurShader();
 
     glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+	glUniform1f(horizontalBlurUniform.blurFactor, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
     glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
@@ -714,6 +721,7 @@ void displayGaussianBlur(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurUniform = useVerticalBlurShader();
 	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glUniform1f(verticalBlurUniform.blurFactor, 1.0f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
     glUniform1i(verticalBlurUniform.vblurTexSamplerUniform, 0);

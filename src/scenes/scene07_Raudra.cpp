@@ -27,14 +27,7 @@ extern int windowHeight;
 
 //GLfloat angleCube;
 
-#ifdef ENABLE_GAUSSIAN_BLUR
-// Gaussian Blur related variables
-static struct GaussianBlurEffect gaussianBlurEffect;
-static struct HorrizontalBlurUniform horizontalBlurUniform;
-static struct VerticalBlurUniform verticalBlurUniform;
-static struct FrameBufferDetails fullSceneFbo;
-static struct FSQuadUniform fsGaussBlurQuadUniform;
-#endif // ENABLE_GAUSSIAN_BLUR
+
 
 extern mat4 perspectiveProjectionMatrix;
 
@@ -47,7 +40,7 @@ extern GLfloat skyFogColor[];
 GLfloat lightAmbient_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightSpecular_raudra[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-GLfloat lightPosition_raudra[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+GLfloat lightPosition_raudra[] = { 50.0f, 50.0f, 50.0f, 1.0f };
 
 GLfloat materialAmbient_raudra[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 GLfloat materialDiffuse_raudra[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -272,11 +265,8 @@ void setCameraScene07_RaudraRas(void)
 	}
 }
 
-
-void displayScene07_Raudra(void)
-{
-    // set camera
-	setCameraScene07_RaudraRas();
+void displayScene07_Raudra()
+{  
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
