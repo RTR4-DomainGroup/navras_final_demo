@@ -66,7 +66,10 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 	// Code
 	// Here The Game STarts
-	setCamera();
+	if (setCamera)
+	{
+		setCamera();	
+	}
 
 	if (!shouldSceneBlur)
 	{
