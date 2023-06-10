@@ -35,7 +35,10 @@ int initializeSSAO(void) {
 	glBindBuffer(GL_UNIFORM_BUFFER, ssao_points_buffer);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(SAMPLE_POINTS), &point_data, GL_STATIC_DRAW);
 
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, ssao_points_buffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	glBindVertexArray(0);
+
 
 	return 0;
 }
@@ -44,6 +47,8 @@ void displaySSAO(struct SSAOFrameBufferStruct* frameBufferDetails) {
 
 	// Code
 	glEnable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, ssao_points_buffer);
 
 	useSSAOShader();
 
@@ -52,13 +57,16 @@ void displaySSAO(struct SSAOFrameBufferStruct* frameBufferDetails) {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, frameBufferDetails->fbo_textures[1]);
 
-	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(ssao_quad_vao);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glBindVertexArray(0);
 
 	glUseProgram(0);
+	
+	//glBindBufferBase(GL_UNIFORM_BUFFER, 0, 0);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
 }
 

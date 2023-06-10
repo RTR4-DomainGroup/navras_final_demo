@@ -73,11 +73,11 @@ int initializeSSAOShader(void)
         "																		\n" \
         "out vec4 color;														\n" \
         "																		\n" \
-        "float ssao_level = 0.05;										        \n" \
+        "float ssao_level = 0.10;										        \n" \
         "float object_level = 1.2;										        \n" \
         "float ssao_radius = 0.05 * 2560.0/1000.0;								\n" \
         "bool weight_by_angle = true;									        \n" \
-        "uint point_count = 32;											        \n" \
+        "uint point_count = 16;											        \n" \
         "bool randomize_points = true;									        \n" \
         "																		\n" \
         "layout (binding = 0, std140) uniform SAMPLE_POINTS						\n" \
