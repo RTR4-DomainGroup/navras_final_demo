@@ -160,9 +160,10 @@ void Mesh::DrawCustomTex(GLuint texID, GLuint erodeTexID)
     glBindVertexArray(0);
 
     // always good practice to set everything back to defaults once configured.
-    //glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
 
     glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_3D, 0);
 }
 
 
