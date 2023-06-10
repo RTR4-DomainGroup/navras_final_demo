@@ -69,7 +69,7 @@ int initializeFSQuadShader(void)
         "\n" \
         "in vec2 a_texcoord_out;" \
         "\n" \
-        "uniform int u_singleTexture; \n" \
+        "uniform int u_singleTexture = 0; \n" \
         "uniform sampler2D u_textureSampler0;" \
         "\n" \
         "uniform sampler2D u_textureSampler1;" \
@@ -93,7 +93,7 @@ int initializeFSQuadShader(void)
             "{\n" \
                 "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
                 "\n" \
-            "}\n"
+            "}\n" \
         "}";
     
     // Create the Fragment Shader object.
