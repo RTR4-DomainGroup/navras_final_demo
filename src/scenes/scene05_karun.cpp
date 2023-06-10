@@ -40,18 +40,31 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
+GLuint texture_withParent;
+GLuint texture_onlyChild;
 GLuint texture_kidroom_ceiling;
 GLuint texture_kidroom_floor;
 GLuint texture_kidroom_side;
 GLuint texture_kidroom_back;
 
+//blending variables
+GLfloat blendingValue = 0.0f;
+
 //Model variables
-STATIC_MODEL tableModel;
+STATIC_MODEL roomModel;
+STATIC_MODEL woodenToy;
+STATIC_MODEL cryanosModel;
+STATIC_MODEL colorPencilModel;
+STATIC_MODEL boyModel;
+STATIC_MODEL teddyBear;
 
 GLuint textures_kidroom[4];
 
 //values
 scene5_variables translatevalues;
+
+bool isInitialDisplayScene05_karun = true;
+
 
 int initializeScene5_karun(void)
 {
@@ -73,7 +86,16 @@ int initializeScene5_karun(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/kid-table/kid-tableOBJ.obj", &tableModel);
+	loadStaticModel("res/models/scene05-karunras/room/new/karunRoomNew7.obj", &roomModel); //texture issue
+	//loadStaticModel("res/models/scene05-karunras/room/new/karunRoomNew1.obj", &roomModel); //done
+	////loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.fbx", &roomModel); 
+	loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &cryanosModel); //done
+	loadStaticModel("res/models/scene05-karunras/colorpencil/pencil1obj.obj", &colorPencilModel); //done
+	loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &boyModel);
+	loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &woodenToy); //done
+	loadStaticModel("res/models/scene05-karunras/teddy/teddy.obj", &teddyBear); //done
+	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &roomModel); //change scale
+	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &roomModel);
 
 	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room/scene5Room/ceiling.png") == FALSE)
 	{
@@ -128,13 +150,47 @@ int initializeScene5_karun(void)
 	textures_kidroom[2] = (GLuint)texture_kidroom_back;
 	textures_kidroom[3] = (GLuint)texture_kidroom_side;
 //	glEnable(GL_TEXTURE_2D);
+
+	initializeQuad();
+	if (LoadGLTexture_UsingSOIL(&texture_withParent, TEXTURE_DIR"Scene5-karunRas\\withParents.png") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_withParent FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_withParent Successfull = %u!!!\n", texture_withParent);
+	}
+	if (LoadGLTexture_UsingSOIL(&texture_onlyChild, TEXTURE_DIR"Scene5-karunRas\\onlychild.png") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_onlyChild FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_onlyChild Successfull = %u!!!\n", texture_onlyChild);
+	}
+
 	return 0;
+}
+
+void setCameraScene05_karun(void)
+{
+	if (isInitialDisplayScene05_karun == true)
+	{
+		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
+		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
+		setCamera(8.85f, -1.05f, -8.10f, 8.07f, -1.08f, -7.48f, 0.00f, 1.00f, 0.00f);
+		isInitialDisplayScene05_karun = false;
+	}
 }
 
 void displayScene5_karun(void)
 {
     // set camera
-	displayCamera();
+	setCameraScene05_karun();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -145,6 +201,7 @@ void displayScene5_karun(void)
 	mat4 rotationMatrix_z = mat4::identity();
 	mat4 viewMatrix = mat4::identity();
 
+	displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -172,6 +229,7 @@ void displayScene5_karun(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
@@ -182,7 +240,7 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//glEnable(GL_TEXTURE_2D);	
-	displayRoom(textures_kidroom);
+	//displayRoom(textures_kidroom);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef ENABLE_MASKSQUADS
@@ -209,7 +267,7 @@ void displayScene5_karun(void)
 	glBindTexture(GL_TEXTURE_2D, 0);
 #endif // ENABLE_MASKSQUADS
 
-    // ------ Desk Model ------
+    // ------ Room Model ------
 	translationMatrix = mat4::identity();
 	rotationMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
@@ -218,12 +276,9 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	//translatevalues.x = 1.799999 , translatevalues.y = -1.000000, translatevalues.z = -3.299998 
-	translationMatrix = vmath::translate(1.799999f, -1.000000f, -3.299998f);
-	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
-	scaleMatrix = vmath::scale(0.5f, 0.4f, 0.35f);
-	//rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+	translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
+	scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
 	modelMatrix = translationMatrix * scaleMatrix ;
 
@@ -231,7 +286,174 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(tableModel);
+	drawStaticModel(roomModel);
+
+    // ****************** woodenToy ******************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	rotationMatrix_x = vmath::rotate(-0.84f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(-69.96f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-0.04f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	
+	translationMatrix = vmath::translate(-0.02f, -1.09f, 0.66f);
+	scaleMatrix = vmath::scale(0.02f, 0.02f, 0.02f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(woodenToy);
+
+    // ****************** cryanosModel ******************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	rotationMatrix_x = vmath::rotate(-66.00f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(-3.00f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-22.00f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	
+	translationMatrix = vmath::translate(-2.17f, -2.49f, 0.63f);
+	scaleMatrix = vmath::scale(0.04f, 0.04f, 0.04f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(cryanosModel);
+
+
+	//***********BOY********************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+    translationMatrix = vmath::translate(-1.48f, -3.51f, -0.80f);
+	scaleMatrix = vmath::scale(2.01f, 1.53f, 1.40f);
+	rotationMatrix_x = vmath::rotate(4.80f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(36.18f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-0.30f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(boyModel);
+
+	////***********teddyBear********************
+	//translationMatrix = mat4::identity();
+	//rotationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+	//scaleMatrix = mat4::identity();
+	//rotationMatrix_x = mat4::identity();
+	//rotationMatrix_y = mat4::identity();
+	//rotationMatrix_z = mat4::identity();
+	//
+    //translationMatrix = vmath::translate(-1.48f, -3.51f, -0.80f);
+	//scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
+	//rotationMatrix_x = vmath::rotate(4.80f, 1.0f, 0.0f, 0.0f); //rotatefX
+	//rotationMatrix_y = vmath::rotate(36.18f, 0.0f, 1.0f, 0.0f); //rotatefY
+	//rotationMatrix_z = vmath::rotate(-0.30f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	//rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	//
+	//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	//
+	//glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	//glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//
+	//drawStaticModel(teddyBear);
+
+    // ------ colorPencil Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+	
+	translationMatrix = vmath::translate(-0.27f, -2.49f, 0.30f);
+	scaleMatrix = vmath::scale(0.003f, 0.003f, 0.003f);
+	rotationMatrix_x = vmath::rotate(1.50f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(128.25f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-0.50f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	
+	drawStaticModel(colorPencilModel);
+
+
+	//**************QUAD*********************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+ 
+	translationMatrix = vmath::translate(-1.14f, -2.49f, 0.42f);
+	scaleMatrix = vmath::scale(0.54f, 0.54f, 0.54f);
+	rotationMatrix = vmath::rotate(90.22f, 1.0f, 0.00f, 0.00f);
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	
+
+	glUniform1f(sceneIndoorADSUniform.blendingUniform, blendingValue);
+	glUniform1i(sceneIndoorADSUniform.uniform_enable_blending, 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_withParent);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform1, 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, texture_onlyChild);
+	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform2, 1);
+	
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glUniform1i(sceneIndoorADSUniform.uniform_enable_blending, 0);
 
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
@@ -239,10 +461,76 @@ void displayScene5_karun(void)
     #endif 
 }
 
+void updateScene5_karun(void)
+{
+	if (cameraEyeZ >= -1.42f)
+	{
+		blendingValue += 0.0007f;
+		if (blendingValue >= 1.0f)
+		{
+			blendingValue = 1.0f;
+		}
+	}
+	
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	// setCamera(6.70f, 0.10f, -1.95f, 6.00f, 0.03f, -1.24f, 0.00f, 1.00f, 0.00f);
+	// lookAt   (4.10f, 0.50f, -0.40f, -287.50f, -106.39f, 216.66f, 0.00f, 1.00f, 0.00f)
+
+	//cameraEyeX = preciselerp(cameraEyeX, 4.10f, 0.001f);
+	//cameraEyeY = preciselerp(cameraEyeY, 0.50f, 0.001f);
+	//cameraEyeZ = preciselerp(cameraEyeZ, -0.40f, 0.001);
+
+	//cameraCenterX = preciselerp(cameraCenterX, -287.50f, 0.001f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, 216.66f, 0.001f);
+
+	//if (cameraEyeX <= 5.00f)
+	//	cameraCenterY = preciselerp(cameraCenterY, -106.39f, 0.001f);
+
+
+	// lookAt   (3.45f, 0.60f, -0.05f, 2.89f, -0.03f, 0.49f, 0.00f, 1.00f, 0.00f)
+	// lookAt   (3.55f, 0.70f, -0.00f, -260.29f, -270.46f, 237.59f, 0.00f, 1.00f, 0.00f)
+
+	//cameraEyeX = preciselerp(cameraEyeX, 3.55f, 0.001f);
+	//cameraEyeY = preciselerp(cameraEyeY, 0.70f, 0.001f);
+	//cameraEyeZ = preciselerp(cameraEyeZ, 0.0f, 0.001);
+
+	//cameraCenterX = preciselerp(cameraCenterX, -260.29f, 0.001f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, 237.59f, 0.001f);
+
+	//if (cameraEyeX <= 5.00f)
+	//	cameraCenterY = preciselerp(cameraCenterY, -270.46f, 0.001f);
+
+	// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f) (source)
+	// lookAt(1.05f, -1.10f, -2.00f, 0.40f, -1.58f, -1.41f, 0.00f, 1.00f, 0.00f) (target)
+	// lookAt(1.20f, -1.05f, -1.90f, 0.51f, -1.52f, -1.36f, 0.00f, 1.00f, 0.00f) (target2)
+
+	//lookAt(0.35f, -1.05f, -1.35f, -0.35f, -1.47f, -0.77f, 0.00f, 1.00f, 0.00f)
+
+	cameraEyeX = preciselerp(cameraEyeX, 0.35f, 0.001f);
+	cameraEyeY = preciselerp(cameraEyeY, -1.05f, 0.001f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -1.35f, 0.001);
+
+	cameraCenterX = preciselerp(cameraCenterX, -0.35f, 0.08f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -0.77f, 0.08f);
+
+	//if (cameraEyeX <= 4.8f)
+		cameraCenterY = preciselerp(cameraCenterY, -1.47f, 0.08f);
+
+#endif // ENABLE_CAMERA_ANIMATION
+
+}
+
+
 void uninitializeScene5_karun(void)
 {
     //UNINIT models
-	unloadStaticModel(&tableModel);
+	unloadStaticModel(&roomModel);
+	unloadStaticModel(&woodenToy);
+	unloadStaticModel(&cryanosModel);
+	unloadStaticModel(&colorPencilModel);
+	unloadStaticModel(&boyModel);
+	unloadStaticModel(&teddyBear);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_karunMask)
@@ -271,6 +559,11 @@ void uninitializeScene5_karun(void)
 	{
 		glDeleteTextures(1, &texture_kidroom_side);
 		texture_kidroom_side = 0;
+	}
+	if (texture_withParent)
+	{
+		glDeleteTextures(1, &texture_withParent);
+		texture_withParent = 0;
 	}
 	
 }

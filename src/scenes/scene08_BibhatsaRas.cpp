@@ -42,7 +42,6 @@ extern struct FSQuadUniform fsqUniform;
 
 struct ADSUniform bibhatsaRasObject;
 
-
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
@@ -72,6 +71,25 @@ extern mat4 viewMatrix;
 
 extern mat4 perspectiveProjectionMatrix;
 
+// Bibhatsa
+#define X_MIN_BR (-6.0f)
+#define X_MAX_BR (6.0f)
+
+#define X_MIN_BR_TRASHPILE (-12.0f)
+#define X_MAX_BR_TRASHPILE (12.0f)
+
+#define Y_MIN_BR (-3.0f)
+#define Y_MAX_BR (0.0f)
+
+#define Z_MIN_BR (-14.5f)
+#define Z_MAX_BR (-9.0f)
+
+#define Z_MIN_BR_TRASHPILE (-55.0f)
+#define Z_MAX_BR_TRASHPILE (-10.0f)
+
+#define NO_OF_INSTANCES_KACHARA 200
+
+
 #ifdef ENABLE_STARFIELD
 // Variables For Starfieldx
 extern GLuint texture_star; 
@@ -97,19 +115,14 @@ STATIC_MODEL canTrash2;
 STATIC_MODEL canTrash3;
 STATIC_MODEL cigarette1;
 STATIC_MODEL cigarette2;
-STATIC_MODEL plasticBottleTrash1;
-STATIC_MODEL plasticBottleTrash2;
-STATIC_MODEL plasticBottleTrash3;
 STATIC_MODEL glassContainer;
 
 STATIC_MODEL extraTrash1;
-STATIC_MODEL extraTrash2;
-STATIC_MODEL extraTrash3;
+STATIC_MODEL papersTrash1;
 STATIC_MODEL extraTrash4;
 STATIC_MODEL extraTrash5;
 STATIC_MODEL extraTrash6;
 STATIC_MODEL extraTrash7;
-
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -188,11 +201,13 @@ int initializeScene08_BibhatsaRas(void)
 	void initializeCiga2InstancePositions(void);
 	void initializeRedCan3InstancePositions(void);
 	void initializepileTrashInstancePositions(void);
-	
+	void initializepaperTrashInstancePositions(void);
+
 	initializepileTrashInstancePositions();
 	initializeCiga1InstancePositions();
 	initializeCiga2InstancePositions();
 	initializeRedCan3InstancePositions();
+	initializepaperTrashInstancePositions();
 
 	//load models
 	loadStaticModel("res/models/scene08-beebhatsa/man/tempBeebhatsaMan.obj", &manModel);
@@ -207,22 +222,13 @@ int initializeScene08_BibhatsaRas(void)
 	loadStaticModel("res/models/scene08-beebhatsa/trash1/trashCan1.obj", &trashOneModel);
 
 	// 4 June Models
-	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/1/untitled.obj", &pileOfTrash);
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/1.obj", &canTrash1);
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/2.obj", &canTrash2);
-	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/2/3.obj", &canTrash3);
-
-	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/3/1.obj", &cigarette1);
-	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/3/2.obj", &cigarette2);
-	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/1.obj", &plasticBottleTrash1);
-	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/2.obj", &plasticBottleTrash2);
-	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/4/3.obj", &plasticBottleTrash3);
 
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/11/glass.obj", &glassContainer);
 
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/1.obj", &extraTrash1);
-	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/2.obj", &extraTrash2);
-	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/3.obj", &extraTrash3);
+
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/4.obj", &extraTrash4);
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/1.obj", &extraTrash5);
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/2.obj", &extraTrash6);
@@ -236,6 +242,44 @@ int initializeScene08_BibhatsaRas(void)
 #endif // ENABLE_DYNAMIC_MODELS
 
 	return 0;
+}
+
+void initializepaperTrashInstancePositions(void)
+{
+	LOG("Enter Bibhatsa Initialize==================== \n");
+	float instance_positions[NO_OF_INSTANCES_KACHARA * 3] = {};
+
+	for (int i = 0; i < NO_OF_INSTANCES_KACHARA; i++)
+	{
+		static GLfloat xPos = X_MIN_BR_TRASHPILE;
+		static GLfloat xMinLast = X_MIN_BR_TRASHPILE;
+		static GLfloat xMaxLast = X_MAX_BR_TRASHPILE;
+
+		static GLfloat yPos = Y_MIN_BR;
+		static GLfloat zPos = Z_MIN_BR_TRASHPILE;
+
+		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX_BR_TRASHPILE - X_MIN_BR_TRASHPILE)) + X_MIN_BR_TRASHPILE;
+		instance_positions[(i * 3) + 1] = 0.0f;
+		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR_TRASHPILE - Z_MIN_BR_TRASHPILE)) + Z_MIN_BR_TRASHPILE;
+
+		//LOG("Paper Trash Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+
+		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
+		if (xPos >= xMaxLast)
+		{
+			zPos += Z_INCREMENT;
+			if (zPos >= Z_MAX_BR_TRASHPILE)
+			{
+				break;
+			}
+			xPos = xMinLast;
+		}
+	}
+
+#ifdef ENABLE_STATIC_MODELS
+	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
+	loadStaticModelInstanced("res/models/scene08-beebhatsa/Papers/Papers1.obj", &papersTrash1, NO_OF_INSTANCES_KACHARA, tmpPositions);
+#endif
 }
 
 void initializepileTrashInstancePositions(void)
@@ -256,8 +300,7 @@ void initializepileTrashInstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR - Z_MIN_BR)) + Z_MIN_BR;
 
-		LOG("Pile Trash Instance %d Position: [%.02f %.02f %.02f]\n", i,
-			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+		//LOG("Pile Trash Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -270,10 +313,11 @@ void initializepileTrashInstancePositions(void)
 			xPos = xMinLast;
 		}
 	}
+
 #ifdef ENABLE_STATIC_MODELS
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/1/untitled.obj", &pileOfTrash, NO_OF_INSTANCES_KACHARA, tmpPositions);
-#endif // ENABLE_STATIC_MODELS
+#endif
 }
 
 void initializeCiga1InstancePositions(void)
@@ -294,8 +338,7 @@ void initializeCiga1InstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
 
-		LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i,
-			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+		//LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -308,13 +351,11 @@ void initializeCiga1InstancePositions(void)
 			xPos = xMinLast;
 		}
 	}
-	#ifdef ENABLE_STATIC_MODELS
 
+#ifdef ENABLE_STATIC_MODELS
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/3/1.obj", &cigarette1, NO_OF_INSTANCES_KACHARA, tmpPositions);
-
-	#endif // ENABLE_STATIC_MODELS
-	
+#endif
 }
 
 void initializeCiga2InstancePositions(void)
@@ -335,8 +376,7 @@ void initializeCiga2InstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
 
-		LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i,
-			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+		//LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -349,13 +389,11 @@ void initializeCiga2InstancePositions(void)
 			xPos = xMinLast;
 		}
 	}
-	#ifdef ENABLE_STATIC_MODELS
 
+#ifdef ENABLE_STATIC_MODELS
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/3/2.obj", &cigarette2, NO_OF_INSTANCES_KACHARA, tmpPositions);
-
-	#endif // ENABLE_STATIC_MODELS
-	
+#endif
 }
 
 void initializeRedCan3InstancePositions(void)
@@ -376,8 +414,7 @@ void initializeRedCan3InstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
 
-		LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i,
-			instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
+		//LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -391,13 +428,10 @@ void initializeRedCan3InstancePositions(void)
 		}
 	}
 
-	#ifdef ENABLE_STATIC_MODELS
-
+#ifdef ENABLE_STATIC_MODELS
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/2/3.obj", &canTrash3, NO_OF_INSTANCES_KACHARA, tmpPositions);
-
-	#endif // ENABLE_STATIC_MODELS
-	
+#endif
 }
 
 void setCameraScene08(void)
@@ -1033,41 +1067,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		drawStaticModel(extraTrash1);
 		// ################################### Extra Trash 1 ###################################  
 
-		//// ################################### Extra Trash 2 ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
-
-		//// ------ Trash 2 ------
-		//translationMatrix = vmath::translate(-11.5f, -5.0f, -22.0f);
-		//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
-		//rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
-
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
-		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		//drawStaticModel(extraTrash2);
-		//// ################################### Extra Trash 2 ###################################  
-
-		// ################################### Extra Trash 3 ###################################  
+		// ################################### Paper Trash 1 ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 3 ------
-		translationMatrix = vmath::translate(8.0f, -5.0f, -35.0f);
+		translationMatrix = vmath::translate(15.0f, -5.0f, -15.0f);
 		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1077,17 +1084,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModel(extraTrash3);
-		// ################################### Extra Trash 3 ###################################  
+		drawStaticModelInstanced(papersTrash1, NO_OF_INSTANCES_KACHARA);
+		// ################################### Paper Trash 1 ###################################  
 
 		// ################################### Extra Trash 4 ###################################  
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 4 ------
 		translationMatrix = vmath::translate(6.0f, -5.0f, -20.0f);
@@ -1108,9 +1112,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 5 ------
 		translationMatrix = vmath::translate(12.0f, -5.0f, -50.0f);
@@ -1131,9 +1132,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 6 ------
 		translationMatrix = vmath::translate(6.0f, -5.0f, -40.0f);
@@ -1154,9 +1152,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 7 ------
 		translationMatrix = vmath::translate(4.0f, -5.0f, -25.0f);
@@ -1310,15 +1305,11 @@ void uninitializeScene08_BibhatsaRas(void)
 	unloadStaticModel(&extraTrash6);
 	unloadStaticModel(&extraTrash5);
 	unloadStaticModel(&extraTrash4);
-	unloadStaticModel(&extraTrash3);
-	unloadStaticModel(&extraTrash2);
+	unloadStaticModel(&papersTrash1);
 	unloadStaticModel(&extraTrash1);
 
 	unloadStaticModel(&glassContainer);
 
-	unloadStaticModel(&plasticBottleTrash3);
-	unloadStaticModel(&plasticBottleTrash2);
-	unloadStaticModel(&plasticBottleTrash1);
 	unloadStaticModel(&cigarette2);
 	unloadStaticModel(&cigarette1);
 	
@@ -1344,4 +1335,3 @@ void uninitializeScene08_BibhatsaRas(void)
 	//uninitializeCamera(&camera);
 
 }
-

@@ -71,7 +71,6 @@ bool timeFlag = true;
 time_t now;
 time_t then;
 
-// #define SHORTS
 #ifdef SHORTS
 int time_scene1 = 5;
 int time_scene2 = 10;
@@ -89,7 +88,7 @@ int time_scene13 = 10;
 int time_scene14 = 10;
 #else
 int time_scene1 = 5;
-int time_scene2 = 200;
+int time_scene2 = 40;
 int time_scene3 = 40;
 int time_scene4 = 40;
 int time_scene5 = 40;
@@ -467,32 +466,32 @@ int initializeNavras(void) {
 	}
 
 	// SCENE06
-	// if (initializeScene06_BhayanakRas() != 0)
-	// {
-	// 	LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	if (initializeScene06_BhayanakRas() != 0)
+	{
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE07
-	// if (initializeScene07_Raudra() != 0)
-	// {
-	// 	LOG("initializeScene7_Raudra() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE07
+	if (initializeScene07_Raudra() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE08
-	// if (initializeScene08_BibhatsaRas() != 0)
-	// {
-	// 	LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE08
+	if (initializeScene08_BibhatsaRas() != 0)
+	{
+		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE09
-	// if (initializeScene09_VeerRas() != 0)
-	// {
-	// 	LOG("initializeScene09_VeerRas() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE09
+	if (initializeScene09_VeerRas() != 0)
+	{
+		LOG("initializeScene09_VeerRas() FAILED !!!\n");
+		return (-8);
+	}
 
 	// SCENE10
 	if (initializeScene10_AdbhutRas() != 0)
@@ -532,17 +531,20 @@ int initializeNavras(void) {
 	 }
 
 	scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);
+	scenePush(SCENE14_PARTICLE);	
 	scenePush(SCENE13_SHANT_RAS);
 	//scenePush(SCENE12_HASYA_RAS);
-	// scenePush(SCENE11_SHRINGAR_RAS);
-	// scenePush(SCENE10_ADBHUT_RAS);
-	// scenePush(SCENE09_VEER_RAS);
-	// scenePush(SCENE08_BIBHATSA_RAS);
+	scenePush(SCENE11_SHRINGAR_RAS);
+	scenePush(SCENE10_ADBHUT_RAS);
+	scenePush(SCENE09_VEER_RAS);
+	scenePush(SCENE08_BIBHATSA_RAS);
 	
-	// scenePush(SCENE07_RAUDRA_RAS);
-	// scenePush(SCENE06_BHAYANK_RAS);
-	//scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	currentScene = scenePop();
@@ -622,7 +624,7 @@ void displayNavras(void)
 	
 	bool isGodRequired = true;
 	bool isWaterRequired = false;
-	bool isGaussianBlurRequired = true;
+	bool isGaussianBlurRequired = false;
 
 	// Function declarations
 	void resize(int, int);
@@ -652,22 +654,21 @@ void displayNavras(void)
 
 		isGodRequired = false;
 		isWaterRequired = false;
-		if(now >= then+20)
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - 10);
+		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
-		}
-		else
-		{
-			isGaussianBlurRequired = false;
 		}
 		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
 	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
 	{
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
+
 		audio(SCENE05_KARUN_RAS);
-		
-		displayScene5_karun();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
 	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
@@ -746,9 +747,11 @@ void displayNavras(void)
 	}
 	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
 	{
+		shouldSceneRaudraMaskAppear = false;
+		
 		audio(SCENE13_SHANT_RAS);
-
-		displayScene13_Shant();
+		displayScene_PlaceHolderIndoor(setCameraScene13_ShantRas, displayScene13_Shant, shouldSceneRaudraMaskAppear);
+		//displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
 	else if (now <= (then + time_scene14) && currentScene == SCENE14_PARTICLE)
@@ -767,7 +770,7 @@ void displayNavras(void)
 		audio(SCENE_INVALID);
 		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
-		QuitApplication();
+		//QuitApplication();
 	}
 
 }
@@ -829,6 +832,12 @@ void updateNavras(void)
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
+	}
+
+	
+	else if (currentScene == SCENE05_KARUN_RAS)
+	{
+		updateScene5_karun();
 	}
 
 	// camera movement related updates

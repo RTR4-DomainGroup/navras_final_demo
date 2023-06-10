@@ -68,6 +68,9 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
+#define FBO_EARTHANDSPACE_WIDTH (WIN_WIDTH * 3)  
+#define FBO_EARTHANDSPACE_HEIGHT (WIN_HEIGHT * 3)
+
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
 TEXTURE texture_grass;
@@ -353,8 +356,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_STARFIELD
 
-	fboEarthAndSpace.textureWidth = 3840;
-	fboEarthAndSpace.textureHeight = 2160;
+	fboEarthAndSpace.textureWidth = FBO_EARTHANDSPACE_WIDTH;
+	fboEarthAndSpace.textureHeight = FBO_EARTHANDSPACE_HEIGHT;
 
 	createFBO(&fboEarthAndSpace);
 
@@ -572,7 +575,8 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		modelMatrix = mat4::identity();
 		
 		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
-		modelMatrix = translationMatrix;
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+		modelMatrix = translationMatrix * scaleMatrix;
 		
 		sceneOutdoorADSStaticUniform = useADSShader();
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
