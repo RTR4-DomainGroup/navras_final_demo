@@ -69,6 +69,7 @@ int initializeFSQuadShader(void)
         "\n" \
         "in vec2 a_texcoord_out;" \
         "\n" \
+        "uniform int u_singleTexture; \n" \
         "uniform sampler2D u_textureSampler0;" \
         "\n" \
         "uniform sampler2D u_textureSampler1;" \
@@ -84,11 +85,15 @@ int initializeFSQuadShader(void)
 
         "void main(void)" \
         "{" \
-            "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
-          /*"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
-            "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \*/
-            //"FragColor = vec4(vec3(depthValue), 1.0); \n" \/
-            "\n" \
+            "if(u_singleTexture == 1)\n" \
+            "{\n" \
+                "FragColor = texture(u_textureSampler0, a_texcoord_out);\n" \
+             "}\n" \
+            "else\n" \
+            "{\n" \
+                "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
+                "\n" \
+            "}\n"
         "}";
     
     // Create the Fragment Shader object.
@@ -129,7 +134,6 @@ int initializeFSQuadShader(void)
         }
     }
 
-    LOG("fragmentShaderSrcCode in doen.\n");
     // Shader Program Object
     fsQuadShaderProgramObject = glCreateProgram();
     
@@ -171,6 +175,8 @@ int initializeFSQuadShader(void)
         }
     }
 
+    fsQuadUniform.singleTexture = glGetUniformLocation(
+        fsQuadShaderProgramObject, "u_singleTexture");
     fsQuadUniform.textureSamplerUniform1 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler0");
     fsQuadUniform.textureSamplerUniform2 = glGetUniformLocation(
