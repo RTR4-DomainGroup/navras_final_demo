@@ -75,8 +75,8 @@ int initializeScene_PlaceHolderIndoor(void)
 	//int windowHeight;
 
 
-	ssaoFrameBufferDetails.textureWidth = 2560;
-	ssaoFrameBufferDetails.textureHeight = 1440;
+	ssaoFrameBufferDetails.textureWidth = 1920;
+	ssaoFrameBufferDetails.textureHeight = 1080;
 
 	if (ssaoCreateFBO(&ssaoFrameBufferDetails) == GL_FALSE) 
 	{
