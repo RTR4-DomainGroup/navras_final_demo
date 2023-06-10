@@ -14,6 +14,7 @@
 #include "../../inc/shaders/VerticalBlur.h"
 #include "../../inc/shaders/AtmosphereShader.h"
 #include "../../inc/shaders/ParticleShader.h"
+#include "../../inc/shaders/SSAOShader.h"
 
 
 bool initAllShaders(void)
@@ -100,6 +101,10 @@ bool initAllShaders(void)
     {
         return false;
     }
+    if (initializeSSAOShader() != 0)
+    {
+        return false;
+    }
 
     return true;
 }
@@ -118,5 +123,6 @@ void uninitializeAllShaders(void)
     uninitializeADSDynamicShader();
     uninitializeCloudNoiseShader();
     uninitializeAtmosphereShader();
+    uninitializeSSAOShader();
 }
 
