@@ -41,6 +41,7 @@ static struct FrameBufferDetails fullSceneIndoorFbo;
 static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
 
+extern struct FrameBufferDetails fboMaskPass;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -106,8 +107,9 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	if (!shouldSceneBlur)
 	{
 #ifdef ENABLE_SSAO
-		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
+		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
@@ -144,14 +146,19 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
 		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
 		displayQuad();
-		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
+
+		////
+		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
+
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glUseProgram(0);
 		glEnable(GL_BLEND);
-
-
-
-		
-
 
 	}
 }

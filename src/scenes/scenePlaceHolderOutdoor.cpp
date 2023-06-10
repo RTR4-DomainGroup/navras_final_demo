@@ -663,14 +663,17 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		
 
 		////
-		//glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
-		//glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+		
+		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
-		//displayQuad();
-		//glBindTexture(GL_TEXTURE_2D, 0);
-		//glUseProgram(0);
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+		glUseProgram(0);
 
 	}
 	else if(isGodRequired && !isGaussianBlurRequired)
@@ -790,15 +793,13 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		//glDisable(GL_BLEND);
 
 		//
-		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+		/*glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
 		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
-
+		glBindTexture(GL_TEXTURE_2D, 0);*/
 		glUseProgram(0);
 	
 	}
@@ -933,13 +934,18 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//
-		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
-		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if (getCurrentScene() != SCENE02_EARTH_AND_SPACE) {
+
+			glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+			glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+
+			displayQuad();
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+		}
 		glUseProgram(0);
 	
 	}
@@ -983,6 +989,7 @@ void displayGaussianBlur(void)
     horizontalBlurUniform = useHorrizontalBlurShader();
 
     glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+	glUniform1f(horizontalBlurUniform.blurFactor, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
     glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
@@ -998,6 +1005,7 @@ void displayGaussianBlur(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurUniform = useVerticalBlurShader();
 	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glUniform1f(verticalBlurUniform.blurFactor, 1.0f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
     glUniform1i(verticalBlurUniform.vblurTexSamplerUniform, 0);
