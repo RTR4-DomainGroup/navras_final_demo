@@ -6,10 +6,14 @@
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/framebuffer.h"
 #include "../../inc/helper/geometry.h"
+#include "../../inc/helper/ssaoframebuffer.h"
 
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/SSAOShader.h"
 
 #include "../../inc/effects/GaussianBlurEffect.h"
+#include "../../inc/effects/SSAOEffect.h"
+
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
@@ -19,6 +23,11 @@
 
 extern int windowWidth;
 extern int windowHeight;
+
+// SSAO variable
+SSAOFrameBufferStruct ssaoFrameBufferDetails;
+
+//GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
@@ -57,6 +66,32 @@ int initializeScene_PlaceHolderIndoor(void)
 	
 #endif // ENABLE_GAUSSIAN_BLUR
 
+
+#ifdef ENABLE_SSAO
+
+
+	// framebuffer related variables
+	//int windowWidth;
+	//int windowHeight;
+
+
+	ssaoFrameBufferDetails.textureWidth = 2560;
+	ssaoFrameBufferDetails.textureHeight = 1440;
+
+	if (ssaoCreateFBO(&ssaoFrameBufferDetails) == GL_FALSE) 
+	{
+		LOG("ssaoCreateFBO() For Shadow FAILED!!!\n");
+		return(-1);
+	}
+	else 
+	{
+		LOG("ssaoCreateFBO() Successfull for Shadow!!!\n");
+	}
+	initializeSSAO();
+
+#endif // ENABLE_SSAO
+
+
 	return 0;
 }
 
@@ -70,7 +105,20 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 	if (!shouldSceneBlur)
 	{
+#ifdef ENABLE_SSAO
+		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
+		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+
 		displayPasses();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		displaySSAO(&ssaoFrameBufferDetails);
+
+
+
+#endif // ENABLE_SSAO
 	}
 	else
 	{
@@ -99,6 +147,12 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
 		glEnable(GL_BLEND);
+
+
+
+		
+
+
 	}
 }
 
