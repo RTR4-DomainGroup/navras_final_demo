@@ -599,7 +599,8 @@ void displayScene13_Shant(void)
 
 	// ------ Room Model ------
 	//translationMatrix = vmath::translate(- 1.0f, -2.0f, -6.0f);
-	translationMatrix = vmath::translate(-0.85f, -1.75f, -8.36f);
+	//translationMatrix = vmath::translate(-0.85f, -1.75f, -8.36f);
+	translationMatrix = vmath::translate(-0.85f, -1.75f, -8.06f);
 	scaleMatrix = vmath::scale(0.02f, 0.02f, 0.02f);
 	rotationMatrix_y = vmath::rotate(0.0f, 0.0f, 1.0f, 0.0f);
 
@@ -767,7 +768,7 @@ void displayScene13_Shant(void)
 		float xPos = maskTranslationRadii[i] * cos(angle * M_PI / 180.0);
 		float yPos = maskTranslationRadiiY[i] * sin(angle * M_PI / 180.0);
 
-		translationMatrix = vmath::translate(xPos - 0.765f /* - 0.08f*/, yPos - 0.5f - 0.8f, -8.36f);
+		translationMatrix = vmath::translate(xPos - 0.765f /* - 0.08f*/, yPos - 0.5f - 0.8f, -8.06f);
 		scaleMatrix = vmath::scale(maskScales[i], maskScales[i], maskScales[i]);
 		modelMatrix = translationMatrix * scaleMatrix/* * rotationMatrix*/;
 
@@ -835,12 +836,12 @@ void updateScene13_ShantRas(void)
 	{
 		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
 		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
-		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.05f);
+		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.005f);
 		cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
-		cameraEyeZ = preciselerp(cameraEyeZ, -8.51f, 0.05f);
-		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.05f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -18.51f, 0.005f);
+		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.005f);
 		cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -14.51f, 0.05f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -24.51f, 0.005f);
 	}
 #endif // ENABLE_CAMERA_ANIMATION
 
@@ -848,28 +849,28 @@ void updateScene13_ShantRas(void)
 	{
 #ifdef ENABLE_EROSION
 
-		maskTranslationRadii[0] += 0.003f;
-		maskTranslationRadiiY[0] += 0.004f;
+		maskTranslationRadii[0] += 0.005f;
+		maskTranslationRadiiY[0] += 0.005f;
 		maskScales[0] += 0.00001f;
 		for (int i = 0; i < 9; i++)
 		{
 			//if (maskTranslationRadii[i] >= 0.433f)
 			if (maskTranslationRadiiY[i] >= 0.733f)
 			{
-				maskTranslationRadii[i + 1] += 0.003f;
-				maskTranslationRadiiY[i + 1] += 0.004f;
+				maskTranslationRadii[i + 1] += 0.005f;
+				maskTranslationRadiiY[i + 1] += 0.005f;
 				maskScales[i + 1] += 0.00001f;
 			}
 			if (maskTranslationRadii[i] >= 2.1f)
 				maskTranslationRadii[i] = 2.1f;
 
-			if (maskTranslationRadiiY[i] >= 2.4f)
-				maskTranslationRadiiY[i] = 2.4f;
+			if (maskTranslationRadiiY[i] >= 2.1f)
+				maskTranslationRadiiY[i] = 2.1f;
 
 			//if (maskTranslationRadii[8] == 1.3f)
 			//	masksTransformationsComplete = true;
 
-			if (maskTranslationRadiiY[8] == 2.4f)
+			if (maskTranslationRadiiY[8] == 2.1f)
 				masksTransformationsComplete = true;
 
 			if (maskScales[i] >= 0.007f)
@@ -878,11 +879,11 @@ void updateScene13_ShantRas(void)
 
 		if (masksTransformationsComplete == true)
 		{
-			updateErosion(offsetIncrement, offset_ras[8], 0.005f);
+			updateErosion(offsetIncrement, offset_ras[8], 0.002f);
 			for (int i = 8; i > -1; i--)
 			{
-				if (offset_ras[i][0] <= 0.33f)
-					updateErosion(offsetIncrement, offset_ras[i - 1], 0.005f);
+				if (offset_ras[i][0] <= 0.40f)
+					updateErosion(offsetIncrement, offset_ras[i - 1], 0.002f);
 				if (offset_ras[i][0] <= 0.17f)
 					isMaskQuadEnabled[i] = false;
 				if (isMaskQuadEnabled[0] == false)
