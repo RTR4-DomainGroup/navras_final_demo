@@ -65,6 +65,23 @@ bool timeFlag = true;
 time_t now;
 time_t then;
 
+// #define SHORTS
+#ifdef SHORTS
+int time_scene1 = 5;
+int time_scene2 = 10;
+int time_scene3 = 10;
+int time_scene4 = 10;
+int time_scene5 = 10;
+int time_scene6 = 10;
+int time_scene7 = 10;
+int time_scene8 = 10;
+int time_scene9 = 10;
+int time_scene10 = 10;
+int time_scene11 = 10;
+int time_scene12 = 10;
+int time_scene13 = 10;
+int time_scene14 = 10;
+#else
 int time_scene1 = 5;
 int time_scene2 = 40;
 int time_scene3 = 40;
@@ -79,20 +96,8 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
+#endif
 
-//int time_scene2 = 10;
-//int time_scene3 = 10;
-//int time_scene4 = 10;
-//int time_scene5 = 10;
-//int time_scene6 = 10;
-//int time_scene7 = 10;
-//int time_scene8 = 10;
-//int time_scene9 = 10;
-//int time_scene10 = 10;
-//int time_scene11 = 10;
-//int time_scene12 = 10;
-//int time_scene13 = 10;
-//int time_scene14 = 10;
 
 // Audio
 static bool audioFlag = true;
