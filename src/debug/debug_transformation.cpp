@@ -19,33 +19,27 @@ static bool rotateMode = false;
 static bool cameraMode = false;
 
 static bool updateFirstCall = true;
-static bool debugFirstCall = true;
-
-// extern these variables in your WndProc 
-extern GLbyte charPressed;
-extern GLuint keyPressed;
-
-extern GLuint numPressed;
+static bool debugObjectChanged = true;
 
 // extern
 // camera related variables for movement in scene during debugging
 extern float cameraCounterSideWays;
 extern float cameraCounterUpDownWays;
 
-void debug_tranformation(void)
+void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 {
 	// local trnasformation
 	static TRANFORM ltf_t; // local translation
 	static TRANFORM ltf_s; // local scale
 	static TRANFORM ltf_r; // local rotation
 	static GLfloat ltf_Speed;
-	if(debugFirstCall)
+	if(debugObjectChanged)
 	{
 		ltf_t = tf_t;  
 		ltf_s = tf_s;  
 		ltf_r = tf_r; 
 		ltf_Speed = tf_Speed;
-		debugFirstCall = false;
+		debugObjectChanged = false;
 	}
 
 	// code
@@ -58,7 +52,7 @@ void debug_tranformation(void)
 		case 't': // translate
 			translateMode = scaleMode = rotateMode = cameraMode = false;
 			translateMode = translateMode ? false : true;
-			LOG("switched to translation mode: %d\n", translateMode);
+			LOG("switched to translation mode\n");
 			break;
 		case 's': // scale or cameraZ 
 			if(cameraMode)
@@ -68,8 +62,8 @@ void debug_tranformation(void)
 			}
 			else {
 				translateMode = scaleMode = rotateMode = cameraMode = false;
-				scaleMode = scaleMode ? false : true;
-				LOG("switched to scale mode: %d\n", scaleMode);
+				scaleMode = true;
+				LOG("switched to scale mode\n");
 			}
 			break;
 		case 'r': // rotate or camera reset
@@ -77,8 +71,8 @@ void debug_tranformation(void)
 				resetCamera();
 			else	{
 				translateMode = scaleMode = rotateMode = cameraMode = false;
-				rotateMode = rotateMode ? false : true;
-				LOG("switched to rotation mode: %d\n", rotateMode);
+				rotateMode = true;
+				LOG("switched to rotation mode\n");
 			}
 			break;
 		case 'x':
@@ -194,8 +188,8 @@ void debug_tranformation(void)
 			break;
 		case 'c':
 			LOG("switched to camera mode\n");
-			// translateMode = scaleMode = rotateMode = cameraMode = false;
-			cameraMode = cameraMode ? false : true; 
+			translateMode = scaleMode = rotateMode = cameraMode = false;
+			cameraMode = true; 
 			break;
 		case 'W':
 		case 'w':
@@ -250,7 +244,6 @@ void debug_tranformation(void)
 		case '9':
 			LOG("Num key pressed %c \n", charPressed, charPressed);
 			updateFirstCall = true;
-			debugFirstCall = true;
 			tf_t = {0.0f, 0.0f, 0.0f};
 			tf_r = {0.0f, 0.0f, 0.0f};
 			tf_s = {0.0f, 0.0f, 0.0f};
@@ -262,7 +255,7 @@ void debug_tranformation(void)
 			break;
 		}
 
-		charPressed = 0;
+		// charPressed = 0;
 	}
 
 	if(keyPressed)
@@ -293,7 +286,7 @@ void debug_tranformation(void)
 		default:
 			break;
 		}
-		keyPressed = 0;
+		// keyPressed = 0;
 	}
 }
 
@@ -321,6 +314,7 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 			tf_r = {0.0f, 0.0f, 0.0f};
 		tf_Speed = 0.25f;
 		updateFirstCall = false;
+		debugObjectChanged = true;
 	}
 
 	if(translationMatrix)
@@ -380,13 +374,12 @@ void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMa
 }
 
 void print_vector(const vmath::vec4& vector) {
-	LOG(""
-	"%.02ff %.02ff %.02ff %.02ff \n\n", 
+	LOG("%.02ff %.02ff %.02ff %.02ff \n\n", 
 	vector[0], vector[1], vector[2], vector[3]);
 }
 
 void print_matrix(const vmath::mat4& matrix) {
-	LOG(""
+	LOG("\n"
 	"%.02ff %.02ff %.02ff %.02ff \n"
 	"%.02ff %.02ff %.02ff %.02ff \n"
 	"%.02ff %.02ff %.02ff %.02ff \n"
@@ -399,7 +392,7 @@ void print_matrix(const vmath::mat4& matrix) {
 }
 
 void print_matrix_glm(const glm::mat4& matrix) {
-	LOG(""
+	LOG("\n"
 	"%.02ff %.02ff %.02ff %.02ff \n"
 	"%.02ff %.02ff %.02ff %.02ff \n"
 	"%.02ff %.02ff %.02ff %.02ff \n"
@@ -409,5 +402,17 @@ void print_matrix_glm(const glm::mat4& matrix) {
 	matrix[2][0], matrix[2][1], matrix[2][2], matrix[2][3],
 	matrix[3][0], matrix[3][1], matrix[3][2], matrix[3][3]
 	);
+}
+
+
+void print_matrices(const vmath::mat4& translationMatrix, const vmath::mat4& scaleMatrix, const vmath::mat4& rotationMatrix, const TRANFORM& vector) {
+	LOG("Translation Matrix\n");
+	print_matrix(translationMatrix);
+	LOG("Scale Matrix\n");
+	print_matrix(scaleMatrix);
+	LOG("Rotation Matrix\n");
+	print_matrix(rotationMatrix);
+	LOG("Rotation Vector\n");
+	print_vector({vector.x, vector.y, vector.z, vector.w});
 }
 
