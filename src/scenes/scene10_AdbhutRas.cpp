@@ -81,7 +81,13 @@ extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-extern struct CloudNoiseUniform sceneCloudNoiseUniform;
+struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
+float cloudMyScaleAdbhutRas = 1.0f;
+float cloudNoiseScaleAdbhutRas = 2.0f;
+bool cloudNoiseScaleIncrementAdbhutRas = true;
+GLuint noise_texture_adbhut_ras;
+GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 
@@ -124,15 +130,8 @@ extern mat4 lightSpaceMatrix;
 extern GLfloat waterHeight; // = 0.0f;
 extern GLfloat moveFactor; // = 0.0f;
 extern GLfloat planeReflection[]; // = { 0.0f, 1.0f, 0.0f, -waterHeight };
-extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight };
+extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight }; 
 
-extern float myScale; 
-
-extern float noiseScale; 
-
-extern GLfloat skyColor[]; 
-extern GLfloat cloudColor[]; 
-extern GLuint noise_texture;
 extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -311,6 +310,20 @@ int initializeScene10_AdbhutRas(void)
 	}
 	
 #endif // ENABLE_TERRIAN
+
+#ifdef ENABLE_CLOUD_NOISE
+	noise_texture_adbhut_ras = initializeCloud();
+	if (noise_texture_adbhut_ras == 0)
+	{
+		LOG("initializeCloud() - noise_texture_adbhut_ras FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() - noise_texture_adbhut_ras Successfull!!!\n");
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 	return 0;
 }
 
@@ -415,7 +428,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 #ifdef ENABLE_CLOUD_NOISE
 
 		glEnable(GL_TEXTURE_3D);
-		sceneCloudNoiseUniform = useCloudNoiseShader();
+		sceneAdbhutRasCloudNoiseUniform = useCloudNoiseShader();
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -426,38 +439,29 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		rotationMatrix_y = mat4::identity();
 		rotationMatrix_z = mat4::identity();
 
-
-		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneAdbhutRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneAdbhutRasCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		glUniform1f(sceneAdbhutRasCloudNoiseUniform.scaleUniform, cloudMyScaleAdbhutRas);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.skyColorUniform, 1, skyColorForAdbhutRas);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorFOrAdbhutRas);
+		glUniform1f(sceneAdbhutRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleAdbhutRas);
+		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
 
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
@@ -883,35 +887,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 		// rotationAngles = { 0.50f, 18.75f, 2.00f};
 
-		static bool firstcall = 1;
-		if(firstcall)
-		{
-			LOG("Before update tranform\n");
-			LOG("Translation Matrix\n");
-			print_matrix(translationMatrix);
-			LOG("Scale Matrix\n");
-			print_matrix(scaleMatrix);
-			LOG("Rotation Matrix\n");
-			print_matrix(rotationMatrix);
-			LOG("Rotation Vector\n");
-			print_vector({rotationAngles.x, rotationAngles.y, rotationAngles.z, rotationAngles.w});
-		}
-		if(7 == tf_Object) // Red Flower
-			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-		
-		if(firstcall)
-		{
-			LOG("After update tranform\n");
-			LOG("Translation Matrix\n");
-			print_matrix(translationMatrix);
-			LOG("Scale Matrix\n");
-			print_matrix(scaleMatrix);
-			LOG("Rotation Matrix\n");
-			print_matrix(rotationMatrix);
-			LOG("Rotation Vector\n");
-			print_vector({rotationAngles.x, rotationAngles.y, rotationAngles.z, rotationAngles.w});
-			firstcall = 0;
-		}
+		// if(7 == tf_Object) // Red Flower
+		// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);	
 		rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		rotationMatrix_z = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
@@ -942,8 +919,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		translationMatrix = vmath::translate(-4.75f, -1.90f, -13.50f);
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 
-		if(8 == tf_Object) // White Flower
-				update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+		// if(8 == tf_Object) // White Flower
+		// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -954,26 +931,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		glBindTexture(GL_TEXTURE_2D, texture_flower.id);
 		displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
 		glBindTexture(GL_TEXTURE_2D, 0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 		/// /////////////////////////
@@ -1025,12 +982,12 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		else
 			scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-		translationMatrix = vmath::translate(34.50f, -2.05f, -27.75f);
+		translationMatrix = vmath::translate(33.00f, -2.05f, -27.75f);
 		scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
 		rotationAngles = {0.0f, 17.0f, 0.0f};
 
 		if(8 == tf_Object) // White Flower
-				update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -1075,6 +1032,11 @@ void updateScene10_AdbhutRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_CLOUD_NOISE
+	// update Cloud
+	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
+#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -1094,6 +1056,7 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
+#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_adbhutMask)
@@ -1103,7 +1066,6 @@ void uninitializeScene10_AdbhutRas(void)
 	}
 #endif // ENABLE_MASKSQUADS
 
-#endif // ENABLE_STATIC_MODELS
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -1111,6 +1073,32 @@ void uninitializeScene10_AdbhutRas(void)
 #endif
 	//uninitializeCamera(&camera);
 
+#ifdef ENABLE_CLOUD_NOISE
+	uninitializeCloud();
+	if (noise_texture_adbhut_ras)
+	{
+		glDeleteTextures(1, &noise_texture_adbhut_ras);
+		noise_texture_adbhut_ras = 0;
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 }
+
+//////////////
+
+
+// static bool firstcall = 1;
+// if(firstcall)
+// {
+// 	LOG("Before update tranform\n");
+// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
+// }
+
+// if(firstcall)
+// {
+// 	LOG("After update tranform\n");
+// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
+// 	firstcall = 0;
+// }
 
 

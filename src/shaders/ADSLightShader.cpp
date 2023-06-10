@@ -215,6 +215,7 @@ int initializeADSShader(void)
 		"uniform float far_plane; \n" \
 
 		"out vec4 FragColor; \n" \
+		"out vec4 normal_depth; \n" \
 
 		"float ShadowCalculation(vec4 fragPosLightSpace) \n" \
 		"{ \n" \
@@ -319,6 +320,9 @@ int initializeADSShader(void)
 			"{\n" \
 				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
 			"}\n" \
+			"	FragColor = mix(vec4(0.0), FragColor, 0.7);\n" \
+			"	normal_depth = vec4(normalize( transformedNormals ), viewerVector.z); \n" \
+
 		"} \n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);
