@@ -624,18 +624,8 @@ void displayNavras(void)
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifdef ENABLE_SINGLE_SCENE
-	// no time 
-#else // not ENABLE_SINGLE_SCENE
-	if (timeFlag == true) {
-		then = time(NULL);
-		timeFlag = false;
-	}
-	now = time(NULL);
-#endif // !ENABLE_SINGLE_SCENE
-
 	// Call Scenes Display Here
-	if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
+	if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
@@ -645,14 +635,14 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
-	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
 		audio(SCENE05_KARUN_RAS);
 		
 		displayScene5_karun();
 		sceneTime(time_scene5);
 	}
-	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		audio(SCENE06_BHAYANK_RAS);
 		
@@ -662,14 +652,14 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene06_BhyanakRas, displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene6);
 	}
-	else if (now <= (then + time_scene7) && currentScene == SCENE07_RAUDRA_RAS)
+	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
 		audio(SCENE07_RAUDRA_RAS);
 
 		displayScene07_Raudra();
 		sceneTime(time_scene7);
 	}
-	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
+	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
 
@@ -679,7 +669,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene8);
 	}
-	else if (now <= (then + time_scene9) && currentScene == SCENE09_VEER_RAS)
+	else if (currentScene == SCENE09_VEER_RAS)
 	{
 		audio(SCENE09_VEER_RAS);
 
@@ -689,7 +679,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene9);
 	}
-	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
+	else if (currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
 		
@@ -699,7 +689,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
 	}
-	else if (now <= (then + time_scene11) && currentScene == SCENE11_SHRINGAR_RAS)
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		audio(SCENE11_SHRINGAR_RAS);
 		
@@ -709,21 +699,21 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene11_ShringarRas, displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene11);
 	}
-	else if (now <= (then + time_scene12) && currentScene == SCENE12_HASYA_RAS)
+	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
 		
 		displayScene12_Hasya();
 		sceneTime(time_scene12);
 	}
-	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
+	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		audio(SCENE13_SHANT_RAS);
 
 		displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
-	else if (now <= (then + time_scene14) && currentScene == SCENE14_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		audio(SCENE14_PARTICLE);
 		
@@ -812,6 +802,16 @@ void sceneTime(int scenetime){
 
 	// Code
 #ifndef ENABLE_SINGLE_SCENE
+
+	if (timeFlag == true) {
+		then = time(NULL);
+		timeFlag = false;
+	}
+
+#ifdef AUTOSWITCH_SCENE
+	now = time(NULL);
+#endif
+
 	if (now == (then + scenetime))
 	{
 		then = time(NULL);

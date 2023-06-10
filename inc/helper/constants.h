@@ -120,7 +120,7 @@ static const char *szAudios[] = {
 #define ENABLE_AUDIO
 
 
-//#define ENABLE_SINGLE_SCENE
+#define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
@@ -139,6 +139,10 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
+
+#else
+
+#define AUTOSWITCH_SCENE
 
 #endif // ENABLE_SINGLE_SCENE
 
