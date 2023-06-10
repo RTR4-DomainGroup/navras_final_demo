@@ -93,63 +93,13 @@ int initializeScene5_karun(void)
 	loadStaticModel("res/models/scene05-karunras/colorpencil/pencil1obj.obj", &colorPencilModel); //done
 	loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &boyModel);
 	loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &woodenToy); //done
-	loadStaticModel("res/models/scene05-karunras/teddy/teddy.obj", &teddyBear); //done
+	//loadStaticModel("res/models/scene05-karunras/teddy/teddy.obj", &teddyBear); //done
 	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &roomModel); //change scale
 	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &roomModel);
 
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_ceiling, TEXTURE_DIR"Room/scene5Room/ceiling.png") == FALSE)
-	{
-		//uninitialize();
-		LOG("LoadGLTexture FAILED in Karun Ras!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_ceiling);
-	}
-	
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_floor, TEXTURE_DIR"Room/floor.jpg") == FALSE) 
-	{
-		//uninitialize();
-		LOG("LoadGLTexture FAILED in floor Karun Ras!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_floor);
-	}
-	
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_back, TEXTURE_DIR"Room/scene5Room/frontwall2.png") == FALSE) 
-	{
-		//uninitialize();
-		LOG("LoadGLTexture FAILED in back Karun Ras!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_back);
-	}
-	
-	if (LoadGLTexture_UsingSOIL(&texture_kidroom_side, TEXTURE_DIR"Room/scene5Room/sidewalls.png") == FALSE) 
-	{
-		//uninitialize();
-		LOG("LoadGLTexture FAILED in sidewall Karun Ras!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_kidroom_side);
-	}
-	//loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
-#endif
-	initializeInvertedNormalCube();
-	initializeQuad();
 
-	textures_kidroom[0] = (GLuint)texture_kidroom_ceiling;
-	textures_kidroom[1] = (GLuint)texture_kidroom_floor;
-	textures_kidroom[2] = (GLuint)texture_kidroom_back;
-	textures_kidroom[3] = (GLuint)texture_kidroom_side;
-//	glEnable(GL_TEXTURE_2D);
+#endif
+
 
 	initializeQuad();
 	if (LoadGLTexture_UsingSOIL(&texture_withParent, TEXTURE_DIR"Scene5-karunRas\\withParents.png") == FALSE)
@@ -232,16 +182,7 @@ void displayScene5_karun(void)
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
-	scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
-	modelMatrix = translationMatrix * scaleMatrix;
 
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	//glEnable(GL_TEXTURE_2D);	
-	//displayRoom(textures_kidroom);
-	glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef ENABLE_MASKSQUADS
 	// Transformations For Mask Quad
@@ -465,7 +406,7 @@ void updateScene5_karun(void)
 {
 	if (cameraEyeZ >= -1.42f)
 	{
-		blendingValue += 0.0007f;
+		blendingValue += 0.012f;
 		if (blendingValue >= 1.0f)
 		{
 			blendingValue = 1.0f;
@@ -507,9 +448,9 @@ void updateScene5_karun(void)
 
 	//lookAt(0.35f, -1.05f, -1.35f, -0.35f, -1.47f, -0.77f, 0.00f, 1.00f, 0.00f)
 
-	cameraEyeX = preciselerp(cameraEyeX, 0.35f, 0.001f);
-	cameraEyeY = preciselerp(cameraEyeY, -1.05f, 0.001f);
-	cameraEyeZ = preciselerp(cameraEyeZ, -1.35f, 0.001);
+	cameraEyeX = preciselerp(cameraEyeX, 0.35f, 0.003f);
+	cameraEyeY = preciselerp(cameraEyeY, -1.05f, 0.003f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -1.35f, 0.003f);
 
 	cameraCenterX = preciselerp(cameraCenterX, -0.35f, 0.08f);
 	cameraCenterZ = preciselerp(cameraCenterZ, -0.77f, 0.08f);
