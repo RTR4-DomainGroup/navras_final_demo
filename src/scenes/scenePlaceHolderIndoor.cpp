@@ -106,8 +106,9 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	if (!shouldSceneBlur)
 	{
 #ifdef ENABLE_SSAO
-		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
+		
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
+		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
@@ -147,11 +148,6 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
 		glEnable(GL_BLEND);
-
-
-
-		
-
 
 	}
 }
