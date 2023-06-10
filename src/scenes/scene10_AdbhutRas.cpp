@@ -81,7 +81,13 @@ extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-extern struct CloudNoiseUniform sceneCloudNoiseUniform;
+struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
+float cloudMyScaleAdbhutRas = 1.0f;
+float cloudNoiseScaleAdbhutRas = 2.0f;
+bool cloudNoiseScaleIncrementAdbhutRas = true;
+GLuint noise_texture_adbhut_ras;
+GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 
@@ -124,15 +130,8 @@ extern mat4 lightSpaceMatrix;
 extern GLfloat waterHeight; // = 0.0f;
 extern GLfloat moveFactor; // = 0.0f;
 extern GLfloat planeReflection[]; // = { 0.0f, 1.0f, 0.0f, -waterHeight };
-extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight };
+extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight }; 
 
-extern float myScale; 
-
-extern float noiseScale; 
-
-extern GLfloat skyColor[]; 
-extern GLfloat cloudColor[]; 
-extern GLuint noise_texture;
 extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -311,6 +310,20 @@ int initializeScene10_AdbhutRas(void)
 	}
 	
 #endif // ENABLE_TERRIAN
+
+#ifdef ENABLE_CLOUD_NOISE
+	noise_texture_adbhut_ras = initializeCloud();
+	if (noise_texture_adbhut_ras == 0)
+	{
+		LOG("initializeCloud() - noise_texture_adbhut_ras FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() - noise_texture_adbhut_ras Successfull!!!\n");
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 	return 0;
 }
 
@@ -415,7 +428,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 #ifdef ENABLE_CLOUD_NOISE
 
 		glEnable(GL_TEXTURE_3D);
-		sceneCloudNoiseUniform = useCloudNoiseShader();
+		sceneAdbhutRasCloudNoiseUniform = useCloudNoiseShader();
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -435,29 +448,29 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneAdbhutRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneAdbhutRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneAdbhutRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneAdbhutRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneAdbhutRasCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		glUniform1f(sceneAdbhutRasCloudNoiseUniform.scaleUniform, cloudMyScaleAdbhutRas);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.skyColorUniform, 1, skyColorForAdbhutRas);
+		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorFOrAdbhutRas);
+		glUniform1f(sceneAdbhutRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleAdbhutRas);
+		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
 
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
@@ -1075,6 +1088,11 @@ void updateScene10_AdbhutRas(void)
 	frameTime += 1;
 
 #endif // ENABLE_BILLBOARDING
+
+#ifdef ENABLE_CLOUD_NOISE
+	// update Cloud
+	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
+#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -1110,6 +1128,15 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadDynamicModel(&skeletonModel);
 #endif
 	//uninitializeCamera(&camera);
+
+#ifdef ENABLE_CLOUD_NOISE
+	uninitializeCloud();
+	if (noise_texture_adbhut_ras)
+	{
+		glDeleteTextures(1, &noise_texture_adbhut_ras);
+		noise_texture_adbhut_ras = 0;
+	}
+#endif // ENABLE_CLOUD_NOISE
 
 }
 
