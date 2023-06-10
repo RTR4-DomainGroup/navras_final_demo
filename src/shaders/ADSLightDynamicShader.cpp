@@ -83,7 +83,7 @@ int initializeADSDynamicShader(void)
 		"	viewerVector = vec3(-eyeCoordinates); \n" \
 
 		//Normal Mapping
-		"FragPos = u_modelMatrix * a_position; \n" \
+		"vs_out.FragPos = u_modelMatrix * a_position; \n" \
 		"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
 		"vec3 N = normalize(normalMatrix_nm * a_normal); \n" \
 		"vec3 T = normalize(normalMatrix_nm * a_tangent); \n" \
@@ -92,7 +92,7 @@ int initializeADSDynamicShader(void)
 		"mat3 TBN = transpose(mat3(T,B,N)); \n" \
 		"a_lightDirection_out = TBN * vec3(u_lightPosition) ; \n" \
 		"a_eyeDirection_out =  TBN *  viewPosition; \n" \
-		"a_fragPosNM_out =TBN *  FragPos.xyz; \n" \
+		"a_fragPosNM_out =TBN *  vs_out.FragPos.xyz; \n" \
 
 		/*skeletal anim*/
 		"	vec4 totalPosition = vec4(0.0); \n" \

@@ -93,6 +93,7 @@ static float displacementmap_depth;
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
 static STATIC_MODEL rockModel;
+static STATIC_MODEL roomModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -114,19 +115,20 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 // Camera angle for rotation
 static GLfloat cameraAngle = 0.0f;
+static GLfloat cameraRadius = 10.0f;
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
 extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 
-static GLfloat lightAmbient_bhayanak[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-static GLfloat lightDiffuse_bhayanak[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat lightAmbient_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat lightDiffuse_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat lightSpecular_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition_bhayanak[] = { 10.0f, 10.0f, 10.0f, 1.0f };
+static GLfloat lightPosition_bhayanak[] = { 0.0f, 200.0f, 200.0f, 1.0f };
 
 static GLfloat materialAmbient_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat materialDiffuse_bhayanak[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialSpecular_bhayanak[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static GLfloat materialDiffuse_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+static GLfloat materialSpecular_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialShininess_bhayanak = 128.0f;
 
 GLfloat cameraForeward = 0.0f;
@@ -162,7 +164,8 @@ int initializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/rock/rock.obj", &rockModel);
+	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
+	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom2.obj", &roomModel);
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -180,7 +183,7 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		setCamera(0.0f, 2.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
 }
@@ -201,7 +204,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 	float distance;
 
-	rotateCamera(0.0f, 2.0f, -2.0f, 10.0f, cameraAngle);
+	rotateCamera(0.0f, 1.0f, -2.25f, cameraRadius, cameraAngle);
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//displayCamera();
 	//setCamera(&camera);
@@ -274,6 +277,8 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular_bhayanak);
 	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess_bhayanak);
 
+	glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
+
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
@@ -282,7 +287,9 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ Rock Model ------
-	translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f);
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	translationMatrix = vmath::translate(0.0f, 0.0f, -2.25f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
@@ -307,6 +314,35 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(rockModel);
+
+	//// ------ Room Model ------
+	//translationMatrix = mat4::identity();
+	//scaleMatrix = mat4::identity();
+	//translationMatrix = vmath::translate(0.0f, 7.55f, 0.0f);
+	//scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+
+	//modelMatrix = translationMatrix * scaleMatrix;
+
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//if (actualDepthQuadScene == 1)
+	//{
+	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+	//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	//}
+	//else
+	//{
+	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+
+	//	glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	//}
+
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	//drawStaticModel(roomModel);
 
 #ifdef ENABLE_MASKSQUADS
 	// Transformations For Mask Quad
@@ -418,7 +454,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-		scaleMatrix = vmath::scale(40.0f, 1.0f, 40.0f);
+		scaleMatrix = vmath::scale(180.0f, 1.0f,180.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
 
@@ -464,9 +500,13 @@ void updateScene06_BhayanakRas(void)
 {
 	// Code
 
-	cameraAngle += 5.0f;
-	if(cameraAngle >= 360.0f)
-		cameraAngle -= 360.0f;
+	cameraAngle += 1.5f;
+	if(cameraAngle >= 1170.0f)
+		cameraAngle =1170.0f;
+
+	cameraRadius -= 0.01f;
+	if (cameraRadius <= 3.75f)
+		cameraRadius = 3.75f;
 
 #ifdef ENABLE_WATER
 

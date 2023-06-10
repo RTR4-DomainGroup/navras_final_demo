@@ -27,8 +27,8 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
     for (int i = 0; i < state->avFormatContext->nb_streams; i++)
     {
         avCodecParams = state->avFormatContext->streams[i]->codecpar;
+        
         avCodec = avcodec_find_decoder(avCodecParams->codec_id);
-
         if (!avCodec)
         {
             continue;
@@ -111,24 +111,27 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
             LOG("Failed to Decode AV Packet.\n");
             return false;
         }
+        
         av_packet_unref(state->avPacket);
         break;    
     }
-
-    state->swsScaleContext = sws_getContext(state->width, state->height, state->avCodecContext->pix_fmt, 
-                                state->width, state->height, AV_PIX_FMT_RGB0, SWS_BILINEAR, NULL, NULL, NULL);
     
     if (!state->swsScaleContext)
     {
-        LOG("Failed to get scale context.\n");
-        return false;
+        state->swsScaleContext = sws_getContext(state->width, state->height, state->avCodecContext->pix_fmt, 
+                                    state->width, state->height, AV_PIX_FMT_RGBA, SWS_BILINEAR, NULL, NULL, NULL);
+        
+        if (!state->swsScaleContext)
+        {
+            LOG("Failed to get scale context.\n");
+            return false;
+        }
     }
-    
     uint8_t* dest[4] = { frame_buffer, NULL, NULL, NULL };
     int dest_lineSize[4] = {state->width * 4, 0, 0, 0 };
     sws_scale(state->swsScaleContext, state->avFrame->data, state->avFrame->linesize, 0, state->avFrame->height, dest, dest_lineSize);
     //av_frame_free(&state->avFrame);
-    sws_freeContext(state->swsScaleContext);
+    //sws_freeContext(state->swsScaleContext);
     return true;
 
 }
@@ -136,7 +139,11 @@ bool video_reader_read_frame(VideoReaderState* state, uint8_t* frame_buffer)
 bool video_reader_close(VideoReaderState* state)
 {
     if (state)
-    {        
+    {
+        if (state->swsScaleContext)
+        {
+            sws_freeContext(state->swsScaleContext);
+        }        
         if (state->avFrame)
         {
             av_frame_unref(state->avFrame);

@@ -42,9 +42,6 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_SKYBOX
 #include "../../inc/effects/SkyboxEffect.h"
 #endif // ENABLE_SKYBOX
@@ -94,7 +91,13 @@ extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-extern struct CloudNoiseUniform sceneCloudNoiseUniform;
+struct CloudNoiseUniform sceneShringarRasCloudNoiseUniform;
+float cloudMyScaleShringarRas = 1.0f;
+float cloudNoiseScaleShringarRas = 2.0f;
+bool cloudNoiseScaleIncrementShringarRas = true;
+GLuint noise_texture_shringar_ras;
+GLfloat skyColorForShringarRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+GLfloat cloudColorForShringarRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 static struct TextureVariables terrainTextureVariables;
@@ -156,12 +159,6 @@ extern bool noiseScaleIncrement; // = true;
 
 extern mat4 viewMatrix;
 
-
-extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
-extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
-extern GLuint noise_texture;
-
 extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -184,6 +181,8 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
 STATIC_MODEL treemodel_11;
+STATIC_MODEL manModel_11;
+STATIC_MODEL womanModel_11;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -208,7 +207,7 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 static GLfloat lightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 4.0f, 3.0f, 3.0f, 1.0f };
+static GLfloat lightPosition[] = { 10.0f, 10.0f, 3.0f, 1.0f };
 
 static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -236,7 +235,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks\\ShringarMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_shringarMask, TEXTURE_DIR"Masks/ShringarMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarMask FAILED!!!\n");
@@ -252,6 +251,8 @@ int initializeScene11_ShringarRas(void)
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
 	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
+	loadStaticModel("res/models/scene11_shringar/man/tempShringrMan.obj", &manModel_11);
+	loadStaticModel("res/models/scene11_shringar/woman/tempShringarWoman.obj", &womanModel_11);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -263,7 +264,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_TERRIAN
 	displacementmap_depth = 5.0f;
 
-	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/1diffuse1.png";
+	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene11_Shringar/1diffuse14.png";
 	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/1disp.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
 
@@ -311,6 +312,19 @@ int initializeScene11_ShringarRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_CLOUD_NOISE
+	noise_texture_shringar_ras = initializeCloud();
+	if (noise_texture_shringar_ras == 0)
+	{
+		LOG("initializeCloud() - noise_texture_shringar_ras FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() - noise_texture_shringar_ras Successfull!!!\n");
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 
 	return 0;
 }
@@ -319,7 +333,8 @@ void setCameraScene11_ShringarRas(void)
 {
 	if (isInitialDisplayScene11_ShringarRas == true)
 	{
-		setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		//setCamera(0.0, 1.5f, 6.0, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(0.0, 0.25f, 6.0, 0.0f, 0.25f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 		//setCamera(0.00, 0.00, -12.50, 0.00f, 0.00f, -18.50f, 0.0f, 0.0f, 1.0f);
 		isInitialDisplayScene11_ShringarRas = false;
@@ -343,10 +358,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
-	rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
+	rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
+	//displayCamera();
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -451,7 +467,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 #ifdef ENABLE_CLOUD_NOISE
 
 		glEnable(GL_TEXTURE_3D);
-		sceneCloudNoiseUniform = useCloudNoiseShader();
+		sceneShringarRasCloudNoiseUniform = useCloudNoiseShader();
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -473,33 +489,34 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneShringarRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneShringarRasCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
+		glUniform1f(sceneShringarRasCloudNoiseUniform.scaleUniform, cloudMyScaleShringarRas);
+		glUniform4fv(sceneShringarRasCloudNoiseUniform.skyColorUniform, 1, skyColorForShringarRas);
+		glUniform4fv(sceneShringarRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorForShringarRas);
+		glUniform1f(sceneShringarRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleShringarRas);
+		glUniform1i(sceneShringarRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneShringarRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		//glEnable(GL_BLEND);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_shringar_ras);
 
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);
+		//glDisable(GL_BLEND);
 
 		glUseProgram(0);
 
@@ -564,8 +581,17 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	vmath::mat4 mv_matrix = mat4::identity();
 	vmath::mat4 proj_matrix = mat4::identity();
 
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
+	translationMatrix = translate(0.0f, -0.67f, -20.0f);
+	scaleMatrix = scale(1.0f, 1.0f, 1.0f);
+
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
 	//normal mapping
-	vmath::mat4 m_matrix = (translate(0.0f, -0.5f, -20.0f) * scale(1.0f, 1.0f, 1.0f));
+	vmath::mat4 m_matrix = (translationMatrix * scaleMatrix);
 	vmath::mat4 v_matrix = finalViewMatrix;
 
 	mv_matrix = finalViewMatrix * m_matrix;
@@ -617,8 +643,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
 #endif // DEBUG - ENABLE_FOG
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
@@ -631,7 +657,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	displayTerrain();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
 
 	glUseProgram(0);
 #endif // ENABLE_TERRIAN
@@ -673,7 +699,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.25f, 0.55f, -17.0f);
+	translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
 	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
 	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
@@ -701,6 +727,84 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	drawStaticModel(treemodel_11);
+
+	// Man
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(-0.06f, 0.03f, -15.0f);
+	scaleMatrix = vmath::scale(0.0065f, 0.0065f, 0.0065f);
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	if (actualDepthQuadScene == 1) {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+	}
+	else {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
+	}
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(manModel_11);
+
+	// Woman
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(0.04f, 0.02f, -15.0f);
+	scaleMatrix = vmath::scale(0.0065f, 0.0065f, 0.0065f);
+
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+
+	modelMatrix = translationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	if (actualDepthQuadScene == 1) {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+
+	}
+	else {
+
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+
+	}
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(womanModel_11);
 
 #ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
@@ -950,7 +1054,7 @@ void updateScene11_ShringarRas(void)
 		cameraAngle_shringar = 270.0f;
 	//cameraAngle_shringar = preciselerp(cameraAngle_shringar, 270.f, 0.07f);
 
-	cameraRadius_shringar -= 0.020f;
+	cameraRadius_shringar -= 0.022f;
 	if (cameraRadius_shringar <= 2.0f)
 		cameraRadius_shringar = 2.0f;
 	//cameraRadius_shringar = preciselerp(cameraRadius_shringar, 2.0f, 0.018f);
@@ -970,6 +1074,11 @@ void updateScene11_ShringarRas(void)
 	if (moveFactor >= 360.0f)
 		moveFactor -= 360.0f;
 #endif // ENABLE_WATER
+
+#ifdef ENABLE_CLOUD_NOISE
+	// update Cloud
+	updateCloud(cloudNoiseScaleIncrementShringarRas, cloudNoiseScaleShringarRas, 0.0001f);
+#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene11_ShringarRas(void)
@@ -1002,5 +1111,14 @@ void uninitializeScene11_ShringarRas(void)
 	unloadDynamicModel(&skeletonModel_11);
 #endif
 	//uninitializeCamera(&camera);
+
+#ifdef ENABLE_CLOUD_NOISE
+	uninitializeCloud();
+	if (noise_texture_shringar_ras)
+	{
+		glDeleteTextures(1, &noise_texture_shringar_ras);
+		noise_texture_shringar_ras = 0;
+	}
+#endif // ENABLE_CLOUD_NOISE
 
 }

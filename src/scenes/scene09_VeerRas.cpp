@@ -56,7 +56,13 @@ extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-extern struct CloudNoiseUniform sceneCloudNoiseUniform;
+struct CloudNoiseUniform sceneVeerRasCloudNoiseUniform;
+float cloudMyScaleVeerRas = 1.0f;
+float cloudNoiseScaleVeerRas = 2.0f;
+bool cloudNoiseScaleIncrementVeerRas = true;
+GLuint noise_texture_veer_ras;
+GLfloat skyColorForVeerRas[] = { 0.3f, 0.3f, 0.5f, 0.0f };
+GLfloat cloudColorForVeerRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 struct TextureVariables terrainTextureVariables;
@@ -91,15 +97,10 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-extern float myScale; // = 1.0f;
-
-extern float noiseScale; // = 2.0f;
-extern bool noiseScaleIncrement; // = true;
-
 static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+static GLfloat lightPosition[] = { 100.0f, 100.0f, 0.0f, 1.0f };
 
 static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -107,15 +108,6 @@ static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
 extern mat4 viewMatrix;
-
-
-extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
-extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
-GLfloat skyColorForVeerRas[] = { 0.3f, 0.3f, 0.5f, 0.0f };
-GLfloat cloudColorForVeerRas[] = { 0.8f, 0.8f, 0.8f, 0.0f };
-
-extern GLuint noise_texture;
 
 extern GLfloat angleCube;
 
@@ -140,8 +132,9 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 // Camera angle for rotation
-GLfloat cameraAngle = 85.0f;
+GLfloat cameraAngle = 86.0f;
 GLfloat cameraRadius;
+
 extern GLfloat dispersal; // = 0.1875f;
 extern GLfloat haloWidth; // = 0.45f;
 extern GLfloat intensity; // = 1.5f;
@@ -151,6 +144,7 @@ bool isInitialDisplayScene09_VeerRas = true;
 bool isCameraRotation = false;
 bool continueCameraRotation = true;
 bool stopCameraRotation = false;
+int cameraRotationCount = 0;
 
 GLuint texture_veerMask;
 
@@ -207,15 +201,30 @@ int initializeScene09_VeerRas(void)
 #endif // ENABLE_TERRIAN
 
 	displacementmap_depth = 15;
-	return 0;
 
+#ifdef ENABLE_CLOUD_NOISE
+	noise_texture_veer_ras = initializeCloud();
+	if (noise_texture_veer_ras == 0)
+	{
+		LOG("initializeCloud() - noise_texture_veer_ras FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() - noise_texture_veer_ras Successfull!!!\n");
+	}
+#endif // ENABLE_CLOUD_NOISE
+
+	return 0;
 }
 
 void setCameraScene09_VeerRas(void)
 {
 	if (isInitialDisplayScene09_VeerRas == true)
 	{
-		setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f); // Initial postion for camera animation
+		//setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f); // Initial postion for camera animation
+		//setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
+		setCamera(17.50f, 3.35f, -4.70f, 15.40f, 5.00f, -19.70f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
 		//setCamera(15.75f, 5.10f, -17.20f, -21.01f, -3.03f, -359.39f, 0.0f, 1.0f, 0.0f); // static camera position
 		isInitialDisplayScene09_VeerRas = false;
 	}
@@ -317,7 +326,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 #ifdef ENABLE_CLOUD_NOISE
 
 		glEnable(GL_TEXTURE_3D);
-		sceneCloudNoiseUniform = useCloudNoiseShader();
+		sceneVeerRasCloudNoiseUniform = useCloudNoiseShader();
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -339,29 +348,29 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneVeerRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneVeerRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneVeerRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneVeerRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneVeerRasCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
-		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		glUniform1f(sceneVeerRasCloudNoiseUniform.scaleUniform, cloudMyScaleVeerRas);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
+		glUniform1f(sceneVeerRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleVeerRas);
+		glUniform1i(sceneVeerRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneVeerRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_veer_ras);
 
 		float color[3] = { 1.0f, 1.0f, 1.0f };
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f, 1.0f, 1.0f));
@@ -621,6 +630,11 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 	glUseProgram(0);
 
+#ifdef ENABLE_CLOUD_NOISE
+	// update Cloud
+	updateCloud(cloudNoiseScaleIncrementVeerRas, cloudNoiseScaleVeerRas, 0.0001f);
+#endif // ENABLE_CLOUD_NOISE
+
 #endif
 }
 
@@ -640,37 +654,81 @@ void updateScene09_VeerRas(void)
 #ifdef ENABLE_CAMERA_ANIMATION
 	if (isCameraRotation == false)
 	{
-		cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.01f);
-		cameraCenterX = preciselerp(cameraCenterX, -21.01f, 0.01f);
+		if (cameraEyeY <= 5.77f)
+		{
+			cameraEyeX = preciselerp(cameraEyeX, 15.75f, 0.002f);
+			cameraCenterX = preciselerp(cameraCenterX, 15.40f, 0.002f);
 
-		cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.01f);
-		cameraCenterY = preciselerp(cameraCenterY, -3.03f, 0.01f);
+			//cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.005f);
+			cameraEyeY = preciselerp(cameraEyeY, 6.5f, 0.002f);
+			cameraCenterY = preciselerp(cameraCenterY, 5.00f, 0.002f);
 
-		cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.01f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);
+			cameraEyeZ = preciselerp(cameraEyeZ, -17.20f, 0.002f);
+			cameraCenterZ = preciselerp(cameraCenterZ, -19.70f, 0.002f);
 
-		cameraUpY = preciselerp(cameraUpY, 1.0f, 0.001f);
-		cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.001f);
+			/*cameraUpY = preciselerp(cameraUpY, 1.0f, 0.0002f);
+			cameraUpZ = preciselerp(cameraUpZ, 0.0f, 0.0002f);*/
 
-		if (cameraEyeY > 5.00f)
+			// lookAt(16.19f, 5.71f, -14.07f, -38.36f, 13.19f, -357.79f, 0.00f, 0.55f, 0.45f)
+			// lookAt(16.16f, 5.77f, -14.31f, -37.03f, 11.95f, -357.92f, 0.00f, 0.57f, 0.43f)
+			// 
+			// lookAt(15.34f, 6.50f, -15.70f, 15.40f, 4.99f, -19.70f, 0.00f, 1.00f, 0.00f)
+		}
+		else if (cameraEyeY > 5.77f)
+		{
+			/*isCameraRotation = true;
+			cameraRadius = 5.39f;
+			cameraUpY = 1.0f;
+			cameraUpZ = 0.0f;*/
+			//LOG("veer display camera lookat(%f, %f, %f, %f, %f, %f, %f, %f, %f)\n", cameraEyeX, cameraEyeY, cameraEyeZ, cameraCenterX, cameraCenterY, cameraCenterZ, cameraUpX, cameraUpY, cameraUpZ);
+			cameraEyeX = preciselerp(cameraEyeX, 15.77f, 0.02f);
+			cameraCenterX = preciselerp(cameraCenterX, 15.40f, 0.02f);
+
+			//cameraEyeY = preciselerp(cameraEyeY, 5.10f, 0.005f);
+			cameraEyeY = preciselerp(cameraEyeY, 5.77f, 0.02f);
+			cameraCenterY = preciselerp(cameraCenterY, 4.99f, 0.02f);
+
+			cameraEyeZ = preciselerp(cameraEyeZ, -14.32f, 0.02f);
+			cameraCenterZ = preciselerp(cameraCenterZ, -19.70f, 0.02f);
+		}
+		if (cameraEyeX <= 15.90f && cameraEyeY > 5.77f)
 		{
 			isCameraRotation = true;
-			cameraRadius = 4.00f;
+			cameraRadius = 5.39f;
 			cameraUpY = 1.0f;
 			cameraUpZ = 0.0f;
 		}
 	}
 	else if (isCameraRotation == true && continueCameraRotation == true)
 	{
-		cameraAngle += 0.3f;
-		if (cameraAngle > 360.0f)
+		cameraRadius -= 0.0005f;
+		if (cameraRadius <= 2.0f)
+			cameraRadius = 2.0f;
+
+		if (cameraRotationCount == 0)
 		{
-			continueCameraRotation = false;
-			cameraAngle -= 360.0f;
+			//cameraEyeY = 6.5f;
+			cameraEyeY = 5.77f;
+			cameraAngle += 0.3f;
+
+			if (cameraAngle > 360.0f && cameraRotationCount == 0)
+			{
+				cameraAngle -= 360.0f;
+				cameraRotationCount++;
+			}
 		}
 
-		if (cameraAngle > 10.0f && continueCameraRotation == false)
-			stopCameraRotation = true;
+		if (cameraRotationCount == 1)
+		{
+			cameraAngle = preciselerp(cameraAngle, 85.0f, 0.003f);
+			/*if (cameraAngle >= 85.0f && cameraRotationCount == 1)
+				continueCameraRotation = false;*/
+		}
+		
+	}
+	else
+	{
+		stopCameraRotation = true;
 	}
 #endif // ENABLE_CAMERA_ANIMATION
 }
@@ -697,4 +755,14 @@ void uninitializeScene09_VeerRas(void)
 	unloadDynamicModel(&skeletonModel);
 #endif
 	//uninitializeCamera(&camera);
+
+#ifdef ENABLE_CLOUD_NOISE
+	uninitializeCloud();
+	if (noise_texture_veer_ras)
+	{
+		glDeleteTextures(1, &noise_texture_veer_ras);
+		noise_texture_veer_ras = 0;
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 }
