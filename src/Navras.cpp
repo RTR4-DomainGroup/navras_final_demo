@@ -673,10 +673,15 @@ void displayNavras(void)
 	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
 	{
 		audio(SCENE06_BHAYANK_RAS);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		
 		isGodRequired = false;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
+		
 		displayScene_PlaceHolderOutdoor(setCameraScene06_BhyanakRas, displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene6);
 	}
@@ -692,10 +697,13 @@ void displayNavras(void)
 	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
-
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		isGodRequired = false;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene8);
 	}
