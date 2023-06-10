@@ -52,6 +52,8 @@ GLfloat blendingValue = 0.0f;
 
 //Model variables
 STATIC_MODEL roomModel;
+STATIC_MODEL woodenToy;
+STATIC_MODEL cryanosModel;
 STATIC_MODEL colorPencilModel;
 STATIC_MODEL boyModel;
 
@@ -83,12 +85,13 @@ int initializeScene5_karun(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/scene05-karunras/room/new/karunRoomNew1.obj", &roomModel); //done
+	loadStaticModel("res/models/scene05-karunras/room/new/karunRoomNew7.obj", &roomModel); //texture issue
+	//loadStaticModel("res/models/scene05-karunras/room/new/karunRoomNew1.obj", &roomModel); //done
 	////loadStaticModel("res/models/scene05-karunras/colorpencil/pencil.fbx", &roomModel); 
-	//loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &roomModel); //done
+	loadStaticModel("res/models/scene05-karunras/crayons/crayons.obj", &cryanosModel); //done
 	loadStaticModel("res/models/scene05-karunras/colorpencil/pencil1obj.obj", &colorPencilModel); //done
 	loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &boyModel);
-	//loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &roomModel); //done
+	loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &woodenToy); //done
 	//loadStaticModel("res/models/kid-table/kidTable.obj", &roomModel); //done
 	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &roomModel); //change scale
 	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &roomModel);
@@ -225,6 +228,7 @@ void displayScene5_karun(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
@@ -271,13 +275,7 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	//translatevalues.x = 1.650000 , translatevalues.y = -1.000000, translatevalues.z = -2.500001  
 	translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
-	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
-	//scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
-	//LOG(" scale.x = %f , scale.y = %f, scale.z = %f \n", tf_s.x, tf_s.y, tf_s.z);
-	//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 	scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
 	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
@@ -289,6 +287,58 @@ void displayScene5_karun(void)
 
 	drawStaticModel(roomModel);
 
+    // ****************** woodenToy ******************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	rotationMatrix_x = vmath::rotate(-0.84f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(-69.96f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-0.04f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	
+	translationMatrix = vmath::translate(-0.02f, -1.09f, 0.66f);
+	scaleMatrix = vmath::scale(0.02f, 0.02f, 0.02f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(woodenToy);
+
+    // ****************** cryanosModel ******************
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	rotationMatrix_x = vmath::rotate(-58.50f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(-11.25f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-36.25f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	
+	translationMatrix = vmath::translate(-2.17f, -2.49f, 0.63f);
+	scaleMatrix = vmath::scale(0.04f, 0.04f, 0.04f);
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(NULL, NULL, &rotationMatrix,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(cryanosModel);
+
 
 	//***********BOY********************
 	translationMatrix = mat4::identity();
@@ -299,14 +349,13 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-    translationMatrix = vmath::translate(-0.37f, -2.26f, -1.27f);
-	scaleMatrix = vmath::scale(1.40f, 1.40f, 1.40f);
-	//scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+    translationMatrix = vmath::translate(-1.48f, -3.51f, -0.80f);
+	scaleMatrix = vmath::scale(2.01f, 1.53f, 1.40f);
 	rotationMatrix_x = vmath::rotate(4.80f, 1.0f, 0.0f, 0.0f); //rotatefX
 	rotationMatrix_y = vmath::rotate(36.18f, 0.0f, 1.0f, 0.0f); //rotatefY
 	rotationMatrix_z = vmath::rotate(-0.30f, 0.0f, 0.0f, 1.0f); //rotatefZ
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
-	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
+	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
@@ -325,18 +374,15 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 	
-	//translatevalues.x = 1.650000 , translatevalues.y = -1.000000, translatevalues.z = -2.500001  
-	translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
-	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	//LOG(" translatevalues.x = %f , translatevalues.y = %f, translatevalues.z = %f \n", tf_t.x, tf_t.y, tf_t.z);
-	//scaleMatrix = vmath::scale(tf_s.x, tf_s.y, tf_s.z);
-	//LOG(" scale.x = %f , scale.y = %f, scale.z = %f \n", tf_s.x, tf_s.y, tf_s.z);
-	//scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
-	scaleMatrix = vmath::scale(0.00005f, 0.00005f, 0.00005f);
-	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-	TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
-	modelMatrix = translationMatrix * scaleMatrix ;
+	translationMatrix = vmath::translate(-0.27f, -2.49f, 0.30f);
+	scaleMatrix = vmath::scale(0.003f, 0.003f, 0.003f);
+	rotationMatrix_x = vmath::rotate(1.50f, 1.0f, 0.0f, 0.0f); //rotatefX
+	rotationMatrix_y = vmath::rotate(128.25f, 0.0f, 1.0f, 0.0f); //rotatefY
+	rotationMatrix_z = vmath::rotate(-0.50f, 0.0f, 0.0f, 1.0f); //rotatefZ
+	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
+	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
+	//update_transformations(&translationMatrix, &scaleMatrix, NULL,&speedVector);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 	
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -354,11 +400,9 @@ void displayScene5_karun(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
  
-	//translatevalues.x = 2.750000, translatevalues.y = 0.100000, translatevalues.z = 0.799998
-	//translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
-	translationMatrix = vmath::translate(0.13f, -1.73f, -1.04f);
+	translationMatrix = vmath::translate(-1.14f, -2.49f, 0.42f);
 	scaleMatrix = vmath::scale(0.54f, 0.54f, 0.54f);
-	rotationMatrix = vmath::rotate(89.45f, 1.0f, 0.00f, 0.00f);
+	rotationMatrix = vmath::rotate(90.22f, 1.0f, 0.00f, 0.00f);
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
 	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -449,6 +493,8 @@ void uninitializeScene5_karun(void)
 {
     //UNINIT models
 	unloadStaticModel(&roomModel);
+	unloadStaticModel(&woodenToy);
+	unloadStaticModel(&cryanosModel);
 	unloadStaticModel(&colorPencilModel);
 	unloadStaticModel(&boyModel);
 
