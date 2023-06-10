@@ -73,6 +73,8 @@ static STATIC_MODEL shantaManModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_EROSION
+bool startMaskAnimation = false;
+bool startCameraZoomToMan = false;
 struct ErosionNoiseUniform sceneErosionNoiseUniform;
 GLuint noise_texture_eroded;
 GLuint texture_Marble_Shant;
@@ -396,15 +398,25 @@ int initializeScene13_Shant(void)
 
 	LOG("Shant Ras coming here in initialize 1\n");
 
-	model_masks[0] = maskModel_karunRas;
-	model_masks[1] = maskModel_bhayanakRas;
-	model_masks[2] = maskModel_raudraRas;
-	model_masks[3] = maskModel_bibhatsaRas;
+	//model_masks[0] = maskModel_karunRas;
+	//model_masks[1] = maskModel_bhayanakRas;
+	//model_masks[2] = maskModel_raudraRas;
+	//model_masks[3] = maskModel_bibhatsaRas;
+	//model_masks[4] = maskModel_veerRas;
+	//model_masks[5] = maskModel_adbhutRas;
+	//model_masks[6] = maskModel_shringarRas;
+	//model_masks[7] = maskModel_hasyaRas;
+	//model_masks[8] = maskModel_shantRas;
+
+	model_masks[0] = maskModel_shantRas;
+	model_masks[1] = maskModel_hasyaRas;
+	model_masks[2] = maskModel_shringarRas;
+	model_masks[3] = maskModel_adbhutRas;
 	model_masks[4] = maskModel_veerRas;
-	model_masks[5] = maskModel_adbhutRas;
-	model_masks[6] = maskModel_shringarRas;
-	model_masks[7] = maskModel_hasyaRas;
-	model_masks[8] = maskModel_shantRas;
+	model_masks[5] = maskModel_bibhatsaRas;
+	model_masks[6] = maskModel_raudraRas;
+	model_masks[7] = maskModel_bhayanakRas;
+	model_masks[8] = maskModel_karunRas;
 
 	LOG("Shant Ras coming here in initialize 2\n");
 
@@ -500,7 +512,8 @@ void setCameraScene13_ShantRas(void)
 		//setCamera(-0.70, 0.00, -1.85, -0.70, 0.00, -7.85, 0.0f, 1.0f, 0.0f);
 		// updated initial position
 		// lookAt(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f)
-		setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
+		// lookAt(-0.70f, 0.00f, -1.41f, -0.70f, 0.00f, -7.41f, 0.00f, 1.00f, 0.00f)
+		setCamera(-0.70f, 0.00f, -1.41f, -0.70f, 0.00f, -7.41f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene13_ShantRas = false;
 	}
 }
@@ -811,48 +824,74 @@ void displayScene13_Shant(void)
 
 void updateScene13_ShantRas(void)
 {
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	//setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -2.75f, 0.01f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -8.75f, 0.01f);
+	if (cameraEyeZ <= -2.0f)
+		startMaskAnimation = true;
+	if (startCameraZoomToMan == true)
+	{
+		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
+		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
+		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.05f);
+		cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -8.51f, 0.05f);
+		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.05f);
+		cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -14.51f, 0.05f);
+	}
+#endif // ENABLE_CAMERA_ANIMATION
+
+	if (startMaskAnimation == true)
+	{
 #ifdef ENABLE_EROSION
 
-	maskTranslationRadii[0] += 0.004f;
-	maskTranslationRadiiY[0] += 0.004f;
-	maskScales[0] += 0.00001f;
-	for (int i = 0; i < 9; i++)
-	{
-		//if (maskTranslationRadii[i] >= 0.433f)
-		if (maskTranslationRadiiY[i] >= 0.733f)
+		maskTranslationRadii[0] += 0.003f;
+		maskTranslationRadiiY[0] += 0.004f;
+		maskScales[0] += 0.00001f;
+		for (int i = 0; i < 9; i++)
 		{
-			maskTranslationRadii[i + 1] += 0.004f;
-			maskTranslationRadiiY[i + 1] += 0.004f;
-			maskScales[i + 1] += 0.00001f;
+			//if (maskTranslationRadii[i] >= 0.433f)
+			if (maskTranslationRadiiY[i] >= 0.733f)
+			{
+				maskTranslationRadii[i + 1] += 0.003f;
+				maskTranslationRadiiY[i + 1] += 0.004f;
+				maskScales[i + 1] += 0.00001f;
+			}
+			if (maskTranslationRadii[i] >= 2.1f)
+				maskTranslationRadii[i] = 2.1f;
+
+			if (maskTranslationRadiiY[i] >= 2.4f)
+				maskTranslationRadiiY[i] = 2.4f;
+
+			//if (maskTranslationRadii[8] == 1.3f)
+			//	masksTransformationsComplete = true;
+
+			if (maskTranslationRadiiY[8] == 2.4f)
+				masksTransformationsComplete = true;
+
+			if (maskScales[i] >= 0.007f)
+				maskScales[i] = 0.007f;
 		}
-		if (maskTranslationRadii[i] >= 2.1f)
-			maskTranslationRadii[i] = 2.1f;
 
-		if (maskTranslationRadiiY[i] >= 2.4f)
-			maskTranslationRadiiY[i] = 2.4f;
-
-		//if (maskTranslationRadii[8] == 1.3f)
-		//	masksTransformationsComplete = true;
-
-		if (maskTranslationRadiiY[8] == 2.4f)
-			masksTransformationsComplete = true;
-
-		if (maskScales[i] >= 0.007f)
-			maskScales[i] = 0.007f;
-	}
-
-	if (masksTransformationsComplete == true)
-	{
-		updateErosion(offsetIncrement, offset_ras[8], 0.001f);
-		for (int i = 8; i > -1; i--)
+		if (masksTransformationsComplete == true)
 		{
-			if (offset_ras[i][0] <= 0.33f)
-				updateErosion(offsetIncrement, offset_ras[i - 1], 0.001f);
-			if (offset_ras[i][0] <= 0.17f)
-				isMaskQuadEnabled[i] = false;
+			updateErosion(offsetIncrement, offset_ras[8], 0.005f);
+			for (int i = 8; i > -1; i--)
+			{
+				if (offset_ras[i][0] <= 0.33f)
+					updateErosion(offsetIncrement, offset_ras[i - 1], 0.005f);
+				if (offset_ras[i][0] <= 0.17f)
+					isMaskQuadEnabled[i] = false;
+				if (isMaskQuadEnabled[0] == false)
+					startCameraZoomToMan = true;
+			}
 		}
-	}
 #endif // ENABLE_EROSION
+	}
+
 
 }
 
