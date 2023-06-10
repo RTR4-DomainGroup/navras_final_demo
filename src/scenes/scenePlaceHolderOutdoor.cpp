@@ -10,6 +10,7 @@
 #include "../../inc/shaders/ADSLightDynamicShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
+#include "../../inc/Navras.h"
 
 
 #ifdef ENABLE_WATER
@@ -43,9 +44,6 @@
 #ifdef ENABLE_STARFIELD
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
-
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_SKYBOX
 #include "../../inc/effects/SkyboxEffect.h"
@@ -85,9 +83,14 @@ struct FSQuadUniform fsqUniform;
 struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneCloudNoiseUniform;
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//struct CloudNoiseUniform sceneCloudNoiseUniform;
+// float myScale = 1.0f;
+// float noiseScale = 2.0f;
+// bool noiseScaleIncrement = true;
+// GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+// GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -141,17 +144,9 @@ struct FrameBufferDetails fboEarthAndSpace;
 extern int windowWidth;
 extern int windowHeight;
 
-float myScale = 1.0f;
-
-float noiseScale = 2.0f;
-bool noiseScaleIncrement = true;
-
 mat4 viewMatrix;
 
-GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-
-GLuint noise_texture;
+//GLuint noise_texture;
 
 GLfloat angleCube;
 
@@ -341,20 +336,20 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 #endif // ENABLE_SKYBOX
 
-#ifdef ENABLE_CLOUD_NOISE
-
-	noise_texture = initializeCloud();
-	if (noise_texture == 0)
-	{
-		LOG("initializeCloud() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeCloud() Successfull!!!\n");
-	}
-
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//
+//	noise_texture = initializeCloud();
+//	if (noise_texture == 0)
+//	{
+//		LOG("initializeCloud() FAILED!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("initializeCloud() Successfull!!!\n");
+//	}
+//
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_STARFIELD
 
@@ -396,7 +391,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_BILLBOARDING
 	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/grass.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower2.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);
@@ -445,6 +440,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glViewport(0, 0, (GLsizei)waterReflectionFrameBufferDetails.textureWidth, (GLsizei)waterReflectionFrameBufferDetails.textureHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)waterReflectionFrameBufferDetails.textureWidth / waterReflectionFrameBufferDetails.textureHeight, 0.1f, 1000.0f);
+
 		displayPasses(1, true, true, false, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -500,37 +496,39 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 #ifdef ENABLE_SHADOW
 
-		// Shadow
-		glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
-		glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
-		displayPasses(1, true, true, false, 1);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	#endif // ENABLE_SHADOW
+	// Shadow
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
+	glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+	displayPasses(1, true, true, false, 1);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		//////////////////////////////////////////////////////////////
-		/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
-			0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		fsqUniform = useFSQuadShader();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+#endif // ENABLE_SHADOW
 
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);*/
+	//////////////////////////////////////////////////////////////
+	/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
+		0.1f, 1000.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	fsqUniform = useFSQuadShader();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+
+	displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUseProgram(0);*/
 
 	if(!isGaussianBlurRequired && !isGodRequired) 
 	{
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
 			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		LOG("Enter\n");
 		displayPasses(1, false, false, isWaterRequired, 0);
 	}
 	else if(isGaussianBlurRequired) 
@@ -542,6 +540,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		LOG("Enter\n");
 		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -583,7 +582,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
 		float color[3] = {1.0f, 1.0f, 1.0f};
-		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
+		if(getCurrentScene() == SCENE02_EARTH_AND_SPACE)
 		{
 			color[0] = 1.0f;
 			color[1] = 0.65f;
@@ -612,7 +611,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 		sceneGodRaysUniform = useGodRaysShader();
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -628,8 +626,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
 		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-		if(CURRENT_SCENE == SCENE02_EARTH_AND_SPACE)
-		{
+		if(getCurrentScene() == SCENE02_EARTH_AND_SPACE) {
 			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
 		}
 		// else
@@ -745,10 +742,10 @@ void updateScene_PlaceHolderOutdoor(void)
 	deltaTime = updateStarfield(deltaTime);
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	// update Cloud
+//	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_WATER
 
@@ -799,15 +796,15 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	uninitializeAtmosphere();
 #endif // ENABLE_ATMOSPHERE
 
-#ifdef ENABLE_CLOUD_NOISE
-	
-	uninitializeCloud();
-	if (noise_texture)
-	{
-		glDeleteTextures(1, &noise_texture);
-		noise_texture = 0;
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	
+//	uninitializeCloud();
+//	if (noise_texture)
+//	{
+//		glDeleteTextures(1, &noise_texture);
+//		noise_texture = 0;
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)
