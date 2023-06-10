@@ -723,7 +723,7 @@ void displayNavras(void)
 	}
 	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
 	{
-		shouldSceneRaudraMaskAppear = true;
+		shouldSceneRaudraMaskAppear = false;
 		
 		audio(SCENE13_SHANT_RAS);
 		displayScene_PlaceHolderIndoor(setCameraScene13_ShantRas, displayScene13_Shant, shouldSceneRaudraMaskAppear);
