@@ -15,7 +15,7 @@ struct ADSUniform
     GLuint viewpositionUniform;
     GLuint textureSamplerUniform_normal;
 
-    // lIght
+    // light
     GLuint laUniform;
     GLuint ldUniform;
     GLuint lsUniform;
@@ -42,7 +42,7 @@ struct ADSUniform
     GLuint skyFogColorUniform;
     GLuint fogEnableUniform;
     GLuint uniform_enable_godRays;
-
+    GLuint isInstanced;
     GLuint godrays_blackpass_sphere;
 
 };

@@ -1,69 +1,121 @@
 #include "../../inc/helper/common.h"
 
-
-#pragma once
-
 // standard headers
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <string.h>
 
 #include "../../inc/helper/constants.h"
 
 #ifdef __linux__ 
+// linux specific headers
 
+#elif _WIN32 // windows code goes here
+// windows specific header
 
-#elif _WIN32
-
-// windows code goes here
-// windows header
 #include <Windows.h>
 #include <strsafe.h>
 
 // Open GL headers
 #include <GL/gl.h>
 
+char* getcwd(char* cwd, size_t size)
+{
+    return (cwd);
+}
 
 #else
+// platform support not added
 
 #endif
 
+
 // macros
-#include <time.h>
 
-
+// file scoped global variables
+static char _currdir[256] ; 
 static char _filename[256] ; 
-static FILE* _pFile ; 
+static FILE* _pFile = NULL; 
+
+
+// external functions
+extern void set_title(const char* const);
+
+// internal function declaration
+char* currentDateTime(void);
 
 
 ////////////
 
 static char log_buffer[MAX_LOG_LENGTH];
 
-char* vararg2string(const char* format, ...)
+const char* filename(const char* filewithpath)
 {
-    va_list _ArgList;
-    memset(log_buffer, 0, MAX_LOG_LENGTH);
-    __crt_va_start(_ArgList, format);
-    _vsnprintf_l(log_buffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
-    __crt_va_end(_ArgList);
-    return (log_buffer);
+    int len = strlen(filewithpath);
+    while(len > 0) {
+        char c = filewithpath[len -1];
+        if(c == PATH_SEPARATOR)
+            return (filewithpath + len);
+        len--;
+    }
+    return (filewithpath);
 }
 
-char* currentDateTime()
+const char* removepath(const char* filewithpath)
 {
-    time_t now = time(0);
-    struct tm curr_time = *localtime(&now);
-    memset(log_buffer, 0, MAX_LOG_LENGTH);
-    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", &curr_time);
-    return (log_buffer);
-};
+    char cwd[MAX_LOG_LENGTH];
+    getcwd(cwd, sizeof(cwd));
+    const char* result = strstr(filewithpath, cwd);
+    if(result != NULL)
+    {
+        return (filewithpath + strlen(cwd)+1);
+    }
 
+    return (filewithpath);
+}
+
+int log_printf_internal(char const* const filewithpath, char const* const funcname, int linenum, char const* const buffer)
+{
+    int _Result = 0;
+    char firstCall = 0;
+    if(0 == strlen(_filename)) {
+        strcpy(_filename, "log.txt");
+        firstCall = 1;
+    }
+    
+	if ((_pFile = fopen( _filename, firstCall?"w":"a")) == NULL)
+	{
+		_Result = -1;
+	}
+    else
+    {
+        // _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), filename(filewithpath), linenum, funcname, myBuffer);
+        // _Result = fprintf(_pFile, "%s %s(%d):%s(): %s", currentDateTime(), filewithpath, linenum, funcname, buffer);
+        _Result = fprintf(_pFile, "%s", buffer);
+		fclose(_pFile);
+        _pFile = NULL;
+    }
+    return _Result;	
+}
 
 #ifdef __linux__ 
     //linux code goes here
     // dummy macro
 #include <sys/time.h>
 #include <string.h>
+
+char* currentDateTime(void)
+{
+    time_t timer = 0;
+    struct tm* tm_info = NULL;
+
+    // timer = time(NULL);
+    tm_info = localtime(&timer);
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", tm_info);
+    return (log_buffer);
+};
 
 int log_open(char const* FileName , char const* Mode)
 {
@@ -87,31 +139,33 @@ int log_open(char const* FileName , char const* Mode)
 	{
         strcpy(_filename, FileName);
         retval = 0;
+        fclose(_pFile);
+        _pFile = NULL;
 	}
 
-    fclose(_pFile);
-    _pFile = NULL;
     return retval;
 }
 
-
-int log_printf(char const* const _Format, ...)
+int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
-    int retval = -1;
-	if ((_pFile = fopen(_filename, "a")) == NULL)
-	{
-		retval = -1;
-	}
-    else
-    {
-        va_list _ArgList;
-        __builtin_va_start(_ArgList, _Format);
-        retval = vfprintf(_pFile, _Format, _ArgList);
-        __builtin_va_end(_ArgList);
-    }
-    fclose(_pFile);
-    _pFile = NULL;
-    return retval;	
+
+    char buffer[MAX_LOG_LENGTH] = {};
+    va_list _ArgList;
+    __builtin_va_start(_ArgList, format);
+    vsnprintf(buffer, MAX_LOG_LENGTH, format, _ArgList);
+    __builtin_va_end(_ArgList);
+
+    return log_printf_internal(filewithpath, funcname, linenum, buffer);
+}
+
+char* vararg2string(const char* format, ...)
+{
+    va_list _ArgList;
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    __builtin_va_start(_ArgList, format);
+    vfprintf(_pFile, format, _ArgList);
+    __builtin_va_end(_ArgList);
+    return (log_buffer);
 }
 
 #elif _WIN32
@@ -119,6 +173,14 @@ int log_printf(char const* const _Format, ...)
 // windows code goes here
 #include <strsafe.h>
 
+char* currentDateTime()
+{
+    time_t now = time(NULL);
+    struct tm curr_time = *localtime(&now);
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    strftime(log_buffer, MAX_LOG_LENGTH, "%Y-%m-%d %X", &curr_time);
+    return (log_buffer);
+};
 
 // file operations
 int log_open(char const* FileName , char const* Mode)
@@ -133,59 +195,51 @@ int log_open(char const* FileName , char const* Mode)
 	{
         strcpy(_filename, FileName);
         retval = 0;
+        fclose(_pFile);
+        _pFile = NULL;
 	}
 
-    fclose(_pFile);
-    _pFile = NULL;
     return retval;
-}
-
-const char* removepath(const char* filewithpath)
-{
-    int len = strlen(filewithpath);
-    while(len > 0) {
-        char c = filewithpath[len -1];
-        if(c == PATH_SEPARATOR)
-            return (filewithpath + len);
-        len--;
-    }
-    return (filewithpath);
 }
 
 int log_printf(char const* const filewithpath, char const* const funcname, int linenum, char const* const format, ...)
 {
-    int _Result = 0;
-    char firstCall = 0;
-    if(0 == strlen(_filename)) {
-        strcpy(_filename, "log.txt");
-        firstCall = 1;
-    }
-    
-	if (fopen_s(&_pFile, _filename, firstCall?"w":"a") != 0)
-	{
-		_Result = -1;
-	}
-    else
-    {
-        char myBuffer[MAX_LOG_LENGTH] = {};
-        va_list _ArgList;
-        __crt_va_start(_ArgList, format);
-        _vsnprintf_l(myBuffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
-        __crt_va_end(_ArgList);
+    char buffer[MAX_LOG_LENGTH] = {};
 
-        _Result = fprintf(_pFile, "%s %s:%s (%d) %s", currentDateTime(), removepath(filewithpath), funcname, linenum, myBuffer);
-    }
-    fclose(_pFile);
-    return _Result;	
+    va_list _ArgList;
+    __crt_va_start(_ArgList, format);
+    _vsnprintf_l(buffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
+    __crt_va_end(_ArgList);
+
+    int retval = log_printf_internal(filewithpath, funcname, linenum, buffer);
+
+    // adding to log to title
+    set_title(buffer);
+
+    return (retval);
 }
 
+char* vararg2string(const char* format, ...)
+{
+    va_list _ArgList;
+    memset(log_buffer, 0, MAX_LOG_LENGTH);
+    __crt_va_start(_ArgList, format);
+    _vsnprintf_l(log_buffer, MAX_LOG_LENGTH, format, NULL, _ArgList);
+    __crt_va_end(_ArgList);
+    return (log_buffer);
+}
 
 #else
 // architecture not supported
 #endif
 
-
 int log_close(void)
 {
-    return (_pFile) ? fclose(_pFile) : 0;
+    if(_pFile)  {
+        fclose(_pFile);
+        _pFile = NULL;
+    }
+    return (0);
 }
+
+

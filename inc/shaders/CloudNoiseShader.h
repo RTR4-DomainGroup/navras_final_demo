@@ -22,9 +22,16 @@ struct CloudNoiseUniform
 	GLuint noiseScaleUniform;
 
 	GLuint noiseSamplerUniform;
+	GLuint textureSamplerUniform;
 	GLuint skyColorUniform;
 	GLuint cloudColorUniform;
 	GLuint uniform_enable_godRays;
+
+	// eroded uniforms
+	GLuint offsetUniform;
+
+	// cloud or eroded switch
+	GLuint cloudErodeToggleUniform;
 };
 
 int intializeCloudNoiseShader(void);

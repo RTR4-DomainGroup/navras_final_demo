@@ -5,6 +5,7 @@
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
+#include "../../inc/shaders/ErosionNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
 #include "../inc/shaders/WaterShader.h"
@@ -15,87 +16,92 @@
 #include "../../inc/shaders/ParticleShader.h"
 
 
-BOOL initAllShaders(void)
+bool initAllShaders(void)
 {
     // Variable Declarations
 
-    // Code
+    // // Code
     if (initializeFSQuadShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeAtmosphereShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeADSShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeADSDynamicShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeSkyboxShader() != 0)
     {
-        return FALSE;
+        return false;
     }
     
-    if(initializeFSQuadShader() != 0)
-    {
-        return FALSE;
-    }
+    // if(initializeFSQuadShader() != 0)
+    // {
+    //     return false;
+    // }
 
     if (initializeGodraysShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeTerrainShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if(intializeCloudNoiseShader() != 0)
     {
-        return FALSE;
+        return false;
+    }
+
+    if(intializeErosionNoiseShader() != 0)
+    {
+        return false;
     }
 
     if (initializeStarfieldShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
 	if(initializeBillboardingShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeWaterShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initialize_horrizontalBlur() != 0)
     {
-        return FALSE;
+        return false;
     }
     
     if (initialize_verticalBlur() != 0)
     {
-        return FALSE;
+        return false;
     }
 
     if (initializeParticleShader() != 0)
     {
-        return FALSE;
+        return false;
     }
 
-    return TRUE;
+    return true;
 }
 
 void uninitializeAllShaders(void)

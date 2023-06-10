@@ -2,13 +2,11 @@
 
 GLuint fsQuadShaderProgramObject;
 struct FSQuadUniform fsQuadUniform;
-extern HWND ghwnd;
 
 int initializeFSQuadShader(void)
 {
     // Code
     ZeroMemory((void*)&fsQuadUniform, sizeof(FSQuadUniform));
-
     // Vertex Shader
     const GLchar* vertexShaderSrcCode = 
         "#version 460 core" \
@@ -28,6 +26,7 @@ int initializeFSQuadShader(void)
         "}";
 
     // Create the Vertex Shader object.
+    
     GLuint vertexShaderObj = glCreateShader(GL_VERTEX_SHADER);
 
     // Give the shader source to shader object.
@@ -59,7 +58,7 @@ int initializeFSQuadShader(void)
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -86,8 +85,9 @@ int initializeFSQuadShader(void)
         "void main(void)" \
         "{" \
             "FragColor = texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out);" \
-            /*"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
+          /*"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
             "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \*/
+            //"FragColor = vec4(vec3(depthValue), 1.0); \n" \/
             "\n" \
         "}";
     
@@ -124,11 +124,12 @@ int initializeFSQuadShader(void)
                 free(log);
                 log = NULL;
                 uninitializeFSQuadShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
 
+    LOG("fragmentShaderSrcCode in doen.\n");
     // Shader Program Object
     fsQuadShaderProgramObject = glCreateProgram();
     
@@ -165,7 +166,7 @@ int initializeFSQuadShader(void)
                 LOG("FSQuad Shader Program Link Log: %s\n", log);
                 free(log);
                 uninitializeFSQuadShader();
-                DestroyWindow(ghwnd);
+                return(-1);
             }
         }
     }
@@ -186,7 +187,7 @@ struct FSQuadUniform useFSQuadShader(void)
 
 void uninitializeFSQuadShader(void)
 {
-    // Code
+    // Code    
     if (fsQuadShaderProgramObject)
     {
         GLsizei numAttachedShader;

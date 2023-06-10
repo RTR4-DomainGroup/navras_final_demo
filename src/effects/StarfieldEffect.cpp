@@ -26,7 +26,7 @@ static inline float random_float()
 int initializeStarfield(GLuint* texture, const char* path)
 {
 	
-	if (LoadGLTexture_UsingSOIL(texture, path) == FALSE)
+	if (LoadGLTexture_UsingSOIL(texture, path) == false)
 	{
 		LOG("LoadGLTexture texture_star For Starfield FAILED!!!\n");
 		return(-1);
@@ -92,6 +92,7 @@ void displayStarfield(GLuint texture)
 		glDrawArrays(GL_POINTS, 0, NUM_STARS);
 	glBindVertexArray(0);
 
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_BLEND);
 
 }
@@ -99,7 +100,7 @@ void displayStarfield(GLuint texture)
 float updateStarfield(float time)
 {
 	// Code
-	time = time + 0.00025;
+	time = time + 0.0005;
 	return time;
 }
 
@@ -109,7 +110,7 @@ void uninitializeStarfield(GLuint texture)
 	if (texture)
 	{
 		glDeleteTextures(1, &texture);
-		texture = NULL;
+		texture = 0;
 	}
 
 	// Delete/Unintilization of Vertex Buffer Object

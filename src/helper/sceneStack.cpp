@@ -13,19 +13,48 @@
 #include <stdio.h>   // for File IO functions
 #include <stdlib.h>  // for exit()
 #include "../../inc/helper/sceneStack.h"
+#include "../../inc/helper/common.h"
 
 
-static scene_t sceneStack[32];
-static int head = 0;
+static scene_types_t sceneStack[MAX_SCENES];
+static int head = -1;
+static int curr = -1;
 
-void scenePush(scene_t scene)
+void scenePush(scene_types_t scene)
 {
-    sceneStack[head] = scene;
-    head++;
+    if(head < (int)MAX_SCENES) {    
+        sceneStack[++head] = scene;
+        LOG("scene %d pushed, stack Head: %d !!!\n", scene, head);
+        curr = head;
+    }
+    else {
+        LOG("scene stack overflow: %d !!!\n", head);
+    }
 }
 
-scene_t scenePop ()
+scene_types_t scenePop ()
 {
-    head--;
-    return sceneStack[head];
+    scene_types_t scene = SCENE_INVALID;
+    if(head >= 0) {
+        scene = sceneStack[head];
+        LOG("scene %d poped, stack Head: %d !!!\n", scene, head);
+        sceneStack[head] = SCENE_INVALID;
+        curr = --head;
+    }
+    else {
+        LOG("scene stack underflow: %d !!!\n", head);
+    }
+    return scene;
 }
+
+
+scene_types_t sceneNext() 
+{
+    return sceneStack[((curr - 1) >= 0) ? --curr : curr];
+}
+
+scene_types_t scenePrev() 
+{
+    return sceneStack[((curr + 1) <= head) ? ++curr : curr];
+}
+

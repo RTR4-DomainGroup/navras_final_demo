@@ -2,6 +2,8 @@
 #include "../../inc/helper/camera.h"
 #include "../../inc/helper/geometry.h"
 
+// Atmosphere Scattering
+AtmosphericVariables atmosVariables;
 
 int initializeAtmosphere(AtmosphericVariables atmosVariables) {
 	

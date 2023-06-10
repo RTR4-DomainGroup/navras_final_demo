@@ -1,6 +1,6 @@
-#pragma once
 #include "../../inc/helper/common.h"
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
+#include "../../inc/shaders/ADSLightDynamicShader.h"
 
 #define MAX_BONES 100
 
@@ -761,7 +761,7 @@ unsigned int DynamicModel::TextureFromFile(const char* path, const string& direc
 
     if (data)
     {
-        LOG("SUCCESS : texture directory = %s\n", directory.c_str());
+        //LOG("SUCCESS : texture directory = %s\n", directory.c_str());
         LOG("SUCCESS : texture filename = %s\n", filename.c_str());
 
         GLenum format;
@@ -789,7 +789,7 @@ unsigned int DynamicModel::TextureFromFile(const char* path, const string& direc
     }
     else
     {
-        LOG("ERROR : texture directory = %s\n", directory.c_str());
+        //LOG("ERROR : texture directory = %s\n", directory.c_str());
         LOG("ERROR: texture filename = %s\n", filename.c_str());
         //MessageBox(NULL, TEXT("Texture not loaded"), TEXT("ERROR"), MB_OK);
         SOIL_free_image_data(data);
@@ -824,7 +824,8 @@ vector<DynamicModelTexture> DynamicModel::loadMaterialTextures(aiMaterial* mat, 
             texture.id = TextureFromFile(str.C_Str(), this->directory);
 
             if (texture.id == 0)
-                MessageBox(NULL, NULL, TEXT("Tex not loaded"), MB_OK);
+                // MessageBox(NULL, NULL, TEXT("Tex not loaded"), MB_OK);
+                LOG("Tex not loaded\n");
 
             texture.type = typeName;
             texture.path = str.C_Str();
@@ -860,7 +861,11 @@ void loadDynamicModel(const char* path, DYNAMIC_MODEL* dynamicModel)
 
 void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime)
 {
-    float currentFrame = GetTickCount();
+    float currentFrame = 0.0f;
+#ifdef _WIN32
+    currentFrame = GetTickCount();
+#endif // _WIN32
+
     m_deltaTime = (currentFrame - m_lastFrame) * deltaTime;
     m_lastFrame = currentFrame;
 

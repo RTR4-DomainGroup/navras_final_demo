@@ -5,7 +5,6 @@
 GLuint adsShaderProgramObject;
 
 ADSUniform adsUniform;
-extern HWND ghwnd;
 
 int initializeADSShader(void)
 {
@@ -21,6 +20,7 @@ int initializeADSShader(void)
 		"#version 460 core \n" \
 		"\n" \
 		"in vec4 a_position; \n" \
+		"in vec4 a_instancePosition; \n" \
 		"in vec4 a_color; \n" \
 		"in vec2 a_texcoord; \n" \
 		"in vec3 a_normal; \n"	\
@@ -39,6 +39,7 @@ int initializeADSShader(void)
 		"uniform int u_depthQuadScene; \n" \
 
 		"uniform mat4 lightSpaceMatrix; \n" \
+		"uniform int u_isInstanced = 1; \n" \
 		"out VS_OUT{ \n" \
 			"vec4 FragPos; \n" \
 			"vec3 Normal; \n" \
@@ -64,17 +65,28 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-			
+			"vec4 pos;\n" \
+			"if(u_isInstanced == 1)\n" \
+			"{"
+				"pos = (a_position + a_instancePosition); \n" \
+			"}"
+			"else"
+			"{"
+				"pos = a_position;\n" \
+			"}"
+			"vec4 worldPos; \n" \
+			"worldPos = u_modelMatrix * pos; \n" \
+
 			"mat3 TBN; \n" \
 			"if (u_actualScene == 1) \n" \
 			"{ \n" \
-				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position; \n" \
+				"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * pos; \n" \
 				"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix); \n" \
 				"transformedNormals = normalMatrix * a_normal; \n" \
 				"lightDirection = vec3(u_lightPosition) - eyeCoordinates.xyz; \n" \
 				"viewerVector = vec3(-eyeCoordinates); \n" \
-				"vs_out.FragPos = u_modelMatrix * a_position; \n" \
-				
+				"vs_out.FragPos = u_modelMatrix * pos; \n" \
+					
 				//Normal Mapping
 				"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
 		        "vec3 N = normalize(normalMatrix_nm * a_normal); \n" \
@@ -90,29 +102,28 @@ int initializeADSShader(void)
 				"vs_out.Normal = mat3(transpose(inverse(u_modelMatrix))) * a_normal; \n" \
 				"vs_out.FragPosLightSpace = lightSpaceMatrix * vs_out.FragPos; \n" \
 
-				"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position; \n" \
+				"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * pos; \n" \
 				"a_color_out = a_color;\n" \
 				"a_texcoord_out = a_texcoord;\n" \
 
 			"} \n" \
-			
 
 			"if(u_depthScene == 1) { \n" \
 
-				"gl_Position = lightSpaceMatrix * u_modelMatrix * a_position; \n" \
+				"gl_Position = lightSpaceMatrix * u_modelMatrix * pos; \n" \
 
 			"} \n" \
 
 			"if(u_depthQuadScene == 1) { \n" \
 
 				"a_texcoord_out = a_texcoord;\n" \
-				"gl_Position = a_position; \n" \
+				"gl_Position = pos; \n" \
 
 			"} \n" \
 
 			"if (u_fogEnable == 1) \n" \
 			"{ \n" \
-				"vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * a_position; \n"		\
+				"vec4 positionRelativeToCamera = u_viewMatrix * u_modelMatrix * pos; \n"		\
 				"float distance = length(positionRelativeToCamera.xyz); \n"							\
 				"visibility = exp(-pow((distance * u_density), u_gradient)); \n"					\
 				"visibility = clamp(visibility, 0.0f, 1.0f); \n"									\
@@ -143,7 +154,7 @@ int initializeADSShader(void)
 				LOG("ADS Vertex Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
-				DestroyWindow(ghwnd);
+				return(-1);
 			}
 
 		}
@@ -237,8 +248,12 @@ int initializeADSShader(void)
 			"if (enable_godRays == 1) \n" \
 			"{\n" \
 				"if(u_actualScene == 1) { \n" \
-					"vec4 phong_ads_light; \n" \
+					"vec4 phong_ads_light = vec4(1.0, 1.0, 1.0, 1.0); \n" \
+
 					"vec4 texColor = texture(texture_diffuse, a_texcoord_out); \n"		\
+
+					"if(texColor.a < 0.1) \n" \
+						"discard; \n" \
 					
 					//read normals from normal map and normalize it
 					"vec3 normalizedNormals = normalize(texture(texture_normal,a_texcoord_out).rgb*2.0 - vec3(1.0)); \n" \
@@ -257,9 +272,9 @@ int initializeADSShader(void)
 			        "vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
 					
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
-					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
+					"phong_ads_light = (ambient + diffuse + specular); \n" \
 					
-					"FragColor = phong_ads_light; \n" \
+					"FragColor = texColor + phong_ads_light; \n" \
 					"if (u_fogEnable == 1) \n" \
 					"{ \n" \
 						"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
@@ -311,7 +326,7 @@ int initializeADSShader(void)
 				LOG("ADS Fragment Shader Compilation Log: %s\n", log);
 				free(log);
 				uninitializeADSShader();
-				DestroyWindow(ghwnd);
+				return(-1);
 			}
 
 		}
@@ -322,6 +337,7 @@ int initializeADSShader(void)
 	adsShaderProgramObject = glCreateProgram();
 	glAttachShader(adsShaderProgramObject, vertexShadderObject);
 	glAttachShader(adsShaderProgramObject, fragmentShadderObject);
+	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_INSTANCE_POSITION, "a_instancePosition");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
 	glBindAttribLocation(adsShaderProgramObject, DOMAIN_ATTRIBUTE_NORMAL, "a_normal");
@@ -346,7 +362,7 @@ int initializeADSShader(void)
 				free(log);
 				log = NULL;
 				uninitializeADSShader();
-				DestroyWindow(ghwnd);
+				return(-1);
 
 			}
 		}
@@ -384,9 +400,11 @@ int initializeADSShader(void)
 	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
 	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
 	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
+	adsUniform.isInstanced = glGetUniformLocation(adsShaderProgramObject, "u_isInstanced");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);
+	glUniform1i(adsUniform.shadowMapSamplerUniform, 1);
     glUniform1i(adsUniform.textureSamplerUniform_normal, 2);   //don't change
 	glUseProgram(0);
 
@@ -427,7 +445,6 @@ void uninitializeADSShader(void)
 			glDetachShader(adsShaderProgramObject, shaderObjects[i]);
 			glDeleteShader(shaderObjects[i]);
 			shaderObjects[i] = 0;
-
 		}
 
 		free(shaderObjects);
