@@ -539,7 +539,7 @@ int initializeNavras(void) {
 	
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
-	//scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	currentScene = scenePop();
@@ -650,9 +650,12 @@ void displayNavras(void)
 	}
 	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
 	{
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
+
 		audio(SCENE05_KARUN_RAS);
 		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-		displayScene5_karun();
+		//displayScene5_karun();
+		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
 	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
