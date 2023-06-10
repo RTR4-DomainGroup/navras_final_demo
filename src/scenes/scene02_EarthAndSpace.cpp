@@ -159,6 +159,7 @@ void setCameraScene02_EarthAndSpace(void)
 	if (isInitialDisplayScene02_EarthAndSpace == true)
 	{
 		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		initializeSphere(2.5f, 60, 60);
 		isInitialDisplayScene02_EarthAndSpace = false;
 	}
 }
