@@ -443,10 +443,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
