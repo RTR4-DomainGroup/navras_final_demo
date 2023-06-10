@@ -68,19 +68,19 @@ int initializeSSAOShader(void)
     const GLchar* fragmentShaderSrcCode = 
         "#version 460 core \n" \
         "\n" \
-        "uniform sampler2D sColor;												\n" \
-        "uniform sampler2D sNormalDepth;										\n" \
+        "layout (binding = 0) uniform sampler2D sColor;							\n" \
+        "layout (binding = 1) uniform sampler2D sNormalDepth;					\n" \
         "																		\n" \
         "out vec4 color;														\n" \
         "																		\n" \
-        "float ssao_level = 0.30;										\n" \
-        "float object_level = 1.50;										\n" \
-        "float ssao_radius = 50.0;										\n" \
-        "bool weight_by_angle = true;									\n" \
-        "uint point_count = 8;											\n" \
-        "bool randomize_points = true;									\n" \
+        "float ssao_level = 0.05;										        \n" \
+        "float object_level = 1.2;										        \n" \
+        "float ssao_radius = 0.05 * 2560.0/1000.0;								\n" \
+        "bool weight_by_angle = true;									        \n" \
+        "uint point_count = 32;											        \n" \
+        "bool randomize_points = true;									        \n" \
         "																		\n" \
-        "uniform SAMPLE_POINTS													\n" \
+        "layout (binding = 0, std140) uniform SAMPLE_POINTS						\n" \
         "{																		\n" \
         "	vec4 pos[256];														\n" \
         "	vec4 random_vectors[256];											\n" \
