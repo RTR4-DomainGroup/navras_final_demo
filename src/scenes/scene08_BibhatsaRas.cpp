@@ -270,9 +270,10 @@ void initializepileTrashInstancePositions(void)
 			xPos = xMinLast;
 		}
 	}
-
+#ifdef ENABLE_STATIC_MODELS
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/1/untitled.obj", &pileOfTrash, NO_OF_INSTANCES_KACHARA, tmpPositions);
+#endif // ENABLE_STATIC_MODELS
 }
 
 void initializeCiga1InstancePositions(void)
@@ -307,9 +308,13 @@ void initializeCiga1InstancePositions(void)
 			xPos = xMinLast;
 		}
 	}
+	#ifdef ENABLE_STATIC_MODELS
 
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/3/1.obj", &cigarette1, NO_OF_INSTANCES_KACHARA, tmpPositions);
+
+	#endif // ENABLE_STATIC_MODELS
+	
 }
 
 void initializeCiga2InstancePositions(void)
@@ -344,9 +349,13 @@ void initializeCiga2InstancePositions(void)
 			xPos = xMinLast;
 		}
 	}
+	#ifdef ENABLE_STATIC_MODELS
 
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/3/2.obj", &cigarette2, NO_OF_INSTANCES_KACHARA, tmpPositions);
+
+	#endif // ENABLE_STATIC_MODELS
+	
 }
 
 void initializeRedCan3InstancePositions(void)
@@ -382,8 +391,13 @@ void initializeRedCan3InstancePositions(void)
 		}
 	}
 
+	#ifdef ENABLE_STATIC_MODELS
+
 	vector<float> tmpPositions{ instance_positions, instance_positions + (NO_OF_INSTANCES_KACHARA * 3) };
 	loadStaticModelInstanced("res/models/scene08-beebhatsa/Trash_4June/2/3.obj", &canTrash3, NO_OF_INSTANCES_KACHARA, tmpPositions);
+
+	#endif // ENABLE_STATIC_MODELS
+	
 }
 
 void setCameraScene08(void)

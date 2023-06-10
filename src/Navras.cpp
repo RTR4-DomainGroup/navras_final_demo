@@ -89,7 +89,7 @@ int time_scene13 = 10;
 int time_scene14 = 10;
 #else
 int time_scene1 = 5;
-int time_scene2 = 40;
+int time_scene2 = 200;
 int time_scene3 = 40;
 int time_scene4 = 40;
 int time_scene5 = 40;
@@ -467,32 +467,32 @@ int initializeNavras(void) {
 	}
 
 	// SCENE06
-	if (initializeScene06_BhayanakRas() != 0)
-	{
-		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-		return (-8);
-	}
+	// if (initializeScene06_BhayanakRas() != 0)
+	// {
+	// 	LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
-	// SCENE07
-	if (initializeScene07_Raudra() != 0)
-	{
-		LOG("initializeScene7_Raudra() FAILED !!!\n");
-		return (-8);
-	}
+	// // SCENE07
+	// if (initializeScene07_Raudra() != 0)
+	// {
+	// 	LOG("initializeScene7_Raudra() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
-	// SCENE08
-	if (initializeScene08_BibhatsaRas() != 0)
-	{
-		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
-		return (-8);
-	}
+	// // SCENE08
+	// if (initializeScene08_BibhatsaRas() != 0)
+	// {
+	// 	LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
-	// SCENE09
-	if (initializeScene09_VeerRas() != 0)
-	{
-		LOG("initializeScene09_VeerRas() FAILED !!!\n");
-		return (-8);
-	}
+	// // SCENE09
+	// if (initializeScene09_VeerRas() != 0)
+	// {
+	// 	LOG("initializeScene09_VeerRas() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
 	// SCENE10
 	if (initializeScene10_AdbhutRas() != 0)
@@ -535,13 +535,13 @@ int initializeNavras(void) {
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	//scenePush(SCENE12_HASYA_RAS);
-	scenePush(SCENE11_SHRINGAR_RAS);
-	scenePush(SCENE10_ADBHUT_RAS);
-	scenePush(SCENE09_VEER_RAS);
-	scenePush(SCENE08_BIBHATSA_RAS);
+	// scenePush(SCENE11_SHRINGAR_RAS);
+	// scenePush(SCENE10_ADBHUT_RAS);
+	// scenePush(SCENE09_VEER_RAS);
+	// scenePush(SCENE08_BIBHATSA_RAS);
 	
-	scenePush(SCENE07_RAUDRA_RAS);
-	scenePush(SCENE06_BHAYANK_RAS);
+	// scenePush(SCENE07_RAUDRA_RAS);
+	// scenePush(SCENE06_BHAYANK_RAS);
 	//scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 

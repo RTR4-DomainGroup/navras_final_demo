@@ -12,6 +12,7 @@
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/FontShader.h"
 #include "../../inc/scenes/fontRendering.h"
+#include "../../inc/helper/geometrytypes.h"
 
 #ifdef ENABLE_SHADOW
 #include "../../inc/helper/shadowframebuffer.h"
@@ -188,58 +189,6 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 {
 	// Code
 
-	// Time
-	// if (timeFlagEarth == true) {
-	// 	thenEarth = time(NULL);
-	// 	timeFlagEarth = false;
-	// }
-	// nowEarth = time(NULL);
-
-	// if(nowEarth >= thenEarth + 30)
-	// {
-	// 	glEnable(GL_CULL_FACE);
-	// 	glEnable(GL_BLEND);
-	// 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// 	vec4 textColor = vec4(0.3, 0.7, 0.9,alpha);
-	// 	displayFont("Presenting", vec3(-20.0f, 3.0f, -50.0f), 0.05f, textColor);
-	// 	textColor = vec4(1.0f, 0.8f, 0.2f,alpha);
-	// 	displayFont("NAVRAS", vec3(-20.0f, -7.0f, -50.0f), 0.2f, textColor);
-
-	// 	glDisable(GL_CULL_FACE);
-	// 	glDisable(GL_BLEND);
-
-	// 	// update
-	// 	alpha = alpha+0.001;
-	// 	if(alpha>=1.0)
-	// 	{
-	// 		alpha = 1.0f;
-	// 	}
-	// }
-
-	if(now >= then + 23)
-	{
-		glEnable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		vec4 textColor = vec4(0.3, 0.7, 0.9,alpha);
-		displayFont("Presenting", vec3(-20.0f, -3.0f, -50.0f), 0.05f, textColor);
-		textColor = vec4(1.0f, 0.8f, 0.2f,alpha);
-		displayFont("NAVRAS", vec3(-20.0f, -11.0f, -50.0f), 0.2f, textColor);
-
-		glDisable(GL_CULL_FACE);
-		glDisable(GL_BLEND);
-
-		// update
-		alpha = alpha+0.0005;
-		if(alpha>=1.0)
-		{
-			alpha = 1.0f;
-		}
-	}
-
-
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -251,7 +200,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_z = mat4::identity();
 
 	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
-	//displayCamera();
+	// displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
 
@@ -389,39 +338,39 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//// Sun
-		//translationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
 
-		//translationMatrix = vmath::translate(200.0f, 20.0f, -50.0f);					// glTranslatef() is replaced by this line.
-		////scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
-		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+		translationMatrix = vmath::translate(200.0f, 20.0f, -50.0f);					// glTranslatef() is replaced by this line.
+		//scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
-		//glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//if (actualDepthQuadScene == 1)
-		//{
-		//	glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 0);
-		//	glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 1);
-		//	glUniformMatrix4fv(adsEarthAndSpaceUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-		//}
-		//else
-		//{
-		//	glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 1);
-		//	glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 0);
-		//	glActiveTexture(GL_TEXTURE3);
-		//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-		//}
+		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		if (actualDepthQuadScene == 1)
+		{
+			glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 0);
+			glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 1);
+			glUniformMatrix4fv(adsEarthAndSpaceUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		}
+		else
+		{
+			glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 1);
+			glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 0);
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+		}
 
-		//glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture_sun);
-		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_sun);
+		glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
 
-		////displaySphere(color);
-		//glBindTexture(GL_TEXTURE_2D, 0);
+		//displaySphere(color);
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 
 
@@ -431,6 +380,36 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 
 	}
 
+	if(now >= then + 23)
+	{
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		vec4 textColor = vec4(1.0f, 1.0f, 1.0f,alpha);
+		TRANFORM vector = {-0.5f, 0.23f, -3.0f};
+		update_transformations(NULL, NULL, NULL, &vector);
+		displayFont("Presenting", vec3(vector.x, vector.y, vector.z), 0.003f, textColor);
+		// displayFont("Presenting", vec3(-0.5f, 0.23f, -3.0f), 0.05f, textColor);
+		
+		
+		textColor = vec4(1.0f, 1.0f, 1.0f,alpha);
+		displayFont("NAVRAS", vec3(-1.25f, -0.25f, -3.0f), 0.010f, textColor);
+		// TRANFORM vector = {-1.25f, -0.25f, -3.0f};
+		// update_transformations(NULL, NULL, NULL, &vector);
+		// displayFont("NAVRAS", vec3(vector.x, vector.y, vector.z), 0.010f, textColor);
+
+
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+
+		// update
+		alpha = alpha+0.0005;
+		if(alpha>=1.0)
+		{
+			alpha = 1.0f;
+		}
+	}
 	
 
 }

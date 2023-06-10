@@ -46,7 +46,8 @@ int initializeFont() {
     }
 
 	// find path to font
-    std::string font_name = "res/fonts/arial.ttf";
+    // std::string font_name = "res/fonts/arial.ttf";
+    std::string font_name = "res/fonts/PostersItalicPersonalUseBoldItalic.ttf";
     if (font_name.empty())
     {
         LOG("ERROR::FREETYPE: Failed to load font_name");
@@ -158,8 +159,6 @@ void displayFont(std::string text, vec3 fontTranslate, float fontScale, vec4 fon
 
 	// Use the shader program object
     fontUniforms = useFontShader();
-
-    LOG("in font display() !!!\n");
 
 	mat4 modelViewMatrix = mat4::identity();
 	mat4 translationMatrix = mat4::identity();
