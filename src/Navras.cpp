@@ -69,7 +69,6 @@ bool timeFlag = true;
 time_t now;
 time_t then;
 
-// #define SHORTS
 #ifdef SHORTS
 int time_scene1 = 5;
 int time_scene2 = 10;
@@ -530,7 +529,7 @@ int initializeNavras(void) {
 	 }
 
 	scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);
+	scenePush(SCENE14_PARTICLE);	
 	scenePush(SCENE13_SHANT_RAS);
 	//scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
@@ -540,7 +539,7 @@ int initializeNavras(void) {
 	
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
-	//scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	currentScene = scenePop();
@@ -651,9 +650,12 @@ void displayNavras(void)
 	}
 	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
 	{
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
+
 		audio(SCENE05_KARUN_RAS);
-		
-		displayScene5_karun();
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		//displayScene5_karun();
+		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
 	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
@@ -724,9 +726,11 @@ void displayNavras(void)
 	}
 	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
 	{
+		shouldSceneRaudraMaskAppear = false;
+		
 		audio(SCENE13_SHANT_RAS);
-
-		displayScene13_Shant();
+		displayScene_PlaceHolderIndoor(setCameraScene13_ShantRas, displayScene13_Shant, shouldSceneRaudraMaskAppear);
+		//displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
 	else if (now <= (then + time_scene14) && currentScene == SCENE14_PARTICLE)
@@ -745,7 +749,7 @@ void displayNavras(void)
 		audio(SCENE_INVALID);
 		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
-		QuitApplication();
+		//QuitApplication();
 	}
 
 }
@@ -807,6 +811,12 @@ void updateNavras(void)
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
+	}
+
+	
+	else if (currentScene == SCENE05_KARUN_RAS)
+	{
+		updateScene5_karun();
 	}
 
 	// camera movement related updates
