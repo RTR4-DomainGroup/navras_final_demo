@@ -707,6 +707,7 @@ void displayGaussianBlur(void)
     horizontalBlurUniform = useHorrizontalBlurShader();
 
     glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+	glUniform1f(horizontalBlurUniform.blurFactor, 1.2f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
     glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
@@ -722,6 +723,7 @@ void displayGaussianBlur(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurUniform = useVerticalBlurShader();
 	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glUniform1f(verticalBlurUniform.blurFactor, 1.2f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
     glUniform1i(verticalBlurUniform.vblurTexSamplerUniform, 0);
