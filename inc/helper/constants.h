@@ -86,8 +86,6 @@ static const char *szAudios[] = {
     "Scene12_HasyaRas_40_seconds.wav",
     "Scene13_ShantRas_40_seconds.wav",
     "Scene14_Particle_40_seconds.wav",
-    "Scene13_ShantRas_40_seconds.wav",
-    "Scene14_Particle_40_seconds.wav",
     "audio1.wav",
     "audio3.wav",
 };
