@@ -6,6 +6,7 @@ struct VerticalBlurUniform
     /* data */
     GLuint targetHeight;
     GLuint vblurTexSamplerUniform;
+    GLuint blurFactor;
 };
 
 int initialize_verticalBlur(void);
