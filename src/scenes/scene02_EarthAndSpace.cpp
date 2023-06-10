@@ -92,7 +92,7 @@ static GLfloat materialShininess = 128.0f;
 bool isInitialDisplayScene02_EarthAndSpace = true;
 
 GLfloat cameraRadiusEarthAndSpace = 4.0f;
-GLfloat cameraAngleEarthAndSpace = 90.0f;
+GLfloat cameraAngleEarthAndSpace = 95.0f;
 
 //float distance10;
 
@@ -234,15 +234,18 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glUniform1i(adsEarthAndSpaceUniform.godrays_blackpass_sphere, 0);
 		glUniform1i(adsEarthAndSpaceUniform.isInstanced, 0);
 
-		// Cube
+		// Space Sphere 
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
 
-		translationMatrix = vmath::translate(-200.0f, 0.0f, -10.0f);					// glTranslatef() is replaced by this line.
+		translationMatrix = vmath::translate(0.0f, 0.0f, -15.0f);					// glTranslatef() is replaced by this line.
 		scaleMatrix = vmath::scale(400.0f, 400.0f, 400.0f);
-		modelMatrix = translationMatrix * scaleMatrix;									// ORDER IS VERY IMPORTANT
+
+		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+		rotationMatrix = rotationMatrix * rotationMatrix_x;
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		if (actualDepthQuadScene == 1)
@@ -266,7 +269,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glBindTexture(GL_TEXTURE_2D, fboEarthAndSpace.frameBufferTexture);
 		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
 
-		displayCube();
+		float color[3] = { 1.0f, 1.0f, 1.0f };
+		displaySphere(color);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		// Earth
@@ -276,7 +280,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		scaleMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
 		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = vmath::rotate(angleSphere, 0.0f, 1.0f, 0.0f);
 		rotationMatrix = rotationMatrix * rotationMatrix_x;
@@ -304,7 +308,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		glBindTexture(GL_TEXTURE_2D, texture_earth);
 		//glUniform1i(fboEarthAndSpace.textureSamplerUniform_diffuse, 0);
 
-		float color[3] = { 0.0f, 0.0f, 0.0f };
+		//float color[3] = { 0.0f, 0.0f, 0.0f };
 		if (godRays == 1)
 		{
 			color[0] = 1.0f;
@@ -320,11 +324,9 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		//modelMatrix = mat4::identity();
 		//rotationMatrix = mat4::identity();
 		//scaleMatrix = mat4::identity();
-
 		//translationMatrix = vmath::translate(200.0f, 20.0f, -50.0f);					// glTranslatef() is replaced by this line.
 		////scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
 		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
 		//glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		//if (actualDepthQuadScene == 1)
 		//{
@@ -339,14 +341,11 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		//	glActiveTexture(GL_TEXTURE3);
 		//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 		//}
-
 		//glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		//glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
 		//glActiveTexture(GL_TEXTURE0);
 		//glBindTexture(GL_TEXTURE_2D, texture_sun);
 		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
-
 		////displaySphere(color);
 		//glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -364,7 +363,7 @@ void updateScene02_EarthAndSpace(void)
 	//cameraAngleEarthAndSpace += 0.02f;
 	//if (cameraAngleEarthAndSpace > 120.0f)
 	//	cameraAngleEarthAndSpace = 120.0f;
-	cameraAngleEarthAndSpace = preciselerp(cameraAngleEarthAndSpace, 120.0f, 0.002f);
+	cameraAngleEarthAndSpace = preciselerp(cameraAngleEarthAndSpace, 110.0f, 0.0002f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 	// Code
