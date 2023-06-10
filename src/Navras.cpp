@@ -652,7 +652,7 @@ void displayNavras(void)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
-		isGodRequired = false;
+		isGodRequired = true;
 		isWaterRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - 10);
 		if (shouldSceneRaudraMaskAppear)
@@ -674,7 +674,7 @@ void displayNavras(void)
 	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
 	{
 		audio(SCENE06_BHAYANK_RAS);
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene6) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -698,7 +698,7 @@ void displayNavras(void)
 	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene8) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -711,36 +711,53 @@ void displayNavras(void)
 	else if (now <= (then + time_scene9) && currentScene == SCENE09_VEER_RAS)
 	{
 		audio(SCENE09_VEER_RAS);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene9) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 
 		isGodRequired = false;
 		isWaterRequired = false;
-		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene9);
 	}
 	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
-		
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene10) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		isGodRequired = true;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
 	}
 	else if (now <= (then + time_scene11) && currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		audio(SCENE11_SHRINGAR_RAS);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene11) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		
 		isGodRequired = true;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
+		
 		displayScene_PlaceHolderOutdoor(setCameraScene11_ShringarRas, displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene11);
 	}
 	else if (now <= (then + time_scene12) && currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		
 		displayScene12_Hasya();
 		sceneTime(time_scene12);

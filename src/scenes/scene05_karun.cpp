@@ -93,7 +93,7 @@ int initializeScene5_karun(void)
 	loadStaticModel("res/models/scene05-karunras/colorpencil/pencil1obj.obj", &colorPencilModel); //done
 	loadStaticModel("res/models/scene05-karunras/boy/tempKarunBoy1.obj", &boyModel);
 	loadStaticModel("res/models/scene05-karunras/woodenToy/woodenToy.obj", &woodenToy); //done
-	loadStaticModel("res/models/scene05-karunras/teddy/teddy.obj", &teddyBear); //done
+	//loadStaticModel("res/models/scene05-karunras/teddy/teddy.obj", &teddyBear); //done
 	//loadStaticModel("res/models/scene05-karunras/Toytrain/toyTrain.obj", &roomModel); //change scale
 	//loadStaticModel("res/models/kids-bicycle/bicycle_1.obj", &roomModel);
 
