@@ -76,7 +76,7 @@ static STATIC_MODEL shantaManModel;
 bool startMaskAnimation = false;
 bool startCameraZoomToMan = false;
 struct ErosionNoiseUniform sceneErosionNoiseUniform;
-GLuint noise_texture_eroded;
+GLuint noise_texture_eroded[9];
 GLuint texture_Marble_Shant;
 float myScale_erosion = 2.0f;
 float noiseScale_erosion = 2.0f;
@@ -488,15 +488,18 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble_Shant);
 	}
 
-	noise_texture_eroded = initializeErosion();
-	if (noise_texture_eroded == 0)
+	for (int i = 0; i < 9; i++)
 	{
-		LOG("initializeErosion() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeErosion() Successfull!!!\n");
+		noise_texture_eroded[i] = initializeErosion();
+		if (noise_texture_eroded[i] == 0)
+		{
+			LOG("initializeErosion() FAILED for noise_texture_eroded[%d]!!!\n", i);
+			return(-1);
+		}
+		else
+		{
+			LOG("initializeErosion() Successfull for noise_texture_eroded[%d]!!!\n", i);
+		}
 	}
 #endif // ENABLE_EROSION
 
@@ -813,7 +816,7 @@ void displayScene13_Shant(void)
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras[i]);
 
 		if (isMaskQuadEnabled[i])
-			drawCustomTextureStaticModel(model_masks[i], textures_masks[i], noise_texture_eroded);
+			drawCustomTextureStaticModel(model_masks[i], textures_masks[i], noise_texture_eroded[i]);
 
 		angle = angle + 15.0f;
 	}
@@ -983,11 +986,15 @@ void uninitializeScene13_Shant(void)
 	}
 #ifdef ENABLE_EROSION
 	uninitializeErosion();
-	if (noise_texture_eroded)
+	for (int i = 0; i < 9; i++)
 	{
-		glDeleteTextures(1, &noise_texture_eroded);
-		noise_texture_eroded = 0;
+		if (noise_texture_eroded[i])
+		{
+			glDeleteTextures(1, &noise_texture_eroded[i]);
+			noise_texture_eroded[i] = 0;
+		}
 	}
+	
 #endif // ENABLE_EROSION
 }
 
