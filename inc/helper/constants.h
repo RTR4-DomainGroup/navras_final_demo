@@ -125,6 +125,8 @@ static const char *szAudios[] = {
 
 #define ENABLE_SSAO
 
+//#define ENABLE_MASKS
+
 //#define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE

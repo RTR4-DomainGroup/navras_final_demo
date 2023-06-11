@@ -49,15 +49,14 @@ static struct FrameBufferDetails fullSceneIndoorFbo;
 static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
 
+#ifdef ENABLE_MASKS
 // MASKS
 static struct FrameBufferDetails fboMaskPass_Indoor;
 static GLuint texture_mask_indoor;
 
-#ifdef ENABLE_MASKSQUADS
 static STATIC_MODEL maskModel_KarunRas;
 static STATIC_MODEL maskModel_RaudraRas;
 static STATIC_MODEL maskModel_HasyaRas;
-#endif // ENABLE_MASKSQUADS
 
 extern GLfloat lightAmbient_shantRas_mask[];
 extern GLfloat lightDiffuse_shantRas_mask[];
@@ -73,9 +72,10 @@ static GLuint noise_texture_eroded_indoor;
 static float myScale_erosion_indoor = 2.0f;
 static float noiseScale_erosion_indoor = 2.0f;
 static bool offsetIncrement_indoor = false;
-static bool isBlurI = false;
 
 static GLfloat offset_ras_indoor[] = { 0.17f, 0.17f, 0.17f };
+#endif // ENABLE_MASKS
+static bool isBlurI = false;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -126,8 +126,7 @@ int initializeScene_PlaceHolderIndoor(void)
 
 #endif // ENABLE_SSAO
 
-#ifdef ENABLE_MASKSQUADS
-
+#ifdef ENABLE_MASKS
 	fboMaskPass_Indoor.textureWidth = 1920;
 	fboMaskPass_Indoor.textureHeight = 1080;
 
@@ -160,7 +159,7 @@ int initializeScene_PlaceHolderIndoor(void)
 	{
 		LOG("initializeErosion() Successfull!!!\n");
 	}
-#endif // ENABLE_MASKSQUADS
+#endif // ENABLE_MASKS
 
 	return 0;
 }
@@ -172,14 +171,14 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	scene_types_t  getCurrentScene(void);
 
 	// Code
+
 	isBlurI = shouldSceneBlur;
 
 	// Code
 	// Here The Game STarts
 	setCamera();
 
-#ifdef ENABLE_MASKSQUADS
-
+#ifdef ENABLE_MASKS
 	// Masks
 	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Indoor.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboMaskPass_Indoor.textureWidth, (GLsizei)fboMaskPass_Indoor.textureHeight);
@@ -258,11 +257,10 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glDisable(GL_TEXTURE_2D);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#endif // ENABLE_MASKSQUADS
+#endif // ENABLE_MASKS
 
 	if (!shouldSceneBlur)
 	{
-
 #ifdef ENABLE_SSAO
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
@@ -276,8 +274,9 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 		displaySSAO(&ssaoFrameBufferDetails);
 
-#endif // ENABLE_SSAO
 
+
+#endif // ENABLE_SSAO
 	}
 	else
 	{
@@ -298,8 +297,9 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurIndoorQuadUniform = useFSQuadShader();
-		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
 
+		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
 		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
@@ -307,13 +307,15 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
     	glBindTexture(GL_TEXTURE_2D, 0);
 
 		////
-		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Indoor.frameBufferTexture);
-		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
+		#ifdef ENABLE_MASKS
+				glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, fboMaskPass_Indoor.frameBufferTexture);
+				glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
 
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);
+				displayQuad();
+				glBindTexture(GL_TEXTURE_2D, 0);
+		#endif
 
 		glUseProgram(0);
 		//glEnable(GL_BLEND);
@@ -373,6 +375,7 @@ void updateScene_PlaceHolderIndoor(void)
 	/*cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);*/
 
+#ifdef ENABLE_MASKS
 	if (isBlurI == false)
 	{
 		offset_ras_indoor[0] = 0.17f;
@@ -395,17 +398,17 @@ void updateScene_PlaceHolderIndoor(void)
 			offset_ras_indoor[2] = 0.48f;
 		}
 	}
+#endif // ENABLE_MASKS
 }
 
 void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
-#ifdef ENABLE_MASKSQUADS
-
+#ifdef ENABLE_MASKS
 	unloadStaticModel(&maskModel_KarunRas);
 	unloadStaticModel(&maskModel_HasyaRas);
 	unloadStaticModel(&maskModel_RaudraRas);
-#endif // ENABLE_MASKSQUADS
+#endif // ENABLE_MASKS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	// unloadDynamicModel(&skeletonModel);
