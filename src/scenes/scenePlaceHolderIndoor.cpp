@@ -53,9 +53,11 @@ static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
 static struct FrameBufferDetails fboMaskPass_Indoor;
 static GLuint texture_mask_indoor;
 
+#ifdef ENABLE_MASKSQUADS
 static STATIC_MODEL maskModel_KarunRas;
 static STATIC_MODEL maskModel_RaudraRas;
 static STATIC_MODEL maskModel_HasyaRas;
+#endif // ENABLE_MASKSQUADS
 
 extern GLfloat lightAmbient_shantRas_mask[];
 extern GLfloat lightDiffuse_shantRas_mask[];
@@ -124,6 +126,8 @@ int initializeScene_PlaceHolderIndoor(void)
 
 #endif // ENABLE_SSAO
 
+#ifdef ENABLE_MASKSQUADS
+
 	fboMaskPass_Indoor.textureWidth = 1920;
 	fboMaskPass_Indoor.textureHeight = 1080;
 
@@ -156,6 +160,7 @@ int initializeScene_PlaceHolderIndoor(void)
 	{
 		LOG("initializeErosion() Successfull!!!\n");
 	}
+#endif // ENABLE_MASKSQUADS
 
 	return 0;
 }
@@ -172,6 +177,8 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	// Code
 	// Here The Game STarts
 	setCamera();
+
+#ifdef ENABLE_MASKSQUADS
 
 	// Masks
 	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Indoor.frameBuffer);
@@ -251,9 +258,11 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glDisable(GL_TEXTURE_2D);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif // ENABLE_MASKSQUADS
 
 	if (!shouldSceneBlur)
 	{
+
 #ifdef ENABLE_SSAO
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
@@ -267,9 +276,8 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 		displaySSAO(&ssaoFrameBufferDetails);
 
-
-
 #endif // ENABLE_SSAO
+
 	}
 	else
 	{
@@ -392,9 +400,12 @@ void updateScene_PlaceHolderIndoor(void)
 void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
+#ifdef ENABLE_MASKSQUADS
+
 	unloadStaticModel(&maskModel_KarunRas);
 	unloadStaticModel(&maskModel_HasyaRas);
 	unloadStaticModel(&maskModel_RaudraRas);
+#endif // ENABLE_MASKSQUADS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	// unloadDynamicModel(&skeletonModel);

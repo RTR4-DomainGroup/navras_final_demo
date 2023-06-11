@@ -162,6 +162,7 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
+static STATIC_MODEL leafModel;
 static STATIC_MODEL farmhouseModel;
 static STATIC_MODEL adbhutmanModel;
 static STATIC_MODEL bridgeModel;
@@ -278,6 +279,7 @@ int initializeScene10_AdbhutRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
+	loadStaticModel("res/models/tree_adbhut/leaf.obj", &leafModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
 	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 	loadStaticModel("res/models/bridge/bridge.obj", &bridgeModel);
@@ -702,7 +704,11 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
 	glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+	// glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+	TRANFORM lightPos = { 104.0f, 103.0f, 3.0f, 1.0f };
+	// update_transformations(NULL, NULL, NULL, &lightPos);
+	vmath::vec4 lp = {lightPos.x, lightPos.y, lightPos.z, lightPos.w}; 
+	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lp);
 	glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
@@ -771,13 +777,31 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
 
 	// usage type 1 
+	// if(3 == tf_Object) // Tree model
+	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+
+	drawStaticModel(treeModel);
+
+	// ------ Leaf Model ------
+	modelMatrix = mat4::identity();
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+
+	translationMatrix = vmath::translate(-18.75f, -2.27f, -34.25f);
+	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
+
+	// usage type 1 
 	if(3 == tf_Object) // Tree model
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
-	drawStaticModel(treeModel);
+	drawStaticModel(leafModel);
 
 
 	// ------ farmhouse Model ------
@@ -831,14 +855,16 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(3.56f, -1.07f, -1.50f);
+	translationMatrix = vmath::translate(3.56f, -1.27f, -1.50f);
 	scaleMatrix = vmath::scale( 3.80f,  3.80f,  3.80f);
-	rotationAngles = {0.0f, 144.55f, 0.0f};
+	rotationAngles = {0.0f, 151.41f, -2.45f};
 
 	// usage type 1 
 	if(9 == tf_Object) // bridge model
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -1212,6 +1238,7 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&adbhutmanModel);
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
+	unloadStaticModel(&leafModel);
 	unloadStaticModel(&treeModel);
 #endif // ENABLE_STATIC_MODELS
 

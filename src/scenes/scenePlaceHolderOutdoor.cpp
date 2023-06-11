@@ -153,11 +153,21 @@ struct FrameBufferDetails fboEarthAndSpace;
 static struct FrameBufferDetails fboMaskPass_Outdoor;
 static GLuint texture_shringarRas;
 
+#ifdef ENABLE_MASKSQUADS
 static STATIC_MODEL maskModel_BhayanakRas;
 static STATIC_MODEL maskModel_BibhastaRas;
 static STATIC_MODEL maskModel_VeerRas;
 static STATIC_MODEL maskModel_AdbhutRas;
 static STATIC_MODEL maskModel_ShringarRas;
+
+#ifdef ENABLE_EROSION
+extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
+static GLuint noise_texture_eroded_outdoor;
+static float myScale_erosion_outdoor = 2.0f;
+static float noiseScale_erosion_outdoor = 2.0f;
+#endif // ENABLE_EROSION
+
+#endif // ENABLE_MASKSQUADS
 
 GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat lightDiffuse_shantRas_mask[] = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -168,10 +178,8 @@ GLfloat materialAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialSpecular_shantRas_mask[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat materialShininess_shantRas_mask = 128.0f;
-extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
-static GLuint noise_texture_eroded_outdoor;
-static float myScale_erosion_outdoor = 2.0f;
-static float noiseScale_erosion_outdoor = 2.0f;
+
+
 static bool offsetIncrement_outdoor = false;
 static bool isBlur = false;
 
@@ -443,6 +451,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_MASKSQUADS
 	fboMaskPass_Outdoor.textureWidth = 1920;
 	fboMaskPass_Outdoor.textureHeight = 1080;
 
@@ -477,6 +486,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	{
 		LOG("initializeErosion() Successfull!!!\n");
 	}
+#endif // ENABLE_MASKSQUADS
 
 	return 0;
 }
@@ -498,7 +508,10 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
 
+	// Transformations
 	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
 	viewMatrix = mat4::identity();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -543,11 +556,9 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	time = time * 0.05f;
 	time = time - floor(time);
 
-	// Transformations
 	translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
+
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
@@ -594,6 +605,8 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glUseProgram(0);*/
 
 	// Masks
+#ifdef ENABLE_MASKSQUADS
+
 	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Outdoor.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboMaskPass_Outdoor.textureWidth, (GLsizei)fboMaskPass_Outdoor.textureHeight);
 		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -614,6 +627,8 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		glEnable(GL_TEXTURE_3D);
 		glEnable(GL_TEXTURE_2D);
+#ifdef ENABLE_EROSION
+
 		sceneErosionNoiseUniform = useErosionNoiseShader();
 
 		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
@@ -673,6 +688,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		}
 
+#endif // ENABLE_EROSION
 
 		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
 		// ################################### ROOM ###################################  
@@ -684,6 +700,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+#endif // ENABLE_MASKSQUADS
 
 	//
 	if(!isGaussianBlurRequired && !isGodRequired) 
@@ -1140,6 +1157,7 @@ void updateScene_PlaceHolderOutdoor(void)
 void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
+#ifdef ENABLE_MASKSQUADS
 
 	unloadStaticModel(&maskModel_AdbhutRas);
 	unloadStaticModel(&maskModel_BhayanakRas);
@@ -1147,6 +1165,7 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	unloadStaticModel(&maskModel_VeerRas);
 	unloadStaticModel(&maskModel_ShringarRas);
 	
+#endif // ENABLE_MASKSQUADS
 
 #ifdef ENABLE_BILLBOARDING
 
