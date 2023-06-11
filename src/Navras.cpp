@@ -569,7 +569,7 @@ int initializeNavras(void) {
 	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	////scenePush(SCENE12_HASYA_RAS);
+	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
@@ -672,7 +672,7 @@ void displayNavras(void)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - 10);
@@ -791,7 +791,8 @@ void displayNavras(void)
 			isGaussianBlurRequired = true;
 		}
 		
-		displayScene12_Hasya();
+		displayScene_PlaceHolderIndoor(setCameraScene12_Hasya, displayScene12_Hasya, shouldSceneRaudraMaskAppear);
+		// displayScene12_Hasya();
 		sceneTime(time_scene12);
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)

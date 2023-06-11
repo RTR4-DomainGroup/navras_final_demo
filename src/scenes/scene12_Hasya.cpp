@@ -5,7 +5,8 @@
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../inc/shaders/BillboardingShader.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
-
+#include "../../inc/effects/GodraysEffect.h"
+#include "../../inc/effects/GaussianBlurEffect.h"
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 #include "../../inc/scenes/scene12_Hasya.h"
 #include "../../inc/debug/debug_transformation.h"
@@ -42,6 +43,12 @@ static GLuint texture_floor;
 static GLuint texture_side;
 static GLuint texture_back;
 
+
+bool isInitialDisplayScene12_hasya = true;
+
+//Model variables
+STATIC_MODEL hasya_roomModel;
+
 //Model variables
 static STATIC_MODEL deskModel;
 
@@ -63,89 +70,35 @@ int initializeScene12_Hasya(void)
 	{
 		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
 	}
-#endif
+#endif // ENABLE_MASKSQUADS
 
 #ifdef ENABLE_STATIC_MODELS
-	// function declarations
-	void initializeDeskInstancePositions(void);
-	void initializeShelfInstancePositions(void);
-
-	//load models
-	initializeDeskInstancePositions();
-	
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Hasya/concrete.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED in Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Hasya/stone.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED in floor Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Hasya/brick.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED in backwall Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Hasya/pxfuel.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED for sidewall Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
-	}
-
-	initializeQuad();
-
-	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
-	{
-		//uninitialize();
-		LOG("LoadGLTexture for texture_hasyaMask FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
-	}
+	// load Model
+	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom3.obj", &hasya_roomModel);
 
 #endif
-	initializeInvertedNormalCube();
+	// initializeInvertedNormalCube();
 	initializeQuad();
 
-	textures[0] = (GLuint)texture_ceiling;
-	textures[1] = (GLuint)texture_floor;
-	textures[2] = (GLuint)texture_back;
-	textures[3] = (GLuint)texture_side;
 
-	// external debugging varaible
-    tf_t = {2.0f, 0.0f, -3.35f}; // tree pos 
-    // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
-    // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
-	tf_Speed = 0.05f;
-//	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
 
+void setCameraScene12_Hasya(void)
+{
+	if (isInitialDisplayScene12_hasya == true)
+	{
+		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
+		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
+		setCamera(6.15f, 0.05f, -2.86f, -360.97f, -11.97f, 4.89f, 0.00f, 1.00f, 0.00f);
+		isInitialDisplayScene12_hasya = false;
+	}
+}
 
 void displayScene12_Hasya(void)
 {
     // set camera
-	displayCamera();
+	setCameraScene12_Hasya();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -156,7 +109,9 @@ void displayScene12_Hasya(void)
 	mat4 rotationMatrix_z = mat4::identity();
 	mat4 viewMatrix = mat4::identity();
 	
+	displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	// viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	
@@ -183,18 +138,7 @@ void displayScene12_Hasya(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
-	
-
-	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);
-	scaleMatrix = vmath::scale(4.0f, 2.0f, 5.0f);
-	modelMatrix = translationMatrix * scaleMatrix;
-
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-	//glEnable(GL_TEXTURE_2D);
-	
-	displayRoom(textures);
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 
 #ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
@@ -206,6 +150,7 @@ void displayScene12_Hasya(void)
 	translationMatrix = vmath::translate(5.0f, 5.0f, -12.0f);					// glTranslatef() is replaced by this line.
 	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 	//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
+
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -214,13 +159,39 @@ void displayScene12_Hasya(void)
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_hasyaMask);
-	glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
-	displayQuad();
-#endif
+		glUniform1i(sceneIndoorADSUniform.textureSamplerUniform_diffuse, 0);
+		displayQuad();
+	glBindTexture(GL_TEXTURE_2D, 0);
+#endif // ENABLE_MASKSQUADS
 
-	glUseProgram(0);
-	//glDisable(GL_TEXTURE_2D);
+	// ------ Room Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	translationMatrix = vmath::translate(1.650000f,-1.000000f, -2.500001f);
+	scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
+	rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+	modelMatrix = translationMatrix * scaleMatrix ;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(hasya_roomModel);
+
+
     #endif 
+}
+
+void updateScene12_Hasya()
+{
+	// code
 }
 
 void uninitializeScene12_Hasya(void)

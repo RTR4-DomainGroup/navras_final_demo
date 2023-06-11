@@ -6,4 +6,7 @@
 
 int initializeScene12_Hasya(void);
 void displayScene12_Hasya(void);
+void setCameraScene12_Hasya(void);
+void updateScene12_Hasya(void);
 void uninitializeScene12_Hasya(void);
+
