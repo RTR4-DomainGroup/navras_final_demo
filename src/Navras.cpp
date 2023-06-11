@@ -317,6 +317,7 @@ int initializeNavras(void) {
 	void printGLInfo(void);
 	void uninitialize(void);
 	void resetCamera(void);
+	void sceneTime(int);
 
 	// Variable Declarations
 
@@ -567,6 +568,8 @@ int initializeNavras(void) {
 
 	perspectiveProjectionMatrix = mat4::identity();
 
+	sceneTime(time_scene2);
+
 	return(0);
 }
 
@@ -629,23 +632,8 @@ void displayNavras(void)
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifdef ENABLE_SINGLE_SCENE
-	// no time 
-#else // not ENABLE_SINGLE_SCENE
-	if (timeFlag == true) {
-		then = time(NULL);
-		timeFlag = false;
-	}
-	now = time(NULL);
-#endif // !ENABLE_SINGLE_SCENE
-
-	// Call Scenes Display Here	
-	// if(currentScene == SCENE00_AMC_BANNER)
-	// {
-	// 	displayFont();
-	// }
-	// else 
-	if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
+	// Call Scenes Display Here
+	if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
@@ -659,7 +647,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
-	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
 		
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
@@ -673,7 +661,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
-	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		audio(SCENE06_BHAYANK_RAS);
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene6) - 10);
@@ -688,7 +676,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene06_BhyanakRas, displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene6);
 	}
-	else if (now <= (then + time_scene7) && currentScene == SCENE07_RAUDRA_RAS)
+	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
 		
@@ -697,7 +685,7 @@ void displayNavras(void)
 		//displayScene07_Raudra();
 		sceneTime(time_scene7);
 	}
-	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
+	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene8) - 10);
@@ -710,7 +698,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene8);
 	}
-	else if (now <= (then + time_scene9) && currentScene == SCENE09_VEER_RAS)
+	else if (currentScene == SCENE09_VEER_RAS)
 	{
 		audio(SCENE09_VEER_RAS);
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene9) - 10);
@@ -724,7 +712,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene9);
 	}
-	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
+	else if (currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene10) - 10);
@@ -737,7 +725,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
 	}
-	else if (now <= (then + time_scene11) && currentScene == SCENE11_SHRINGAR_RAS)
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		audio(SCENE11_SHRINGAR_RAS);
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene11) - 10);
@@ -746,13 +734,13 @@ void displayNavras(void)
 			isGaussianBlurRequired = true;
 		}
 		
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = true;
 		
 		displayScene_PlaceHolderOutdoor(setCameraScene11_ShringarRas, displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene11);
 	}
-	else if (now <= (then + time_scene12) && currentScene == SCENE12_HASYA_RAS)
+	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
@@ -764,7 +752,7 @@ void displayNavras(void)
 		displayScene12_Hasya();
 		sceneTime(time_scene12);
 	}
-	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
+	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		shouldSceneRaudraMaskAppear = false;
 		
@@ -773,10 +761,10 @@ void displayNavras(void)
 		//displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
-	else if (now <= (then + time_scene14) && currentScene == SCENE14_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		audio(SCENE14_PARTICLE);
-		
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayParticle();
 		sceneTime(time_scene14);
 	}
@@ -789,7 +777,7 @@ void displayNavras(void)
 		audio(SCENE_INVALID);
 		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
-		//QuitApplication();
+		QuitApplication();
 	}
 
 }
@@ -851,9 +839,7 @@ void updateNavras(void)
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
-	}
-
-	
+	}	
 	else if (currentScene == SCENE05_KARUN_RAS)
 	{
 		updateScene5_karun();
@@ -868,6 +854,16 @@ void sceneTime(int scenetime){
 
 	// Code
 #ifndef ENABLE_SINGLE_SCENE
+
+	if (timeFlag == true) {
+		then = time(NULL);
+		timeFlag = false;
+	}
+
+#ifdef AUTOSWITCH_SCENE
+	now = time(NULL);
+#endif
+
 	if (now == (then + scenetime))
 	{
 		then = time(NULL);

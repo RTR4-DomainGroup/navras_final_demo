@@ -18,6 +18,12 @@
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
 
+#include "../../inc/effects/StaticModelLoadingEffect.h"
+
+#ifdef ENABLE_EROSION
+#include "../../inc/effects/ErosionEffect.h"
+#endif // ENABLE_EROSION
+
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
@@ -41,7 +47,29 @@ static struct FrameBufferDetails fullSceneIndoorFbo;
 static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
 
-extern struct FrameBufferDetails fboMaskPass;
+// MASKS
+static struct FrameBufferDetails fboMaskPass_Indoor;
+static GLuint texture_mask_indoor;
+
+static STATIC_MODEL maskModel_KarunRas;
+static STATIC_MODEL maskModel_RaudraRas;
+static STATIC_MODEL maskModel_HasyaRas;
+
+extern GLfloat lightAmbient_shantRas_mask[];
+extern GLfloat lightDiffuse_shantRas_mask[];
+extern GLfloat lightSpecular_shantRas_mask[];
+extern GLfloat lightPosition_shantRas_mask[];
+
+extern GLfloat materialAmbient_shantRas_mask[];
+extern GLfloat materialDiffuse_shantRas_mask[];
+extern GLfloat materialSpecular_shantRas_mask[];
+extern GLfloat materialShininess_shantRas_mask;
+extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
+extern GLuint noise_texture_eroded;
+extern GLuint texture_Marble_Shant;
+extern float myScale_erosion;
+extern float noiseScale_erosion;
+extern bool offsetIncrement;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -92,6 +120,28 @@ int initializeScene_PlaceHolderIndoor(void)
 
 #endif // ENABLE_SSAO
 
+	fboMaskPass_Indoor.textureWidth = 1920;
+	fboMaskPass_Indoor.textureHeight = 1080;
+
+	createFBO(&fboMaskPass_Indoor);
+
+
+	loadStaticModel("res/models/masks/individualScenes/RaudraWithText.obj", &maskModel_RaudraRas);
+	loadStaticModel("res/models/masks/individualScenes/KarunWithText.obj", &maskModel_KarunRas);
+	loadStaticModel("res/models/masks/individualScenes/HasyaWithText.obj", &maskModel_HasyaRas);
+
+
+	if (LoadGLTexture_UsingSOIL(&texture_mask_indoor, "res/models/masks/copper.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_mask_indoor FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_mask_indoor Successfull = %u!!!\n", texture_mask_indoor);
+	}
+
 
 	return 0;
 }
@@ -99,10 +149,89 @@ int initializeScene_PlaceHolderIndoor(void)
 void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR displayPasses, bool shouldSceneBlur)
 {
 	void displayBlur(void);
+	scene_types_t  getCurrentScene(void);
 
 	// Code
 	// Here The Game STarts
 	setCamera();
+
+	// Masks
+	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Indoor.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboMaskPass_Indoor.textureWidth, (GLsizei)fboMaskPass_Indoor.textureHeight);
+		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboMaskPass_Indoor.textureWidth / fboMaskPass_Indoor.textureHeight, 0.1f, 100.0f);
+
+		mat4 translationMatrix = mat4::identity();
+		mat4 rotationMatrix = mat4::identity();
+		mat4 modelMatrix = mat4::identity();
+		mat4 scaleMatrix = mat4::identity();
+		mat4 rotationMatrix_x = mat4::identity();
+		mat4 rotationMatrix_y = mat4::identity();
+		mat4 rotationMatrix_z = mat4::identity();
+
+		//float angle = 0.0;
+
+		glEnable(GL_TEXTURE_3D);
+		glEnable(GL_TEXTURE_2D);
+		sceneErosionNoiseUniform = useErosionNoiseShader();
+
+		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+		glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
+
+		glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
+
+		//glDisable(GL_BLEND);
+		// ------ Mask Model ------
+		translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
+		scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
+		//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+
+		glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, mat4::identity());
+		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+
+		if (getCurrentScene() == SCENE05_KARUN_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_KarunRas, texture_mask_indoor, noise_texture_eroded);
+
+		}
+		else if (getCurrentScene() == SCENE07_RAUDRA_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_RaudraRas, texture_mask_indoor, noise_texture_eroded);
+
+		}
+		else if (getCurrentScene() == SCENE12_HASYA_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_HasyaRas, texture_mask_indoor, noise_texture_eroded);
+
+		}
+
+
+		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_mask_indoor, noise_texture_eroded);
+		// ################################### ROOM ###################################  
+
+		glUseProgram(0);
+
+		glDisable(GL_TEXTURE_3D);
+		glDisable(GL_TEXTURE_2D);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	if (!shouldSceneBlur)
 	{
@@ -124,7 +253,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	}
 	else
 	{
-		glDisable(GL_BLEND);
+		//glDisable(GL_BLEND);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneIndoorFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneIndoorFbo.textureWidth, (GLsizei)fullSceneIndoorFbo.textureHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -151,14 +280,14 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		////
 		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Indoor.frameBufferTexture);
 		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
 
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glUseProgram(0);
-		glEnable(GL_BLEND);
+		//glEnable(GL_BLEND);
 
 	}
 }
@@ -219,7 +348,9 @@ void updateScene_PlaceHolderIndoor(void)
 void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
-
+	unloadStaticModel(&maskModel_KarunRas);
+	unloadStaticModel(&maskModel_HasyaRas);
+	unloadStaticModel(&maskModel_RaudraRas);
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	// unloadDynamicModel(&skeletonModel);

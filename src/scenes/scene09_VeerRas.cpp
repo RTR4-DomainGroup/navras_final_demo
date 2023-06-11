@@ -249,7 +249,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 		displayCamera();
 	else
 	{
-		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle);
+		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle, false);
 	}
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);

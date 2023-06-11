@@ -150,24 +150,30 @@ struct FrameBufferDetails fboGodRayPass;
 struct FrameBufferDetails fboEarthAndSpace;
 
 // Masks
-struct FrameBufferDetails fboMaskPass;
+static struct FrameBufferDetails fboMaskPass_Outdoor;
 static GLuint texture_shringarRas;
-static STATIC_MODEL maskModel_shringarRas;
-static GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightDiffuse_shantRas_mask[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-static GLfloat lightSpecular_shantRas_mask[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition_shantRas_mask[] = { 0.0f, 10.0f, 10.0f, 1.0f };
 
-static GLfloat materialAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialSpecular_shantRas_mask[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-static GLfloat materialShininess_shantRas_mask = 128.0f;
-static struct ErosionNoiseUniform sceneErosionNoiseUniform;
-static GLuint noise_texture_eroded;
-static GLuint texture_Marble_Shant;
-static float myScale_erosion = 2.0f;
-static float noiseScale_erosion = 2.0f;
-static bool offsetIncrement = true;
+static STATIC_MODEL maskModel_BhayanakRas;
+static STATIC_MODEL maskModel_BibhastaRas;
+static STATIC_MODEL maskModel_VeerRas;
+static STATIC_MODEL maskModel_AdbhutRas;
+static STATIC_MODEL maskModel_ShringarRas;
+
+GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightDiffuse_shantRas_mask[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+GLfloat lightSpecular_shantRas_mask[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat lightPosition_shantRas_mask[] = { 0.0f, 10.0f, 10.0f, 1.0f };
+
+GLfloat materialAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialSpecular_shantRas_mask[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+GLfloat materialShininess_shantRas_mask = 128.0f;
+extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
+extern GLuint noise_texture_eroded;
+extern GLuint texture_Marble_Shant;
+extern float myScale_erosion;
+extern float noiseScale_erosion;
+extern bool offsetIncrement;
 
 extern int windowWidth;
 extern int windowHeight;
@@ -419,14 +425,14 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_BILLBOARDING
 	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower2.png");
-	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-	{
-		LOG("Texture loading failed for image %s\n", imagefile);
-		return (-6);
-	}
+	// sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower3.png");
+	// if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	// {
+	// 	LOG("Texture loading failed for image %s\n", imagefile);
+	// 	return (-6);
+	// }
 
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower5.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);
@@ -435,12 +441,19 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_BILLBOARDING
 
-	fboMaskPass.textureWidth = 1920;
-	fboMaskPass.textureHeight = 1080;
+	fboMaskPass_Outdoor.textureWidth = 1920;
+	fboMaskPass_Outdoor.textureHeight = 1080;
 
-	createFBO(&fboMaskPass);
+	createFBO(&fboMaskPass_Outdoor);
 
-	loadStaticModel("res/models/masks/ShringarMask.obj", &maskModel_shringarRas);
+	loadStaticModel("res/models/masks/individualScenes/AdbhutWithText.obj", &maskModel_AdbhutRas);
+	loadStaticModel("res/models/masks/individualScenes/BhayanakWithText.obj", &maskModel_BhayanakRas);
+	loadStaticModel("res/models/masks/individualScenes/ShringarWithText.obj", &maskModel_ShringarRas);
+	loadStaticModel("res/models/masks/individualScenes/VeerWithText.obj", &maskModel_VeerRas);
+	loadStaticModel("res/models/masks/individualScenes/BeebhatsaWithText.obj", &maskModel_BibhastaRas);
+
+
+
 	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, "res/models/masks/copper.jpg") == FALSE)
 	{
 		//uninitialize();
@@ -567,13 +580,13 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glUseProgram(0);*/
 
 	// Masks
-	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass.frameBuffer);
-		glViewport(0, 0, (GLsizei)fboMaskPass.textureWidth, (GLsizei)fboMaskPass.textureHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Outdoor.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboMaskPass_Outdoor.textureWidth, (GLsizei)fboMaskPass_Outdoor.textureHeight);
 		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboMaskPass.textureWidth / fboMaskPass.textureHeight, 0.1f, 100.0f);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboMaskPass_Outdoor.textureWidth / fboMaskPass_Outdoor.textureHeight, 0.1f, 100.0f);
 
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
@@ -601,7 +614,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		//glDisable(GL_BLEND);
 		// ------ Mask Model ------
-		translationMatrix = vmath::translate(0.0f, 0.0f, -6.0f);
+		translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
 		scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
 		//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -614,7 +627,39 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
 
-		drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded);
+		if(getCurrentScene() == SCENE06_BHAYANK_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_BhayanakRas, texture_shringarRas, noise_texture_eroded);
+
+		}
+		else if(getCurrentScene() == SCENE08_BIBHATSA_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_BibhastaRas, texture_shringarRas, noise_texture_eroded);
+
+		}
+		else if(getCurrentScene() == SCENE09_VEER_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_VeerRas, texture_shringarRas, noise_texture_eroded);
+
+		}
+		else if(getCurrentScene() == SCENE10_ADBHUT_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_AdbhutRas, texture_shringarRas, noise_texture_eroded);
+
+		}
+		else if(getCurrentScene() == SCENE11_SHRINGAR_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_ShringarRas, texture_shringarRas, noise_texture_eroded);
+
+		}
+
+
+		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded);
 		// ################################### ROOM ###################################  
 
 		glUseProgram(0);
@@ -666,7 +711,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		
 		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
 		displayQuad();
@@ -784,7 +829,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
 
 		/*glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform3, 2);*/
 
 		displayQuad();
@@ -795,7 +840,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		//
 		/*glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
 		displayQuad();
@@ -939,7 +984,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 			glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, fboMaskPass.frameBufferTexture);
+			glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
 			glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
 			displayQuad();
@@ -1055,6 +1100,14 @@ void updateScene_PlaceHolderOutdoor(void)
 void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
+
+	unloadStaticModel(&maskModel_AdbhutRas);
+	unloadStaticModel(&maskModel_BhayanakRas);
+	unloadStaticModel(&maskModel_BibhastaRas);
+	unloadStaticModel(&maskModel_VeerRas);
+	unloadStaticModel(&maskModel_ShringarRas);
+	
+
 #ifdef ENABLE_BILLBOARDING
 
 	// texture
