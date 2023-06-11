@@ -1,5 +1,5 @@
 #include "../../inc/effects/ErosionEffect.h"
-//#include "../../inc/Noise.h"
+#include "../../inc/Noise.h"
 #include "../../inc/helper/geometry.h"
 
 extern mat4 perspectiveProjectionMatrix;

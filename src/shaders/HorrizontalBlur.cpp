@@ -76,33 +76,36 @@ int initialize_horrizontalBlur()
         "in vec2 blurTextureCoords[11];\n" \
         "uniform sampler2D u_blurTexture;" \
         "\n" \
+        "uniform float u_blurFactor = 1.0;" \
+        "\n" \
+        
         "out vec4 FragColor;" \
         "\n" \
         "void main(void)\n" \
         "{\n" \
             "FragColor = vec4(0.0, 0.0, 0.0, 1.0);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[0]) * 0.0093;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[0]) * (0.0093 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[1]) * 0.028002;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[1]) * (0.028002 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[2]) * 0.065984;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[2]) * (0.065984 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[3]) * 0.121703;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[3]) * (0.121703 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[4]) * 0.175713;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[4]) * (0.175713 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[5]) * 0.198596;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[5]) * (0.198596 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[6]) * 0.175713;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[6]) * (0.175713 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[7]) * 0.121703;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[7]) * (0.121703 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[8]) * 0.065984;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[8]) * (0.065984 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[9]) * 0.028002;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[9]) * (0.028002 * u_blurFactor);" \
             "\n" \
-            "FragColor += texture(u_blurTexture, blurTextureCoords[10]) * 0.0093;" \
+            "FragColor += texture(u_blurTexture, blurTextureCoords[10]) * (0.0093 * u_blurFactor);" \
         "}\n";
     
      // Create the Fragment Shader object.
@@ -183,6 +186,7 @@ int initialize_horrizontalBlur()
     }
     hBlurUniform.targetWidth = glGetUniformLocation(shaderProgram_horrizontalBlur, "u_targetWidth");
     hBlurUniform.hblurTexSamplerUniform = glGetUniformLocation(shaderProgram_horrizontalBlur,"u_blurTexture");
+    hBlurUniform.blurFactor = glGetUniformLocation(shaderProgram_horrizontalBlur,"u_blurFactor");
     return (0);
 }
 

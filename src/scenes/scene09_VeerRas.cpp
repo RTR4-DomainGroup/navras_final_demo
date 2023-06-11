@@ -11,10 +11,10 @@
 #include "../../inc/helper/shadowframebuffer.h"
 #endif // ENABLE_SHADOW
 
-#ifdef ENABLE_ATMOSPHERE
-#include "../../inc/shaders/AtmosphereShader.h"
-#include "../../inc/effects/AtmosphereEffect.h"
-#endif // ENABLE_ATMOSPHERE
+//#ifdef ENABLE_ATMOSPHERE
+//#include "../../inc/shaders/AtmosphereShader.h"
+//#include "../../inc/effects/AtmosphereEffect.h"
+//#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_TERRIAN
 #include "../../inc/effects/TerrainEffect.h"
@@ -76,11 +76,11 @@ extern struct FrameBufferDetails fullSceneFbo;
 extern struct FSQuadUniform fsGaussBlurQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
 
-#ifdef ENABLE_ATMOSPHERE
-// Atmosphere Scattering
-extern AtmosphereUniform atmosphereUniform;
-extern AtmosphericVariables atmosVariables;
-#endif // ENABLE_ATMOSPHERE
+//#ifdef ENABLE_ATMOSPHERE
+//// Atmosphere Scattering
+//static AtmosphereUniform atmosphereUniform_09;
+//static AtmosphericVariables atmosVariables_09;
+//#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
 // Shadow
@@ -249,7 +249,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 		displayCamera();
 	else
 	{
-		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle);
+		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle, false);
 	}
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -282,44 +282,44 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 		if (godRays == 1)
 		{
 
-#ifdef ENABLE_ATMOSPHERE
-
-			translationMatrix = mat4::identity();
-			rotationMatrix = mat4::identity();
-			modelMatrix = mat4::identity();
-
-			//glBlendFunc(GL_ONE, GL_ONE);
-
-			atmosphereUniform = useAtmosphereShader();
-
-			glUniform3f(atmosphereUniform.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
-			glUniform3f(atmosphereUniform.lightPosUniform, atmosVariables.m_vLightDirection[0], atmosVariables.m_vLightDirection[1], atmosVariables.m_vLightDirection[2]);
-			glUniform3f(atmosphereUniform.invWavelengthUniform, 1 / atmosVariables.m_fWavelength4[0], 1 / atmosVariables.m_fWavelength4[1], 1 / atmosVariables.m_fWavelength4[2]);
-			glUniform1f(atmosphereUniform.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
-			glUniform1f(atmosphereUniform.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
-			glUniform1f(atmosphereUniform.innerRadiusUniform, atmosVariables.m_fInnerRadius);
-			glUniform1f(atmosphereUniform.innerRadius2Uniform, atmosVariables.m_fInnerRadius * atmosVariables.m_fInnerRadius);
-			glUniform1f(atmosphereUniform.outerRadiusUniform, atmosVariables.m_fOuterRadius);
-			glUniform1f(atmosphereUniform.outerRadius2Uniform, atmosVariables.m_fOuterRadius * atmosVariables.m_fOuterRadius);
-			glUniform1f(atmosphereUniform.KrESunUniform, atmosVariables.m_Kr * atmosVariables.m_ESun);
-			glUniform1f(atmosphereUniform.KmESunUniform, atmosVariables.m_Km * atmosVariables.m_ESun);
-			glUniform1f(atmosphereUniform.Kr4PIUniform, atmosVariables.m_Kr4PI);
-			glUniform1f(atmosphereUniform.Km4PIUniform, atmosVariables.m_Km4PI);
-			glUniform1f(atmosphereUniform.scaleUniform, 1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius));
-			glUniform1f(atmosphereUniform.scaleDepthUniform, atmosVariables.m_fRayleighScaleDepth);
-			glUniform1f(atmosphereUniform.scaleOverScaleDepthUniform, (1.0f / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius)) / atmosVariables.m_fRayleighScaleDepth);
-			glUniform1f(atmosphereUniform.gUniform, atmosVariables.m_g);
-			glUniform1f(atmosphereUniform.g2Uniform, atmosVariables.m_g * atmosVariables.m_g);
-
-			glUniformMatrix4fv(atmosphereUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-			glUniformMatrix4fv(atmosphereUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
-			glUniformMatrix4fv(atmosphereUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-			displayAtmosphere();
-
-			glUseProgram(0);
-
-#endif // ENABLE_ATMOSPHERE
+//#ifdef ENABLE_ATMOSPHERE
+//
+//			translationMatrix = mat4::identity();
+//			rotationMatrix = mat4::identity();
+//			modelMatrix = mat4::identity();
+//
+//			//glBlendFunc(GL_ONE, GL_ONE);
+//
+//			atmosphereUniform_09 = useAtmosphereShader();
+//
+//			glUniform3f(atmosphereUniform_09.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+//			glUniform3f(atmosphereUniform_09.lightPosUniform, atmosVariables_09.m_vLightDirection[0], atmosVariables_09.m_vLightDirection[1], atmosVariables_09.m_vLightDirection[2]);
+//			glUniform3f(atmosphereUniform_09.invWavelengthUniform, 1 / atmosVariables_09.m_fWavelength4[0], 1 / atmosVariables_09.m_fWavelength4[1], 1 / atmosVariables_09.m_fWavelength4[2]);
+//			glUniform1f(atmosphereUniform_09.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+//			glUniform1f(atmosphereUniform_09.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+//			glUniform1f(atmosphereUniform_09.innerRadiusUniform, atmosVariables_09.m_fInnerRadius);
+//			glUniform1f(atmosphereUniform_09.innerRadius2Uniform, atmosVariables_09.m_fInnerRadius * atmosVariables_09.m_fInnerRadius);
+//			glUniform1f(atmosphereUniform_09.outerRadiusUniform, atmosVariables_09.m_fOuterRadius);
+//			glUniform1f(atmosphereUniform_09.outerRadius2Uniform, atmosVariables_09.m_fOuterRadius * atmosVariables_09.m_fOuterRadius);
+//			glUniform1f(atmosphereUniform_09.KrESunUniform, atmosVariables_09.m_Kr * atmosVariables_09.m_ESun);
+//			glUniform1f(atmosphereUniform_09.KmESunUniform, atmosVariables_09.m_Km * atmosVariables_09.m_ESun);
+//			glUniform1f(atmosphereUniform_09.Kr4PIUniform, atmosVariables_09.m_Kr4PI);
+//			glUniform1f(atmosphereUniform_09.Km4PIUniform, atmosVariables_09.m_Km4PI);
+//			glUniform1f(atmosphereUniform_09.scaleUniform, 1.0f / (atmosVariables_09.m_fOuterRadius - atmosVariables_09.m_fInnerRadius));
+//			glUniform1f(atmosphereUniform_09.scaleDepthUniform, atmosVariables_09.m_fRayleighScaleDepth);
+//			glUniform1f(atmosphereUniform_09.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_09.m_fOuterRadius - atmosVariables_09.m_fInnerRadius)) / atmosVariables_09.m_fRayleighScaleDepth);
+//			glUniform1f(atmosphereUniform_09.gUniform, atmosVariables_09.m_g);
+//			glUniform1f(atmosphereUniform_09.g2Uniform, atmosVariables_09.m_g * atmosVariables_09.m_g);
+//
+//			glUniformMatrix4fv(atmosphereUniform_09.modelMatrix, 1, GL_FALSE, modelMatrix);
+//			glUniformMatrix4fv(atmosphereUniform_09.viewMatrix, 1, GL_FALSE, viewMatrix);
+//			glUniformMatrix4fv(atmosphereUniform_09.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+//
+//			displayAtmosphere();
+//
+//			glUseProgram(0);
+//
+//#endif // ENABLE_ATMOSPHERE
 
 		} // if(godRays == 1)
 
