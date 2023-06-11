@@ -317,6 +317,7 @@ int initializeNavras(void) {
 	void printGLInfo(void);
 	void uninitialize(void);
 	void resetCamera(void);
+	void sceneTime(int);
 
 	// Variable Declarations
 
@@ -566,6 +567,8 @@ int initializeNavras(void) {
 	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
+
+	sceneTime(time_scene2);
 
 	return(0);
 }
