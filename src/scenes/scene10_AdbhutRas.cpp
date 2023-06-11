@@ -164,6 +164,7 @@ static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
 static STATIC_MODEL farmhouseModel;
 static STATIC_MODEL adbhutmanModel;
+static STATIC_MODEL bridgeModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -279,6 +280,7 @@ int initializeScene10_AdbhutRas(void)
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
 	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
+	loadStaticModel("res/models/bridge/bridge.obj", &bridgeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -821,6 +823,29 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	drawStaticModel(adbhutmanModel);
 
+
+	// ------ Bridge Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationAngles = {0.0f, 0.0f, 0.0f};
+
+	translationMatrix = vmath::translate(3.56f, -1.07f, -1.50f);
+	scaleMatrix = vmath::scale( 3.80f,  3.80f,  3.80f);
+	rotationAngles = {0.0f, 144.55f, 0.0f};
+
+	// usage type 1 
+	if(9 == tf_Object) // bridge model
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+
+	drawStaticModel(bridgeModel);
+
+
 #ifdef ENABLE_MASKSQUADS
 	// Quad For Mask
 	translationMatrix = mat4::identity();
@@ -1183,6 +1208,8 @@ void uninitializeScene10_AdbhutRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
+	unloadStaticModel(&bridgeModel);
+	unloadStaticModel(&adbhutmanModel);
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&treeModel);
