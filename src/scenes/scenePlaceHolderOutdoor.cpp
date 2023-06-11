@@ -11,6 +11,7 @@
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../../inc/Navras.h"
+#include "../../inc/effects/StaticModelLoadingEffect.h"
 
 
 #ifdef ENABLE_WATER
@@ -45,9 +46,6 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_SKYBOX
 #include "../../inc/effects/SkyboxEffect.h"
 #endif // ENABLE_SKYBOX
@@ -68,8 +66,15 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
 
+#ifdef ENABLE_EROSION
+#include "../../inc/effects/ErosionEffect.h"
+#endif // ENABLE_EROSION
+
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
+
+#define FBO_EARTHANDSPACE_WIDTH (WIN_WIDTH * 3)  
+#define FBO_EARTHANDSPACE_HEIGHT (WIN_HEIGHT * 3)
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
@@ -86,9 +91,14 @@ struct FSQuadUniform fsqUniform;
 struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneCloudNoiseUniform;
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//struct CloudNoiseUniform sceneCloudNoiseUniform;
+// float myScale = 1.0f;
+// float noiseScale = 2.0f;
+// bool noiseScaleIncrement = true;
+// GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+// GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -139,20 +149,40 @@ struct FrameBufferDetails fboGodRayPass;
 
 struct FrameBufferDetails fboEarthAndSpace;
 
+// Masks
+static struct FrameBufferDetails fboMaskPass_Outdoor;
+static GLuint texture_shringarRas;
+
+static STATIC_MODEL maskModel_BhayanakRas;
+static STATIC_MODEL maskModel_BibhastaRas;
+static STATIC_MODEL maskModel_VeerRas;
+static STATIC_MODEL maskModel_AdbhutRas;
+static STATIC_MODEL maskModel_ShringarRas;
+
+GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat lightDiffuse_shantRas_mask[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+GLfloat lightSpecular_shantRas_mask[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat lightPosition_shantRas_mask[] = { 0.0f, 10.0f, 10.0f, 1.0f };
+
+GLfloat materialAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat materialSpecular_shantRas_mask[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+GLfloat materialShininess_shantRas_mask = 128.0f;
+extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
+static GLuint noise_texture_eroded_outdoor;
+static float myScale_erosion_outdoor = 2.0f;
+static float noiseScale_erosion_outdoor = 2.0f;
+static bool offsetIncrement_outdoor = false;
+static bool isBlur = false;
+
+static GLfloat offset_ras_outdoor[] = { 0.17f, 0.17f, 0.17f };
+
 extern int windowWidth;
 extern int windowHeight;
 
-float myScale = 1.0f;
-
-float noiseScale = 2.0f;
-bool noiseScaleIncrement = true;
-
 mat4 viewMatrix;
 
-GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-
-GLuint noise_texture;
+//GLuint noise_texture;
 
 GLfloat angleCube;
 
@@ -342,25 +372,25 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 #endif // ENABLE_SKYBOX
 
-#ifdef ENABLE_CLOUD_NOISE
-
-	noise_texture = initializeCloud();
-	if (noise_texture == 0)
-	{
-		LOG("initializeCloud() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeCloud() Successfull!!!\n");
-	}
-
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//
+//	noise_texture = initializeCloud();
+//	if (noise_texture == 0)
+//	{
+//		LOG("initializeCloud() FAILED!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("initializeCloud() Successfull!!!\n");
+//	}
+//
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_STARFIELD
 
-	fboEarthAndSpace.textureWidth = 3840;
-	fboEarthAndSpace.textureHeight = 2160;
+	fboEarthAndSpace.textureWidth = FBO_EARTHANDSPACE_WIDTH;
+	fboEarthAndSpace.textureHeight = FBO_EARTHANDSPACE_HEIGHT;
 
 	createFBO(&fboEarthAndSpace);
 
@@ -397,14 +427,14 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #ifdef ENABLE_BILLBOARDING
 	char imagefile[64] = {};
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower2.png");
-	if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-	{
-		LOG("Texture loading failed for image %s\n", imagefile);
-		return (-6);
-	}
+	// sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower3.png");
+	// if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
+	// {
+	// 	LOG("Texture loading failed for image %s\n", imagefile);
+	// 	return (-6);
+	// }
 
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower.png");
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower5.png");
 	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
 	{
 		LOG("Texture loading failed for image %s\n", imagefile);
@@ -412,6 +442,41 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 
 #endif // ENABLE_BILLBOARDING
+
+	fboMaskPass_Outdoor.textureWidth = 1920;
+	fboMaskPass_Outdoor.textureHeight = 1080;
+
+	createFBO(&fboMaskPass_Outdoor);
+
+	loadStaticModel("res/models/masks/individualScenes/AdbhutWithText.obj", &maskModel_AdbhutRas);
+	loadStaticModel("res/models/masks/individualScenes/BhayanakWithText.obj", &maskModel_BhayanakRas);
+	loadStaticModel("res/models/masks/individualScenes/ShringarWithText.obj", &maskModel_ShringarRas);
+	loadStaticModel("res/models/masks/individualScenes/VeerWithText.obj", &maskModel_VeerRas);
+	loadStaticModel("res/models/masks/individualScenes/BeebhatsaWithText.obj", &maskModel_BibhastaRas);
+
+
+
+	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, "res/models/masks/copper.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
+	}
+
+	noise_texture_eroded_outdoor = initializeErosion();
+	if (noise_texture_eroded_outdoor == 0)
+	{
+		LOG("initializeErosion() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeErosion() Successfull!!!\n");
+	}
 
 	return 0;
 }
@@ -426,6 +491,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	// set cameraa
 	setCamera();
 
+	isBlur = isGaussianBlurRequired;
 
 	displayCamera();
 	//setCamera(&camera);
@@ -527,6 +593,99 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);*/
 
+	// Masks
+	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Outdoor.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboMaskPass_Outdoor.textureWidth, (GLsizei)fboMaskPass_Outdoor.textureHeight);
+		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboMaskPass_Outdoor.textureWidth / fboMaskPass_Outdoor.textureHeight, 0.1f, 100.0f);
+
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		mat4 rotationMatrix_x = mat4::identity();
+		mat4 rotationMatrix_y = mat4::identity();
+		mat4 rotationMatrix_z = mat4::identity();
+
+		//float angle = 0.0;
+
+		glEnable(GL_TEXTURE_3D);
+		glEnable(GL_TEXTURE_2D);
+		sceneErosionNoiseUniform = useErosionNoiseShader();
+
+		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+		glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
+
+		glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
+
+		//glDisable(GL_BLEND);
+		// ------ Mask Model ------
+		translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
+		scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
+		//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+
+		glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, mat4::identity());
+		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_outdoor);
+		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_outdoor);
+
+		if(getCurrentScene() == SCENE06_BHAYANK_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_BhayanakRas, texture_shringarRas, noise_texture_eroded_outdoor);
+
+		}
+		else if(getCurrentScene() == SCENE08_BIBHATSA_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_BibhastaRas, texture_shringarRas, noise_texture_eroded_outdoor);
+
+		}
+		else if(getCurrentScene() == SCENE09_VEER_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_VeerRas, texture_shringarRas, noise_texture_eroded_outdoor);
+
+		}
+		else if(getCurrentScene() == SCENE10_ADBHUT_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_AdbhutRas, texture_shringarRas, noise_texture_eroded_outdoor);
+
+		}
+		else if(getCurrentScene() == SCENE11_SHRINGAR_RAS)
+		{
+
+			drawCustomTextureStaticModel(maskModel_ShringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
+
+		}
+
+
+		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
+		// ################################### ROOM ###################################  
+
+		glUseProgram(0);
+
+		glDisable(GL_TEXTURE_3D);
+		glDisable(GL_TEXTURE_2D);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	//
 	if(!isGaussianBlurRequired && !isGodRequired) 
 	{
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
@@ -534,10 +693,9 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 			(GLfloat)windowWidth / windowHeight, 0.01f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//LOG("Enter\n");
 		displayPasses(1, false, false, isWaterRequired, 0);
 	}
-	else if(isGaussianBlurRequired) 
+	else if(isGaussianBlurRequired && !isGodRequired)
 	{
 		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
@@ -546,7 +704,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//LOG("Enter\n");
 		displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -557,14 +714,29 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurQuadUniform = useFSQuadShader();
+		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 		displayQuad();
-		glUseProgram(0);
     	glBindTexture(GL_TEXTURE_2D, 0);
+		
+
+		////
+		
+		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+		glUseProgram(0);
+
 	}
-	else if(isGodRequired)
+	else if(isGodRequired && !isGaussianBlurRequired)
 	{
 		// GodRay Black pass
 		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
@@ -579,7 +751,8 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		modelMatrix = mat4::identity();
 		
 		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
-		modelMatrix = translationMatrix;
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+		modelMatrix = translationMatrix * scaleMatrix;
 		
 		sceneOutdoorADSStaticUniform = useADSShader();
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -656,7 +829,12 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 		fsqUniform = useFSQuadShader();
+		//glEnable(GL_BLEND);
+
+		glUniform1i(fsqUniform.singleTexture, 0);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
@@ -664,11 +842,175 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
+
+		/*glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
+		glUniform1i(fsqUniform.textureSamplerUniform3, 2);*/
+
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//glDisable(GL_BLEND);
+
+		//
+		/*glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);*/
 		glUseProgram(0);
 	
 	}
+	else if (isGodRequired && isGaussianBlurRequired)
+	{
+		
+		// GodRay Black pass
+		glBindFramebuffer(GL_FRAMEBUFFER, fboBlackPass.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboBlackPass.textureWidth, (GLsizei)fboBlackPass.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboBlackPass.textureWidth / fboBlackPass.textureHeight,
+			0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		displayPasses(0, false, false, isWaterRequired, 0);
+
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(lightPosition_gr[0], lightPosition_gr[1], lightPosition_gr[2]);
+		scaleMatrix = vmath::scale(0.25f, 0.25f, 0.25f);
+		modelMatrix = translationMatrix * scaleMatrix;
+
+		sceneOutdoorADSStaticUniform = useADSShader();
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 1);
+		float color[3] = { 1.0f, 1.0f, 1.0f };
+		if (getCurrentScene() == SCENE02_EARTH_AND_SPACE)
+		{
+			color[0] = 1.0f;
+			color[1] = 0.65f;
+			color[2] = 0.01f;
+		}
+		//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+
+		displaySphere(color);
+		glUseProgram(0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// GodRay Color Pass
+		glBindFramebuffer(GL_FRAMEBUFFER, fboColorPass.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboColorPass.textureWidth, (GLsizei)fboColorPass.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboColorPass.textureWidth / fboColorPass.textureHeight, 0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		displayPasses(1, false, false, isWaterRequired, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// God Rays Pass
+		glBindFramebuffer(GL_FRAMEBUFFER, fboGodRayPass.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboGodRayPass.textureWidth, (GLsizei)fboGodRayPass.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboGodRayPass.textureWidth / fboGodRayPass.textureHeight, 0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		sceneGodRaysUniform = useGodRaysShader();
+		translationMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+		//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
+		modelMatrix = translationMatrix;
+
+		glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
+		glUniform1f(sceneGodRaysUniform.decay, 1.0f);
+		glUniform1f(sceneGodRaysUniform.density, 0.92f);
+		glUniform1f(sceneGodRaysUniform.exposure, 0.25f);
+		glUniform1f(sceneGodRaysUniform.weight, 0.04f);
+
+		glUniformMatrix4fv(sceneGodRaysUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneGodRaysUniform.viewMatrix, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneGodRaysUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+		if (getCurrentScene() == SCENE02_EARTH_AND_SPACE) {
+			glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 0);
+		}
+		// else
+		glUniform1i(sceneGodRaysUniform.godrays_lfEnabled, 1);
+
+		glUniform1f(sceneGodRaysUniform.dispersalUniform, dispersal);
+		glUniform1f(sceneGodRaysUniform.haloWidthUniform, haloWidth);
+		glUniform1f(sceneGodRaysUniform.intensityUniform, intensity);
+		glUniform3fv(sceneGodRaysUniform.distortionUniform, 1, distortion);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboBlackPass.frameBufferTexture);
+		glUniform1i(sceneGodRaysUniform.godraysampler, 0);
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glUseProgram(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// Godrays Default Frame Buffer
+		//displayPasses(1, false, false, isWaterRequired, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
+		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight,
+			0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsqUniform = useFSQuadShader();
+		//glEnable(GL_BLEND);
+
+		glUniform1i(fsqUniform.singleTexture, 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fboGodRayPass.frameBufferTexture);
+		glUniform1i(fsqUniform.textureSamplerUniform1, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
+		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
+
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		// Gausian Blur
+		displayGaussianBlur();
+
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsGaussBlurQuadUniform = useFSQuadShader();
+		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+		displayQuad();
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		//
+
+		if (getCurrentScene() != SCENE02_EARTH_AND_SPACE) {
+
+			glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
+			glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+
+			displayQuad();
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+		}
+		glUseProgram(0);
+	
+	}
+
+
 }
 
 int initializeGodRays(void)
@@ -706,7 +1048,8 @@ void displayGaussianBlur(void)
 	
     horizontalBlurUniform = useHorrizontalBlurShader();
 
-    glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+    glUniform1f(horizontalBlurUniform.targetWidth, 540.0f);
+	glUniform1f(horizontalBlurUniform.blurFactor, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
     glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
@@ -721,7 +1064,8 @@ void displayGaussianBlur(void)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurUniform = useVerticalBlurShader();
-	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glUniform1f(verticalBlurUniform.targetHeight, 270.0f);
+	glUniform1f(verticalBlurUniform.blurFactor, 1.0f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
     glUniform1i(verticalBlurUniform.vblurTexSamplerUniform, 0);
@@ -748,10 +1092,10 @@ void updateScene_PlaceHolderOutdoor(void)
 	deltaTime = updateStarfield(deltaTime);
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	// update Cloud
+//	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_WATER
 
@@ -766,11 +1110,44 @@ void updateScene_PlaceHolderOutdoor(void)
 	/*cameraAngle = cameraAngle + 0.5f;
 	if (cameraAngle >= 360.0f)
 		cameraAngle -= 360.0f;*/
+	// updateErosion(offsetIncrement_outdoor, offset_ras_outdoor[8], 0.002f);
+	if (isBlur == false)
+	{
+		offset_ras_outdoor[0] = 0.17f;
+		offset_ras_outdoor[1] = 0.17f;
+		offset_ras_outdoor[2] = 0.17f;
+	}
+
+	if (((getCurrentScene() == SCENE06_BHAYANK_RAS) ||
+		(getCurrentScene() == SCENE08_BIBHATSA_RAS) ||
+		(getCurrentScene() == SCENE09_VEER_RAS) ||
+		(getCurrentScene() == SCENE10_ADBHUT_RAS) ||
+		(getCurrentScene() == SCENE11_SHRINGAR_RAS)) && 
+		isBlur == true)
+	{
+		offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
+		offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
+		offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
+		if (offset_ras_outdoor[2] > 0.48f)
+		{
+			offset_ras_outdoor[0] = 0.48f;
+			offset_ras_outdoor[1] = 0.48f;
+			offset_ras_outdoor[2] = 0.48f;
+		}
+	}
 }
 
 void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
+
+	unloadStaticModel(&maskModel_AdbhutRas);
+	unloadStaticModel(&maskModel_BhayanakRas);
+	unloadStaticModel(&maskModel_BibhastaRas);
+	unloadStaticModel(&maskModel_VeerRas);
+	unloadStaticModel(&maskModel_ShringarRas);
+	
+
 #ifdef ENABLE_BILLBOARDING
 
 	// texture
@@ -802,15 +1179,15 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	uninitializeAtmosphere();
 #endif // ENABLE_ATMOSPHERE
 
-#ifdef ENABLE_CLOUD_NOISE
-	
-	uninitializeCloud();
-	if (noise_texture)
-	{
-		glDeleteTextures(1, &noise_texture);
-		noise_texture = 0;
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	
+//	uninitializeCloud();
+//	if (noise_texture)
+//	{
+//		glDeleteTextures(1, &noise_texture);
+//		noise_texture = 0;
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)

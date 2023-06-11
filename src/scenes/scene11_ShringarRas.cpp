@@ -42,15 +42,15 @@
 #include "../../inc/effects/StarfieldEffect.h"
 #endif // ENABLE_STARFIELD
 
-#ifdef ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_SKYBOX
 #include "../../inc/effects/SkyboxEffect.h"
 #endif // ENABLE_SKYBOX
 
 #ifdef ENABLE_CLOUD_NOISE
+#undef ENABLE_CLOUD_NOISE
 #include "../../inc/effects/CloudEffect.h"
+#else
+#define ENABLE_CLOUD_NOISE
 #endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_WATER
@@ -94,7 +94,13 @@ extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-extern struct CloudNoiseUniform sceneCloudNoiseUniform;
+struct CloudNoiseUniform sceneShringarRasCloudNoiseUniform;
+float cloudMyScaleShringarRas = 1.0f;
+float cloudNoiseScaleShringarRas = 2.0f;
+bool cloudNoiseScaleIncrementShringarRas = true;
+GLuint noise_texture_shringar_ras;
+GLfloat skyColorForShringarRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+GLfloat cloudColorForShringarRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 static struct TextureVariables terrainTextureVariables;
@@ -156,12 +162,6 @@ extern bool noiseScaleIncrement; // = true;
 
 extern mat4 viewMatrix;
 
-
-extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
-extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
-extern GLuint noise_texture;
-
 extern GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
@@ -173,13 +173,6 @@ static float displacementmap_depth;
 extern GLuint texture_skybox;
 extern struct SkyboxUniform sceneSkyBoxUniform;
 #endif // ENABLE_SKYBOX
-
-#ifdef ENABLE_STARFIELD
-// Variables For Starfieldx
-extern GLuint texture_star; 
-extern double deltaTime;
-extern struct StarfieldUniform sceneStarfieldUniform;
-#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
@@ -239,32 +232,28 @@ int initializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_ATMOSPHERE
 
-//
-	atmosVariables_11.m_nSamples = 3;		// Number of sample rays to use in integral equation
-	atmosVariables_11.m_Kr = 0.0035f;		// Rayleigh scattering constant
-	atmosVariables_11.m_Kr4PI = atmosVariables_11.m_Kr * 4.0f * M_PI;
-	atmosVariables_11.m_Km = 0.0015f;		// Mie scattering constant
-	atmosVariables_11.m_Km4PI = atmosVariables_11.m_Km * 4.0f * M_PI;
-	atmosVariables_11.m_ESun = 20.0f;		// Sun brightness constant
-	atmosVariables_11.m_g = -0.990f;		// The Mie phase asymmetry factor
-	atmosVariables_11.m_fExposure = 2.0f;
+	//
+	atmosVariables_11.m_nSamples = 3;
+	atmosVariables_11.m_Kr = 0.148502;
+	atmosVariables_11.m_Kr4PI = 1.866133;
+	atmosVariables_11.m_Km = 0.005000;
+	atmosVariables_11.m_Km4PI = 0.062832;
+	atmosVariables_11.m_ESun = 20.700003;
+	atmosVariables_11.m_g = -0.974000;
+	atmosVariables_11.m_fExposure = 2.000000;
+	atmosVariables_11.m_fInnerRadius = 0.000000;
+	atmosVariables_11.m_fOuterRadius = 102.000000;
+	atmosVariables_11.m_fScale = 0.009804;
+	atmosVariables_11.m_fWavelength[0] = 0.628000;
+	atmosVariables_11.m_fWavelength[1] = 0.570000;
+	atmosVariables_11.m_fWavelength[2] = 0.475000;
+	atmosVariables_11.m_fWavelength4[0] = 0.155539;
+	atmosVariables_11.m_fWavelength4[1] = 0.105560;
+	atmosVariables_11.m_fWavelength4[2] = 0.050907;
+	atmosVariables_11.m_fRayleighScaleDepth = 0.250000;
+	atmosVariables_11.m_fMieScaleDepth = 0.100000;
 
-	atmosVariables_11.m_fInnerRadius = 0.0f;
-	atmosVariables_11.m_fOuterRadius = 102.0f;
-	//atmosVariables_11.m_fOuterRadius = atmosVariables_11.m_fInnerRadius + (atmosVariables_11.m_fInnerRadius * 2.5f);
-	atmosVariables_11.m_fScale = 1 / (atmosVariables_11.m_fOuterRadius - atmosVariables_11.m_fInnerRadius);
-
-	atmosVariables_11.m_fWavelength[0] = 0.650f;		// 650 nm for red
-	atmosVariables_11.m_fWavelength[1] = 0.570f;		// 570 nm for green
-	atmosVariables_11.m_fWavelength[2] = 0.475f;		// 475 nm for blue
-	atmosVariables_11.m_fWavelength4[0] = powf(atmosVariables_11.m_fWavelength[0], 4.0f);
-	atmosVariables_11.m_fWavelength4[1] = powf(atmosVariables_11.m_fWavelength[1], 4.0f);
-	atmosVariables_11.m_fWavelength4[2] = powf(atmosVariables_11.m_fWavelength[2], 4.0f);
-
-	atmosVariables_11.m_fRayleighScaleDepth = 0.25f;
-	atmosVariables_11.m_fMieScaleDepth = 0.1f;
-
-	atmosVariables_11.m_vLight = vec3(0, 2, -35);
+	atmosVariables_11.m_vLight = vec3(0, 1, -35);
 	atmosVariables_11.m_vLightDirection = atmosVariables_11.m_vLight / sqrtf(atmosVariables_11.m_vLight[0] * atmosVariables_11.m_vLight[0] + atmosVariables_11.m_vLight[1] * atmosVariables_11.m_vLight[1] + atmosVariables_11.m_vLight[2] * atmosVariables_11.m_vLight[2]);
 
 	//
@@ -352,6 +341,19 @@ int initializeScene11_ShringarRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_CLOUD_NOISE
+	noise_texture_shringar_ras = initializeCloud();
+	if (noise_texture_shringar_ras == 0)
+	{
+		LOG("initializeCloud() - noise_texture_shringar_ras FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() - noise_texture_shringar_ras Successfull!!!\n");
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 
 	return 0;
 }
@@ -393,11 +395,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//LOG("%f\n", varY);
 
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
-	//rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
+	rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
-	displayCamera();
+	//displayCamera();
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -502,7 +504,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 #ifdef ENABLE_CLOUD_NOISE
 
 		glEnable(GL_TEXTURE_3D);
-		sceneCloudNoiseUniform = useCloudNoiseShader();
+		sceneShringarRasCloudNoiseUniform = useCloudNoiseShader();
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -524,72 +526,40 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneShringarRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneShringarRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneShringarRasCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform4fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColor);
-		glUniform4fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColor);
-		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-		glEnable(GL_BLEND);
+		glUniform1f(sceneShringarRasCloudNoiseUniform.scaleUniform, cloudMyScaleShringarRas);
+		glUniform4fv(sceneShringarRasCloudNoiseUniform.skyColorUniform, 1, skyColorForShringarRas);
+		glUniform4fv(sceneShringarRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorForShringarRas);
+		glUniform1f(sceneShringarRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleShringarRas);
+		glUniform1i(sceneShringarRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneShringarRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		//glEnable(GL_BLEND);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_shringar_ras);
 
 		float color[3] = {1.0f, 1.0f, 1.0f};
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 		displaySphere(color);
-		glDisable(GL_BLEND);
+		//glDisable(GL_BLEND);
 
 		glUseProgram(0);
 
 		glDisable(GL_TEXTURE_3D);
 
 #endif // ENABLE_CLOUD_NOISE
-
-#ifdef ENABLE_STARFIELD
-
-		sceneStarfieldUniform = useStarfieldShader();
-
-		float time = (float)deltaTime;
-
-		time = time * 0.05f;
-		time = time - floor(time);
-
-		// Transformations
-		translationMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-
-		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
-		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
-		glUniform1f(sceneStarfieldUniform.timeUniform, time);
-
-		displayStarfield(texture_star);
-		glUseProgram(0);
-
-#endif // ENABLE_STARFIELD
 
 #ifdef ENABLE_SKYBOX
 
@@ -1109,6 +1079,11 @@ void updateScene11_ShringarRas(void)
 	if (moveFactor >= 360.0f)
 		moveFactor -= 360.0f;
 #endif // ENABLE_WATER
+
+#ifdef ENABLE_CLOUD_NOISE
+	// update Cloud
+	updateCloud(cloudNoiseScaleIncrementShringarRas, cloudNoiseScaleShringarRas, 0.0001f);
+#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene11_ShringarRas(void)
@@ -1141,5 +1116,14 @@ void uninitializeScene11_ShringarRas(void)
 	unloadDynamicModel(&skeletonModel_11);
 #endif
 	//uninitializeCamera(&camera);
+
+#ifdef ENABLE_CLOUD_NOISE
+	uninitializeCloud();
+	if (noise_texture_shringar_ras)
+	{
+		glDeleteTextures(1, &noise_texture_shringar_ras);
+		noise_texture_shringar_ras = 0;
+	}
+#endif // ENABLE_CLOUD_NOISE
 
 }

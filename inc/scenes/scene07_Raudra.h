@@ -6,6 +6,7 @@
 #include "../../inc/helper/texture_loader.h"
 
 int initializeScene07_Raudra(void);
+void setCameraScene07_RaudraRas(void);
 void displayScene07_Raudra(void);
 void updateScene07_RaudraRas(void);
 void uninitializeScene07_Raudra(void);

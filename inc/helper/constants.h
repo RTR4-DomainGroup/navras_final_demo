@@ -73,10 +73,11 @@
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
     "AMC_Banner_Audio.wav",
+    "\0",
     "Scene02_EarthAndSpace_40_seconds.wav",
     "\0",
     "\0",
-    "Scene05_KarunRas_40_seconds_new.wav", 
+    "Scene05_KarunRas_40_seconds_new_1.wav", 
     "Scene06_BhayanakRas_40_seconds.wav",
     "Scene07_RoudraRas_40_seconds.wav", 
     "Kkl_cut_2.wav", 
@@ -93,9 +94,11 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-//#define ENABLE_MULTI_THREADING
+#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+
+//#define SHORTS
 
 // always ON
 #define ENABLE_WATER
@@ -105,22 +108,24 @@ static const char *szAudios[] = {
 // configurable
 #define ENABLE_TERRIAN
 #define ENABLE_ATMOSPHERE
-//#define ENABLE_CLOUD_NOISE
+#define ENABLE_CLOUD_NOISE
 //#define ENABLE_SKYBOX
 #define ENABLE_STARFIELD
 //#define ENABLE_FOG
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
-#define ENABLE_STATIC_MODELS	
+ #define ENABLE_STATIC_MODELS
 //#define ENABLE_DYNAMIC_MODELS
-//#define ENABLE_CAMERA_ANIMATION
+#define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
-//#define ENABLE_AUDIO
+#define ENABLE_AUDIO
+#define ENABLE_FONT_RENDERING
 
+#define ENABLE_SSAO
 
-#define ENABLE_SINGLE_SCENE
+//#define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
@@ -130,7 +135,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
-//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Rask
+//#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
@@ -139,6 +144,10 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
+
+#else
+
+#define AUTOSWITCH_SCENE
 
 #endif // ENABLE_SINGLE_SCENE
 

@@ -12,8 +12,11 @@
 #endif // ENABLE_SHADOW
 
 #ifdef ENABLE_ATMOSPHERE
+#undef ENABLE_ATMOSPHERE
 #include "../../inc/shaders/AtmosphereShader.h"
 #include "../../inc/effects/AtmosphereEffect.h"
+#else
+#define ENABLE_ATMOSPHERE
 #endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_TERRIAN
@@ -56,7 +59,13 @@ extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-extern struct CloudNoiseUniform sceneCloudNoiseUniform;
+struct CloudNoiseUniform sceneVeerRasCloudNoiseUniform;
+float cloudMyScaleVeerRas = 1.0f;
+float cloudNoiseScaleVeerRas = 2.0f;
+bool cloudNoiseScaleIncrementVeerRas = true;
+GLuint noise_texture_veer_ras;
+GLfloat skyColorForVeerRas[] = { 0.3f, 0.3f, 0.5f, 0.0f };
+GLfloat cloudColorForVeerRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 struct TextureVariables terrainTextureVariables;
@@ -91,11 +100,6 @@ extern struct FrameBufferDetails fboGodRayPass;
 extern int windowWidth;
 extern int windowHeight;
 
-extern float myScale; // = 1.0f;
-
-extern float noiseScale; // = 2.0f;
-extern bool noiseScaleIncrement; // = true;
-
 static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -107,15 +111,6 @@ static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
 extern mat4 viewMatrix;
-
-
-extern GLfloat skyColor[]; // = { 0.0f, 0.0f, 0.8f, 0.0f };
-extern GLfloat cloudColor[]; // = { 0.8f, 0.8f, 0.8f, 0.0f };
-
-GLfloat skyColorForVeerRas[] = { 0.3f, 0.3f, 0.5f, 0.0f };
-GLfloat cloudColorForVeerRas[] = { 0.8f, 0.8f, 0.8f, 0.0f };
-
-extern GLuint noise_texture;
 
 extern GLfloat angleCube;
 
@@ -209,8 +204,21 @@ int initializeScene09_VeerRas(void)
 #endif // ENABLE_TERRIAN
 
 	displacementmap_depth = 15;
-	return 0;
 
+#ifdef ENABLE_CLOUD_NOISE
+	noise_texture_veer_ras = initializeCloud();
+	if (noise_texture_veer_ras == 0)
+	{
+		LOG("initializeCloud() - noise_texture_veer_ras FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeCloud() - noise_texture_veer_ras Successfull!!!\n");
+	}
+#endif // ENABLE_CLOUD_NOISE
+
+	return 0;
 }
 
 void setCameraScene09_VeerRas(void)
@@ -244,7 +252,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 		displayCamera();
 	else
 	{
-		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle);
+		rotateCamera(15.40f, 4.99f, -19.70f, cameraRadius, cameraAngle, false);
 	}
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -321,7 +329,7 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 #ifdef ENABLE_CLOUD_NOISE
 
 		glEnable(GL_TEXTURE_3D);
-		sceneCloudNoiseUniform = useCloudNoiseShader();
+		sceneVeerRasCloudNoiseUniform = useCloudNoiseShader();
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -343,29 +351,29 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
 
-		glUniformMatrix4fv(sceneCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glUniformMatrix4fv(sceneVeerRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneVeerRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+		glUniformMatrix4fv(sceneVeerRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+		glUniform4fv(sceneVeerRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
 
-		glUniform3fv(sceneCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneCloudNoiseUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+		glUniform1f(sceneVeerRasCloudNoiseUniform.materialShininessUniform, materialShininess);
 
-		glUniform1f(sceneCloudNoiseUniform.scaleUniform, myScale);
-		glUniform3fv(sceneCloudNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
-		glUniform3fv(sceneCloudNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
-		glUniform1f(sceneCloudNoiseUniform.noiseScaleUniform, noiseScale);
-		glUniform1i(sceneCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+		glUniform1f(sceneVeerRasCloudNoiseUniform.scaleUniform, cloudMyScaleVeerRas);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.skyColorUniform, 1, skyColorForVeerRas);
+		glUniform3fv(sceneVeerRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorForVeerRas);
+		glUniform1f(sceneVeerRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleVeerRas);
+		glUniform1i(sceneVeerRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+		//glUniform1f(sceneVeerRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture);
+		glBindTexture(GL_TEXTURE_3D, noise_texture_veer_ras);
 
 		float color[3] = { 1.0f, 1.0f, 1.0f };
 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f, 1.0f, 1.0f));
@@ -625,6 +633,11 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 	glUseProgram(0);
 
+#ifdef ENABLE_CLOUD_NOISE
+	// update Cloud
+	updateCloud(cloudNoiseScaleIncrementVeerRas, cloudNoiseScaleVeerRas, 0.0001f);
+#endif // ENABLE_CLOUD_NOISE
+
 #endif
 }
 
@@ -745,4 +758,14 @@ void uninitializeScene09_VeerRas(void)
 	unloadDynamicModel(&skeletonModel);
 #endif
 	//uninitializeCamera(&camera);
+
+#ifdef ENABLE_CLOUD_NOISE
+	uninitializeCloud();
+	if (noise_texture_veer_ras)
+	{
+		glDeleteTextures(1, &noise_texture_veer_ras);
+		noise_texture_veer_ras = 0;
+	}
+#endif // ENABLE_CLOUD_NOISE
+
 }

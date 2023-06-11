@@ -14,6 +14,7 @@
 
 #include "../inc/shaders/FSQuadShader.h"
 #include "../inc/shaders/ParticleShader.h"
+#include "../inc/shaders/FontShader.h"
 
 #include "../inc/scenes/scenes.h"
 #include "../inc/scenes/scenePlaceHolderOutdoor.h"
@@ -28,6 +29,7 @@
 #include "../inc/scenes/scene11_ShringarRas.h"
 #include "../inc/scenes/scene12_Hasya.h"
 #include "../inc/scenes/scene13_Shant.h"
+#include "../inc/scenes/fontRendering.h"
 #include "../inc/effects/videoEffect.h"
 
 #include "../inc/Navras.h"
@@ -46,7 +48,8 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-
+// extern GLbyte charPressed;
+// extern GLuint keyPressed;
 extern bool mouseLeftClickActive;
 extern float mouseX;
 extern float mouseY;
@@ -59,26 +62,17 @@ float lastY = 600.0f / 2.0f;
 int winWidth;
 int winHeight;
 
+
+// Indoor Gaussian Blur
+bool shouldSceneRaudraMaskAppear = false;
+
 // Time
 bool timeFlag = true;
 time_t now;
 time_t then;
 
-//int time_scene1 = 5;
-//int time_scene2 = 40;
-//int time_scene3 = 40;
-//int time_scene4 = 40;
-//int time_scene5 = 40;
-//int time_scene6 = 40;
-//int time_scene7 = 40;
-//int time_scene8 = 40;
-//int time_scene9 = 40;
-//int time_scene10 = 40;
-//int time_scene11 = 40;
-//int time_scene12 = 40;
-//int time_scene13 = 40;
-//int time_scene14 = 40;
-
+#ifdef SHORTS
+int time_scene1 = 5;
 int time_scene2 = 10;
 int time_scene3 = 10;
 int time_scene4 = 10;
@@ -92,6 +86,23 @@ int time_scene11 = 10;
 int time_scene12 = 10;
 int time_scene13 = 10;
 int time_scene14 = 10;
+#else
+int time_scene1 = 5;
+int time_scene2 = 40;
+int time_scene3 = 40;
+int time_scene4 = 40;
+int time_scene5 = 40;
+int time_scene6 = 40;
+int time_scene7 = 40;
+int time_scene8 = 40;
+int time_scene9 = 40;
+int time_scene10 = 40;
+int time_scene11 = 40;
+int time_scene12 = 40;
+int time_scene13 = 40;
+int time_scene14 = 40;
+#endif
+
 
 // Audio
 static bool audioFlag = true;
@@ -123,7 +134,9 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	// variables
 	static int songId; 
-
+    GLbyte charPressed = 0;
+    GLuint keyPressed = 0;
+	
 	// Code
 	switch (iMsg) {
 	case WM_SETFOCUS:
@@ -140,6 +153,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;
 		default:
 			// LOG("keypress : %d\n", wParam);
+			keyPressed = wParam;
+			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
 		break;
@@ -270,6 +285,8 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 		default:
 			// LOG("keypressed : %d\n", wParam);
+			charPressed = wParam;
+			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
 		break;
@@ -279,7 +296,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 
 	}
 
-	// debug_tranformation();
 	return(0);
 }
 
@@ -336,6 +352,7 @@ int initializeNavras(void) {
 	void printGLInfo(void);
 	void uninitialize(void);
 	void resetCamera(void);
+	void sceneTime(int);
 
 	// Variable Declarations
 
@@ -491,14 +508,14 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE07
+	//// SCENE07
 	if (initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
 		return (-8);
 	}
 
-	// SCENE08
+	//// SCENE08
 	if (initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
@@ -526,7 +543,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// // SCENE12
+	// SCENE12
 	if (initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene12_Hasya() FAILED !!!\n");
@@ -540,9 +557,9 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	LOG("initializeScene13_Shant() DONE !!!\n");
+	////LOG("initializeScene13_Shant() DONE !!!\n");
 
-	//  // SCENE14
+	// SCENE14
 	 if (initializeParticle() != 0)
 	 {
 	 	LOG("initializeParticle() FAILED !!!\n");
@@ -552,15 +569,15 @@ int initializeNavras(void) {
 	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	//scenePush(SCENE12_HASYA_RAS);
+	////scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
-	
+
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
-	//scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	currentScene = scenePop();
@@ -585,6 +602,8 @@ int initializeNavras(void) {
 	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
+
+	sceneTime(time_scene2);
 
 	return(0);
 }
@@ -648,115 +667,152 @@ void displayNavras(void)
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifdef ENABLE_SINGLE_SCENE
-	// no time 
-#else // not ENABLE_SINGLE_SCENE
-	if (timeFlag == true) {
-		then = time(NULL);
-		timeFlag = false;
-	}
-	now = time(NULL);
-#endif // !ENABLE_SINGLE_SCENE
-
 	// Call Scenes Display Here
-	if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
+	if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
 		isGodRequired = true;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
-	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
+
 		audio(SCENE05_KARUN_RAS);
-		
-		displayScene5_karun();
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
-	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		audio(SCENE06_BHAYANK_RAS);
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene6) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		
 		isGodRequired = false;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
+		
 		displayScene_PlaceHolderOutdoor(setCameraScene06_BhyanakRas, displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene6);
 	}
-	else if (now <= (then + time_scene7) && currentScene == SCENE07_RAUDRA_RAS)
+	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		
 		audio(SCENE07_RAUDRA_RAS);
-
-		displayScene07_Raudra();
+		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra, shouldSceneRaudraMaskAppear);
+		//displayScene07_Raudra();
 		sceneTime(time_scene7);
 	}
-	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
+	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
-
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene8) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		isGodRequired = false;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene8);
 	}
-	else if (now <= (then + time_scene9) && currentScene == SCENE09_VEER_RAS)
+	else if (currentScene == SCENE09_VEER_RAS)
 	{
 		audio(SCENE09_VEER_RAS);
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene9) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 
 		isGodRequired = false;
 		isWaterRequired = false;
-		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene9);
 	}
-	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
+	else if (currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
-		
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene10) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		isGodRequired = true;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
 	}
-	else if (now <= (then + time_scene11) && currentScene == SCENE11_SHRINGAR_RAS)
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		audio(SCENE11_SHRINGAR_RAS);
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene11) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		
 		isGodRequired = false;
 		isWaterRequired = true;
-		isGaussianBlurRequired = false;
+		
 		displayScene_PlaceHolderOutdoor(setCameraScene11_ShringarRas, displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene11);
 	}
-	else if (now <= (then + time_scene12) && currentScene == SCENE12_HASYA_RAS)
+	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
+		isGaussianBlurRequired = false;
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 		
 		displayScene12_Hasya();
 		sceneTime(time_scene12);
 	}
-	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
+	else if (currentScene == SCENE13_SHANT_RAS)
 	{
+		shouldSceneRaudraMaskAppear = false;
+		
 		audio(SCENE13_SHANT_RAS);
-
-		displayScene13_Shant();
+		displayScene_PlaceHolderIndoor(setCameraScene13_ShantRas, displayScene13_Shant, shouldSceneRaudraMaskAppear);
+		//displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
-	else if (now <= (then + time_scene14) && currentScene == SCENE14_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		audio(SCENE14_PARTICLE);
-		
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayParticle();
 		sceneTime(time_scene14);
 	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
-		displayScene_PlaceHolderIndoor();
+		//displayScene_PlaceHolderIndoor();
 	}
 	else
 	{
@@ -788,20 +844,10 @@ void updateNavras(void)
 		updateScene_PlaceHolderOutdoor();
 		updateScene02_EarthAndSpace();
 	}
-	else if (currentScene == SCENE09_VEER_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
-		updateScene_PlaceHolderOutdoor();
-		updateScene09_VeerRas();
-	}
-	else if (currentScene == SCENE11_SHRINGAR_RAS)
-	{
-		updateScene_PlaceHolderOutdoor();
-		updateScene11_ShringarRas();
-	}
-	if(currentScene == SCENE10_ADBHUT_RAS)
-	{
-		updateScene_PlaceHolderOutdoor();
-		updateScene10_AdbhutRas();
+		updateScene5_karun();
+		updateScene_PlaceHolderIndoor();
 	}
 	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
@@ -811,26 +857,44 @@ void updateNavras(void)
 	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
 		updateScene07_RaudraRas();
+		updateScene_PlaceHolderIndoor();
 	}
-
 	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene08_BibhatsaRas();
 	}
-	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	else if (currentScene == SCENE09_VEER_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene09_VeerRas();
+	}
+	else if(currentScene == SCENE10_ADBHUT_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
+	}
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene11_ShringarRas();
+	}
+	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
+	}	
+	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	{
+		updateScene_PlaceHolderIndoor();
 	}
+	
 
 	// camera movement related updates
 	updateMouseMovement();
-
-	debug_tranformation();
 
 }
 
@@ -838,6 +902,16 @@ void sceneTime(int scenetime){
 
 	// Code
 #ifndef ENABLE_SINGLE_SCENE
+
+	if (timeFlag == true) {
+		then = time(NULL);
+		timeFlag = false;
+	}
+
+#ifdef AUTOSWITCH_SCENE
+	now = time(NULL);
+#endif
+
 	if (now == (then + scenetime))
 	{
 		then = time(NULL);
