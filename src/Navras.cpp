@@ -112,7 +112,10 @@ static scene_types_t currentScene = SCENE_INVALID;
 
 bool sceneFadeOut = false;
 
+#ifdef ENABLE_ATMOSPHERE
 extern AtmosphericVariables atmosVariables;
+extern AtmosphericVariables atmosVariables_11;
+#endif
 
 void QuitApplication(void);
 
@@ -179,75 +182,107 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		case ']':	
 			currentScene = sceneNext();
 			LOG("current scene changed: %d\n", currentScene);
-			break;	
-		// case '1':
-		// case '!':
-		// 	if (wParam == '!')
-		// 		atmosVariables.m_Kr = max(0.0f, atmosVariables.m_Kr - 0.0001f);
-		// 	else
-		// 		atmosVariables.m_Kr += 0.0001f;
-		// 	atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
-		// 	break;
+			break;
 
-		// case '2':
-		// case '@':
-		// 	if (wParam == '@')
-		// 		atmosVariables.m_Km = max(0.0f, atmosVariables.m_Km - 0.0001f);
-		// 	else
-		// 		atmosVariables.m_Km += 0.0001f;
-		// 	atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
-		// 	break;
+		#ifdef ENABLE_ATMOSPHERE
+		 case '1':
+		 case '!':
+		 	if (wParam == '!')
+		 		atmosVariables_11.m_Kr = max(0.0f, atmosVariables_11.m_Kr - 0.0001f);
+		 	else
+		 		atmosVariables_11.m_Kr += 0.0001f;
+		 	atmosVariables_11.m_Kr4PI = atmosVariables_11.m_Kr * 4.0f * M_PI;
+		 	break;
 
-		// case '3':
-		// case '#':
-		// 	if (wParam == '#')
-		// 		atmosVariables.m_g = max(-1.0f, atmosVariables.m_g - 0.001f);
-		// 	else
-		// 		atmosVariables.m_g = min(1.0f, atmosVariables.m_g + 0.001f);
-		// 	break;
+		 case '2':
+		 case '@':
+		 	if (wParam == '@')
+		 		atmosVariables_11.m_Km = max(0.0f, atmosVariables_11.m_Km - 0.0001f);
+		 	else
+		 		atmosVariables_11.m_Km += 0.0001f;
+		 	atmosVariables_11.m_Km4PI = atmosVariables_11.m_Km * 4.0f * M_PI;
+		 	break;
 
-		// case '4':
-		// case '$':
-		// 	if (wParam == '$')
-		// 		atmosVariables.m_ESun = max(0.0f, atmosVariables.m_ESun - 0.1f);
-		// 	else
-		// 		atmosVariables.m_ESun += 0.1f;
-		// 	break;
+		 case '3':
+		 case '#':
+		 	if (wParam == '#')
+		 		atmosVariables_11.m_g = max(-1.0f, atmosVariables_11.m_g - 0.001f);
+		 	else
+		 		atmosVariables_11.m_g = min(1.0f, atmosVariables_11.m_g + 0.001f);
+		 	break;
 
-		// case '5':
-		// case '%':
-		// 	if (wParam == '%')
-		// 		atmosVariables.m_fWavelength[0] = max(0.001f, atmosVariables.m_fWavelength[0] -= 0.001f);
-		// 	else
-		// 		atmosVariables.m_fWavelength[0] += 0.001f;
-		// 	atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
-		// 	break;
+		 case '4':
+		 case '$':
+		 	if (wParam == '$')
+		 		atmosVariables_11.m_ESun = max(0.0f, atmosVariables_11.m_ESun - 0.1f);
+		 	else
+		 		atmosVariables_11.m_ESun += 0.1f;
+		 	break;
 
-		// case '6':
-		// case '^':
-		// 	if (wParam == '^')
-		// 		atmosVariables.m_fWavelength[1] = max(0.001f, atmosVariables.m_fWavelength[1] -= 0.001f);
-		// 	else
-		// 		atmosVariables.m_fWavelength[1] += 0.001f;
-		// 	atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
-		// 	break;
+		 case '5':
+		 case '%':
+		 	if (wParam == '%')
+		 		atmosVariables_11.m_fWavelength[0] = max(0.001f, atmosVariables_11.m_fWavelength[0] -= 0.001f);
+		 	else
+		 		atmosVariables_11.m_fWavelength[0] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[0] = powf(atmosVariables_11.m_fWavelength[0], 4.0f);
+		 	break;
 
-		// case '7':
-		// case '&':
-		// 	if (wParam == '&')
-		// 		atmosVariables.m_fWavelength[2] = max(0.001f, atmosVariables.m_fWavelength[2] -= 0.001f);
-		// 	else
-		// 		atmosVariables.m_fWavelength[2] += 0.001f;
-		// 	atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
-		// 	break;
+		 case '6':
+		 case '^':
+		 	if (wParam == '^')
+		 		atmosVariables_11.m_fWavelength[1] = max(0.001f, atmosVariables_11.m_fWavelength[1] -= 0.001f);
+		 	else
+		 		atmosVariables_11.m_fWavelength[1] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[1] = powf(atmosVariables_11.m_fWavelength[1], 4.0f);
+		 	break;
 
-		// case '8':
-		// case '*':
-		// 	if (wParam == '*')
-		// 		atmosVariables.m_fExposure = max(0.1f, atmosVariables.m_fExposure - 0.1f);
-		// 	else
-		// 		atmosVariables.m_fExposure += 0.1f;
-		// 	break;
+		 case '7':
+		 case '&':
+		 	if (wParam == '&')
+		 		atmosVariables_11.m_fWavelength[2] = max(0.001f, atmosVariables_11.m_fWavelength[2] -= 0.001f);
+		 	else
+		 		atmosVariables_11.m_fWavelength[2] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[2] = powf(atmosVariables_11.m_fWavelength[2], 4.0f);
+		 	break;
+
+		 case '8':
+		 case '*':
+		 	if (wParam == '*')
+		 		atmosVariables_11.m_fExposure = max(0.1f, atmosVariables_11.m_fExposure - 0.1f);
+		 	else
+		 		atmosVariables_11.m_fExposure += 0.1f;
+		 	break;
+
+		case '/':
+			LOG("-----------------------------------------------------------------------------------------------\n");
+			LOG("m_nSamples = %d\n", atmosVariables_11.m_nSamples);
+			LOG("m_Kr = %f\n", atmosVariables_11.m_Kr);
+			LOG("m_Kr4PI = %f\n", atmosVariables_11.m_Kr4PI);
+			LOG("m_Km = %f\n", atmosVariables_11.m_Km);
+			LOG("m_Km4PI = %f\n", atmosVariables_11.m_Km4PI);
+			LOG("m_ESun = %f\n", atmosVariables_11.m_ESun);
+			LOG("m_g = %f\n", atmosVariables_11.m_g);
+			LOG("m_fExposure = %f\n", atmosVariables_11.m_fExposure);
+			
+			LOG("m_fInnerRadius = %f\n", atmosVariables_11.m_fInnerRadius);
+			LOG("m_fOuterRadius = %f\n", atmosVariables_11.m_fOuterRadius);
+			LOG("m_fScale = %f\n", atmosVariables_11.m_fScale);
+			
+			LOG("m_fWavelength[0] = %f\n", atmosVariables_11.m_fWavelength[0]);
+			LOG("m_fWavelength[1] = %f\n", atmosVariables_11.m_fWavelength[1]);
+			LOG("m_fWavelength[2] = %f\n", atmosVariables_11.m_fWavelength[2]);
+			LOG("m_fWavelength4[0] = %f\n", atmosVariables_11.m_fWavelength4[0]);
+			LOG("m_fWavelength4[1] = %f\n", atmosVariables_11.m_fWavelength4[1]);
+			LOG("m_fWavelength4[2] = %f\n", atmosVariables_11.m_fWavelength4[2]);
+
+			LOG("m_fRayleighScaleDepth = %f\n", atmosVariables_11.m_fRayleighScaleDepth);
+			LOG("m_fMieScaleDepth = %f\n", atmosVariables_11.m_fMieScaleDepth);
+			LOG("-----------------------------------------------------------------------------------------------\n");
+			break;
+
+		#endif
+
 		default:
 			// LOG("keypressed : %d\n", wParam);
 			charPressed = wParam;
@@ -317,6 +352,7 @@ int initializeNavras(void) {
 	void printGLInfo(void);
 	void uninitialize(void);
 	void resetCamera(void);
+	void sceneTime(int);
 
 	// Variable Declarations
 
@@ -472,14 +508,14 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE07
+	//// SCENE07
 	if (initializeScene07_Raudra() != 0)
 	{
 		LOG("initializeScene7_Raudra() FAILED !!!\n");
 		return (-8);
 	}
 
-	// SCENE08
+	//// SCENE08
 	if (initializeScene08_BibhatsaRas() != 0)
 	{
 		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
@@ -507,7 +543,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// // SCENE12
+	// SCENE12
 	if (initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene12_Hasya() FAILED !!!\n");
@@ -521,9 +557,9 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	LOG("initializeScene13_Shant() DONE !!!\n");
+	////LOG("initializeScene13_Shant() DONE !!!\n");
 
-	//  // SCENE14
+	// SCENE14
 	 if (initializeParticle() != 0)
 	 {
 	 	LOG("initializeParticle() FAILED !!!\n");
@@ -531,9 +567,9 @@ int initializeNavras(void) {
 	 }
 
 	scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);	
+	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	//scenePush(SCENE12_HASYA_RAS);
+	////scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
@@ -566,6 +602,8 @@ int initializeNavras(void) {
 	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
+
+	sceneTime(time_scene2);
 
 	return(0);
 }
@@ -619,7 +657,7 @@ void displayNavras(void)
 	void sceneTime(int);
 	void audio(int);
 	
-	bool isGodRequired = true;
+	bool isGodRequired = false;
 	bool isWaterRequired = false;
 	bool isGaussianBlurRequired = false;
 
@@ -629,28 +667,14 @@ void displayNavras(void)
 	// Code
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-#ifdef ENABLE_SINGLE_SCENE
-	// no time 
-#else // not ENABLE_SINGLE_SCENE
-	if (timeFlag == true) {
-		then = time(NULL);
-		timeFlag = false;
-	}
-	now = time(NULL);
-#endif // !ENABLE_SINGLE_SCENE
-
-	// Call Scenes Display Here	
-	// if(currentScene == SCENE00_AMC_BANNER)
-	// {
-	// 	displayFont();
-	// }
-	// else 
-	if (now <= (then + time_scene2) && currentScene == SCENE02_EARTH_AND_SPACE)
+	// Call Scenes Display Here
+	if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
 		isGodRequired = true;
 		isWaterRequired = false;
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
@@ -659,18 +683,24 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene02_EarthAndSpace, displayScene02_EarthAndSpace, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene2);
 	}
-	else if (now <= (then + time_scene5) && currentScene == SCENE05_KARUN_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
+		if (shouldSceneRaudraMaskAppear)
+		{
+			isGaussianBlurRequired = true;
+		}
 
 		audio(SCENE05_KARUN_RAS);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
-	else if (now <= (then + time_scene6) && currentScene == SCENE06_BHAYANK_RAS)
+	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
 		audio(SCENE06_BHAYANK_RAS);
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene6) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
@@ -683,7 +713,7 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene06_BhyanakRas, displayScene06_BhayanakRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene6);
 	}
-	else if (now <= (then + time_scene7) && currentScene == SCENE07_RAUDRA_RAS)
+	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
 		
@@ -692,9 +722,10 @@ void displayNavras(void)
 		//displayScene07_Raudra();
 		sceneTime(time_scene7);
 	}
-	else if (now <= (then + time_scene8) && currentScene == SCENE08_BIBHATSA_RAS)
+	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene8) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
@@ -705,9 +736,10 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene08, displayScene08_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene8);
 	}
-	else if (now <= (then + time_scene9) && currentScene == SCENE09_VEER_RAS)
+	else if (currentScene == SCENE09_VEER_RAS)
 	{
 		audio(SCENE09_VEER_RAS);
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene9) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
@@ -719,9 +751,10 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene09_VeerRas, displayScene09_VeerRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene9);
 	}
-	else if (now <= (then + time_scene10) && currentScene == SCENE10_ADBHUT_RAS)
+	else if (currentScene == SCENE10_ADBHUT_RAS)
 	{
 		audio(SCENE10_ADBHUT_RAS);
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene10) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
@@ -732,24 +765,26 @@ void displayNavras(void)
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
 	}
-	else if (now <= (then + time_scene11) && currentScene == SCENE11_SHRINGAR_RAS)
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
 	{
 		audio(SCENE11_SHRINGAR_RAS);
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene11) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
 		}
 		
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = true;
 		
 		displayScene_PlaceHolderOutdoor(setCameraScene11_ShringarRas, displayScene11_ShringarRas, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene11);
 	}
-	else if (now <= (then + time_scene12) && currentScene == SCENE12_HASYA_RAS)
+	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
+		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
 		if (shouldSceneRaudraMaskAppear)
 		{
@@ -759,7 +794,7 @@ void displayNavras(void)
 		displayScene12_Hasya();
 		sceneTime(time_scene12);
 	}
-	else if (now <= (then + time_scene13) && currentScene == SCENE13_SHANT_RAS)
+	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		shouldSceneRaudraMaskAppear = false;
 		
@@ -768,10 +803,10 @@ void displayNavras(void)
 		//displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
-	else if (now <= (then + time_scene14) && currentScene == SCENE14_PARTICLE)
+	else if (currentScene == SCENE14_PARTICLE)
 	{
 		audio(SCENE14_PARTICLE);
-		
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayParticle();
 		sceneTime(time_scene14);
 	}
@@ -784,7 +819,7 @@ void displayNavras(void)
 		audio(SCENE_INVALID);
 		LOG("current scene changed: %d\n", currentScene);
 		currentScene = SCENE_INVALID;
-		//QuitApplication();
+		QuitApplication();
 	}
 
 }
@@ -809,20 +844,10 @@ void updateNavras(void)
 		updateScene_PlaceHolderOutdoor();
 		updateScene02_EarthAndSpace();
 	}
-	else if (currentScene == SCENE09_VEER_RAS)
+	else if (currentScene == SCENE05_KARUN_RAS)
 	{
-		updateScene_PlaceHolderOutdoor();
-		updateScene09_VeerRas();
-	}
-	else if (currentScene == SCENE11_SHRINGAR_RAS)
-	{
-		updateScene_PlaceHolderOutdoor();
-		updateScene11_ShringarRas();
-	}
-	if(currentScene == SCENE10_ADBHUT_RAS)
-	{
-		updateScene_PlaceHolderOutdoor();
-		updateScene10_AdbhutRas();
+		updateScene5_karun();
+		updateScene_PlaceHolderIndoor();
 	}
 	else if (currentScene == SCENE06_BHAYANK_RAS)
 	{
@@ -832,27 +857,41 @@ void updateNavras(void)
 	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
 		updateScene07_RaudraRas();
+		updateScene_PlaceHolderIndoor();
 	}
-
 	else if (currentScene == SCENE08_BIBHATSA_RAS)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene08_BibhatsaRas();
 	}
-	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
+	else if (currentScene == SCENE09_VEER_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene09_VeerRas();
+	}
+	else if(currentScene == SCENE10_ADBHUT_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene10_AdbhutRas();
+	}
+	else if (currentScene == SCENE11_SHRINGAR_RAS)
+	{
+		updateScene_PlaceHolderOutdoor();
+		updateScene11_ShringarRas();
+	}
+	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
-	}
-
-	
-	else if (currentScene == SCENE05_KARUN_RAS)
+	}	
+	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
-		updateScene5_karun();
+		updateScene_PlaceHolderIndoor();
 	}
+	
 
 	// camera movement related updates
 	updateMouseMovement();
@@ -863,6 +902,16 @@ void sceneTime(int scenetime){
 
 	// Code
 #ifndef ENABLE_SINGLE_SCENE
+
+	if (timeFlag == true) {
+		then = time(NULL);
+		timeFlag = false;
+	}
+
+#ifdef AUTOSWITCH_SCENE
+	now = time(NULL);
+#endif
+
 	if (now == (then + scenetime))
 	{
 		then = time(NULL);
@@ -899,7 +948,7 @@ void uninitializeNavras(void) {
 	// Function Declarations
 
 	// Code
-	LOG("Enter\n");
+	//LOG("Enter\n");
 
 	// audio
 	uninitializeAudio();

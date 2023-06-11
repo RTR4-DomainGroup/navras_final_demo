@@ -597,7 +597,7 @@ void uninitialize(void)
 		ToggleFullscreen();
 	}
 
-	LOG("Enter\n");
+	//LOG("Enter\n");
 	uninitializeNavras();
 	if(wglGetCurrentContext() == ghrc)
 	{
