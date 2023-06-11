@@ -30,6 +30,8 @@
 extern int windowWidth;
 extern int windowHeight;
 
+scene_types_t  getCurrentScene(void);
+
 // SSAO variable
 SSAOFrameBufferStruct ssaoFrameBufferDetails;
 
@@ -65,11 +67,13 @@ extern GLfloat materialDiffuse_shantRas_mask[];
 extern GLfloat materialSpecular_shantRas_mask[];
 extern GLfloat materialShininess_shantRas_mask;
 extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
-extern GLuint noise_texture_eroded;
-extern GLuint texture_Marble_Shant;
-extern float myScale_erosion;
-extern float noiseScale_erosion;
-extern bool offsetIncrement;
+static GLuint noise_texture_eroded_indoor;
+static float myScale_erosion_indoor = 2.0f;
+static float noiseScale_erosion_indoor = 2.0f;
+static bool offsetIncrement_indoor = false;
+static bool isBlurI = false;
+
+static GLfloat offset_ras_indoor[] = { 0.17f, 0.17f, 0.17f };
 
 int initializeScene_PlaceHolderIndoor(void)
 {
@@ -142,14 +146,28 @@ int initializeScene_PlaceHolderIndoor(void)
 		LOG("LoadGLTexture texture_mask_indoor Successfull = %u!!!\n", texture_mask_indoor);
 	}
 
+	noise_texture_eroded_indoor = initializeErosion();
+	if (noise_texture_eroded_indoor == 0)
+	{
+		LOG("initializeErosion() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeErosion() Successfull!!!\n");
+	}
 
 	return 0;
 }
 
 void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR displayPasses, bool shouldSceneBlur)
 {
+	// Function declarations
 	void displayBlur(void);
 	scene_types_t  getCurrentScene(void);
+
+	// Code
+	isBlurI = shouldSceneBlur;
 
 	// Code
 	// Here The Game STarts
@@ -200,30 +218,31 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, mat4::identity());
 		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
-		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_indoor);
+		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_indoor);
 
 		if (getCurrentScene() == SCENE05_KARUN_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_KarunRas, texture_mask_indoor, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_KarunRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
 		else if (getCurrentScene() == SCENE07_RAUDRA_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_RaudraRas, texture_mask_indoor, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_RaudraRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
 		else if (getCurrentScene() == SCENE12_HASYA_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_HasyaRas, texture_mask_indoor, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_HasyaRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
 
 
-		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_mask_indoor, noise_texture_eroded);
+		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_mask_indoor, noise_texture_eroded_indoor);
 		// ################################### ROOM ###################################  
 
 		glUseProgram(0);
@@ -303,7 +322,7 @@ void displayBlur(void)
 
     horizontalBlurUniform = useHorrizontalBlurShader();
 
-    glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+    glUniform1f(horizontalBlurUniform.targetWidth, 540.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
     glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
@@ -317,7 +336,7 @@ void displayBlur(void)
 	(GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurIndoorUniform = useVerticalBlurShader();
-	glUniform1f(verticalBlurIndoorUniform.targetHeight, 540.0f);
+	glUniform1f(verticalBlurIndoorUniform.targetHeight, 270.0f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBufferTexture);
     glUniform1i(verticalBlurIndoorUniform.vblurTexSamplerUniform, 0);
@@ -343,6 +362,29 @@ void updateScene_PlaceHolderIndoor(void)
 	//update camera using lerp
 	/*cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);*/
+
+	if (isBlurI == false)
+	{
+		offset_ras_indoor[0] = 0.17f;
+		offset_ras_indoor[1] = 0.17f;
+		offset_ras_indoor[2] = 0.17f;
+	}
+
+	if (((getCurrentScene() == SCENE05_KARUN_RAS) ||
+		(getCurrentScene() == SCENE07_RAUDRA_RAS) ||
+		(getCurrentScene() == SCENE12_HASYA_RAS)) &&
+		isBlurI == true)
+	{
+		offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
+		offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
+		offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
+		if (offset_ras_indoor[2] > 0.48f)
+		{
+			offset_ras_indoor[0] = 0.48f;
+			offset_ras_indoor[1] = 0.48f;
+			offset_ras_indoor[2] = 0.48f;
+		}
+	}
 }
 
 void uninitializeScene_PlaceHolderIndoor(void)

@@ -77,7 +77,7 @@ static const char *szAudios[] = {
     "Scene02_EarthAndSpace_40_seconds.wav",
     "\0",
     "\0",
-    "Scene05_KarunRas_40_seconds_new.wav", 
+    "Scene05_KarunRas_40_seconds_new_1.wav", 
     "Scene06_BhayanakRas_40_seconds.wav",
     "Scene07_RoudraRas_40_seconds.wav", 
     "Kkl_cut_2.wav", 

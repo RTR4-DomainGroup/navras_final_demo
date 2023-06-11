@@ -169,11 +169,13 @@ GLfloat materialDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat materialSpecular_shantRas_mask[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat materialShininess_shantRas_mask = 128.0f;
 extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
-extern GLuint noise_texture_eroded;
-extern GLuint texture_Marble_Shant;
-extern float myScale_erosion;
-extern float noiseScale_erosion;
-extern bool offsetIncrement;
+static GLuint noise_texture_eroded_outdoor;
+static float myScale_erosion_outdoor = 2.0f;
+static float noiseScale_erosion_outdoor = 2.0f;
+static bool offsetIncrement_outdoor = false;
+static bool isBlur = false;
+
+static GLfloat offset_ras_outdoor[] = { 0.17f, 0.17f, 0.17f };
 
 extern int windowWidth;
 extern int windowHeight;
@@ -465,6 +467,17 @@ int initializeScene_PlaceHolderOutdoor(void)
 		LOG("LoadGLTexture texture_shringarRas Successfull = %u!!!\n", texture_shringarRas);
 	}
 
+	noise_texture_eroded_outdoor = initializeErosion();
+	if (noise_texture_eroded_outdoor == 0)
+	{
+		LOG("initializeErosion() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeErosion() Successfull!!!\n");
+	}
+
 	return 0;
 }
 
@@ -478,6 +491,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	// set cameraa
 	setCamera();
 
+	isBlur = isGaussianBlurRequired;
 
 	displayCamera();
 	//setCamera(&camera);
@@ -624,42 +638,43 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, mat4::identity());
 		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion);
-		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_outdoor);
+		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_outdoor);
 
 		if(getCurrentScene() == SCENE06_BHAYANK_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_BhayanakRas, texture_shringarRas, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_BhayanakRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
 		else if(getCurrentScene() == SCENE08_BIBHATSA_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_BibhastaRas, texture_shringarRas, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_BibhastaRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
 		else if(getCurrentScene() == SCENE09_VEER_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_VeerRas, texture_shringarRas, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_VeerRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
 		else if(getCurrentScene() == SCENE10_ADBHUT_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_AdbhutRas, texture_shringarRas, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_AdbhutRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
 		else if(getCurrentScene() == SCENE11_SHRINGAR_RAS)
 		{
 
-			drawCustomTextureStaticModel(maskModel_ShringarRas, texture_shringarRas, noise_texture_eroded);
+			drawCustomTextureStaticModel(maskModel_ShringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
 
 
-		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded);
+		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
 		// ################################### ROOM ###################################  
 
 		glUseProgram(0);
@@ -1033,7 +1048,7 @@ void displayGaussianBlur(void)
 	
     horizontalBlurUniform = useHorrizontalBlurShader();
 
-    glUniform1f(horizontalBlurUniform.targetWidth, 960.0f);
+    glUniform1f(horizontalBlurUniform.targetWidth, 540.0f);
 	glUniform1f(horizontalBlurUniform.blurFactor, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
@@ -1049,7 +1064,7 @@ void displayGaussianBlur(void)
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurUniform = useVerticalBlurShader();
-	glUniform1f(verticalBlurUniform.targetHeight, 540.0f);
+	glUniform1f(verticalBlurUniform.targetHeight, 270.0f);
 	glUniform1f(verticalBlurUniform.blurFactor, 1.0f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.horrizontalFBDetails.frameBufferTexture);
@@ -1095,6 +1110,31 @@ void updateScene_PlaceHolderOutdoor(void)
 	/*cameraAngle = cameraAngle + 0.5f;
 	if (cameraAngle >= 360.0f)
 		cameraAngle -= 360.0f;*/
+	// updateErosion(offsetIncrement_outdoor, offset_ras_outdoor[8], 0.002f);
+	if (isBlur == false)
+	{
+		offset_ras_outdoor[0] = 0.17f;
+		offset_ras_outdoor[1] = 0.17f;
+		offset_ras_outdoor[2] = 0.17f;
+	}
+
+	if (((getCurrentScene() == SCENE06_BHAYANK_RAS) ||
+		(getCurrentScene() == SCENE08_BIBHATSA_RAS) ||
+		(getCurrentScene() == SCENE09_VEER_RAS) ||
+		(getCurrentScene() == SCENE10_ADBHUT_RAS) ||
+		(getCurrentScene() == SCENE11_SHRINGAR_RAS)) && 
+		isBlur == true)
+	{
+		offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
+		offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
+		offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
+		if (offset_ras_outdoor[2] > 0.48f)
+		{
+			offset_ras_outdoor[0] = 0.48f;
+			offset_ras_outdoor[1] = 0.48f;
+			offset_ras_outdoor[2] = 0.48f;
+		}
+	}
 }
 
 void uninitializeScene_PlaceHolderOutdoor(void)
