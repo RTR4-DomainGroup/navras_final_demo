@@ -581,9 +581,6 @@ void update(void)
 	updateNavras();
 #endif // ENABLE_MULTI_THREADING
 
-	
-	
-	
 }
 
 void uninitialize(void)

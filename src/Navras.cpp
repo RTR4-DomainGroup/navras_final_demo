@@ -1,6 +1,6 @@
 // Header Files
 #include <time.h>
-
+#include <thread>
 #include "../inc/helper/common.h"
 #include "../inc/helper/geometry.h"
 #include "../inc/helper/shaders.h"
@@ -107,6 +107,9 @@ int time_scene14 = 40;
 // Audio
 static bool audioFlag = true;
 
+HGLRC ghrc2;
+extern HGLRC ghrc;
+extern HDC ghdc;
 //
 static scene_types_t currentScene = SCENE_INVALID;
 
@@ -318,23 +321,11 @@ int initializeNavras(void) {
 	void uninitialize(void);
 	void resetCamera(void);
 	void sceneTime(int);
-
+	int initializeSpaceKarunBhayank(void);
 	// Variable Declarations
 
 	// Code
-
-
-	// Here starts OpenGL code
-    // GLEW initialization
-    // codes related to PP requires Core profile
-    // if(glewInit() != GLEW_OK)
-    // {
-    //     LOG("Error: glewInit() failed\n");
-    //     return (-5);
-    // }
-
-	// Print OpenGLInfo
-	printGLInfo();
+	//printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -451,28 +442,14 @@ int initializeNavras(void) {
 	LOG("current scene changed: %d\n", currentScene);
 
 #else
-
-	// SCENE02
-	if (initializeScene02_EarthAndSpace() != 0)
+	ghrc2 = wglCreateContext(ghdc);
+	if(ghrc2 == NULL)
 	{
-		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-		return (-8);
+		return(-3);
 	}
-
-	// SCENE05
-	if (initializeScene5_karun() != 0)
-	{
-		LOG("initializeScene5_karun() FAILED !!!\n");
-		return (-8);
-	}
-
-	// SCENE06
-	if (initializeScene06_BhayanakRas() != 0)
-	{
-		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-		return (-8);
-	}
-
+	wglShareLists(ghrc, ghrc2);
+	std::thread second (initializeSpaceKarunBhayank);
+	
 	//// SCENE07
 	if (initializeScene07_Raudra() != 0)
 	{
@@ -531,6 +508,7 @@ int initializeNavras(void) {
 	 	return (-8);
 	 }
 
+	second.join();
 	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
@@ -550,7 +528,7 @@ int initializeNavras(void) {
 
 #endif
 
-
+	
 	// initialize camera
 	//resetCamera();
 
@@ -570,7 +548,42 @@ int initializeNavras(void) {
 
 	sceneTime(time_scene2);
 
+	
 	return(0);
+}
+
+int initializeSpaceKarunBhayank(void)
+{
+	// create OpenGL rendering context
+	
+	
+
+	// make the rendering context as the current context
+	if(wglMakeCurrent(ghdc, ghrc2) == FALSE) // 
+	{
+		return(-4);
+	}
+	// SCENE02
+	if (initializeScene02_EarthAndSpace() != 0)
+	{
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+		return (-8);
+	}
+
+	// SCENE05
+	if (initializeScene5_karun() != 0)
+	{
+		LOG("initializeScene5_karun() FAILED !!!\n");
+		return (-8);
+	}
+
+	// SCENE06
+	if (initializeScene06_BhayanakRas() != 0)
+	{
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+		return (-8);
+	}
+	return 0;
 }
 
 void printGLInfo(void) {
