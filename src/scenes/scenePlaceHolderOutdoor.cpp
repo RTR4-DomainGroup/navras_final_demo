@@ -126,8 +126,8 @@ struct FSQuadUniform fsGaussBlurQuadUniform;
 
 #ifdef ENABLE_ATMOSPHERE
 // Atmosphere Scattering
-AtmosphereUniform atmosphereUniform;
-AtmosphericVariables atmosVariables;
+AtmosphereUniform atmosphereUniform_outdoor;
+AtmosphericVariables atmosVariables_outdoor;
 #endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
@@ -271,35 +271,35 @@ int initializeScene_PlaceHolderOutdoor(void)
 #ifdef ENABLE_ATMOSPHERE
 
 	//
-	atmosVariables.m_nSamples = 3;		// Number of sample rays to use in integral equation
-	atmosVariables.m_Kr = 0.0035f;		// Rayleigh scattering constant
-	atmosVariables.m_Kr4PI = atmosVariables.m_Kr * 4.0f * M_PI;
-	atmosVariables.m_Km = 0.0015f;		// Mie scattering constant
-	atmosVariables.m_Km4PI = atmosVariables.m_Km * 4.0f * M_PI;
-	atmosVariables.m_ESun = 20.0f;		// Sun brightness constant
-	atmosVariables.m_g = -0.990f;		// The Mie phase asymmetry factor
-	atmosVariables.m_fExposure = 2.0f;
+	atmosVariables_outdoor.m_nSamples = 3;		// Number of sample rays to use in integral equation
+	atmosVariables_outdoor.m_Kr = 0.0035f;		// Rayleigh scattering constant
+	atmosVariables_outdoor.m_Kr4PI = atmosVariables_outdoor.m_Kr * 4.0f * M_PI;
+	atmosVariables_outdoor.m_Km = 0.0015f;		// Mie scattering constant
+	atmosVariables_outdoor.m_Km4PI = atmosVariables_outdoor.m_Km * 4.0f * M_PI;
+	atmosVariables_outdoor.m_ESun = 20.0f;		// Sun brightness constant
+	atmosVariables_outdoor.m_g = -0.990f;		// The Mie phase asymmetry factor
+	atmosVariables_outdoor.m_fExposure = 2.0f;
 
-	atmosVariables.m_fInnerRadius = 10.0f;
-	atmosVariables.m_fOuterRadius = 50.0f;
-	//atmosVariables.m_fOuterRadius = atmosVariables.m_fInnerRadius + (atmosVariables.m_fInnerRadius * 2.5f);
-	atmosVariables.m_fScale = 1 / (atmosVariables.m_fOuterRadius - atmosVariables.m_fInnerRadius);
+	atmosVariables_outdoor.m_fInnerRadius = 10.0f;
+	atmosVariables_outdoor.m_fOuterRadius = 50.0f;
+	//atmosVariables_outdoor.m_fOuterRadius = atmosVariables_outdoor.m_fInnerRadius + (atmosVariables_outdoor.m_fInnerRadius * 2.5f);
+	atmosVariables_outdoor.m_fScale = 1 / (atmosVariables_outdoor.m_fOuterRadius - atmosVariables_outdoor.m_fInnerRadius);
 
-	atmosVariables.m_fWavelength[0] = 0.650f;		// 650 nm for red
-	atmosVariables.m_fWavelength[1] = 0.570f;		// 570 nm for green
-	atmosVariables.m_fWavelength[2] = 0.475f;		// 475 nm for blue
-	atmosVariables.m_fWavelength4[0] = powf(atmosVariables.m_fWavelength[0], 4.0f);
-	atmosVariables.m_fWavelength4[1] = powf(atmosVariables.m_fWavelength[1], 4.0f);
-	atmosVariables.m_fWavelength4[2] = powf(atmosVariables.m_fWavelength[2], 4.0f);
+	atmosVariables_outdoor.m_fWavelength[0] = 0.650f;		// 650 nm for red
+	atmosVariables_outdoor.m_fWavelength[1] = 0.570f;		// 570 nm for green
+	atmosVariables_outdoor.m_fWavelength[2] = 0.475f;		// 475 nm for blue
+	atmosVariables_outdoor.m_fWavelength4[0] = powf(atmosVariables_outdoor.m_fWavelength[0], 4.0f);
+	atmosVariables_outdoor.m_fWavelength4[1] = powf(atmosVariables_outdoor.m_fWavelength[1], 4.0f);
+	atmosVariables_outdoor.m_fWavelength4[2] = powf(atmosVariables_outdoor.m_fWavelength[2], 4.0f);
 
-	atmosVariables.m_fRayleighScaleDepth = 0.25f;
-	atmosVariables.m_fMieScaleDepth = 0.1f;
+	atmosVariables_outdoor.m_fRayleighScaleDepth = 0.25f;
+	atmosVariables_outdoor.m_fMieScaleDepth = 0.1f;
 
-	atmosVariables.m_vLight = vec3(0, 0, -350);
-	atmosVariables.m_vLightDirection = atmosVariables.m_vLight / sqrtf(atmosVariables.m_vLight[0] * atmosVariables.m_vLight[0] + atmosVariables.m_vLight[1] * atmosVariables.m_vLight[1] + atmosVariables.m_vLight[2] * atmosVariables.m_vLight[2]);
+	atmosVariables_outdoor.m_vLight = vec3(0, 0, -350);
+	atmosVariables_outdoor.m_vLightDirection = atmosVariables_outdoor.m_vLight / sqrtf(atmosVariables_outdoor.m_vLight[0] * atmosVariables_outdoor.m_vLight[0] + atmosVariables_outdoor.m_vLight[1] * atmosVariables_outdoor.m_vLight[1] + atmosVariables_outdoor.m_vLight[2] * atmosVariables_outdoor.m_vLight[2]);
 
 	//
-	initializeAtmosphere(atmosVariables);
+	initializeAtmosphere(atmosVariables_outdoor);
 
 #endif // ENABLE_ATMOSPHERE
 
@@ -690,7 +690,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	{
 		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, 
-			(GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+			(GLfloat)windowWidth / windowHeight, 0.01f, 1000.0f);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		displayPasses(1, false, false, isWaterRequired, 0);

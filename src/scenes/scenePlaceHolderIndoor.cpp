@@ -258,6 +258,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
 		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
@@ -275,6 +276,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		//glDisable(GL_BLEND);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneIndoorFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneIndoorFbo.textureWidth, (GLsizei)fullSceneIndoorFbo.textureHeight);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneIndoorFbo.textureWidth / fullSceneIndoorFbo.textureHeight,
 			0.1f, 1000.0f);
