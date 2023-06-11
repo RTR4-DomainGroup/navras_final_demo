@@ -149,6 +149,7 @@ struct FrameBufferDetails fboGodRayPass;
 
 struct FrameBufferDetails fboEarthAndSpace;
 
+#ifdef ENABLE_MASKS
 // Masks
 static struct FrameBufferDetails fboMaskPass_Outdoor;
 static GLuint texture_shringarRas;
@@ -173,9 +174,10 @@ static GLuint noise_texture_eroded_outdoor;
 static float myScale_erosion_outdoor = 2.0f;
 static float noiseScale_erosion_outdoor = 2.0f;
 static bool offsetIncrement_outdoor = false;
-static bool isBlur = false;
 
 static GLfloat offset_ras_outdoor[] = { 0.17f, 0.17f, 0.17f };
+#endif // ENABLE_MASKS
+static bool isBlur = false;
 
 extern int windowWidth;
 extern int windowHeight;
@@ -443,6 +445,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 #endif // ENABLE_BILLBOARDING
 
+#ifdef ENABLE_MASKS
 	fboMaskPass_Outdoor.textureWidth = 1920;
 	fboMaskPass_Outdoor.textureHeight = 1080;
 
@@ -477,6 +480,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 	{
 		LOG("initializeErosion() Successfull!!!\n");
 	}
+#endif // ENABLE_MASKS
 
 	return 0;
 }
@@ -593,6 +597,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUseProgram(0);*/
 
+#ifdef ENABLE_MASKS
 	// Masks
 	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Outdoor.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboMaskPass_Outdoor.textureWidth, (GLsizei)fboMaskPass_Outdoor.textureHeight);
@@ -683,6 +688,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glDisable(GL_TEXTURE_2D);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif // ENABLE_MASKS
 
 
 	//
@@ -723,7 +729,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		
 
 		////
-		
+#ifdef ENABLE_MASKS
 		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
@@ -731,6 +737,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
+#endif
 
 
 		glUseProgram(0);
@@ -994,7 +1001,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		//
-
+#ifdef ENABLE_MASKS
 		if (getCurrentScene() != SCENE02_EARTH_AND_SPACE) {
 
 			glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
@@ -1006,8 +1013,8 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 			glBindTexture(GL_TEXTURE_2D, 0);
 
 		}
+#endif
 		glUseProgram(0);
-	
 	}
 
 
@@ -1104,6 +1111,8 @@ void updateScene_PlaceHolderOutdoor(void)
 		moveFactor -= 360.0f;
 #endif // ENABLE_WATER
 
+#ifdef ENABLE_MASKS
+
 	// update camera using lerp
 	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
@@ -1135,17 +1144,20 @@ void updateScene_PlaceHolderOutdoor(void)
 			offset_ras_outdoor[2] = 0.48f;
 		}
 	}
+#endif // ENABLE_MASKS
+
 }
 
 void uninitializeScene_PlaceHolderOutdoor(void)
 {
 	// Code
-
+#ifdef ENABLE_MASKS
 	unloadStaticModel(&maskModel_AdbhutRas);
 	unloadStaticModel(&maskModel_BhayanakRas);
 	unloadStaticModel(&maskModel_BibhastaRas);
 	unloadStaticModel(&maskModel_VeerRas);
 	unloadStaticModel(&maskModel_ShringarRas);
+#endif // ENABLE_MASKS
 	
 
 #ifdef ENABLE_BILLBOARDING

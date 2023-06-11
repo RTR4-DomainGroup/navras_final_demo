@@ -46,12 +46,10 @@
 #include "../../inc/effects/SkyboxEffect.h"
 #endif // ENABLE_SKYBOX
 
-#ifdef ENABLE_CLOUD_NOISE
-#undef ENABLE_CLOUD_NOISE
-#include "../../inc/effects/CloudEffect.h"
-#else
-#define ENABLE_CLOUD_NOISE
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//#include "../../inc/effects/CloudEffect.h"
+//#endif // ENABLE_CLOUD_NOISE
+
 
 #ifdef ENABLE_WATER
 #include "../../inc/effects/WaterEffect.h"
@@ -93,15 +91,15 @@ extern struct FSQuadUniform fsqUniform;
 extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneShringarRasCloudNoiseUniform;
-float cloudMyScaleShringarRas = 1.0f;
-float cloudNoiseScaleShringarRas = 2.0f;
-bool cloudNoiseScaleIncrementShringarRas = true;
-GLuint noise_texture_shringar_ras;
-GLfloat skyColorForShringarRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColorForShringarRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//struct CloudNoiseUniform sceneShringarRasCloudNoiseUniform;
+//float cloudMyScaleShringarRas = 1.0f;
+//float cloudNoiseScaleShringarRas = 2.0f;
+//bool cloudNoiseScaleIncrementShringarRas = true;
+//GLuint noise_texture_shringar_ras;
+//GLfloat skyColorForShringarRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+//GLfloat cloudColorForShringarRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+//#endif // ENABLE_CLOUD_NOISE
 
 static struct TextureVariables terrainTextureVariables;
 
@@ -341,18 +339,18 @@ int initializeScene11_ShringarRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
-#ifdef ENABLE_CLOUD_NOISE
-	noise_texture_shringar_ras = initializeCloud();
-	if (noise_texture_shringar_ras == 0)
-	{
-		LOG("initializeCloud() - noise_texture_shringar_ras FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeCloud() - noise_texture_shringar_ras Successfull!!!\n");
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	noise_texture_shringar_ras = initializeCloud();
+//	if (noise_texture_shringar_ras == 0)
+//	{
+//		LOG("initializeCloud() - noise_texture_shringar_ras FAILED!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("initializeCloud() - noise_texture_shringar_ras Successfull!!!\n");
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 
 	return 0;
@@ -500,66 +498,66 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		} // if(godRays == 1)
 
 
-
-#ifdef ENABLE_CLOUD_NOISE
-
-		glEnable(GL_TEXTURE_3D);
-		sceneShringarRasCloudNoiseUniform = useCloudNoiseShader();
-
-		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
-
-		rotateX = mat4::identity();
-
-		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
-		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
-		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
-		//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotateX;
-
-		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
-
-		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		glUniform3fv(sceneShringarRasCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneShringarRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneShringarRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneShringarRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-		glUniform3fv(sceneShringarRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneShringarRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneShringarRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneShringarRasCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-		glUniform1f(sceneShringarRasCloudNoiseUniform.scaleUniform, cloudMyScaleShringarRas);
-		glUniform4fv(sceneShringarRasCloudNoiseUniform.skyColorUniform, 1, skyColorForShringarRas);
-		glUniform4fv(sceneShringarRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorForShringarRas);
-		glUniform1f(sceneShringarRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleShringarRas);
-		glUniform1i(sceneShringarRasCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneShringarRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-		//glEnable(GL_BLEND);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture_shringar_ras);
-
-		float color[3] = {1.0f, 1.0f, 1.0f};
-		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
-		displaySphere(color);
-		//glDisable(GL_BLEND);
-
-		glUseProgram(0);
-
-		glDisable(GL_TEXTURE_3D);
-
-#endif // ENABLE_CLOUD_NOISE
+//
+//#ifdef ENABLE_CLOUD_NOISE
+//
+//		glEnable(GL_TEXTURE_3D);
+//		sceneShringarRasCloudNoiseUniform = useCloudNoiseShader();
+//
+//		translationMatrix = mat4::identity();
+//		scaleMatrix = mat4::identity();
+//		rotationMatrix = mat4::identity();
+//		modelMatrix = mat4::identity();
+//
+//		rotationMatrix_x = mat4::identity();
+//		rotationMatrix_y = mat4::identity();
+//		rotationMatrix_z = mat4::identity();
+//
+//		rotateX = mat4::identity();
+//
+//		//translationMatrix = vmath::translate(0.0f, 0.0f, -2.0f); // glTranslatef() is replaced by this line.
+//		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f); // glTranslatef() is replaced by this line.
+//		//scaleMatrix = vmath::scale(1.777778f, 1.0f, 1.0f);
+//		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
+//		//rotateX = vmath::rotate(10.0f, 1.0f, 0.0f, 0.0f);
+//		modelMatrix = translationMatrix * scaleMatrix * rotateX;
+//
+//		//viewMatrix = vmath::lookat(camera.eye, camera.eye, camera.up);
+//
+//		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+//		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+//		glUniformMatrix4fv(sceneShringarRasCloudNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+//
+//		glUniform3fv(sceneShringarRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+//		glUniform3fv(sceneShringarRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+//		glUniform3fv(sceneShringarRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+//		glUniform4fv(sceneShringarRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+//
+//		glUniform3fv(sceneShringarRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+//		glUniform3fv(sceneShringarRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+//		glUniform3fv(sceneShringarRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+//		glUniform1f(sceneShringarRasCloudNoiseUniform.materialShininessUniform, materialShininess);
+//
+//		glUniform1f(sceneShringarRasCloudNoiseUniform.scaleUniform, cloudMyScaleShringarRas);
+//		glUniform4fv(sceneShringarRasCloudNoiseUniform.skyColorUniform, 1, skyColorForShringarRas);
+//		glUniform4fv(sceneShringarRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorForShringarRas);
+//		glUniform1f(sceneShringarRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleShringarRas);
+//		glUniform1i(sceneShringarRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+//		//glUniform1f(sceneShringarRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+//		//glEnable(GL_BLEND);
+//		glActiveTexture(GL_TEXTURE0);
+//		glBindTexture(GL_TEXTURE_3D, noise_texture_shringar_ras);
+//
+//		float color[3] = {1.0f, 1.0f, 1.0f};
+//		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+//		displaySphere(color);
+//		//glDisable(GL_BLEND);
+//
+//		glUseProgram(0);
+//
+//		glDisable(GL_TEXTURE_3D);
+//
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_SKYBOX
 
@@ -1079,11 +1077,11 @@ void updateScene11_ShringarRas(void)
 	if (moveFactor >= 360.0f)
 		moveFactor -= 360.0f;
 #endif // ENABLE_WATER
-
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(cloudNoiseScaleIncrementShringarRas, cloudNoiseScaleShringarRas, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
+//
+//#ifdef ENABLE_CLOUD_NOISE
+//	// update Cloud
+//	updateCloud(cloudNoiseScaleIncrementShringarRas, cloudNoiseScaleShringarRas, 0.0001f);
+//#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene11_ShringarRas(void)
@@ -1117,13 +1115,14 @@ void uninitializeScene11_ShringarRas(void)
 #endif
 	//uninitializeCamera(&camera);
 
-#ifdef ENABLE_CLOUD_NOISE
-	uninitializeCloud();
-	if (noise_texture_shringar_ras)
-	{
-		glDeleteTextures(1, &noise_texture_shringar_ras);
-		noise_texture_shringar_ras = 0;
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	uninitializeCloud();
+//	if (noise_texture_shringar_ras)
+//	{
+//		glDeleteTextures(1, &noise_texture_shringar_ras);
+//		noise_texture_shringar_ras = 0;
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 }
+
