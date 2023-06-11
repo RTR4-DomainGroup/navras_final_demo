@@ -1259,8 +1259,17 @@ void updateScene08_BibhatsaRas(void)
 {
 	// Code
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
+	//cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
+	//cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
+	
+	cameraEyeZ -= 0.05f;
+	if (cameraEyeZ <= -33.25f)
+		cameraEyeZ = -33.25f;
+
+	cameraCenterZ -= 0.05f;
+	if (cameraCenterZ <= -39.25f)
+		cameraCenterZ = -39.25f;
+
 #endif // ENABLE_CAMERA_ANIMATION
 
 }
