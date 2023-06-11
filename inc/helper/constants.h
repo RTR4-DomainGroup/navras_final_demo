@@ -73,6 +73,7 @@
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
     "AMC_Banner_Audio.wav",
+    "\0",
     "Scene02_EarthAndSpace_40_seconds.wav",
     "\0",
     "\0",
@@ -143,6 +144,10 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
+
+#else
+
+#define AUTOSWITCH_SCENE
 
 #endif // ENABLE_SINGLE_SCENE
 
