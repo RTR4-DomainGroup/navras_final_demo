@@ -78,7 +78,7 @@ bool startCameraZoomToMan = false;
 struct ErosionNoiseUniform sceneErosionNoiseUniform;
 GLuint noise_texture_eroded[9];
 GLuint texture_Marble_Shant;
-float myScale_erosion = 2.0f;
+float myScale_erosion = 0.08f;
 float noiseScale_erosion = 2.0f;
 bool offsetIncrement = true;
 // Mask Textures
