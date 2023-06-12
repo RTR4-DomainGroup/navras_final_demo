@@ -70,7 +70,7 @@ int initializeScene5_karun(void)
 {
 
 #ifdef ENABLE_MASKSQUADS
-	if (LoadGLTexture_UsingSOIL(&texture_karunMask, TEXTURE_DIR"Masks\\KarunMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_karunMask, TEXTURE_DIR"Masks/KarunMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in Mask Karun Ras!!!\n");
@@ -102,7 +102,7 @@ int initializeScene5_karun(void)
 
 
 	initializeQuad();
-	if (LoadGLTexture_UsingSOIL(&texture_withParent, TEXTURE_DIR"Scene5-karunRas\\withParents.png") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_withParent, TEXTURE_DIR"Scene5-karunRas/withParents.png") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_withParent FAILED!!!\n");
@@ -112,7 +112,7 @@ int initializeScene5_karun(void)
 	{
 		LOG("LoadGLTexture texture_withParent Successfull = %u!!!\n", texture_withParent);
 	}
-	if (LoadGLTexture_UsingSOIL(&texture_onlyChild, TEXTURE_DIR"Scene5-karunRas\\onlychild.png") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_onlyChild, TEXTURE_DIR"Scene5-karunRas/onlychild.png") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_onlyChild FAILED!!!\n");
