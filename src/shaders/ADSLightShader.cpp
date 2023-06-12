@@ -39,6 +39,7 @@ int initializeADSShader(void)
 		"uniform int u_depthQuadScene; \n" \
 
 		"uniform mat4 lightSpaceMatrix; \n" \
+		"uniform int u_isInstanced = 1; \n" \
 		"out VS_OUT{ \n" \
 			"vec4 FragPos; \n" \
 			"vec3 Normal; \n" \
@@ -64,8 +65,15 @@ int initializeADSShader(void)
 
 		"void main(void) \n" \
 		"{ \n" \
-			"vec4 pos = (a_position + a_instancePosition); \n" \
-
+			"vec4 pos;\n" \
+			"if(u_isInstanced == 1)\n" \
+			"{"
+				"pos = (a_position + a_instancePosition); \n" \
+			"}"
+			"else"
+			"{"
+				"pos = a_position;\n" \
+			"}"
 			"vec4 worldPos; \n" \
 			"worldPos = u_modelMatrix * pos; \n" \
 
@@ -169,6 +177,12 @@ int initializeADSShader(void)
 		"in vec3 a_fragPosNM_out; \n" \
 		"uniform sampler2D texture_normal; \n" \
 
+		//texture blending
+		"uniform float u_alphaBlending; \n" \
+		"uniform int enable_blending; \n" \
+		"uniform sampler2D u_textureSampler1; \n" \
+		"uniform sampler2D u_textureSampler2; \n" \
+
 		"uniform vec4 u_la; \n" \
 		"uniform vec4 u_ld; \n" \
 		"uniform vec4 u_ls; \n" \
@@ -201,6 +215,7 @@ int initializeADSShader(void)
 		"uniform float far_plane; \n" \
 
 		"out vec4 FragColor; \n" \
+		"out vec4 normal_depth; \n" \
 
 		"float ShadowCalculation(vec4 fragPosLightSpace) \n" \
 		"{ \n" \
@@ -243,7 +258,12 @@ int initializeADSShader(void)
 					"vec4 phong_ads_light = vec4(1.0, 1.0, 1.0, 1.0); \n" \
 
 					"vec4 texColor = texture(texture_diffuse, a_texcoord_out); \n"		\
-
+					
+					"if(enable_blending == 1) \n" \
+					"{\n" \
+					"texColor = mix(texture(u_textureSampler1,a_texcoord_out),texture(u_textureSampler2,a_texcoord_out),u_alphaBlending); \n"		\
+					"} \n" \
+		
 					"if(texColor.a < 0.1) \n" \
 						"discard; \n" \
 					
@@ -264,9 +284,13 @@ int initializeADSShader(void)
 			        "vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
 					
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
-					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
+					"phong_ads_light = (ambient + diffuse + specular); \n" \
 					
 					"FragColor = texColor + phong_ads_light; \n" \
+
+
+		//	        "FragColor = mix(texture(u_textureSampler1,a_texcoord_out),texture(u_textureSampler2,a_texcoord_out),u_alphaBlending); \n" \
+
 					"if (u_fogEnable == 1) \n" \
 					"{ \n" \
 						"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
@@ -296,6 +320,9 @@ int initializeADSShader(void)
 			"{\n" \
 				"FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
 			"}\n" \
+			"	FragColor = mix(vec4(0.0), FragColor, 0.7);\n" \
+			"	normal_depth = vec4(normalize( transformedNormals ), viewerVector.z); \n" \
+
 		"} \n";
 
 	GLuint fragmentShadderObject = glCreateShader(GL_FRAGMENT_SHADER);
@@ -377,6 +404,12 @@ int initializeADSShader(void)
 	adsUniform.viewpositionUniform = glGetUniformLocation(adsShaderProgramObject, "viewPosition");
 	adsUniform.textureSamplerUniform_normal = glGetUniformLocation(adsShaderProgramObject, "texture_normal");
 
+	//blending
+	adsUniform.textureSamplerUniform1 = glGetUniformLocation(adsShaderProgramObject, "u_textureSampler1");
+	adsUniform.textureSamplerUniform2 = glGetUniformLocation(adsShaderProgramObject, "u_textureSampler2");
+	adsUniform.blendingUniform = glGetUniformLocation(adsShaderProgramObject, "u_alphaBlending");
+	adsUniform.uniform_enable_blending = glGetUniformLocation(adsShaderProgramObject, "enable_blending");
+
 	adsUniform.lightSpaceMatrixUniform = glGetUniformLocation(adsShaderProgramObject, "lightSpaceMatrix");
 	adsUniform.shadowMapSamplerUniform = glGetUniformLocation(adsShaderProgramObject, "shadowMap");
 	adsUniform.actualSceneUniform = glGetUniformLocation(adsShaderProgramObject, "u_actualScene");
@@ -392,6 +425,7 @@ int initializeADSShader(void)
 	adsUniform.fogEnableUniform = glGetUniformLocation(adsShaderProgramObject, "u_fogEnable");
 	adsUniform.uniform_enable_godRays = glGetUniformLocation(adsShaderProgramObject, "enable_godRays");
 	adsUniform.godrays_blackpass_sphere = glGetUniformLocation(adsShaderProgramObject, "enable_sphere_color");
+	adsUniform.isInstanced = glGetUniformLocation(adsShaderProgramObject, "u_isInstanced");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);

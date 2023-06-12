@@ -34,6 +34,7 @@ int initializeBillboardingShader(void)
     "    vec4 pos = (a_position + a_instancePosition); \n" \
     "    if(1 == u_billboarding) \n" \
     "    {\n" \
+	// change x pos of only two top vertices (0, 1) of a quad ::
     "	    if(gl_VertexID < 2){  \n" \
 	"		    pos.x += sin( float(gl_InstanceID) + (float(u_fTime) * 0.005) ) * 0.5; \n" \
 	"	    } \n" \
@@ -41,6 +42,7 @@ int initializeBillboardingShader(void)
     "        vec3 right = vec3(u_viewMatrix[0][0], u_viewMatrix[1][0], u_viewMatrix[2][0]); \n" \
     "        vec3 up = vec3(u_viewMatrix[0][1], u_viewMatrix[1][1], u_viewMatrix[2][1]); \n" \
     "        pos = a_instancePosition + vec4((right * pos.x) + (up * pos.y), 1.0); \n" \
+	
     "    }\n" \
     "    gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * pos; \n" \
     "    a_texcoord_out = a_texcoord; \n" \
