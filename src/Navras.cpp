@@ -153,10 +153,10 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;
 		default:
 			// LOG("keypress : %d\n", wParam);
-			keyPressed = wParam;
-			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
+		keyPressed = wParam;
+		debug_tranformation(charPressed, keyPressed);
 		break;
 
 	case WM_CHAR:
@@ -184,7 +184,7 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			LOG("current scene changed: %d\n", currentScene);
 			break;
 
-		#ifdef ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
 		 case '1':
 		 case '!':
 		 	if (wParam == '!')
@@ -281,14 +281,14 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			LOG("-----------------------------------------------------------------------------------------------\n");
 			break;
 
-		#endif
+#endif
 
 		default:
 			// LOG("keypressed : %d\n", wParam);
-			charPressed = wParam;
-			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
+		charPressed = wParam;
+		debug_tranformation(charPressed, keyPressed);
 		break;
 
 	default:

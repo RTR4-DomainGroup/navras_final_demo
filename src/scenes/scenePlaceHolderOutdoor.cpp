@@ -502,7 +502,10 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
 
+	// Transformations
 	mat4 translationMatrix = mat4::identity();
+	mat4 scaleMatrix = mat4::identity();
+	mat4 rotationMatrix = mat4::identity();
 	mat4 modelMatrix = mat4::identity();
 	viewMatrix = mat4::identity();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
@@ -547,11 +550,9 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	time = time * 0.05f;
 	time = time - floor(time);
 
-	// Transformations
 	translationMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
 	modelMatrix = mat4::identity();
+
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);

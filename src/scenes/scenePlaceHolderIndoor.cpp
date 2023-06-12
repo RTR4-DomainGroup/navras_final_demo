@@ -159,7 +159,6 @@ int initializeScene_PlaceHolderIndoor(void)
 	{
 		LOG("initializeErosion() Successfull!!!\n");
 	}
-
 #endif // ENABLE_MASKS
 
 	return 0;
