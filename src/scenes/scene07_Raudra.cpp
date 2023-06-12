@@ -398,8 +398,8 @@ void displayScene07_Raudra(void)
 	rotationMatrix_z = mat4::identity();
 
 	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	translationMatrix = vmath::translate(1.85f, -0.85f, -8.20f);
-	scaleMatrix = vmath::scale(0.85f, 0.85f, 0.85f);
+	translationMatrix = vmath::translate(1.75f, -1.0f, -7.0f);
+	//scaleMatrix = vmath::scale(0.85f, 0.85f, 0.85f);
 	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 	
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -448,7 +448,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.85f, -0.45f, -1.10f);
+	translationMatrix = vmath::translate(1.85f, -0.55f, -1.10f);
 	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
 	scaleMatrix = vmath::scale(0.04f, 0.04f, 0.04f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -496,7 +496,7 @@ void displayScene07_Raudra(void)
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(1.95f, -0.45f, -1.12f);
+	translationMatrix = vmath::translate(1.95f, -0.55f, -1.12f);
 	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
 	scaleMatrix = vmath::scale(0.15f, 0.12f, 0.2f);
 	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
