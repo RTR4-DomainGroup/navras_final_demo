@@ -1148,13 +1148,13 @@ void updateScene10_AdbhutRas(void)
 	//cameraCenterZ -= speedVector.x;
 
 	// lookAt(-17.10f, -1.40f, -33.85f, -320.07f, -1.40f, -177.19f, 0.00f, 1.00f, 0.00f)
-	cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.004f);
-	cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.004f);
-	cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.004f);
+	cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.002f);
+	cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.002f);
 
-	cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.004f);
-	cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.004f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.004f);
+	cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.002f);
+	cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.002f);
 
 #endif
 
@@ -1167,7 +1167,7 @@ void updateScene10_AdbhutRas(void)
 // if('l' == tf_Object) // White Flower
 {
 	
-	leaf_translate -= 0.02f;
+	leaf_translate -= 0.015f;
 	leaf_rotate += 9.52f;	
 	if(leaf_translate < -1.75f) {
 		leaf_translate = 0.35f;
