@@ -86,6 +86,8 @@ int time_scene11 = 10;
 int time_scene12 = 10;
 int time_scene13 = 10;
 int time_scene14 = 10;
+
+int blurTime = 3;
 #else
 int time_scene1 = 5;
 int time_scene2 = 40;
@@ -101,6 +103,7 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
+int blurTime = 10;
 #endif
 
 
@@ -675,7 +678,7 @@ void displayNavras(void)
 		isGodRequired = true;
 		isWaterRequired = false;
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene2) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -686,7 +689,7 @@ void displayNavras(void)
 	else if (currentScene == SCENE05_KARUN_RAS)
 	{
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene5) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -701,7 +704,7 @@ void displayNavras(void)
 	{
 		audio(SCENE06_BHAYANK_RAS);
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene6) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene6) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -715,7 +718,7 @@ void displayNavras(void)
 	}
 	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - blurTime);
 		
 		audio(SCENE07_RAUDRA_RAS);
 		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra, shouldSceneRaudraMaskAppear);
@@ -726,7 +729,7 @@ void displayNavras(void)
 	{
 		audio(SCENE08_BIBHATSA_RAS);
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene8) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene8) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -740,7 +743,7 @@ void displayNavras(void)
 	{
 		audio(SCENE09_VEER_RAS);
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene9) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene9) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -755,7 +758,7 @@ void displayNavras(void)
 	{
 		audio(SCENE10_ADBHUT_RAS);
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene10) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene10) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -769,7 +772,7 @@ void displayNavras(void)
 	{
 		audio(SCENE11_SHRINGAR_RAS);
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene11) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene11) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;
@@ -785,7 +788,7 @@ void displayNavras(void)
 	{
 		audio(SCENE12_HASYA_RAS);
 		isGaussianBlurRequired = false;
-		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
+		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - blurTime);
 		if (shouldSceneRaudraMaskAppear)
 		{
 			isGaussianBlurRequired = true;

@@ -37,15 +37,9 @@ static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat materialShininess = 128.0f;
 
-static GLuint texture_ceiling;
-static GLuint texture_floor;
-static GLuint texture_side;
-static GLuint texture_back;
 
 //Model variables
-static STATIC_MODEL deskModel;
-
-static GLuint textures[4];
+STATIC_MODEL hasyaRoom;
 
 GLuint texture_hasyaMask;
 
@@ -63,55 +57,12 @@ int initializeScene12_Hasya(void)
 	{
 		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
 	}
+	initializeQuad();
 #endif
 
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
-	void initializeDeskInstancePositions(void);
-	void initializeShelfInstancePositions(void);
-
-	//load models
-	initializeDeskInstancePositions();
 	
-	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Hasya/concrete.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED in Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_ceiling);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_floor, TEXTURE_DIR"Hasya/stone.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED in floor Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_floor);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_back, TEXTURE_DIR"Hasya/brick.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED in backwall Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_back);
-	}
-	if (LoadGLTexture_UsingSOIL(&texture_side, TEXTURE_DIR"Hasya/pxfuel.jpg") == FALSE) {
-		uninitializeScene12_Hasya();
-		LOG("LoadGLTexture FAILED for sidewall Hasya!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_side);
-	}
-
-	initializeQuad();
-
 	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
 	{
 		//uninitialize();
@@ -124,13 +75,6 @@ int initializeScene12_Hasya(void)
 	}
 
 #endif
-	initializeInvertedNormalCube();
-	initializeQuad();
-
-	textures[0] = (GLuint)texture_ceiling;
-	textures[1] = (GLuint)texture_floor;
-	textures[2] = (GLuint)texture_back;
-	textures[3] = (GLuint)texture_side;
 
 	// external debugging varaible
     tf_t = {2.0f, 0.0f, -3.35f}; // tree pos 
@@ -194,7 +138,7 @@ void displayScene12_Hasya(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 	//glEnable(GL_TEXTURE_2D);
 	
-	displayRoom(textures);
+	//displayRoom(textures);
 
 #ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
@@ -226,7 +170,7 @@ void displayScene12_Hasya(void)
 void uninitializeScene12_Hasya(void)
 {
     //UNINIT models
-	unloadStaticModel(&deskModel);
+	unloadStaticModel(&hasyaRoom);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_hasyaMask)
@@ -235,26 +179,6 @@ void uninitializeScene12_Hasya(void)
 		texture_hasyaMask = 0;
 	}
 #endif
-
-	if (texture_ceiling)
-	{
-		glDeleteTextures(1, &texture_ceiling);
-		texture_ceiling = 0;
-	}
-	if (texture_floor)
-	{
-		glDeleteTextures(1, &texture_floor);
-		texture_floor = 0;
-	}
-	if (texture_back)
-	{
-		glDeleteTextures(1, &texture_back);
-		texture_floor = 0;
-	}
-	if (texture_side)
-	{
-		glDeleteTextures(1, &texture_side);
-		texture_side = 0;
-	}
+	
 }
 
