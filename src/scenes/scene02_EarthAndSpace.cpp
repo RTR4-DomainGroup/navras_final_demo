@@ -1,6 +1,8 @@
 // This File Will Be Replaced by Scene*.cpp
 
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
+#include <time.h>
+
 #include "../../inc/helper/texture_loader.h"
 #include "../../inc/helper/camera.h"
 #include "../../inc/helper/common.h"
@@ -8,6 +10,9 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/FontShader.h"
+#include "../../inc/scenes/fontRendering.h"
+#include "../../inc/helper/geometrytypes.h"
 
 #ifdef ENABLE_SHADOW
 #include "../../inc/helper/shadowframebuffer.h"
@@ -94,12 +99,25 @@ bool isInitialDisplayScene02_EarthAndSpace = true;
 GLfloat cameraRadiusEarthAndSpace = 4.0f;
 GLfloat cameraAngleEarthAndSpace = 95.0f;
 
+GLfloat alpha = 0.0f;
+
+// Time
+
+extern time_t now;
+extern time_t then;
+
 //float distance10;
 
 int initializeScene02_EarthAndSpace(void)
 {
 	// Code.
 	// initializeCamera(&camera);
+
+	if(initializeFont() != 0)
+	{
+		LOG("initializeFont() FAILED in initializeScene02_EarthAndSpace in scene02_EarthAndSpace.cpp !!!\n");
+		return (-8);
+	}
 
 #ifdef ENABLE_ADSLIGHT
 	// Texture
@@ -159,6 +177,7 @@ void setCameraScene02_EarthAndSpace(void)
 	if (isInitialDisplayScene02_EarthAndSpace == true)
 	{
 		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		initializeSphere(2.5f, 60, 60);
 		isInitialDisplayScene02_EarthAndSpace = false;
 	}
 }
@@ -167,6 +186,7 @@ float anglez = 15.0f;
 void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRefraction = false, bool isReflection = false, bool waterDraw = false, int actualDepthQuadScene = 0)
 {
 	// Code
+
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
 	mat4 rotationMatrix = mat4::identity();
@@ -178,7 +198,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 	mat4 rotationMatrix_z = mat4::identity();
 
 	rotateCamera(0.0f, 0.0f, -6.0f, cameraRadiusEarthAndSpace, cameraAngleEarthAndSpace);
-	//displayCamera();
+	// displayCamera();
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
 
@@ -354,6 +374,38 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 #endif // ENABLE_STARFIELD
 
 	}
+
+	//if(now >= then + 33)
+	//{
+	//	glEnable(GL_CULL_FACE);
+	//	glEnable(GL_BLEND);
+	//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//	vec4 textColor = vec4(1.0f, 1.0f, 1.0f,alpha);
+	//	// TRANFORM vector = {-0.5f, 0.23f, -3.0f};
+	//	// update_transformations(NULL, NULL, NULL, &vector);
+	//	// displayFont("Presenting", vec3(vector.x, vector.y, vector.z), 0.003f, textColor);
+	//	displayFont("Presenting", vec3(-0.5f, 0.23f, -3.0f), 0.003f, textColor);
+	//	
+	//	
+	//	textColor = vec4(1.0f, 1.0f, 1.0f,alpha);
+	//	displayFont("NAVRAS", vec3(-1.25f, -0.25f, -3.0f), 0.010f, textColor);
+	//	// TRANFORM vector = {-1.25f, -0.25f, -3.0f};
+	//	// update_transformations(NULL, NULL, NULL, &vector);
+	//	// displayFont("NAVRAS", vec3(vector.x, vector.y, vector.z), 0.010f, textColor);
+
+
+	//	glDisable(GL_CULL_FACE);
+	//	glDisable(GL_BLEND);
+
+	//	// update
+	//	alpha = alpha+0.001;
+	//	if(alpha>=1.0)
+	//	{
+	//		alpha = 1.0f;
+	//	}
+	//}
+	
 
 }
 
