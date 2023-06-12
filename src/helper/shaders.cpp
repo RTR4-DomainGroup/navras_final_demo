@@ -5,6 +5,7 @@
 #include "../../inc/shaders/SkyboxShader.h"
 #include "../../inc/shaders/GodraysShader.h"
 #include "../../inc/shaders/CloudNoiseShader.h"
+#include "../../inc/shaders/ErosionNoiseShader.h"
 #include "../../inc/shaders/TerrainShader.h"
 #include "../../inc/shaders/StarfieldShader.h"
 #include "../inc/shaders/WaterShader.h"
@@ -13,6 +14,8 @@
 #include "../../inc/shaders/VerticalBlur.h"
 #include "../../inc/shaders/AtmosphereShader.h"
 #include "../../inc/shaders/ParticleShader.h"
+#include "../../inc/shaders/SSAOShader.h"
+#include "../../inc/shaders/FontShader.h"
 
 
 bool initAllShaders(void)
@@ -20,6 +23,11 @@ bool initAllShaders(void)
     // Variable Declarations
 
     // Code
+    if(initializeFontShader() != 0)
+    {
+        return false;
+    }
+    
     if (initializeFSQuadShader() != 0)
     {
         return false;
@@ -45,10 +53,10 @@ bool initAllShaders(void)
         return false;
     }
     
-    if(initializeFSQuadShader() != 0)
-    {
-        return false;
-    }
+    // if(initializeFSQuadShader() != 0)
+    // {
+    //     return false;
+    // }
 
     if (initializeGodraysShader() != 0)
     {
@@ -61,6 +69,11 @@ bool initAllShaders(void)
     }
 
     if(intializeCloudNoiseShader() != 0)
+    {
+        return false;
+    }
+
+    if(intializeErosionNoiseShader() != 0)
     {
         return false;
     }
@@ -94,6 +107,10 @@ bool initAllShaders(void)
     {
         return false;
     }
+    if (initializeSSAOShader() != 0)
+    {
+        return false;
+    }
 
     return true;
 }
@@ -112,5 +129,6 @@ void uninitializeAllShaders(void)
     uninitializeADSDynamicShader();
     uninitializeCloudNoiseShader();
     uninitializeAtmosphereShader();
+    uninitializeSSAOShader();
 }
 

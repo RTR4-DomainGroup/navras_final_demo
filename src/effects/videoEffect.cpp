@@ -2,14 +2,19 @@
 #include <math.h>		// for PI
 
 #include "../../inc/effects/videoEffect.h"
-#include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/shaders/FSVQuadShader.h"
 #include "../../inc/helper/texture_loader.h"
+
+#include "../../inc/helper/audioplayer.h"
+#include "../../inc/helper/constants.h"
 
 
 GLuint texture_frame;
 int frameWidth, frameHeight;
 uint8_t* frame_data = NULL;
 struct VideoReaderState vr_state;
+
+bool flagAudio = true;
 
 int initializeVideoEffect(const char* videoFile)
 {
@@ -19,7 +24,13 @@ int initializeVideoEffect(const char* videoFile)
         LOG("Failed to open video file.\n");
         return -1;
     }
-    
+   
+    if(initializeFSVQuadShader() != 0)
+    {
+        LOG("Failed to initializeFSVQuadShader().\n");
+        return -2;
+    }
+    initializeQuadForVideo();
     frameWidth = vr_state.width;
     frameHeight = vr_state.height;
     frame_data = new uint8_t[frameWidth * frameHeight * 4];
@@ -27,35 +38,65 @@ int initializeVideoEffect(const char* videoFile)
     if (!video_reader_read_frame(&vr_state, frame_data))
     {
         LOG("Couldn't load video frame.\n");
-        exit(-2);
-    }
-    if(LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data) == GL_FALSE)
-    {
-        LOG("Unable to load Texture.\n");
-        return -3;
-    }
+        return -2;
+    }    
+    LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
     LOG("Frame Width = %d.\nFrame Height = %d.\n", frameWidth, frameHeight);
    
 
     return 0;
 }
 
-void displayVideoEffect( struct FSQuadUniform* fsqUniform)
+void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
 {
-    // Function declaration
 
-    // Code    
+#ifdef ENABLE_AUDIO
+    if(flagAudio == true){
+        playSong(0);
+        flagAudio = false;
+    }
+ #endif
+
+    // Function declaration
+    static bool myFlag = true;
+    // Code
+    // if (myFlag)
+    // {
+    //     if (!video_reader_read_frame(&vr_state, frame_data))
+    //     {
+    //         LOG("Couldn't load video frame.\n");
+    //     }
+    //     LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
+    //     myFlag = false;
+    // }   
+    //LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
+    
     glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_frame);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frameWidth, frameHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, frame_data);
+    glUniform1i(fsvqUniform->textureSamplerUniform1, 0);
+    glUniform1i(fsvqUniform->textureSamplerUniform2, 1);  
+    displayVideoQuad();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+}
+
+void updateVideoEffect(void)
+{  
     if (!video_reader_read_frame(&vr_state, frame_data))
     {
         LOG("Couldn't load video frame.\n");
-        exit(-1);
-    }    
-    LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
-    glBindTexture(GL_TEXTURE_2D, texture_frame);
-    glUniform1i(fsqUniform->textureSamplerUniform1, 0);
-    glUniform1i(fsqUniform->textureSamplerUniform2, 1);
-    displayQuad();
-    glBindTexture(GL_TEXTURE_2D, 0);    
+    }
+    
 }
 
+void uninitializeVideoEffect(void)
+{
+    if (texture_frame)
+	{
+		glDeleteTextures(1, &texture_frame);
+		texture_frame = 0;
+	}
+    video_reader_close(&vr_state);
+    uninitializeVideoQuad();
+}

@@ -167,12 +167,21 @@ int initializeTerrainShader(void)
                     "float l1 = length(p3.xy - p2.xy) * (16.0 + 1.0); \n" \
                     "float l2 = length(p3.xy - p1.xy) * (16.0 + 1.0); \n" \
                     "float l3 = length(p1.xy - p0.xy) * (16.0 + 1.0); \n" \
-                    "gl_TessLevelOuter[0] = 50.0; \n" \
-                    "gl_TessLevelOuter[1] = 50.0; \n" \
-                    "gl_TessLevelOuter[2] = 50.0; \n" \
-                    "gl_TessLevelOuter[3] = 50.0; \n" \
-                    "gl_TessLevelInner[0] = 50.0; \n" \
-                    "gl_TessLevelInner[1] = 50.0; \n" \
+
+                    /*"gl_TessLevelOuter[0] = l0; \n" \
+                    "gl_TessLevelOuter[1] = l1; \n" \
+                    "gl_TessLevelOuter[2] = l2; \n" \
+                    "gl_TessLevelOuter[3] = l3; \n" \
+                    "gl_TessLevelInner[0] = min(l0, l3); \n" \
+                    "gl_TessLevelInner[1] = min(l0, l2); \n" \*/
+
+                    "gl_TessLevelOuter[0] = 70.0; \n" \
+                    "gl_TessLevelOuter[1] = 70.0; \n" \
+                    "gl_TessLevelOuter[2] = 70.0; \n" \
+                    "gl_TessLevelOuter[3] = 70.0; \n" \
+                    "gl_TessLevelInner[0] = 70.0; \n" \
+                    "gl_TessLevelInner[1] = 70.0; \n" \
+
                 "} \n" \
             "} \n" \
             "gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position; \n" \
@@ -481,6 +490,7 @@ int initializeTerrainShader(void)
             
             /********************************************/
             "vec4 landscape = texture(tex_color, fs_in.tc); \n" \
+            "if (landscape.a < 0.1) discard; \n" \
             "if (enable_godRays) \n" \
             "{ \n" \
                 "if(u_actualScene == 1) { \n" \

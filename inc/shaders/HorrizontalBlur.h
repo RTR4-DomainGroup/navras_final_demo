@@ -6,6 +6,7 @@ struct HorrizontalBlurUniform
     /* data */
     GLuint targetWidth;
     GLuint hblurTexSamplerUniform;
+    GLuint blurFactor;
 };
 
 

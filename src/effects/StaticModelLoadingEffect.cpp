@@ -1,5 +1,6 @@
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #include "../../inc/shaders/ADSLightShader.h"
+#include "../../inc/shaders/ErosionNoiseShader.h"
 
 
 /*############### MESH ###############*/
@@ -111,6 +112,60 @@ void Mesh::Draw()
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+void Mesh::DrawCustomTex(GLuint texID, GLuint erodeTexID)
+{
+    // bind appropriate textures
+    //unsigned int diffuseNr = 1;
+    //unsigned int specularNr = 1;
+    //unsigned int normalNr = 1;
+    //unsigned int heightNr = 1;
+    //for (unsigned int i = 0; i < textures.size(); i++)
+    //{
+    //    glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+    //    // retrieve texture number (the N in diffuse_textureN)
+    //    string number;
+    //    string name = textures[i].type;
+
+    //    if (name == "texture_diffuse")
+    //        number = std::to_string(diffuseNr++);
+
+    //    else if (name == "texture_specular")
+    //        number = std::to_string(specularNr++); // transfer unsigned int to stream
+
+    //    else if (name == "texture_normal")
+    //        number = std::to_string(normalNr++); // transfer unsigned int to stream
+
+    //    else if (name == "texture_height")
+    //        number = std::to_string(heightNr++); // transfer unsigned int to stream
+
+    //    // now set the sampler to the correct texture unit
+    //    glUniform1i(glGetUniformLocation(getADSShaderProgramObject(), (name + number).c_str()), i);
+    //    // and finally bind the texture
+    //    glBindTexture(GL_TEXTURE_2D, noiseTexID);
+    //}
+
+
+    glActiveTexture(GL_TEXTURE0);
+    glUniform1i(glGetUniformLocation(getErosionNoiseShaderProgramObject(), "u_textureSampler"), 0);
+    glBindTexture(GL_TEXTURE_2D, texID);
+
+    glActiveTexture(GL_TEXTURE1);
+    glUniform1i(glGetUniformLocation(getErosionNoiseShaderProgramObject(), "u_noiseSampler"), 1);
+    glBindTexture(GL_TEXTURE_3D, erodeTexID);
+
+    // draw mesh
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+
+    // always good practice to set everything back to defaults once configured.
+    glActiveTexture(GL_TEXTURE0);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_3D, 0);
+}
+
 
 void Mesh::DrawInstanced(int numInstances)
 {
@@ -303,6 +358,13 @@ void StaticModel::Draw()
         meshes[i]->Draw();
 }
 
+void StaticModel::DrawCustomTexture(GLuint texID, GLuint erodeTexID)
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i]->DrawCustomTex(texID, erodeTexID);
+}
+
+
 void StaticModel::DrawInstanced(int numInstances)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
@@ -312,7 +374,6 @@ void StaticModel::DrawInstanced(int numInstances)
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 void StaticModel::loadModel(string const& path)
 {
-    LOG("Entry to function = %s\n", __FUNCTION__);
     LOG("obj file path = %s\n", path.c_str());
 
     // read file via ASSIMP
@@ -326,18 +387,14 @@ void StaticModel::loadModel(string const& path)
     }
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
-
-    LOG("model directory = %s\n", directory.c_str());
 
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
-    LOG("Exit from function = %s\n", __FUNCTION__);
 }
 
 void StaticModel::loadModelInstanced(string const& path, int numInstanced, vector<float> instacePositions)
 {
-    LOG("Entry to function = %s\n", __FUNCTION__);
     LOG("obj file path = %s\n", path.c_str());
 
     // read file via ASSIMP
@@ -352,20 +409,15 @@ void StaticModel::loadModelInstanced(string const& path, int numInstanced, vecto
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
 
-    LOG("model directory = %s\n", directory.c_str());
 
     // process ASSIMP's root node recursively
     processNodeInstanced(scene->mRootNode, scene, numInstanced, instacePositions);
-
-    LOG("Exit from function = %s\n", __FUNCTION__);
 }
 
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 void StaticModel::processNode(aiNode* node, const aiScene* scene)
 {
-    static int count = 0;
-    LOG("Enter : %d\n", count++);
     // process each mesh located at the current node
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
@@ -532,7 +584,7 @@ Mesh* StaticModel::processMesh(aiMesh* mesh, const aiScene* scene)
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
     }
 
-    LOG("mesh number = %zu\n", meshes.size());
+    // LOG("mesh number = %zu\n", meshes.size());
 
     // return a mesh object created from the extracted mesh data
     return new Mesh(vertices, indices, textures);
@@ -700,10 +752,10 @@ vector<StaticModelTexture> StaticModel::loadMaterialTextures(aiMaterial* mat, ai
         if (!skip)
         {   // if texture hasn't been loaded already, load it
             StaticModelTexture texture;
-            texture.id = TextureFromFile(str.C_Str(), this->directory);
+            string filepath = directory + '/' + str.C_Str();
+            texture.id = TextureFromFile(filepath);
 
             if (texture.id == 0)
-                // MessageBox(NULL, NULL, TEXT("Tex not loaded"), MB_OK);
                 LOG("Tex not loaded\n");
 
             texture.type = typeName;
@@ -715,10 +767,8 @@ vector<StaticModelTexture> StaticModel::loadMaterialTextures(aiMaterial* mat, ai
     return textures;
 }
 
-unsigned int TextureFromFile(const char* path, const string& directory, bool gamma)
+unsigned int TextureFromFile(const string& filepath)
 {
-    string filename = string(path);
-    filename = directory + '/' + filename;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -726,12 +776,11 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
     int width, height, nrComponents;
     //stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* data = SOIL_load_image(filename.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data = SOIL_load_image(filepath.c_str(), &width, &height, &nrComponents, 0);
 
     if (data)
     {
-        LOG("SUCCESS : texture directory = %s\n", directory.c_str());
-        LOG("SUCCESS : texture filename = %s\n", filename.c_str());
+        LOG("SUCCESS : texture filename = %s\n", filepath.c_str());
 
         GLenum format;
         if (nrComponents == 1)
@@ -758,9 +807,7 @@ unsigned int TextureFromFile(const char* path, const string& directory, bool gam
     }
     else
     {
-        LOG("ERROR : texture directory = %s\n", directory.c_str());
-        LOG("ERROR: texture filename = %s\n", filename.c_str());
-        //MessageBox(NULL, TEXT("Texture not loaded"), TEXT("ERROR"), MB_OK);
+        LOG("ERROR: texture filepath = %s\n", filepath.c_str());
         SOIL_free_image_data(data);
     }
 
@@ -788,6 +835,11 @@ void loadStaticModelInstanced(const char* path, STATIC_MODEL* staticModel, int n
 void drawStaticModel(STATIC_MODEL staticModel)
 {
 	staticModel.pModel->Draw();
+}
+
+void drawCustomTextureStaticModel(STATIC_MODEL staticModel, GLuint texID, GLuint erodeTexID)
+{
+    staticModel.pModel->DrawCustomTexture(texID, erodeTexID);
 }
 
 void drawStaticModelInstanced(STATIC_MODEL staticModel, int numInstances)

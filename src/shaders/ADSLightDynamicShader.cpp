@@ -83,7 +83,7 @@ int initializeADSDynamicShader(void)
 		"	viewerVector = vec3(-eyeCoordinates); \n" \
 
 		//Normal Mapping
-		"FragPos = u_modelMatrix * a_position; \n" \
+		"vs_out.FragPos = u_modelMatrix * a_position; \n" \
 		"mat3 normalMatrix_nm = mat3(transpose(inverse(u_modelMatrix))); \n" \
 		"vec3 N = normalize(normalMatrix_nm * a_normal); \n" \
 		"vec3 T = normalize(normalMatrix_nm * a_tangent); \n" \
@@ -92,7 +92,7 @@ int initializeADSDynamicShader(void)
 		"mat3 TBN = transpose(mat3(T,B,N)); \n" \
 		"a_lightDirection_out = TBN * vec3(u_lightPosition) ; \n" \
 		"a_eyeDirection_out =  TBN *  viewPosition; \n" \
-		"a_fragPosNM_out =TBN *  FragPos.xyz; \n" \
+		"a_fragPosNM_out =TBN *  vs_out.FragPos.xyz; \n" \
 
 		/*skeletal anim*/
 		"	vec4 totalPosition = vec4(0.0); \n" \
@@ -219,6 +219,7 @@ int initializeADSDynamicShader(void)
 		"uniform vec4 u_lightPosition; \n" \
 
 		"out vec4 FragColor; \n" \
+		"out vec4 normal_depth; \n" \
 
 		"float ShadowCalculation(vec4 fragPosLightSpace) \n" \
 		"{ \n" \
@@ -303,6 +304,8 @@ int initializeADSDynamicShader(void)
 		"	{\n" \
 		"		FragColor = vec4(0.0, 0.0, 0.0, 1.0); \n" \
 		"	}\n" \
+		"	FragColor = mix(vec4(0.0), FragColor, 0.7);\n" \
+		"	normal_depth = vec4(normalize( transformedNormals ), viewerVector.z); \n" \
 		"} \n";
 
 	GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);

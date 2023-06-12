@@ -512,7 +512,6 @@ int& DynamicModel::GetBoneCount()
 // loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 void DynamicModel::loadModel(string const& path)
 {
-    LOG("Entry to function = %s\n", __FUNCTION__);
     LOG("model file path = %s\n", path.c_str());
 
     // read file via ASSIMP
@@ -527,12 +526,9 @@ void DynamicModel::loadModel(string const& path)
     // retrieve the directory path of the filepath
     directory = path.substr(0, path.find_last_of('/'));
 
-    LOG("model directory = %s\n", directory.c_str());
-
     // process ASSIMP's root node recursively
     processNode(scene->mRootNode, scene);
 
-    LOG("Exit from function = %s\n", __FUNCTION__);
 }
 
 // processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
@@ -761,7 +757,7 @@ unsigned int DynamicModel::TextureFromFile(const char* path, const string& direc
 
     if (data)
     {
-        LOG("SUCCESS : texture directory = %s\n", directory.c_str());
+        //LOG("SUCCESS : texture directory = %s\n", directory.c_str());
         LOG("SUCCESS : texture filename = %s\n", filename.c_str());
 
         GLenum format;
@@ -789,7 +785,7 @@ unsigned int DynamicModel::TextureFromFile(const char* path, const string& direc
     }
     else
     {
-        LOG("ERROR : texture directory = %s\n", directory.c_str());
+        //LOG("ERROR : texture directory = %s\n", directory.c_str());
         LOG("ERROR: texture filename = %s\n", filename.c_str());
         //MessageBox(NULL, TEXT("Texture not loaded"), TEXT("ERROR"), MB_OK);
         SOIL_free_image_data(data);

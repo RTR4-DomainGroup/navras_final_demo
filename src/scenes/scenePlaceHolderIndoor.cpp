@@ -1,299 +1,361 @@
 // This File Will Be Replaced by Scene*.cpp
 
 #include "../../inc/helper/texture_loader.h"
-#include "../../inc/helper/waterframebuffer.h"
+
 #include "../../inc/helper/camera.h"
 #include "../../inc/helper/common.h"
 #include "../../inc/helper/framebuffer.h"
-#include "../../inc/helper/texture_loader.h"
+#include "../../inc/helper/geometry.h"
+#include "../../inc/helper/ssaoframebuffer.h"
 
 #include "../../inc/shaders/FSQuadShader.h"
-#include "../../inc/shaders/ADSLightShader.h"
-#include "../../inc/shaders/ADSLightDynamicShader.h"
-#include "../../inc/shaders/BillboardingShader.h"
+#include "../../inc/shaders/SSAOShader.h"
 
-#include "../../inc/effects/videoEffect.h"
-#include "../../inc/effects/TerrainEffect.h"
-#include "../../inc/effects/StarfieldEffect.h"
-#include "../../inc/effects/SkyboxEffect.h"
-#include "../../inc/effects/CloudEffect.h"
-#include "../../inc/effects/WaterEffect.h"
-#include "../../inc/effects/StaticModelLoadingEffect.h"
-#include "../../inc/effects/DynamicModelLoadingEffect.h"
-#include "../../inc/effects/GodraysEffect.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
+#include "../../inc/effects/SSAOEffect.h"
+
 
 #include "../../inc/scenes/scenePlaceHolderIndoor.h"
 
 
+#include "../../inc/effects/StaticModelLoadingEffect.h"
+
+#ifdef ENABLE_EROSION
+#include "../../inc/effects/ErosionEffect.h"
+#endif // ENABLE_EROSION
+
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
-
 extern int windowWidth;
 extern int windowHeight;
+
+scene_types_t  getCurrentScene(void);
+
+// SSAO variable
+SSAOFrameBufferStruct ssaoFrameBufferDetails;
 
 //GLfloat angleCube;
 
 extern mat4 perspectiveProjectionMatrix;
 
-struct ADSUniform sceneIndoorADSUniform;
-struct ADSDynamicUniform sceneIndoorADSDynamicUniform;
 
-static GLfloat density = 0.15;
-static GLfloat gradient = 0.5;
-static GLfloat skyFogColor[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+#ifdef ENABLE_GAUSSIAN_BLUR
+// Gaussian Blur related variables
+static struct GaussianBlurEffect gaussianBlurIndoorEffect;
+static struct HorrizontalBlurUniform horizontalBlurUniform;
+static struct VerticalBlurUniform verticalBlurIndoorUniform;
+static struct FrameBufferDetails fullSceneIndoorFbo;
+static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
+#endif // ENABLE_GAUSSIAN_BLUR
 
-static GLfloat lightAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat lightSpecular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition[] = { 10.0f, 10.0f, 0.0f, 1.0f };
+#ifdef ENABLE_MASKS
+// MASKS
+static struct FrameBufferDetails fboMaskPass_Indoor;
+static GLuint texture_mask_indoor;
 
-static GLfloat materialAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat materialDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static GLfloat materialShininess = 128.0f;
+static STATIC_MODEL maskModel_KarunRas;
+static STATIC_MODEL maskModel_RaudraRas;
+static STATIC_MODEL maskModel_HasyaRas;
 
-static mat4 viewMatrix;
+extern GLfloat lightAmbient_shantRas_mask[];
+extern GLfloat lightDiffuse_shantRas_mask[];
+extern GLfloat lightSpecular_shantRas_mask[];
+extern GLfloat lightPosition_shantRas_mask[];
 
-// //Model variables
-// static STATIC_MODEL rockModel;
-// static STATIC_MODEL streetLightModel;
-// static STATIC_MODEL deskModel;
-// static STATIC_MODEL schoolBagModel;
-// static DYNAMIC_MODEL skeletonModel;
+extern GLfloat materialAmbient_shantRas_mask[];
+extern GLfloat materialDiffuse_shantRas_mask[];
+extern GLfloat materialSpecular_shantRas_mask[];
+extern GLfloat materialShininess_shantRas_mask;
+extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
+static GLuint noise_texture_eroded_indoor;
+static float myScale_erosion_indoor = 2.0f;
+static float noiseScale_erosion_indoor = 2.0f;
+static bool offsetIncrement_indoor = false;
+
+static GLfloat offset_ras_indoor[] = { 0.17f, 0.17f, 0.17f };
+#endif // ENABLE_MASKS
+static bool isBlurI = false;
 
 int initializeScene_PlaceHolderIndoor(void)
 {
 	// Function Declarations
 
-    // Code.
+    // Code
+	#ifdef ENABLE_GAUSSIAN_BLUR
+	initializeQuad();
+	if(initializeGaussianBlur(&gaussianBlurIndoorEffect) == false)
+	{
+		LOG("Initialize Gaussian Blur Effect FAILED!!");
+		return (-7);
+	}
 
-#ifdef ENABLE_ADSLIGHT
-    // Texture
-	// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == FALSE) {
-	if (LoadGLTexture_UsingSOIL(&texture_Marble, TEXTURE_DIR"marble.bmp") == FALSE) {
+	fullSceneIndoorFbo.textureWidth = WIN_WIDTH;
+	fullSceneIndoorFbo.textureHeight = WIN_HEIGHT;
+
+	if (createFBO(&fullSceneIndoorFbo) == false)
+	{
+		LOG("Unable to create FBO for entire scene");
+		return (-8);
+	}
+	
+#endif // ENABLE_GAUSSIAN_BLUR
+
+
+#ifdef ENABLE_SSAO
+
+
+	// framebuffer related variables
+	//int windowWidth;
+	//int windowHeight;
+
+
+	ssaoFrameBufferDetails.textureWidth = 1920;
+	ssaoFrameBufferDetails.textureHeight = 1080;
+
+	if (ssaoCreateFBO(&ssaoFrameBufferDetails) == GL_FALSE) 
+	{
+		LOG("ssaoCreateFBO() For Shadow FAILED!!!\n");
+		return(-1);
+	}
+	else 
+	{
+		LOG("ssaoCreateFBO() Successfull for Shadow!!!\n");
+	}
+	initializeSSAO();
+
+#endif // ENABLE_SSAO
+
+#ifdef ENABLE_MASKS
+	fboMaskPass_Indoor.textureWidth = 1920;
+	fboMaskPass_Indoor.textureHeight = 1080;
+
+	createFBO(&fboMaskPass_Indoor);
+
+
+	loadStaticModel("res/models/masks/individualScenes/RaudraWithText.obj", &maskModel_RaudraRas);
+	loadStaticModel("res/models/masks/individualScenes/KarunWithText.obj", &maskModel_KarunRas);
+	loadStaticModel("res/models/masks/individualScenes/HasyaWithText.obj", &maskModel_HasyaRas);
+
+
+	if (LoadGLTexture_UsingSOIL(&texture_mask_indoor, "res/models/masks/copper.jpg") == FALSE)
+	{
 		//uninitialize();
-		LOG("LoadGLTexture FAILED!!!\n");
+		LOG("LoadGLTexture for texture_mask_indoor FAILED!!!\n");
 		return(-1);
 	}
 	else
 	{
-		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble);
+		LOG("LoadGLTexture texture_mask_indoor Successfull = %u!!!\n", texture_mask_indoor);
 	}
 
-#endif // ENABLE_ADSLIGHT
-	
-// #ifdef ENABLE_STATIC_MODELS
-// 	//load models
-// 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
-// 	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
-// 	loadStaticModel("res/models/desk/desk.obj", &deskModel);
-// 	loadStaticModel("res/models/schoolBag/schoolBag.fbx", &schoolBagModel);
-// #endif // ENABLE_STATIC_MODELS
-
-
-// #ifdef ENABLE_DYNAMIC_MODELS
-// 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
-// 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-// 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
-// #endif
-
+	noise_texture_eroded_indoor = initializeErosion();
+	if (noise_texture_eroded_indoor == 0)
+	{
+		LOG("initializeErosion() FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeErosion() Successfull!!!\n");
+	}
+#endif // ENABLE_MASKS
 
 	return 0;
 }
 
-void displayScene_PlaceHolderIndoor(void)
+void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR displayPasses, bool shouldSceneBlur)
 {
-	// Function Declarations
-	void displayPasses(int,bool,bool,bool);
-	void displayGodRays(int, int);
+	// Function declarations
+	void displayBlur(void);
+	scene_types_t  getCurrentScene(void);
+
+	// Code
+
+	isBlurI = shouldSceneBlur;
 
 	// Code
 	// Here The Game STarts
-
-	// set camera
 	setCamera();
 
-	mat4 translationMatrix = mat4::identity();
-	mat4 scaleMatrix = mat4::identity();
-	mat4 rotationMatrix = mat4::identity();
-	mat4 modelMatrix = mat4::identity();	
-	mat4 rotationMatrix_x = mat4::identity();
-	mat4 rotationMatrix_y = mat4::identity();
-	mat4 rotationMatrix_z = mat4::identity();
-	viewMatrix = mat4::identity();
+#ifdef ENABLE_MASKS
+	// Masks
+	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Indoor.frameBuffer);
+		glViewport(0, 0, (GLsizei)fboMaskPass_Indoor.textureWidth, (GLsizei)fboMaskPass_Indoor.textureHeight);
+		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
 
-	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboMaskPass_Indoor.textureWidth / fboMaskPass_Indoor.textureHeight, 0.1f, 100.0f);
 
-	//Default Frame Buffer
-	
-	//glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-	//perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
-	//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		mat4 translationMatrix = mat4::identity();
+		mat4 rotationMatrix = mat4::identity();
+		mat4 modelMatrix = mat4::identity();
+		mat4 scaleMatrix = mat4::identity();
+		mat4 rotationMatrix_x = mat4::identity();
+		mat4 rotationMatrix_y = mat4::identity();
+		mat4 rotationMatrix_z = mat4::identity();
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//float angle = 0.0;
 
-#ifdef ENABLE_STATIC_MODELS
-	//MODELS
-	sceneIndoorADSUniform = useADSShader();
+		glEnable(GL_TEXTURE_3D);
+		glEnable(GL_TEXTURE_2D);
+		sceneErosionNoiseUniform = useErosionNoiseShader();
 
-	// Sending Light Related Uniforms
-	glUniform1i(sceneIndoorADSUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneIndoorADSUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneIndoorADSUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneIndoorADSUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneIndoorADSUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneIndoorADSUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneIndoorADSUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneIndoorADSUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneIndoorADSUniform.materialShininessUniform, materialShininess);
+		glUniform3fv(sceneErosionNoiseUniform.laUniform, 1, lightAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ldUniform, 1, lightDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.lsUniform, 1, lightSpecular_shantRas_mask);
+		glUniform4fv(sceneErosionNoiseUniform.lightPositionUniform, 1, lightPosition_shantRas_mask);
 
-	glUniform1i(sceneIndoorADSUniform.fogEnableUniform, 0);
-	glUniform1f(sceneIndoorADSUniform.densityUniform, density);
-	glUniform1f(sceneIndoorADSUniform.gradientUniform, gradient);
-	glUniform4fv(sceneIndoorADSUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneIndoorADSUniform.uniform_enable_godRays, 1);
-	glUniform1i(sceneIndoorADSUniform.godrays_blackpass_sphere, 0);
+		glUniform3fv(sceneErosionNoiseUniform.kaUniform, 1, materialAmbient_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.kdUniform, 1, materialDiffuse_shantRas_mask);
+		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
+		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
 
-	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
-	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
-	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+		//glDisable(GL_BLEND);
+		// ------ Mask Model ------
+		translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
+		scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
+		//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-	//For Normal Mapping
-	glUniform4fv(sceneIndoorADSUniform.viewpositionUniform, 1, camera.eye);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
-	// ------ Rock Model ------
-	translationMatrix = vmath::translate(-1.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, mat4::identity());
+		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_indoor);
+		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
+		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_indoor);
 
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		if (getCurrentScene() == SCENE05_KARUN_RAS)
+		{
 
-	// drawStaticModel(rockModel);
+			drawCustomTextureStaticModel(maskModel_KarunRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
-	// ------ Streetlight Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+		}
+		else if (getCurrentScene() == SCENE07_RAUDRA_RAS)
+		{
 
-	
-	translationMatrix = vmath::translate(1.0f, -2.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+			drawCustomTextureStaticModel(maskModel_RaudraRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+		}
+		else if (getCurrentScene() == SCENE12_HASYA_RAS)
+		{
 
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+			drawCustomTextureStaticModel(maskModel_HasyaRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
-	// drawStaticModel(streetLightModel);
-
-	// ------ SchoolBag Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+		}
 
 
-	translationMatrix = vmath::translate(1.0f, 0.0f, -1.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_mask_indoor, noise_texture_eroded_indoor);
+		// ################################### ROOM ###################################  
 
-	modelMatrix = translationMatrix * scaleMatrix;
+		glUseProgram(0);
 
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glDisable(GL_TEXTURE_3D);
+		glDisable(GL_TEXTURE_2D);
 
-	// drawStaticModel(schoolBagModel);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#endif // ENABLE_MASKS
+
+	if (!shouldSceneBlur)
+	{
+#ifdef ENABLE_SSAO
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFrameBufferDetails.render_fbo);
+		glViewport(0, 0, ssaoFrameBufferDetails.textureWidth, ssaoFrameBufferDetails.textureHeight);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+
+		displayPasses();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		displaySSAO(&ssaoFrameBufferDetails);
 
 
-	// ------ Desk Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(-1.0f, -2.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+#endif // ENABLE_SSAO
+	}
+	else
+	{
+		//glDisable(GL_BLEND);
+		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneIndoorFbo.frameBuffer);
+		glViewport(0, 0, (GLsizei)fullSceneIndoorFbo.textureWidth, (GLsizei)fullSceneIndoorFbo.textureHeight);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneIndoorFbo.textureWidth / fullSceneIndoorFbo.textureHeight,
+			0.1f, 1000.0f);
+		
+		displayPasses();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+		displayBlur();
 
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsGaussBlurIndoorQuadUniform = useFSQuadShader();
 
-	// drawStaticModel(deskModel);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
+		displayQuad();
+    	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// Un-use ShaderProgramObject
+		////
+		#ifdef ENABLE_MASKS
+				glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, fboMaskPass_Indoor.frameBufferTexture);
+				glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
+
+				displayQuad();
+				glBindTexture(GL_TEXTURE_2D, 0);
+		#endif
+
+		glUseProgram(0);
+		//glEnable(GL_BLEND);
+
+	}
+}
+
+void displayBlur(void)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurIndoorEffect.horrizontalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurIndoorEffect.horrizontalFBDetails.textureHeight);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)gaussianBlurIndoorEffect.horrizontalFBDetails.textureWidth / gaussianBlurIndoorEffect.horrizontalFBDetails.textureHeight, 0.1f, 1000.0f);
+
+    horizontalBlurUniform = useHorrizontalBlurShader();
+
+    glUniform1f(horizontalBlurUniform.targetWidth, 540.0f);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
+    glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
+	displayQuad();    
+    glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurIndoorEffect.verticalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureHeight);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	verticalBlurIndoorUniform = useVerticalBlurShader();
+	glUniform1f(verticalBlurIndoorUniform.targetHeight, 270.0f);
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBufferTexture);
+    glUniform1i(verticalBlurIndoorUniform.vblurTexSamplerUniform, 0);
+	displayQuad();
 	glUseProgram(0);
-#endif
-
-
-#ifdef ENABLE_DYNAMIC_MODELS
-
-	glm::mat4 glm_modelMatrix;
-	glm::mat4 glm_translateMatrix;
-	glm::mat4 glm_rotateMatrix;
-	glm::mat4 glm_scaleMatrix;
-
-	glm_modelMatrix = glm::mat4(1.0f);
-	glm_translateMatrix = glm::mat4(1.0f);
-	glm_rotateMatrix = glm::mat4(1.0f);
-	glm_scaleMatrix = glm::mat4(1.0f);
-
-	sceneIndoorADSDynamicUniform = useADSDynamicShader();
-
-	// Sending Light Related Uniforms
-	glUniform4fv(sceneIndoorADSDynamicUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneIndoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneIndoorADSDynamicUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneIndoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneIndoorADSDynamicUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneIndoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneIndoorADSDynamicUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneIndoorADSDynamicUniform.materialShininessUniform, materialShininess);
-
-	glUniform1i(sceneIndoorADSDynamicUniform.fogEnableUniform, 0);
-	glUniform1f(sceneIndoorADSDynamicUniform.densityUniform, density);
-	glUniform1f(sceneIndoorADSDynamicUniform.gradientUniform, gradient);
-	glUniform4fv(sceneIndoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneIndoorADSDynamicUniform.uniform_enable_godRays, 1);
-	glUniform1i(sceneIndoorADSDynamicUniform.godrays_blackpass_sphere, 1);
-
-	// ------ Dancing Vampire Model ------
-
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, -2.0f, -2.0f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
-
-	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	// drawDynamicModel(sceneIndoorADSDynamicUniform, skeletonModel, 0.2f);
-
-	glUseProgram(0);
-
-#endif
-
-
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void updateScene_PlaceHolderIndoor(void)
@@ -312,35 +374,41 @@ void updateScene_PlaceHolderIndoor(void)
 	//update camera using lerp
 	/*cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
 	cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);*/
+
+#ifdef ENABLE_MASKS
+	if (isBlurI == false)
+	{
+		offset_ras_indoor[0] = 0.17f;
+		offset_ras_indoor[1] = 0.17f;
+		offset_ras_indoor[2] = 0.17f;
+	}
+
+	if (((getCurrentScene() == SCENE05_KARUN_RAS) ||
+		(getCurrentScene() == SCENE07_RAUDRA_RAS) ||
+		(getCurrentScene() == SCENE12_HASYA_RAS)) &&
+		isBlurI == true)
+	{
+		offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
+		offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
+		offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
+		if (offset_ras_indoor[2] > 0.48f)
+		{
+			offset_ras_indoor[0] = 0.48f;
+			offset_ras_indoor[1] = 0.48f;
+			offset_ras_indoor[2] = 0.48f;
+		}
+	}
+#endif // ENABLE_MASKS
 }
 
 void uninitializeScene_PlaceHolderIndoor(void)
 {
 	// Code
-
-#ifdef ENABLE_ADSLIGHT
-	if (texture_Marble)
-	{
-		glDeleteTextures(1, &texture_Marble);
-		texture_Marble = NULL;
-	}
-
-	// uninitializeSphere();
-	// uninitializeTriangle();
-	// uninitializeQuad();
-	// uninitializePyramid();
-	uninitializeCube();
-
-#endif // ENABLE_ADSLIGHT
-
-#ifdef ENABLE_STATIC_MODELS
-	//UNINIT models
-	// unloadStaticModel(&schoolBagModel);
-	// unloadStaticModel(&deskModel);
-	// unloadStaticModel(&streetLightModel);
-	// unloadStaticModel(&rockModel);
-#endif
-
+#ifdef ENABLE_MASKS
+	unloadStaticModel(&maskModel_KarunRas);
+	unloadStaticModel(&maskModel_HasyaRas);
+	unloadStaticModel(&maskModel_RaudraRas);
+#endif // ENABLE_MASKS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	// unloadDynamicModel(&skeletonModel);

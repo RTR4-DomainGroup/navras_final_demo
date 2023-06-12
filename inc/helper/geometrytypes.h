@@ -12,6 +12,7 @@ typedef struct Vertex
     float x;
     float y;
     float z;
+    float w;
 } VERTEX;
 
 typedef struct Quad

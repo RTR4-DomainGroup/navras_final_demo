@@ -25,7 +25,22 @@ void initializeCamera(Camera* camera)
 	camera = (Camera*)malloc(sizeof(Camera));
 }
 
-void setCamera(void)
+void setCamera(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ)
+{
+	cameraEyeX = eyeX;
+	cameraEyeY = eyeY;
+	cameraEyeZ = eyeZ;
+
+	cameraCenterX = centerX;
+	cameraCenterY = centerY;
+	cameraCenterZ = centerZ;
+
+	cameraUpX = upX;
+	cameraUpY = upY;
+	cameraUpZ = upZ;
+}
+
+void displayCamera(void)
 {
 	camera.eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
 	camera.center = { cameraCenterX, cameraCenterY, cameraCenterZ };
@@ -68,16 +83,19 @@ GLfloat preciselerp(GLfloat v0, GLfloat v1, GLfloat t)
 	return (1 - t) * v0 + t * v1;
 }
 
-void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat radius, GLfloat angle)
+void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat radius, GLfloat angle, bool centerYConfigured)
 {
 	// code
 	float angleRadian = angle * M_PI / 180.0f;
 	cameraEyeX = centerX + (radius * cos(angleRadian));
-	cameraEyeY = centerY;
+	if (centerYConfigured == true)
+		cameraEyeY = centerY;
+		
 	cameraEyeZ = centerZ + (radius * sin(angleRadian));
 
 	cameraCenterX = centerX;
-	cameraCenterY = centerY;
+	if (centerYConfigured == true)
+		cameraCenterY = cameraEyeY;
 	cameraCenterZ = centerZ;
 
 	camera.eye = { cameraEyeX, cameraEyeY, cameraEyeZ };

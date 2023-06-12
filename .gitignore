@@ -7,6 +7,9 @@ res
 *.pdb
 Log.txt
 
+Navras.exp
+Navras.lib
+
 .vs/
 build/
 .vscode/
