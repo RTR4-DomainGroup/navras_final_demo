@@ -46,8 +46,6 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 	// code
 	if(charPressed)
 	{
-		GLubyte charHandled = GL_TRUE;
-
 		switch(charPressed)
 		{
 		case 't': // translate
@@ -172,11 +170,11 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
 			break;
 		case '*':
-			tf_Speed *= 0.02f;
+			tf_Speed *= 2.0f;
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
 			break;
 		case '/':
-			tf_Speed /= 0.02f;
+			tf_Speed /= 2.0f;
 			if(tf_Speed < 0)
 				tf_Speed = 0.0f;
 			LOG("TF speed changed to %.02ff\n", tf_Speed);
@@ -237,6 +235,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 				cameraCenterY = cameraCenterY + tf_Speed;
 			}
 			break;
+	// characters you want to handle in your scene
 		case '0':
 		case '1':
 		case '2':
@@ -247,18 +246,16 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 		case '7':
 		case '8':
 		case '9':
-			LOG("Num key pressed %c \n", charPressed);
-			tf_Object = charPressed - '0';
-			LOG("Object switched to %d \n", tf_Object);
-
+		case 'l': // L - light/leaf
+		if(tf_Object != charPressed) {
+			tf_Object = charPressed ;// - '0';
+			LOG("Key pressed %c \n", charPressed);
 			updateFirstCall = true;
 			break;
+		}
 		default:
-			charHandled = GL_FALSE;
 			break;
 		}
-
-		// charPressed = 0;
 	}
 
 	if(keyPressed)
@@ -289,7 +286,6 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 		default:
 			break;
 		}
-		// keyPressed = 0;
 	}
 }
 
@@ -298,10 +294,9 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 
 	// external debugging varaible
 	static bool sameScaleAllAxes = true;
-	static int ltf_Object = tf_Object;
 
-	if( ltf_Object != tf_Object || updateFirstCall) {
-		print_matrices(translationMatrix, scaleMatrix, rotationMatrix, vector);
+	if( updateFirstCall) {
+		// print_matrices(translationMatrix, scaleMatrix, rotationMatrix, vector);
 
 		tf_t = {0.0f, 0.0f, 0.0f};
 		tf_s = {0.0f, 0.0f, 0.0f};
@@ -321,8 +316,7 @@ void update_transformations(vmath::mat4* translationMatrix, vmath::mat4* scaleMa
 			tf_r = {vector->x, vector->y, vector->z}; // tree rotate
 		updateFirstCall = false;
 		debugObjectChanged = true;
-		ltf_Object = tf_Object;
-		print_camera_transformations();
+		// print_camera_transformations();
 	}
 
 	if(translationMatrix)
@@ -362,7 +356,7 @@ void update_transformations_glm(glm::mat4* translationMatrix, glm::mat4* scaleMa
 			tf_r = { 0.0f, 0.0f, 0.0f };
 		updateFirstCall = false;
 		debugObjectChanged = true;
-		print_camera_transformations();
+		// print_camera_transformations();
 	}
 
 	if (translationMatrix)
