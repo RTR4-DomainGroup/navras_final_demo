@@ -342,7 +342,7 @@ void displayParticle(void) {
     // Here The Game STarts
     // Transformations
     vmath::mat4 mvp = perspectiveProjectionMatrix *
-        vmath::translate(0.0f, -25.0f, -200.0f) *
+        vmath::translate(0.0f, -25.0f, -400.0f) *
         vmath::rotate(180.0f ,vmath::vec3(0.0f, 1.0f, 0.0f));
     /*angleXYZ += 1.0f;
     if(angleXYZ >= 360.0f)
