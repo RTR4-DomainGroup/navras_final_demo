@@ -69,7 +69,7 @@ extern GLfloat materialSpecular_shantRas_mask[];
 extern GLfloat materialShininess_shantRas_mask;
 extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
 static GLuint noise_texture_eroded_indoor;
-static float myScale_erosion_indoor = 2.0f;
+static float myScale_erosion_indoor = 0.06f;
 static float noiseScale_erosion_indoor = 2.0f;
 static bool offsetIncrement_indoor = false;
 
