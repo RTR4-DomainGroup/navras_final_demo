@@ -647,7 +647,7 @@ void resizeNavras(int width, int height) {
 	// 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 5000.0f);
 
 }
 
