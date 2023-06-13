@@ -51,6 +51,10 @@ struct ADSUniform
     GLuint isInstanced;
     GLuint godrays_blackpass_sphere;
 
+    GLuint blackOrWhiteRoomUniform;
+    GLuint blackOrWhiteRoomMixDeltaUniform;
+    GLuint ssaoIntensityDeltaUniform;
+
 };
 
 int initializeADSShader(void);
