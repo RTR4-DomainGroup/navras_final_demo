@@ -171,7 +171,7 @@ GLfloat materialSpecular_shantRas_mask[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 GLfloat materialShininess_shantRas_mask = 128.0f;
 extern struct ErosionNoiseUniform sceneErosionNoiseUniform;
 static GLuint noise_texture_eroded_outdoor;
-static float myScale_erosion_outdoor = 2.0f;
+static float myScale_erosion_outdoor = 0.06f;
 static float noiseScale_erosion_outdoor = 2.0f;
 static bool offsetIncrement_outdoor = false;
 
