@@ -10,14 +10,16 @@ int initialize_gaussianBlur(void)
         "\n" \
         "in vec4 a_position;" \
         "\n" \
-        "out vec2 fragCoord;\n" \
+        "in vec2 a_texcoord; \n" \
+        "\n" \
+        "out vec2 a_texcoord_out;\n" \
         "void main()" \
         "\n" \
         "{"
             "\n" \
-            "gl_Position = vec4(position, 0.0, 1.0);" \
+            "gl_Position = a_position;" \
             "\n" \
-            "fragCoord = uv;" \
+            "a_texcoord_out = a_texcoord;" \
         "}\n";
 
     // Create the Vertex Shader object.
@@ -61,18 +63,18 @@ int initialize_gaussianBlur(void)
     const GLchar* fragmentShaderSrcCode = 
        "#version 460 core" \
         "\n" \
-        "in vec2 TexCoord;"
+        "in vec2 a_texcoord_out;" \
         "\n" \
-        "out vec4 FragColor;"
+        "out vec4 FragColor;" \
         "\n" \
-        "uniform sampler2D u_blurTexture;"
+        "uniform sampler2D u_blurTexture;" \
         "\n" \
-        "uniform vec2 u_textureSize;"
+        "uniform vec2 u_textureSize;" \
         "\n" \
-        "uniform float u_time;"
+        "uniform float u_time;" \
         "\n" \
         // Precomputed kernel size
-        "const int kernelSize = 11;"
+        "const int kernelSize = 11;" \
         "\n" \
         // Gaussian kernel: pre-computed weights for a kernel size of 11
         "float kernel[11] = float[11](0.001328, 0.004787, 0.012747, 0.026994, 0.044368, 0.057669, 0.057669, 0.044368, 0.026994, 0.012747, 0.004787);" \
@@ -82,16 +84,17 @@ int initialize_gaussianBlur(void)
         "{" \
             "\n" \
             // Get the current pixel color
-            "vec4 currentColor = texture(u_blurTexture, TexCoord);" \
+            "vec4 currentColor = texture(u_blurTexture, a_texcoord_out);" \
             // Compute the offset for each pixel convolution
             "vec2 texelSize = 1.0 / u_textureSize;" \
             "\n" \
             "vec2 offset[kernelSize];" \
             "\n" \
-            "for (int i = 0; i < kernelSize; i++)"
+            "for (int i = 0; i < kernelSize; i++)" \
             "{" \
                 "\n" \
                 "offset[i] = vec2(float(i - kernelSize / 2) * texelSize.x, float(i - kernelSize / 2) * texelSize.y);" \
+                "\n" \
             "}" \
             "\n" \
             // Perform the Gaussian blur using the precomputed kernel
@@ -104,14 +107,14 @@ int initialize_gaussianBlur(void)
                 "{" \
                     // Sample texture at each offset and apply a weight according to the corresponding kernel value
                     "\n" \
-                    "blurColor += texture(u_blurTexture, TexCoord + offset[i] + offset[j]) * kernel[i] * kernel[j];" \
+                    "blurColor += texture(u_blurTexture, a_texcoord_out + offset[i] + offset[j]) * kernel[i] * kernel[j];" \
                     "\n" \
                 "}" \
                 "\n" \
             "}" \
             // Compute the transition weight using time
             "\n" \
-            "float weight = abs(sin(u_time + length(TexCoord - vec2(0.5)) * 2.0));" \
+            "float weight = abs(sin(u_time + length(a_texcoord_out - vec2(0.5)) * 2.0));" \
             "\n" \
             // Mix the current and blurred colors using the transition weight
             "\n" \
@@ -165,7 +168,7 @@ int initialize_gaussianBlur(void)
 
     // Pre-linked binding of Shader program object
     glBindAttribLocation(shaderProgram_gaussianBlur, DOMAIN_ATTRIBUTE_POSITION, "a_position");
-
+    glBindAttribLocation(shaderProgram_gaussianBlur, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
     // Link the program
     glLinkProgram(shaderProgram_gaussianBlur);
 
