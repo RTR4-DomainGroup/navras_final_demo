@@ -31,6 +31,11 @@ float aspect_ratio;
 float time = 0.0f;
 float delta_time = 0.0f;
 
+extern int winWidth;
+extern int winHeight;
+
+float angleXYZ = 0;
+
 int initializeParticle(void) {
 	
 	// Declaration of Vertex Data Arrays
@@ -90,12 +95,25 @@ int initializeParticle(void) {
 
 	glGenBuffers(1, &attractor_buffer);
 	glBindBuffer(GL_UNIFORM_BUFFER, attractor_buffer);
-	glBufferData(GL_UNIFORM_BUFFER, 32 * sizeof(vmath::vec4), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_UNIFORM_BUFFER, 64 * sizeof(vmath::vec4), NULL, GL_STATIC_DRAW);
 
 	for (i = 0; i < MAX_ATTRACTORS; i++)
 	{
 		attractor_masses[i] = 0.5f + random_float() * 0.5f;
 	}
+
+   /*for (i = 0; i < 32; i++)
+    {
+        attractor_masses[i*2] = -50.0f;
+        attractor_masses[(i*2)+1] = 50.0f;
+        attractor_masses[(i * 2)+2] = -50.0f;
+        attractor_masses[(i * 2) + 3] = -50.0f;
+
+        attractor_masses[(i * 2) + 4] = 50.0f;
+        attractor_masses[(i * 2) + 5] = -50.0f;
+        attractor_masses[(i * 2) + 6] = 50.0f;
+        attractor_masses[(i * 2) + 7] = 50.0f;
+    }*/
 
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, attractor_buffer);
 
@@ -105,6 +123,8 @@ int initializeParticle(void) {
 }
 
 void displayParticle(void) {
+
+    //perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)winWidth / winHeight, 0.1f, 1000.0f);
 
     // Code
     static const GLuint start_ticks = app_time() - 100000;
@@ -122,60 +142,182 @@ void displayParticle(void) {
 
     vmath::vec4* attractors = (vmath::vec4*)glMapBufferRange(GL_UNIFORM_BUFFER,
         0,
-        32 * sizeof(vmath::vec4),
+        36 * sizeof(vmath::vec4),
         GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
 
     int i;
 
-    for (i = 0; i < 32; i++)
+    /*for (i = 0; i < 32; i++)
     {
         attractors[i] = vmath::vec4(sinf(time * (float)(i + 4) * 7.5f * 20.0f) * 50.0f,
             cosf(time * (float)(i + 7) * 3.9f * 20.0f) * 50.0f,
             sinf(time * (float)(i + 3) * 5.3f * 20.0f) * cosf(time * (float)(i + 5) * 9.1f) * 100.0f,
             attractor_masses[i]);
+    }*/
+
+   /* float shapeParticle[] = {
+    
+        71,87,
+        78,76,
+        86,68,
+        98,61,
+        109,56,
+        122,56,
+        134,56,
+        143,60,
+        152,64,
+        158,71,
+        164,80,
+        165,92,
+        163,104,
+        159,112,
+        152,119,
+        144,124,
+        135,128,
+        129,130,
+        143,132,
+        151,137,
+        158,142,
+        163,148,
+        163,156,
+        163,165,
+        156,175,
+        146,185,
+        136,186,
+        120,184,
+        107,180,
+        96,175,
+        83,167,
+        67,164,
+        52,166,
+        45,172,
+        37,184,
+        39,198,
+        172,108,
+        184,106,
+        196,108,
+        205,117,
+        211,126,
+        214,138,
+        212,151,
+        208,162,
+        200,173,
+        195,181,
+        194,191,
+        198,200,
+        211,205,
+        222,206,
+        183,67,
+        190,73,
+        198,76,
+        207,74,
+        213,66,
+        199,63
+
+    
+    };*/
+
+
+    float shapeParticle[] = {
+
+        70,86,
+        82,72,
+        99,60,
+        118,56,
+        140,60,
+        157,70,
+        165,88,
+        161,108,
+        149,122,
+        129,129,
+        145,134,
+        159,144,
+        163,162,
+        153,180,
+        134,186,
+        113,182,
+        95,175,
+        79,166,
+        63,164,
+        44,170,
+        37,182,
+        39,198,
+        181,106,
+        199,111,
+        210,124,
+        213,134,
+        211,154,
+        204,168,
+        193,184,
+        197,202,
+        212,206,
+        227,204,
+        183,65,
+        192,74,
+        207,73,
+        198,60
+
+    };
+
+    float imageWidth = (260.0f / 2.0f), imageHeight = (280.0f / 2.0f);
+
+    for(i = 0; i < 36; i++){
+        
+        shapeParticle[i * 2] = imageWidth - shapeParticle[i * 2];
+        shapeParticle[(i * 2) + 1] = imageHeight - shapeParticle[(i * 2) + 1];
+
     }
 
-    /*for (i = 0; i < 32; i++)
+    for (i = 0; i < 36; i++)
     {
-        attractors[0] = vmath::vec4(5.0f,
-            5.0f,
+        attractors[i] = vmath::vec4(shapeParticle[i * 2],
+            shapeParticle[(i * 2) + 1],
             0.0f,
-            attractor_masses[0]);
+            attractor_masses[i]);
 
-        attractors[1] = vmath::vec4(-5.0f,
-            5.0f,
-            0.0f,
-            attractor_masses[1]);
+    }
 
-        attractors[2] = vmath::vec4(-5.0f,
-            -5.0f,
-            0.0f,
-            attractor_masses[2]);
+    //for (i = 0; i < 32; i+=4)
+    //{
+    //    attractors[i] = vmath::vec4(500.0f,
+    //        500.0f,
+    //        0.0f,
+    //        attractor_masses[i]);
 
-        attractors[3] = vmath::vec4(5.0f,
-            -5.0f,
-            0.0f,
-            attractor_masses[3]);
+    //    attractors[i+1] = vmath::vec4(-500.0f,
+    //       500.0f,
+    //        0.0f,
+    //        attractor_masses[i+1]);
 
-        if (i > 3) {
+    //    attractors[i+2] = vmath::vec4(-500.0f,
+    //        -500.0f,
+    //        0.0f,
+    //        attractor_masses[i+2]);
 
-            attractors[i] = vmath::vec4(sinf(time * (float)(i + 4) * 7.5f * 20.0f) * 50.0f,
-                cosf(time * (float)(i + 7) * 3.9f * 20.0f) * 50.0f,
-                sinf(time * (float)(i + 3) * 5.3f * 20.0f) * cosf(time * (float)(i + 5) * 9.1f) * 100.0f,
-                attractor_masses[i]);
-        }
+    //    attractors[i+3] = vmath::vec4(500.0f,
+    //        -500.0f,
+    //        0.0f,
+    //        attractor_masses[i+3]);
+
+    //   /* if (i > 3) {
+
+    //        attractors[i] = vmath::vec4(sinf(time * (float)(i + 4) * 7.5f * 20.0f) * 50.0f,
+    //            cosf(time * (float)(i + 7) * 3.9f * 20.0f) * 50.0f,
+    //            sinf(time * (float)(i + 3) * 5.3f * 20.0f) * cosf(time * (float)(i + 5) * 9.1f) * 100.0f,
+    //            attractor_masses[i]);
+    //    }*/
 
 
-    }*/
+    //}
 
     glUnmapBuffer(GL_UNIFORM_BUFFER);
 
     // If dt is too large, the system could explode, so cap it to
     // some maximum allowed value
-    if (delta_time >= 2.0f)
+    /*if (delta_time >= 2.0f)
     {
         delta_time = 2.0f;
-    }
+    }*/
 
     particleComputeUniforms = useParticleComputeShader();
 
@@ -200,8 +342,11 @@ void displayParticle(void) {
     // Here The Game STarts
     // Transformations
     vmath::mat4 mvp = perspectiveProjectionMatrix *
-        vmath::translate(0.0f, 0.0f, -80.0f) *
-        vmath::rotate(time * 1000.0f, vmath::vec3(0.0f, 1.0f, 0.0f));
+        vmath::translate(0.0f, -25.0f, -200.0f) *
+        vmath::rotate(180.0f ,vmath::vec3(0.0f, 1.0f, 0.0f));
+    /*angleXYZ += 1.0f;
+    if(angleXYZ >= 360.0f)
+        angleXYZ -= 360.0f;*/
 
     /*vmath::mat4 mvp = vmath::perspective(45.0f, aspect_ratio, 0.1f, 1000.0f) *
         vmath::translate(0.0f, 0.0f, -150.0f);*/

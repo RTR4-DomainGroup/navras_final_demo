@@ -163,7 +163,7 @@ int initializeParticleShader(void)
         "out vec4 FragColor; \n" \
         "void main(void) \n" \
         "{ \n" \
-        "FragColor = mix(vec4(0.0f, 0.2f, 1.0f, 1.0f), vec4(0.4f, 0.1f, 0.0f, 1.0f), intensity); \n"
+        "FragColor = mix(vec4(0.4f, 0.1f, 0.0f, 1.0f), vec4(0.4f, 0.1f, 0.0f, 1.0f), intensity); \n"
         "} \n";
     
      // Create the Fragment Shader object.
