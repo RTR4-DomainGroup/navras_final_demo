@@ -13,8 +13,8 @@
 #define BB_X_MIN (-40.0f)
 #define BB_X_MAX (-10.0f)
 
-// #define BB_Y_MIN (-3.0f)
-// #define BB_Y_MAX (3.0f)
+#define BB_Y_MIN (-0.3f)
+#define BB_Y_MAX (0.0f)
 
 #define BB_Z_MIN (-50.0f)
 #define BB_Z_MAX (50.0f)
@@ -159,6 +159,7 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
+static STATIC_MODEL leafModel;
 static STATIC_MODEL farmhouseModel;
 static STATIC_MODEL adbhutmanModel;
 static STATIC_MODEL bridgeModel;
@@ -202,6 +203,11 @@ bool isInitialDisplay_Scene10AdbhutRas = true;
 GLuint texture_adbhutMask;
 
 mat4 finalViewMatrix = mat4::identity();
+
+// static float leaf_translate = 1.5f;
+static float leaf_translate = 0.35f;
+// static float leaf_rotate = 31.45f;
+static float leaf_rotate = 0.0f;
 
 struct Point {
     float x, y ;
@@ -275,6 +281,7 @@ int initializeScene10_AdbhutRas(void)
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
+	loadStaticModel("res/models/tree_adbhut/leaf.obj", &leafModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
 	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 	loadStaticModel("res/models/bridge/bridge.obj", &bridgeModel);
@@ -419,7 +426,7 @@ void generate_instance_positions(float instance_positions[], int numInstances, P
 		// instance_positions[(i*4)+3] = 1.0f;
 
 		instance_positions[(i*4)+0] = (((GLfloat)rand() / RAND_MAX) * (BB_X_MAX - BB_X_MIN)) + BB_X_MIN;
-		instance_positions[(i*4)+1] = 0.0f; // (((GLfloat)rand() / RAND_MAX) * (BB_Y_MAX - BB_Y_MIN)) + BB_Y_MIN;
+		instance_positions[(i*4)+1] = (((GLfloat)rand() / RAND_MAX) * (BB_Y_MAX - BB_Y_MIN)) + BB_Y_MIN;
 		instance_positions[(i*4)+2] = (((GLfloat)rand() / RAND_MAX) * (BB_Z_MAX - BB_Z_MIN)) + BB_Z_MIN;
 		instance_positions[(i*4)+3] = 1.0f;
 
@@ -459,8 +466,8 @@ void setCameraScene10(void)
 {
 	if (isInitialDisplay_Scene10AdbhutRas == true)
 	{
-		// lookAt(17.20f, -0.70f, 6.05f, -134.67f, -0.70f, -333.86f, 0.00f, 1.00f, 0.00f)
 		setCamera(17.20f, -0.70f, 6.05f, -134.67f, -0.70f, -333.86f, 0.00f, 1.00f, 0.00f);
+		// setCamera(-15.78f, -1.20f, -34.73f, -362.21f, 49.98f, -14.27f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplay_Scene10AdbhutRas = false;
 	}
 }
@@ -619,7 +626,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	//normal mapping
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
-	if(1 == tf_Object) // terrain
+	if('1' == tf_Object) // terrain
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 	modelMatrix = translationMatrix * scaleMatrix;
 
@@ -699,11 +706,16 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
 	glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+	// glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+	TRANFORM lightPos = { 104.0f, 103.0f, 3.0f, 1.0f };
+	// update_transformations(NULL, NULL, NULL, &lightPos);
+	vmath::vec4 lp = {lightPos.x, lightPos.y, lightPos.z, lightPos.w}; 
+	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lp);
 	glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
 	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
+	glUniform1f(sceneOutdoorADSStaticUniform.isInstanced, 0);
 
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
@@ -729,7 +741,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 	
 	// usage type 2
-	if(2 == tf_Object) // Rock model
+	if('2' == tf_Object) // Rock model
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles);
 
 	rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
@@ -768,13 +780,39 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
 
 	// usage type 1 
-	if(3 == tf_Object) // Tree model
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	// if('3' == tf_Object) // Tree model
+	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(treeModel);
+
+	// ------ Leaf Model ------
+	modelMatrix = mat4::identity();
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationAngles = {0.0f, 0.0f, 0.0f};
+
+	// start
+	translationMatrix = vmath::translate(-20.19f, leaf_translate, -34.25f);
+	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
+	rotationAngles = {0.0f, leaf_rotate, 0.0f};
+	// // end
+	// translationMatrix = vmath::translate(-20.19f, 0.0f, -34.25f);
+	// scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
+	// // rotationAngles = {leaf_rotate, 0.0f, 0.0f};
+
+	// usage type 1 
+	if('3' == tf_Object) // Leaf model
+		update_transformations(NULL, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+
+	drawStaticModel(leafModel);
 
 
 	// ------ farmhouse Model ------
@@ -784,12 +822,12 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(19.00f, -2.15f, -2.75f);
+	translationMatrix = vmath::translate(7.80f, -2.15f, -37.75f);
 	scaleMatrix = vmath::scale(0.7f, 0.7f, 0.7f);
 	rotationAngles = {0.0f, -59.25f, 0.0f};
 
 	// usage type 1 
-	if(4 == tf_Object) // farmhouse model
+	if('4' == tf_Object) // farmhouse model
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -811,7 +849,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationAngles = {0.0f, 99.55f, 0.0f};
 
 	// usage type 1 
-	if(5 == tf_Object) // adbhutman model
+	if('5' == tf_Object) // adbhutman model
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -828,14 +866,16 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(3.56f, -1.07f, -1.50f);
-	scaleMatrix = vmath::scale( 3.80f,  3.80f,  3.80f);
-	rotationAngles = {0.0f, 144.55f, 0.0f};
+	translationMatrix = vmath::translate(-4.99f, -1.63f, -36.50f);
+	scaleMatrix = vmath::scale( 4.21f,  4.21f,  4.21f);
+	rotationAngles = {0.0f, 184.96f, -5.46f};
 
 	// usage type 1 
-	if(9 == tf_Object) // bridge model
+	if('9' == tf_Object) // bridge model
 		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -965,8 +1005,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		translationMatrix = vmath::translate(-2.00f, -3.00f, -3.00f);
 		scaleMatrix = vmath::scale(50.0f, 1.0f, 50.0f);
 
-		if(6 == tf_Object) // Water
-			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+		// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -1014,7 +1053,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
 		glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
-		/// grass
 		/// /////////////////////////
 		/// Flower on left side of river
 		/// /////////////////////////
@@ -1027,35 +1065,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		modelMatrix = mat4::identity();
 		rotationAngles = {0.0f, 0.0f, 0.0f};
 
-		// // Red flower
-		// if (texture_grass.height > texture_grass.width)
-		// 	scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-		// else
-		// 	scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-
-		// translationMatrix = vmath::translate(-5.00f, -2.15f, -13.75f);
-		// scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
-		// // rotationAngles = { 0.50f, 18.75f, 2.00f};
-
-		// // if(7 == tf_Object) // Red Flower
-		// // 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-		// rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);	
-		// rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
-		// rotationMatrix_z = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
-		// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-
-		// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		// glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-		// displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
-		// glBindTexture(GL_TEXTURE_2D, 0);
-
-
-		/// White Flower
+		/// Left Flower
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -1071,7 +1081,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		scaleMatrix *= vmath::scale(0.80f, 0.68f, 0.65f);
 		rotationAngles = {0.0f, 7.25f, 0.0f};
 
-		if(7 == tf_Object) // White Flower
+		if('7' == tf_Object) // White Flower
 			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -1088,41 +1098,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		/// /////////////////////////
 		/// Flower on right side of river
 		/// /////////////////////////
-		// translationMatrix = mat4::identity();
-		// rotationMatrix = mat4::identity();
-		// scaleMatrix = mat4::identity();
-		// modelMatrix = mat4::identity();
-		// rotationAngles = {0.0f, 0.0f, 0.0f};
-
-		// // Red flower
-		// if (texture_grass.height > texture_grass.width)
-		// 	scaleMatrix = vmath::scale(texture_grass.width / (GLfloat)texture_grass.height, 1.0f, 1.0f);
-		// else
-		// 	scaleMatrix = vmath::scale(1.0f, texture_grass.height / (GLfloat)texture_grass.width, 1.0f);
-
-		// translationMatrix = vmath::translate(29.50f, -2.15f, -21.70f);
-		// scaleMatrix *= vmath::scale(0.65f, 0.65f, 0.65f);
-		// // rotationAngles = { 0.50f, 18.75f, 2.00f};
-
-		// if(7 == tf_Object) // Red Flower
-		// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-
-		// rotationMatrix_x = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);	
-		// rotationMatrix_y = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
-		// rotationMatrix_z = vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
-		// rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
-
-		// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		// glUniformMatrix4fv(billboardingEffectUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, texture_grass.id);
-		// displayInstancedQuads(instBuffers, BB_NO_OF_INSTANCES);  // how many instances to draw
-		// glBindTexture(GL_TEXTURE_2D, 0);
 
 
-		/// White Flower
+		/// right Flower
 		translationMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
@@ -1134,11 +1112,11 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		else
 			scaleMatrix = vmath::scale(1.0f, texture_flower.height / (GLfloat)texture_flower.width, 1.0f);
 
-		translationMatrix = vmath::translate(26.75f, -2.05f, -26.75f);
+		translationMatrix = vmath::translate(31.75f, -2.05f, -13.95f);
 		scaleMatrix *= vmath::scale(0.65f, 0.43f, 0.65f);
 		rotationAngles = {0.0f, 15.00f, 0.0f};
 
-		if(8 == tf_Object) // White Flower
+		if('8' == tf_Object) // White Flower
 			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 		rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);	
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
@@ -1170,21 +1148,32 @@ void updateScene10_AdbhutRas(void)
 	//cameraCenterZ -= speedVector.x;
 
 	// lookAt(-17.10f, -1.40f, -33.85f, -320.07f, -1.40f, -177.19f, 0.00f, 1.00f, 0.00f)
-	cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.001f);
-	cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.001f);
-	cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.001f);
+	cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.002f);
+	cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.002f);
 
-	cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.001f);
-	cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.001f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.001f);
+	cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.002f);
+	cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.002f);
 
 #endif
+
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 4;
 
 #endif // ENABLE_BILLBOARDING
 
+// if('l' == tf_Object) // White Flower
+{
+	
+	leaf_translate -= 0.015f;
+	leaf_rotate += 9.52f;	
+	if(leaf_translate < -1.75f) {
+		leaf_translate = 0.35f;
+		leaf_rotate = 0.0f;	
+	}
+}
 #ifdef ENABLE_CLOUD_NOISE
 	// update Cloud
 	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
@@ -1209,6 +1198,7 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadStaticModel(&adbhutmanModel);
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
+	unloadStaticModel(&leafModel);
 	unloadStaticModel(&treeModel);
 #endif // ENABLE_STATIC_MODELS
 

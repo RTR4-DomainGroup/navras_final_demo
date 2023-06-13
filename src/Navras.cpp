@@ -154,10 +154,10 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			break;
 		default:
 			// LOG("keypress : %d\n", wParam);
-			keyPressed = wParam;
-			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
+		keyPressed = wParam;
+		debug_tranformation(charPressed, keyPressed);
 		break;
 
 	case WM_CHAR:
@@ -185,7 +185,7 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			LOG("current scene changed: %d\n", currentScene);
 			break;
 
-		#ifdef ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
 		 case '1':
 		 case '!':
 		 	if (wParam == '!')
@@ -282,14 +282,14 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 			LOG("-----------------------------------------------------------------------------------------------\n");
 			break;
 
-		#endif
+#endif
 
 		default:
 			// LOG("keypressed : %d\n", wParam);
-			charPressed = wParam;
-			debug_tranformation(charPressed, keyPressed);
 			break;
 		}
+		charPressed = wParam;
+		debug_tranformation(charPressed, keyPressed);
 		break;
 
 	default:
@@ -570,7 +570,7 @@ int initializeNavras(void) {
 	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	////scenePush(SCENE12_HASYA_RAS);
+	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
@@ -648,7 +648,7 @@ void resizeNavras(int width, int height) {
 	// 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 5000.0f);
 
 }
 
@@ -885,6 +885,7 @@ void updateNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
+		updateScene12_Hasya();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
