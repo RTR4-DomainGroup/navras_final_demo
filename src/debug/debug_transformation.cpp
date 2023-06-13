@@ -247,6 +247,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 		case '8':
 		case '9':
 		case 'l': // L - light/leaf
+		case 'i': 
 		if(tf_Object != charPressed) {
 			tf_Object = charPressed ;// - '0';
 			LOG("Key pressed %c \n", charPressed);
