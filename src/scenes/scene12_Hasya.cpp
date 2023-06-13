@@ -61,13 +61,12 @@ int initializeScene12_Hasya(void)
 #ifdef ENABLE_STATIC_MODELS
 // 	// function declarations
 	
-// 	//load models
-// 	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
+	//load models
+	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
 	
 
-// #endif
+#endif // ENABLE_STATIC_MODELS
 
-loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
@@ -177,7 +176,7 @@ void displayScene12_Hasya(void)
 	drawStaticModel(hasya_roomModel);
 
 	glUseProgram(0);
-#endif ENABLE_STATIC_MODELS
+#endif // ENABLE_STATIC_MODELS
 }
 
 void updateScene12_Hasya()
