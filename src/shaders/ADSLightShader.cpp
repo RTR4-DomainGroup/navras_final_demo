@@ -286,7 +286,7 @@ int initializeADSShader(void)
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
 					"phong_ads_light = (ambient + diffuse + specular); \n" \
 					
-					"FragColor = texColor + phong_ads_light; \n" \
+					"FragColor = mix((texColor + phong_ads_light), vec4(1.0), 1.0); \n" \
 
 
 		//	        "FragColor = mix(texture(u_textureSampler1,a_texcoord_out),texture(u_textureSampler2,a_texcoord_out),u_alphaBlending); \n" \
