@@ -569,7 +569,7 @@ int initializeNavras(void) {
 	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	////scenePush(SCENE12_HASYA_RAS);
+	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
@@ -882,6 +882,7 @@ void updateNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
+		updateScene12_Hasya();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
