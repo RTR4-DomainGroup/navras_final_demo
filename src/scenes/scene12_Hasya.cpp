@@ -39,6 +39,8 @@ STATIC_MODEL hasya_roomModel;
 GLuint texture_hasyaMask;
 bool isInitialDisplayScene12_hasya = true;
 
+GLuint cameraHasyaUpdate = 1;
+
 int initializeScene12_Hasya(void)
 {
 
@@ -57,13 +59,15 @@ int initializeScene12_Hasya(void)
 #endif
 
 #ifdef ENABLE_STATIC_MODELS
-	// function declarations
+// 	// function declarations
 	
-	//load models
-	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom3.obj", &hasya_roomModel);
+// 	//load models
+// 	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
 	
 
-#endif
+// #endif
+
+loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
@@ -74,7 +78,9 @@ void setCameraScene12_Hasya(void)
 	{
 		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
 		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
-		setCamera(6.15f, 0.05f, -2.86f, -360.97f, -11.97f, 4.89f, 0.00f, 1.00f, 0.00f);
+		setCamera(1.75f, 0.45f, 1.90f, 1.75f, 0.45f, -4.10f, 0.00f, 1.00f, 0.00f);
+		// setCamera(1.75f, 0.60f, -2.95f, 1.75f, 0.60f, -8.95f, 0.00f, 1.00f, 0.00f);
+
 		isInitialDisplayScene12_hasya = false;
 	}
 }
@@ -160,9 +166,9 @@ void displayScene12_Hasya(void)
 
 	translationMatrix = vmath::translate(1.650000f, -1.000000f, -2.500001f);
 	scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
-	rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+	rotationMatrix = vmath::rotate(-90.0f, 0.0f, 1.0f, 0.0f);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
@@ -171,7 +177,47 @@ void displayScene12_Hasya(void)
 	drawStaticModel(hasya_roomModel);
 
 	glUseProgram(0);
-#endif 
+#endif ENABLE_STATIC_MODELS
+}
+
+void updateScene12_Hasya()
+{
+#ifdef ENABLE_CAMERA_ANIMATION
+
+	if(cameraHasyaUpdate==1)
+	{
+
+		cameraEyeX = preciselerp(cameraEyeX, 1.75f, 0.002f);
+		cameraEyeY = preciselerp(cameraEyeY, 0.05f, 0.002f);
+		cameraEyeZ = preciselerp(cameraEyeZ, 1.30f, 0.002f);
+
+		cameraCenterX = preciselerp(cameraCenterX, 1.75f, 0.002f);
+		cameraCenterY = preciselerp(cameraCenterY, 0.05f, 0.002f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -4.70f, 0.002f);
+
+		if(cameraEyeZ>=1.0f)
+		{
+			cameraHasyaUpdate=2;
+		}
+	}
+	if(cameraHasyaUpdate == 2)
+	{
+		cameraEyeX = preciselerp(cameraEyeX, 1.75f, 0.002f);
+		cameraEyeY = preciselerp(cameraEyeY, 0.00f, 0.002f);
+		// cameraEyeZ = preciselerp(cameraEyeZ, 1.20f, 0.002f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -1.0f, 0.002f);
+
+		if(cameraEyeZ<=-1.5f)
+		{
+			cameraCenterX = preciselerp(cameraCenterX, -142.97f, 0.00005f);
+			cameraCenterY = preciselerp(cameraCenterY, 0.00f, 0.002f);
+			cameraCenterZ = preciselerp(cameraCenterZ, -330.29f, 0.00005f);
+		}
+	}
+	
+
+
+#endif // ENABLE_CAMERA_ANIMATION
 }
 
 void uninitializeScene12_Hasya(void)

@@ -882,6 +882,7 @@ void updateNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
+		updateScene12_Hasya();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
