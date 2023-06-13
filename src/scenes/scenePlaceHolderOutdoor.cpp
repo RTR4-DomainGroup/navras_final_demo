@@ -554,7 +554,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	modelMatrix = mat4::identity();
 
 
-	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
+	translationMatrix = vmath::translate(0.0f, 0.0f, -100.0f);					// glTranslatef() is replaced by this line.
 	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 

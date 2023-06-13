@@ -261,10 +261,12 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		scaleMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -15.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(400.0f, 400.0f, 400.0f);
+		scaleMatrix = vmath::scale(25.0f, 25.0f, 25.0f);
 
 		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = rotationMatrix * rotationMatrix_x;
+
+		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
