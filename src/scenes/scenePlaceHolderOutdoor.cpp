@@ -179,6 +179,12 @@ static GLfloat offset_ras_outdoor[] = { 0.17f, 0.17f, 0.17f };
 #endif // ENABLE_MASKS
 static bool isBlur = false;
 
+static bool timeFlag = true;
+static time_t now;
+static time_t then;
+
+extern float mix_intensity;
+
 extern int windowWidth;
 extern int windowHeight;
 
@@ -993,10 +999,16 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurQuadUniform = useFSQuadShader();
-		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 3);
+		glUniform1f(fsGaussBlurQuadUniform.intensity, mix_intensity);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform2, 1);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform2, 1);
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -1145,6 +1157,30 @@ void updateScene_PlaceHolderOutdoor(void)
 		}
 	}
 #endif // ENABLE_MASKS
+
+if(isBlur){
+	if (timeFlag)
+	{
+		then = time(NULL);
+		timeFlag = false;
+	}
+
+	now = time(NULL);
+	if (now >= (then+1))
+	{
+		if(mix_intensity <= 1.0f)
+		{
+			mix_intensity += 0.115f;
+			timeFlag = true;
+		}
+		else{
+
+            mix_intensity = 1.0f;
+
+		}
+		
+	}
+}
 
 }
 

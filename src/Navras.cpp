@@ -65,6 +65,7 @@ int winHeight;
 
 // Indoor Gaussian Blur
 bool shouldSceneRaudraMaskAppear = false;
+extern float mix_intensity;
 
 // Time
 bool timeFlag = true;
@@ -717,6 +718,8 @@ void displayNavras(void)
 	{
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
 		
+		//shouldSceneRaudraMaskAppear = true;
+		
 		audio(SCENE07_RAUDRA_RAS);
 		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra, shouldSceneRaudraMaskAppear);
 		//displayScene07_Raudra();
@@ -916,6 +919,7 @@ void sceneTime(int scenetime){
 	{
 		then = time(NULL);
 		currentScene = scenePop();
+		mix_intensity = 0.0f;
 		LOG("current scene changed: %d\n", currentScene);
 
 		audioFlag = true;

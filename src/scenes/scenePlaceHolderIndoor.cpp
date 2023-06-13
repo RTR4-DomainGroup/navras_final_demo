@@ -10,7 +10,6 @@
 
 #include "../../inc/shaders/FSQuadShader.h"
 #include "../../inc/shaders/SSAOShader.h"
-#include "../../inc/shaders/GaussianBlurShader.h"
 
 #include "../../inc/effects/GaussianBlurEffect.h"
 #include "../../inc/effects/SSAOEffect.h"
@@ -27,13 +26,16 @@
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
+#define MAX_KERNEL_SIZE 11
 
 extern int windowWidth;
 extern int windowHeight;
+static bool timeFlag = true;
+static time_t now;
+static time_t then;
+
 
 scene_types_t  getCurrentScene(void);
-
-GaussianBlurUniform gaussianBlur;
 
 // SSAO variable
 SSAOFrameBufferStruct ssaoFrameBufferDetails;
@@ -50,6 +52,7 @@ static struct HorrizontalBlurUniform horizontalBlurUniform;
 static struct VerticalBlurUniform verticalBlurIndoorUniform;
 static struct FrameBufferDetails fullSceneIndoorFbo;
 static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
+float mix_intensity = 0.0f;
 #endif // ENABLE_GAUSSIAN_BLUR
 
 #ifdef ENABLE_MASKS
@@ -281,6 +284,8 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 		displaySSAO(&ssaoFrameBufferDetails);
 
+
+
 #endif // ENABLE_SSAO
 	}
 	else
@@ -298,18 +303,24 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 		displayBlur();
 
-		// glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-		// perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
-		// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		// fsGaussBlurIndoorQuadUniform = useFSQuadShader();
+		glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
+		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight, 0.1f, 1000.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		fsGaussBlurIndoorQuadUniform = useFSQuadShader();
 
-		// glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 3);
+		glUniform1f(fsGaussBlurIndoorQuadUniform.intensity, mix_intensity);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform2, 1);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
 		
-		// glActiveTexture(GL_TEXTURE0);
-		// glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
-		// glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
-		// displayQuad();
-    	// glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
+		
+		displayQuad();
+    	glBindTexture(GL_TEXTURE_2D, 0);
 
 		////
 		#ifdef ENABLE_MASKS
@@ -330,62 +341,71 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 void displayBlur(void)
 {
-	// glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBuffer);
-	// glViewport(0, 0, (GLsizei)gaussianBlurIndoorEffect.horrizontalFBDetails.textureWidth, 
-	// (GLsizei)gaussianBlurIndoorEffect.horrizontalFBDetails.textureHeight);
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurIndoorEffect.horrizontalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurIndoorEffect.horrizontalFBDetails.textureHeight);
 
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// perspectiveProjectionMatrix = vmath::perspective(45.0f, 
-	// (GLfloat)gaussianBlurIndoorEffect.horrizontalFBDetails.textureWidth / gaussianBlurIndoorEffect.horrizontalFBDetails.textureHeight, 0.1f, 1000.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)gaussianBlurIndoorEffect.horrizontalFBDetails.textureWidth / gaussianBlurIndoorEffect.horrizontalFBDetails.textureHeight, 0.1f, 1000.0f);
 
-    // horizontalBlurUniform = useHorrizontalBlurShader();
+    horizontalBlurUniform = useHorrizontalBlurShader();
 
-    // glUniform1f(horizontalBlurUniform.targetWidth, 540.0f);
-    // glActiveTexture(GL_TEXTURE0);
-    // glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
-    // glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
-	// displayQuad();    
-    // glUseProgram(0);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurIndoorEffect.verticalFBDetails.frameBuffer);
-	// glViewport(0, 0, (GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureWidth, 
-	// (GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureHeight);
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// verticalBlurIndoorUniform = useVerticalBlurShader();
-	// glUniform1f(verticalBlurIndoorUniform.targetHeight, 270.0f);
-	// glActiveTexture(GL_TEXTURE0);
-    // glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBufferTexture);
-    // glUniform1i(verticalBlurIndoorUniform.vblurTexSamplerUniform, 0);
-	// displayQuad();
-	// glUseProgram(0);
-	// glBindTexture(GL_TEXTURE_2D, 0);
-	// glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	gaussianBlur = useGaussianBlurShader();
-	glUniform2i(gaussianBlur.resolution, 1920, 1080);
-	glUniform1i(gaussianBlur.hblurTexSamplerUniform, 0);
-	glUniform1f(gaussianBlur.time, 1.0f);
-	glActiveTexture(GL_TEXTURE0);
+    glUniform1f(horizontalBlurUniform.targetWidth, (float)fullSceneIndoorFbo.textureWidth / 3.0f);
+	glUniform1f(horizontalBlurUniform.blurFactor, 1.0f);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
+    glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
+	displayQuad();    
+    glUseProgram(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, gaussianBlurIndoorEffect.verticalFBDetails.frameBuffer);
+	glViewport(0, 0, (GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureWidth, 
+	(GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureHeight);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	verticalBlurIndoorUniform = useVerticalBlurShader();
+	glUniform1f(verticalBlurIndoorUniform.blurFactor, 1.0f);
+	glUniform1f(verticalBlurIndoorUniform.targetHeight, (float)fullSceneIndoorFbo.textureHeight / 3.0f);
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBufferTexture);
+    glUniform1i(verticalBlurIndoorUniform.vblurTexSamplerUniform, 0);
 	displayQuad();
 	glUseProgram(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void updateScene_PlaceHolderIndoor(void)
 {
 	// Code
-//#ifdef ENABLE_ADSLIGHT
-//    angleCube = angleCube + 1.0f;
-//	if (angleCube >= 360.0f)
-//	{
-//		angleCube -= 360.0f;
-//	}
-//
-//#endif // ENABLE_ADSLIGHT
 
+	if (isBlurI)
+	{
+		if (timeFlag)
+		{
+			then = time(NULL);
+			timeFlag = false;
+		}
+
+		now = time(NULL);
+		if (now >= (then + 1))
+		{
+			if (mix_intensity <= 1.0f)
+			{
+				mix_intensity += 0.115f;
+				timeFlag = true;
+			}
+			else
+			{
+
+				mix_intensity = 1.0f;
+			}
+		}
+	}
+
+// 	}
+//mix_intensity = 0.5f;
 
 	//update camera using lerp
 	/*cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
