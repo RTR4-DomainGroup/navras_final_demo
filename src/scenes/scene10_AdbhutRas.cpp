@@ -64,6 +64,10 @@
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
+#ifdef ENABLE_STARFIELD
+#include "../../inc/effects/StarfieldEffect.h"
+#endif // ENABLE_STARFIELD
+
 #include "../../inc/scenes/scene10_AdbhutRas.h"
 
 
@@ -147,7 +151,7 @@ extern struct SkyboxUniform sceneSkyBoxUniform;
 // Variables For Starfieldx
 extern GLuint texture_star; 
 extern double deltaTime;
-extern struct StarfieldUniform sceneStarfieldUniform;
+static struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
 
 extern GLfloat density; // = 0.15;
@@ -319,6 +323,13 @@ int initializeScene10_AdbhutRas(void)
 	}
 #endif
 
+#ifdef ENABLE_STARFIELD
+	initializeQuad();
+	initializeCube();
+	initializeCubeWithTilingTexcoords();
+
+#endif  // ENABLE_STARFIELD
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
@@ -393,7 +404,6 @@ int initializeScene10_AdbhutRas(void)
 	sort_instances_z_order(instance_positions, BB_NO_OF_INSTANCES);
 
 	initializeInstancedQuad(instBuffers_leftflowers, BB_NO_OF_INSTANCES, instance_positions);
-
 
 
 	// /// Right flowers
@@ -562,6 +572,38 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	if (actualDepthQuadScene == 0) {
 
+#ifdef ENABLE_STARFIELD
+
+		sceneStarfieldUniform = useStarfieldShader();
+
+		float time = (float)deltaTime;
+
+		time = time * 0.05f;
+		time = time - floor(time);
+
+		// Transformations
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(0.0f, 0.0f, -80.0f);					// glTranslatef() is replaced by this line.
+		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		//glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
+		glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+		displayStarfield(texture_star);
+		glUseProgram(0);
+
+#endif // ENABLE_STARFIELD
+
 		if (godRays == 1) {
 
 #ifdef ENABLE_ATMOSPHERE
@@ -569,7 +611,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 			translationMatrix = mat4::identity();
 			rotationMatrix = mat4::identity();
 			modelMatrix = mat4::identity();
-
 
 			//glBlendFunc(GL_ONE, GL_ONE);
 
