@@ -44,19 +44,7 @@ GLuint cameraHasyaUpdate = 1;
 int initializeScene12_Hasya(void)
 {
 
-#ifdef ENABLE_MASKSQUADS
-	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
-	{
-		//uninitialize();
-		LOG("LoadGLTexture for texture_hasyaMask FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
-	}
-	initializeQuad();
-#endif
+initializeQuad();
 
 #ifdef ENABLE_STATIC_MODELS
 // 	// function declarations
@@ -66,8 +54,6 @@ int initializeScene12_Hasya(void)
 	
 
 #endif // ENABLE_STATIC_MODELS
-// loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
-
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
 }
@@ -89,7 +75,7 @@ void setCameraScene12_Hasya(void)
 void displayScene12_Hasya(void)
 {
 	// set camera
-	setCameraScene12_Hasya();
+	//setCameraScene12_Hasya();
 
 	mat4 translationMatrix = mat4::identity();
 	mat4 scaleMatrix = mat4::identity();
@@ -131,6 +117,12 @@ void displayScene12_Hasya(void)
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
+
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomUniform, 1.0f);
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
+
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
 
 #ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask

@@ -36,24 +36,11 @@
 #define Z_MIN_ROUDRA_SHELF (0.0f)
 #define Z_MAX (-3.0f)
 
-// Bibhatsa
-#define X_MIN_BR (-6.0f)
-#define X_MAX_BR (6.0f)
-
-#define Y_MIN_BR (-3.0f)
-#define Y_MAX_BR (0.0f)
-
-#define Z_MIN_BR (-14.5f)
-#define Z_MAX_BR (-9.0f)
-
-#define NO_OF_INSTANCES_KACHARA 200
-
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
 #define NO_OF_INSTANCES 50
-#define NO_OF_INSTANCES_DESK 6
-#define NO_OF_INSTANCES_SHELF 2
+
 
 #define X_INCREMENT 2.0f
 #define X_INCREMENT_SHELF 0.0f
@@ -61,7 +48,6 @@
 #define Z_INCREMENT -2.5f
 
 #define X_SEPARTION_OFFSET 0.5f
-#define X_SEPARTION_OFFSET_SHELF 80.0f
 #define Y_SEPARTION_OFFSET 0.0f
 #define Z_SEPARTION_OFFSET 0.0f
 
@@ -115,8 +101,8 @@ static const char *szAudios[] = {
 #define ENABLE_BILLBOARDING
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
- #define ENABLE_STATIC_MODELS
-//#define ENABLE_DYNAMIC_MODELS
+#define ENABLE_STATIC_MODELS
+#define ENABLE_DYNAMIC_MODELS
 #define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
@@ -127,7 +113,7 @@ static const char *szAudios[] = {
 
 //#define ENABLE_MASKS
 
-// #define ENABLE_SINGLE_SCENE
+//#define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
@@ -144,7 +130,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
 // #define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
-// #define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
+//#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
 
 #else

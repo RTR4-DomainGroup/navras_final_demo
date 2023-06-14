@@ -26,9 +26,18 @@
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
+#define MAX_KERNEL_SIZE 11
 
 extern int windowWidth;
 extern int windowHeight;
+static bool timeFlag = true;
+static time_t now;
+static time_t then;
+
+static bool timeFlag1 = true;
+static time_t now1;
+static time_t then1;
+
 
 scene_types_t  getCurrentScene(void);
 
@@ -47,6 +56,7 @@ static struct HorrizontalBlurUniform horizontalBlurUniform;
 static struct VerticalBlurUniform verticalBlurIndoorUniform;
 static struct FrameBufferDetails fullSceneIndoorFbo;
 static struct FSQuadUniform fsGaussBlurIndoorQuadUniform;
+float mix_intensity = 0.0f;
 #endif // ENABLE_GAUSSIAN_BLUR
 
 #ifdef ENABLE_MASKS
@@ -176,7 +186,10 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 	// Code
 	// Here The Game STarts
-	setCamera();
+	if (setCamera)
+	{
+		setCamera();	
+	}
 
 #ifdef ENABLE_MASKS
 	// Masks
@@ -228,19 +241,19 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_indoor);
 
-		if (getCurrentScene() == SCENE05_KARUN_RAS)
+		if (getCurrentScene() == SCENE05_KARUN_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_KarunRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
-		else if (getCurrentScene() == SCENE07_RAUDRA_RAS)
+		else if (getCurrentScene() == SCENE07_RAUDRA_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_RaudraRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
-		else if (getCurrentScene() == SCENE12_HASYA_RAS)
+		else if (getCurrentScene() == SCENE12_HASYA_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_HasyaRas, texture_mask_indoor, noise_texture_eroded_indoor);
@@ -288,7 +301,8 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneIndoorFbo.textureWidth / fullSceneIndoorFbo.textureHeight,
 			0.1f, 1000.0f);
 		
-		displayPasses();
+		//displayPasses();
+		displaySSAO(&ssaoFrameBufferDetails);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		displayBlur();
@@ -298,11 +312,17 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurIndoorQuadUniform = useFSQuadShader();
 
-		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 3);
+		glUniform1f(fsGaussBlurIndoorQuadUniform.intensity, mix_intensity);
 		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);
+		glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform2, 1);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
+		
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.verticalFBDetails.frameBufferTexture);
+		
 		displayQuad();
     	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -334,7 +354,8 @@ void displayBlur(void)
 
     horizontalBlurUniform = useHorrizontalBlurShader();
 
-    glUniform1f(horizontalBlurUniform.targetWidth, 540.0f);
+    glUniform1f(horizontalBlurUniform.targetWidth, (float)fullSceneIndoorFbo.textureWidth / 3.0f);
+	glUniform1f(horizontalBlurUniform.blurFactor, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, fullSceneIndoorFbo.frameBufferTexture);
     glUniform1i(horizontalBlurUniform.hblurTexSamplerUniform, 0);
@@ -348,7 +369,8 @@ void displayBlur(void)
 	(GLsizei)gaussianBlurIndoorEffect.verticalFBDetails.textureHeight);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	verticalBlurIndoorUniform = useVerticalBlurShader();
-	glUniform1f(verticalBlurIndoorUniform.targetHeight, 270.0f);
+	glUniform1f(verticalBlurIndoorUniform.blurFactor, 1.0f);
+	glUniform1f(verticalBlurIndoorUniform.targetHeight, (float)fullSceneIndoorFbo.textureHeight / 3.0f);
 	glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, gaussianBlurIndoorEffect.horrizontalFBDetails.frameBufferTexture);
     glUniform1i(verticalBlurIndoorUniform.vblurTexSamplerUniform, 0);
@@ -361,15 +383,33 @@ void displayBlur(void)
 void updateScene_PlaceHolderIndoor(void)
 {
 	// Code
-//#ifdef ENABLE_ADSLIGHT
-//    angleCube = angleCube + 1.0f;
-//	if (angleCube >= 360.0f)
-//	{
-//		angleCube -= 360.0f;
-//	}
-//
-//#endif // ENABLE_ADSLIGHT
 
+	if (isBlurI)
+	{
+		if (timeFlag)
+		{
+			then = time(NULL);
+			timeFlag = false;
+		}
+
+		now = time(NULL);
+		if (now >= (then + 1))
+		{
+			if (mix_intensity <= 1.0f)
+			{
+				mix_intensity += 0.115f;
+				timeFlag = true;
+			}
+			else
+			{
+
+				mix_intensity = 1.0f;
+			}
+		}
+	}
+
+// 	}
+//mix_intensity = 0.5f;
 
 	//update camera using lerp
 	/*cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
@@ -383,21 +423,39 @@ void updateScene_PlaceHolderIndoor(void)
 		offset_ras_indoor[2] = 0.17f;
 	}
 
+
 	if (((getCurrentScene() == SCENE05_KARUN_RAS) ||
 		(getCurrentScene() == SCENE07_RAUDRA_RAS) ||
 		(getCurrentScene() == SCENE12_HASYA_RAS)) &&
 		isBlurI == true)
 	{
-		offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
-		offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
-		offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
-		if (offset_ras_indoor[2] > 0.48f)
+
+		if (timeFlag1)
 		{
-			offset_ras_indoor[0] = 0.48f;
-			offset_ras_indoor[1] = 0.48f;
-			offset_ras_indoor[2] = 0.48f;
+			then1 = time(NULL);
+			timeFlag1 = false;
+		}
+
+		now1 = time(NULL);
+		if (now1 >= (then1 + 5))
+		{
+
+			// offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
+			// offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
+			// offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
+			offset_ras_indoor[0] = offset_ras_indoor[0] + 0.0015f;
+			offset_ras_indoor[1] = offset_ras_indoor[1] + 0.0015f;
+			offset_ras_indoor[2] = offset_ras_indoor[2] + 0.0015f;
+			if (offset_ras_indoor[2] > 0.48f)
+			{
+				offset_ras_indoor[0] = 0.48f;
+				offset_ras_indoor[1] = 0.48f;
+				offset_ras_indoor[2] = 0.48f;
+			}
 		}
 	}
+
+	
 #endif // ENABLE_MASKS
 }
 

@@ -25,7 +25,7 @@ int initializeWaterShader(void)
         "out vec2 a_texcoord_out;\n" \
 
         "uniform vec4 u_plane;\n" \
-        "const float tiling = 100.0;\n" \
+        "const float tiling = 50.0;\n" \
         "void main(void) \n" \
         "{ \n" \
             "gl_ClipDistance[0] = dot(u_modelMatrix * a_position, u_plane); \n" \
@@ -104,7 +104,7 @@ int initializeWaterShader(void)
             "vec2 reflectTexCoords = vec2(ndc.x, -ndc.y); \n" \
             "vec3 phong_ads_light; \n" \
             "vec2 distortion1 = (texture(dudvMap, vec2(a_texcoord_out.x + u_moveFactor ,a_texcoord_out.y)).rg * 2.0 - 1.0) * waveStrength; \n" \
-            "vec2 distortion2 = (texture(dudvMap, vec2(-a_texcoord_out.x + u_moveFactor ,a_texcoord_out.y+ u_moveFactor)).rg * 2.0 - 1.0) * waveStrength; \n" \
+            "vec2 distortion2 = (texture(dudvMap, vec2(-a_texcoord_out.x + u_moveFactor ,a_texcoord_out.y + u_moveFactor)).rg * 2.0 - 1.0) * waveStrength; \n" \
 
             "distortion1 = distortion1 + distortion2; \n" \
 
@@ -119,9 +119,13 @@ int initializeWaterShader(void)
             "vec4 texture_Reflection; \n" \
             "vec4 texture_Refraction; \n" \
          
-            "texture_Reflection = texture(u_textureReflection, reflectTexCoords); \n" \
+            "if (waterColor.b == 0.1) {\n" \
+                "texture_Reflection = texture(u_textureReflection, reflectTexCoords + vec2(0.01, 0.0)); \n" \
+            "}\n" \
+            "else {\n" \
+                "texture_Reflection = texture(u_textureReflection, reflectTexCoords); \n" \
+            "}\n" \
             "texture_Refraction = texture(u_textureRefraction, refractTexCoords); \n" \
-
             "vec3 viewVector = normalize(toCameraVector); \n" \
             "float refractiveFactor = dot(viewVector, vec3(0.0, 1.0, 0.0)); \n" \
             /*"refractiveFactor = pow(refractiveFactor, 10.0); \n" \*/
