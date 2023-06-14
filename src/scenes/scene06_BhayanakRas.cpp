@@ -94,6 +94,7 @@ static float displacementmap_depth;
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL roomModel;
+static STATIC_MODEL roomModel2;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
@@ -124,7 +125,7 @@ extern GLfloat distortion[]; // = { 0.94f, 0.97f, 1.0f };
 static GLfloat lightAmbient_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat lightDiffuse_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat lightSpecular_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-static GLfloat lightPosition_bhayanak[] = { 0.0f, 200.0f, 200.0f, 1.0f };
+static GLfloat lightPosition_bhayanak[] = { 0.0f, 2.0f, 2.0f, 1.0f };
 
 static GLfloat materialAmbient_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 static GLfloat materialDiffuse_bhayanak[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -140,6 +141,10 @@ GLfloat cameraUpVector = 1.0f;
 bool isInitialDisplayScene06_BhayanakRas = true;
 
 GLuint texture_bhayanakMask;
+
+// Time
+extern time_t now;
+extern time_t then;
 
 int initializeScene06_BhayanakRas(void)
 {
@@ -165,7 +170,8 @@ int initializeScene06_BhayanakRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
-	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom2.obj", &roomModel);
+	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom.obj", &roomModel);
+	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoomWithoutFloor.obj", &roomModel2);
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -183,7 +189,9 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		//setCamera(0.15f, 0.75f, 4.75f, 0.15f, 0.75f, -1.25f, 0.00f, 1.00f, 0.00f);
+		//lookAt(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f)
+		setCamera(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
 }
@@ -204,9 +212,9 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 	float distance;
 
-	rotateCamera(0.0f, 1.0f, -2.25f, cameraRadius, cameraAngle);
+	//rotateCamera(0.0f, 1.0f, -2.25f, cameraRadius, cameraAngle);
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-	//displayCamera();
+	displayCamera();
 	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
@@ -279,7 +287,11 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 
-	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.5f);
+	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.3f);
+
+	glUniform1f(sceneOutdoorADSStaticUniform.blackOrWhiteRoomUniform, 0.0f);
+	glUniform1f(sceneOutdoorADSStaticUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneOutdoorADSStaticUniform.ssaoIntensityDeltaUniform, 0.7f);
 
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
@@ -287,11 +299,14 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
 
+
+	glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
+
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
-	// ------ Rock Model ------
+	// ------ BOy Model ------
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
-	translationMatrix = vmath::translate(0.0f, 0.0f, -2.25f);
+	translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
@@ -317,35 +332,43 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	drawStaticModel(rockModel);
 
-	//// ------ Room Model ------
-	//translationMatrix = mat4::identity();
-	//scaleMatrix = mat4::identity();
-	//translationMatrix = vmath::translate(0.0f, 7.55f, 0.0f);
-	//scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
+	// ------ Room Model ------
+	translationMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	translationMatrix = vmath::translate(0.0f, 1.28f, 0.0f);
+	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 
-	//modelMatrix = translationMatrix * scaleMatrix;
+	//update_transformations(&translationMatrix, NULL, NULL);
 
-	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	//if (actualDepthQuadScene == 1)
-	//{
-	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-	//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-	//}
-	//else
-	//{
-	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+	modelMatrix = translationMatrix * scaleMatrix;
 
-	//	glActiveTexture(GL_TEXTURE1);
-	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-	//}
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	if (actualDepthQuadScene == 1)
+	{
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	}
+	else
+	{
+		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
 
-	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	}
 
-	//drawStaticModel(roomModel);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
+	if(now >= (then + 10)){
+
+		glUniform1f(sceneOutdoorADSStaticUniform.blackOrWhiteRoomMixDeltaUniform, 0.75f);
+		drawStaticModel(roomModel2);
+	}
+	else{
+		drawStaticModel(roomModel);
+	}
 #ifdef ENABLE_MASKSQUADS
 	// Transformations For Mask Quad
 	translationMatrix = mat4::identity();
@@ -374,6 +397,9 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
+	//glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
+
+	glUniform1f(sceneOutdoorADSStaticUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
 
@@ -447,44 +473,49 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 #endif
 
 #ifdef ENABLE_WATER
-	if(waterDraw == true){
-		waterUniform = useWaterShader();
 
-		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
+	if (now >= (then + 10)) {
 
-		translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
+		if(waterDraw == true){
+			waterUniform = useWaterShader();
 
-		scaleMatrix = vmath::scale(180.0f, 1.0f,180.0f);
+			translationMatrix = mat4::identity();
+			scaleMatrix = mat4::identity();
+			modelMatrix = mat4::identity();
 
-		modelMatrix = translationMatrix * scaleMatrix;
+			translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f);
 
-		glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+			scaleMatrix = vmath::scale(180.0f, 1.0f,180.0f);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
+			modelMatrix = translationMatrix * scaleMatrix;
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
+			glUniformMatrix4fv(waterUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+			glUniformMatrix4fv(waterUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, waterReflectionFrameBufferDetails.frameBufferTexture);
 
-		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, waterRefractionFrameBufferDetails.frameBufferTexture);
 
-		glUniform1f(waterUniform.uniform_waveStrength, 0.0f);
-		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, waterTextureVariables.displacement);
 
-		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
+			glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
-		displayWater();
+			glUniform1f(waterUniform.uniform_waveStrength, 0.0f);
+			glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
 
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glUseProgram(0);
-    }
+			glUniform1f(waterUniform.uniform_enable_godRays, godRays);
+
+			displayWater();
+
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glUseProgram(0);
+		}
+
+	}
 
 	if (isReflection == true) {
 
@@ -502,13 +533,28 @@ void updateScene06_BhayanakRas(void)
 {
 	// Code
 
-	cameraAngle += 1.5f;
-	if(cameraAngle >= 1170.0f)
-		cameraAngle =1170.0f;
+	//cameraAngle += 1.5f;
+	//if(cameraAngle >= 1170.0f)
+	//	cameraAngle =1170.0f;
 
-	cameraRadius -= 0.01f;
-	if (cameraRadius <= 3.75f)
-		cameraRadius = 3.75f;
+	//cameraRadius -= 0.01f;
+	//if (cameraRadius <= 3.75f)
+	//	cameraRadius = 3.75f;
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	// lookAt(1.10f, 0.50f, 1.35f, -248.55f, 0.50f, -262.28f, 0.00f, 1.00f, 0.00f)
+	// lookAt(1.05f, 0.40f, 1.25f, -248.60f, 0.40f, -262.38f, 0.00f, 1.00f, 0.00f)
+	// lookAt(0.70f, 0.25f, 0.95f, -248.95f, 0.25f, -262.68f, 0.00f, 1.00f, 0.00f)
+	cameraEyeX = preciselerp(cameraEyeX, 0.70f, 0.002f);
+	cameraEyeY = preciselerp(cameraEyeY, 0.25f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.95f, 0.002f);
+
+	cameraCenterX = preciselerp(cameraCenterX, -248.95f, 0.002f);
+	cameraCenterY = preciselerp(cameraCenterY, 0.25f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -262.68f, 0.002f);
+
+#endif // ENABLE_CAMERA_ANIMATION
+
 
 #ifdef ENABLE_WATER
 

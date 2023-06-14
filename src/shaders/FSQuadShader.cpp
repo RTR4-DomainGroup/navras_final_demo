@@ -78,6 +78,8 @@ int initializeFSQuadShader(void)
         "\n" \
         "uniform sampler2D u_textureSampler2;" \
         "\n" \
+        "uniform sampler2D u_textureSampler3;" \
+        "\n" \
         "out vec4 FragColor;" \
         "\n" \
 
@@ -203,6 +205,8 @@ int initializeFSQuadShader(void)
         fsQuadShaderProgramObject, "u_textureSampler1");
     fsQuadUniform.textureSamplerUniform3 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler2");
+    fsQuadUniform.textureSamplerUniform4 = glGetUniformLocation(
+        fsQuadShaderProgramObject, "u_textureSampler3");
     fsQuadUniform.intensity  = glGetUniformLocation(fsQuadShaderProgramObject, "u_blurMixDelta");
 
     return 0;
