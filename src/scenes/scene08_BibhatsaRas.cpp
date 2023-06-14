@@ -1405,23 +1405,23 @@ void updateScene08_BibhatsaRas(void)
 	//cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
 	//cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
 	
-	cameraEyeZ -= 0.05f;
-	if (cameraEyeZ <= 35.0f)
-		cameraEyeZ = 35.0f;
+	if (beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
+	{
+		cameraEyeZ -= 0.05f;
+		if (cameraEyeZ <= 35.0f)
+			cameraEyeZ = 35.0f;
 
-	cameraCenterZ -= 0.05f;
-	if (cameraCenterZ <= -65.0f)
-		cameraCenterZ = -65.0f;
+		cameraCenterZ -= 0.05f;
+		if (cameraCenterZ <= -65.0f)
+			cameraCenterZ = -65.0f;
+	}
 
 #endif // ENABLE_CAMERA_ANIMATION
 
 #ifdef ENABLE_DYNAMIC_MODELS
 
-
 	if(beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
 		zTranslateWalk = zTranslateWalk - 0.05f;
-
-
 
 	/*zTranslateWalk = zTranslateWalk - 0.05f;
 	if (zTranslateWalk <= 20.0f)
