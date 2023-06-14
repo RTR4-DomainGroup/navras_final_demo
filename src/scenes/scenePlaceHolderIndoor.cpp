@@ -423,9 +423,12 @@ void updateScene_PlaceHolderIndoor(void)
 		(getCurrentScene() == SCENE12_HASYA_RAS)) &&
 		isBlurI == true)
 	{
-		offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
-		offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
-		offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
+		// offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
+		// offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
+		// offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
+		offset_ras_indoor[0] = offset_ras_indoor[0] + 0.0015f;
+		offset_ras_indoor[1] = offset_ras_indoor[1] + 0.0015f;
+		offset_ras_indoor[2] = offset_ras_indoor[2] + 0.0015f;
 		if (offset_ras_indoor[2] > 0.48f)
 		{
 			offset_ras_indoor[0] = 0.48f;

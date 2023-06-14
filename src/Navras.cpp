@@ -787,14 +787,8 @@ void displayNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
-		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
-		if (shouldSceneRaudraMaskAppear)
-		{
-			isGaussianBlurRequired = true;
-		}
-		
-		displayScene12_Hasya();
+		displayScene_PlaceHolderIndoor(setCameraScene12_Hasya, displayScene12_Hasya, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene12);
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)

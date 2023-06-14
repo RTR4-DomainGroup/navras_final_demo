@@ -1147,9 +1147,12 @@ void updateScene_PlaceHolderOutdoor(void)
 		(getCurrentScene() == SCENE11_SHRINGAR_RAS)) && 
 		isBlur == true)
 	{
-		offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
-		offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
-		offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
+		// offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
+		// offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
+		// offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
+		offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.0015f;
+		offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.0015f;
+		offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.0015f;
 		if (offset_ras_outdoor[2] > 0.48f)
 		{
 			offset_ras_outdoor[0] = 0.48f;
