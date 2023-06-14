@@ -7,6 +7,7 @@
 #include "../../inc/effects/TerrainEffect.h"
 #include "../../inc/effects/SkyboxEffect.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/effects/DynamicModelLoadingEffect.h"
 #include "../../inc/effects/GodraysEffect.h"
 #include "../../inc/effects/GaussianBlurEffect.h"
 
@@ -33,6 +34,7 @@ extern int windowHeight;
 extern mat4 perspectiveProjectionMatrix;
 
 static struct ADSUniform sceneIndoorADSUniform;
+static struct ADSDynamicUniform raudraDynamicADSUniform;
 
 extern GLfloat density;
 extern GLfloat gradient;
@@ -62,6 +64,8 @@ static STATIC_MODEL deskModelRaudra;
 static STATIC_MODEL shelfModel;
 static STATIC_MODEL pencilModelRaudra;
 static STATIC_MODEL tempBoyModelRaudra;
+static DYNAMIC_MODEL boyModelRaudra;
+
 
 static GLuint textures[4];
 
@@ -92,6 +96,17 @@ int initializeScene07_Raudra(void)
 	//load models
 	initializeDeskInstancePositions();
 	
+	initializeShelfInstancePositions();
+
+	loadStaticModel("res/models/pencil/Pencil.fbx", &pencilModelRaudra);
+	loadStaticModel("res/models/scene07_raudra/tempKarunBoy1.obj", &tempBoyModelRaudra);
+
+#endif
+
+#ifdef	ENABLE_DYNAMIC_MODELS
+	loadDynamicModel("res/models/scene07_raudra/raudraBoyAnim.fbx", &boyModelRaudra);
+#endif
+
 	if (LoadGLTexture_UsingSOIL(&texture_ceiling, TEXTURE_DIR"Room/ceiling.jpg") == FALSE) {
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in Raudra!!!\n");
@@ -168,8 +183,6 @@ int initializeScene07_Raudra(void)
 	{
 		LOG("LoadGLTexture for World Map Successfull = %u!!!\n", texture_worldMap);
 	}
-	initializeShelfInstancePositions();
-#endif
 	initializeInvertedNormalCube();
 	initializeQuad();
 
@@ -178,9 +191,7 @@ int initializeScene07_Raudra(void)
 	textures[2] = (GLuint)texture_back;
 	textures[3] = (GLuint)texture_side;
 
-	loadStaticModel("res/models/pencil/Pencil.fbx", &pencilModelRaudra);
-	loadStaticModel("res/models/scene07_raudra/tempKarunBoy1.obj", &tempBoyModelRaudra);
-
+	
 
 	// external debugging varaible
     tf_t = {1.8f, -0.4f, -1.1f}; // tree pos 
@@ -397,7 +408,7 @@ void displayScene07_Raudra()
 	rotationMatrix_z = mat4::identity();
 
 	//translationMatrix = vmath::translate(tf_t.x, tf_t.y, tf_t.z);
-	translationMatrix = vmath::translate(-0.10f, -1.3f, -8.00f);
+	translationMatrix = vmath::translate(-0.10f, -1.35f, -8.00f);
 	//scaleMatrix = vmath::scale(0.85f, 0.85f, 0.85f);
 	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 	
@@ -448,7 +459,7 @@ void displayScene07_Raudra()
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.0f, -0.83f, -2.1f);
+	translationMatrix = vmath::translate(-0.1f, -0.89f, -2.1f);
 	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
 	scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
 	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -463,29 +474,8 @@ void displayScene07_Raudra()
 	
 	drawStaticModel(pencilModelRaudra);
 
-	// ------ Temp Boy Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	translationMatrix = vmath::translate(0.15f, -1.40f, -2.40f);
-	//translationMatrix = vmath::translate(1.85f, -0.34f, -1.1f);
-	scaleMatrix = vmath::scale(0.8f, 0.8f, 0.8f);
-	//rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
-	rotationMatrix_y = vmath::rotate(360.0f, 0.0f, 1.0f, 0.0f);
-	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 	
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
-	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	drawStaticModel(tempBoyModelRaudra);
+	//drawStaticModel(tempBoyModelRaudra);
 
 	// ------ Failed Texture ------
 	translationMatrix = mat4::identity();
@@ -496,7 +486,7 @@ void displayScene07_Raudra()
 	rotationMatrix_y = mat4::identity();
 	rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.15f, -0.83f, -2.1f);
+	translationMatrix = vmath::translate(0.15f, -0.89f, -2.1f);
 	//translationMatrix = vmath::translate(1.75f, -0.54f, -1.1f);
 	scaleMatrix = vmath::scale(0.12f, 0.12f, 0.15f);
 	rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
@@ -538,16 +528,72 @@ void displayScene07_Raudra()
 	
 	// Un-use ShaderProgramObject
 	glUseProgram(0);
+#endif
+	// ------ Dynamic Boy Model ------
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	glm::mat4 glm_modelMatrix;
+	glm::mat4 glm_translateMatrix;
+	glm::mat4 glm_rotateMatrix;
+	glm::mat4 glm_scaleMatrix;
+
+	glm_modelMatrix = glm::mat4(1.0f);
+	glm_translateMatrix = glm::mat4(1.0f);
+	glm_rotateMatrix = glm::mat4(1.0f);
+	glm_scaleMatrix = glm::mat4(1.0f);
+
+	raudraDynamicADSUniform  = useADSDynamicShader();
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.15f, -1.23f, -2.32f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.0078f, 0.0078f, 0.0078f));
+
+	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	//update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, NULL, NULL);
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
+
+	glUniform4fv(raudraDynamicADSUniform.laUniform, 1, lightAmbient_raudra);
+	glUniform4fv(raudraDynamicADSUniform.ldUniform, 1, lightDiffuse_raudra);
+	glUniform4fv(raudraDynamicADSUniform.lsUniform, 1, lightSpecular_raudra);
+	glUniform4fv(raudraDynamicADSUniform.lightPositionUniform, 1, lightPosition_raudra);
+	glUniform4fv(raudraDynamicADSUniform.kaUniform, 1, materialAmbient_raudra);
+	glUniform4fv(raudraDynamicADSUniform.kdUniform, 1, materialDiffuse_raudra);
+	glUniform4fv(raudraDynamicADSUniform.ksUniform, 1, materialSpecular_raudra);
+	glUniform1f(raudraDynamicADSUniform.materialShininessUniform, materialShininess_raudra);
+
+	glUniform1i(raudraDynamicADSUniform.fogEnableUniform, 0);
+	glUniform1f(raudraDynamicADSUniform.densityUniform, density);
+	glUniform1f(raudraDynamicADSUniform.gradientUniform, gradient);
+	glUniform4fv(raudraDynamicADSUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(raudraDynamicADSUniform.uniform_enable_godRays, 1);
+	glUniform1i(raudraDynamicADSUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(raudraDynamicADSUniform.actualSceneUniform, 1);
+	glUniform1i(raudraDynamicADSUniform.depthSceneUniform, 0);
+	glUniform1i(raudraDynamicADSUniform.depthQuadSceneUniform, 0);
+
+
+	glUniformMatrix4fv(raudraDynamicADSUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	glUniformMatrix4fv(raudraDynamicADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(raudraDynamicADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawDynamicModel(raudraDynamicADSUniform, boyModelRaudra, 0.8f);
+	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
-    #endif 
+#endif 
+
 }
 
 void updateScene07_RaudraRas(void)
 {
 	// Code
 #ifdef ENABLE_CAMERA_ANIMATION
-	cameraEyeZ = preciselerp(cameraEyeZ, 0.1f, 0.002f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -3.10f, 0.002f);
+	 cameraEyeZ = preciselerp(cameraEyeZ, 0.1f, 0.002f);
+	 cameraCenterZ = preciselerp(cameraCenterZ, -3.10f, 0.002f);
 #endif // ENABLE_CAMERA_ANIMATION
 
 }
@@ -555,8 +601,11 @@ void updateScene07_RaudraRas(void)
 void uninitializeScene07_Raudra(void)
 {
     //UNINIT models
+	#ifdef ENABLE_STATIC_MODELS
 	unloadStaticModel(&deskModelRaudra);
 	unloadStaticModel(&tempBoyModelRaudra);
+	#endif
+
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_raudraMask)
