@@ -35,6 +35,8 @@ extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
 extern TEXTURE texture_flower;
 
+GLfloat zTranslateWalk = 85.0f;
+
 extern struct ADSUniform sceneOutdoorADSStaticUniform;
 extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 
@@ -239,7 +241,7 @@ int initializeScene08_BibhatsaRas(void)
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	loadDynamicModel("res/models/scene08-beebhatsa/man/beebhatsaManAnim.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
 	return 0;
@@ -477,7 +479,7 @@ void setCameraScene08(void)
 {
 	if (isInitialDisplayScene08_BibhatsaRas == true)
 	{
-		setCamera(0.0f, 0.0f, 99.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(5.25f, 0.0f, 99.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene08_BibhatsaRas = false;
 	}
 }
@@ -1343,13 +1345,15 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		// ------ Dancing Vampire Model ------
 
-		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
-		glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-		//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.5f, -3.65f, zTranslateWalk));
+		glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.025f, 0.025f, 0.025f));
+		glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 50.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+		//update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
+		glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+
 		if (actualDepthQuadScene == 1)
 		{
 			glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
@@ -1409,6 +1413,12 @@ void updateScene08_BibhatsaRas(void)
 		cameraCenterZ = -39.25f;
 
 #endif // ENABLE_CAMERA_ANIMATION
+
+#ifdef ENABLE_DYNAMIC_MODELS
+	zTranslateWalk = zTranslateWalk - 0.05f;
+	if (zTranslateWalk <= -50.0)
+		zTranslateWalk = -50.0f;
+#endif // ENABLE_DYNAMIC_MODELS
 
 }
 
