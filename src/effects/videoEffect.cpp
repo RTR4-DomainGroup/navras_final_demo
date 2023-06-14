@@ -9,14 +9,12 @@
 #include "../../inc/helper/constants.h"
 
 
-GLuint texture_frame;
-int frameWidth, frameHeight;
-uint8_t* frame_data = NULL;
-struct VideoReaderState vr_state;
 
+int frameWidth, frameHeight;
+//uint8_t* frame_data = NULL;
 bool flagAudio = true;
 
-int initializeVideoEffect(const char* videoFile)
+int initializeVideoEffect(const char* videoFile, struct VideoReaderState vr_state, uint8_t* frame_data, GLuint texture_frame)
 {
     // Code
     if (!video_reader_open(&vr_state, videoFile))
@@ -24,12 +22,13 @@ int initializeVideoEffect(const char* videoFile)
         LOG("Failed to open video file.\n");
         return -1;
     }
-   
+   #ifdef ENABLE_MULTI_THREADING
     if(initializeFSVQuadShader() != 0)
     {
         LOG("Failed to initializeFSVQuadShader().\n");
         return -2;
     }
+    #endif
     initializeQuadForVideo();
     frameWidth = vr_state.width;
     frameHeight = vr_state.height;
@@ -47,7 +46,7 @@ int initializeVideoEffect(const char* videoFile)
     return 0;
 }
 
-void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
+void displayVideoEffect( struct FSVQuadUniform* fsvqUniform, uint8_t* frame_data, GLuint texture_frame)
 {
 
 #ifdef ENABLE_AUDIO
@@ -58,18 +57,6 @@ void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
  #endif
 
     // Function declaration
-    static bool myFlag = true;
-    // Code
-    // if (myFlag)
-    // {
-    //     if (!video_reader_read_frame(&vr_state, frame_data))
-    //     {
-    //         LOG("Couldn't load video frame.\n");
-    //     }
-    //     LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
-    //     myFlag = false;
-    // }   
-    //LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_frame);
@@ -81,7 +68,7 @@ void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
     
 }
 
-void updateVideoEffect(void)
+void updateVideoEffect(struct VideoReaderState vr_state, uint8_t* frame_data)
 {  
     if (!video_reader_read_frame(&vr_state, frame_data))
     {
@@ -90,7 +77,7 @@ void updateVideoEffect(void)
     
 }
 
-void uninitializeVideoEffect(void)
+void uninitializeVideoEffect(struct VideoReaderState vr_state, uint8_t* frame_data, GLuint texture_frame)
 {
     if (texture_frame)
 	{
@@ -98,5 +85,11 @@ void uninitializeVideoEffect(void)
 		texture_frame = 0;
 	}
     video_reader_close(&vr_state);
+    if (frame_data)
+    {
+        free(frame_data);
+        frame_data = NULL;
+    }
+    
     uninitializeVideoQuad();
 }

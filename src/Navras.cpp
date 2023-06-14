@@ -73,7 +73,7 @@ time_t now;
 time_t then;
 
 #ifdef SHORTS
-int time_scene1 = 5;
+int time_scene1 = 45;
 int time_scene2 = 10;
 int time_scene3 = 10;
 int time_scene4 = 10;
@@ -87,10 +87,11 @@ int time_scene11 = 10;
 int time_scene12 = 10;
 int time_scene13 = 10;
 int time_scene14 = 10;
+int time_scene15 = 180;
 
 int blurTime = 3;
 #else
-int time_scene1 = 5;
+int time_scene1 = 45;
 int time_scene2 = 40;
 int time_scene3 = 40;
 int time_scene4 = 40;
@@ -104,6 +105,7 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
+int time_scene15 = 180;
 int blurTime = 10;
 #endif
 
@@ -111,6 +113,16 @@ int blurTime = 10;
 // Audio
 static bool audioFlag = true;
 
+// video
+struct VideoReaderState endCredits;
+uint8_t frame_data_credits;
+FSVQuadUniform endCreditsUniform;
+GLuint texture_end_credits;
+
+extern struct FSVQuadUniform videoUniform;
+extern struct VideoReaderState amcBanner;
+extern uint8_t frame_data_banner;
+extern GLuint texture_amc_banner;
 //
 static scene_types_t currentScene = SCENE_INVALID;
 
@@ -373,7 +385,7 @@ int initializeNavras(void) {
     // }
 
 	// Print OpenGLInfo
-	printGLInfo();
+	//printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -385,7 +397,6 @@ int initializeNavras(void) {
         LOG("All Shaders FAILED !!!\n");
         return (-6);
     }
-	
 
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
@@ -490,7 +501,14 @@ int initializeNavras(void) {
 	LOG("current scene changed: %d\n", currentScene);
 
 #else
-
+#ifndef ENABLE_MULTI_THREADING
+	if (initializeVideoEffect("res/videos/AMCBanner_60fps.mp4", amcBanner, &frame_data_banner, texture_amc_banner) != 0)
+	{
+	 	LOG("initializeParticle() FAILED !!!\n");
+	 	return (-8);
+	}
+#endif
+	
 	// SCENE02
 	if (initializeScene02_EarthAndSpace() != 0)
 	{
@@ -570,7 +588,19 @@ int initializeNavras(void) {
 	 	return (-8);
 	 }
 
+	// SCENE15
+#ifndef ENABLE_MULTI_THREADING
+	if (initializeVideoEffect("res/videos/EndCredits.mp4", endCredits, &frame_data_credits, texture_end_credits) != 0)
+	{
+	 	LOG("initializeParticle() FAILED !!!\n");
+	 	return (-8);
+	 }
+#endif
+
 	scenePush(MAX_SCENES);
+#ifndef ENABLE_MULTI_THREADING
+	scenePush(SCENE15_END_CREDITS);
+#endif
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	scenePush(SCENE12_HASYA_RAS);
@@ -583,6 +613,9 @@ int initializeNavras(void) {
 	scenePush(SCENE06_BHAYANK_RAS);
 	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
+	#ifndef ENABLE_MULTI_THREADING
+	scenePush(SCENE00_AMC_BANNER);
+	#endif
 
 	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
@@ -607,7 +640,8 @@ int initializeNavras(void) {
 
 	perspectiveProjectionMatrix = mat4::identity();
 
-	sceneTime(time_scene2);
+	
+	sceneTime(time_scene1);
 
 	return(0);
 }
@@ -672,7 +706,15 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if ( currentScene == SCENE02_EARTH_AND_SPACE)
+	if ( currentScene == SCENE00_AMC_BANNER)
+	{
+		audio(SCENE00_AMC_BANNER);
+		videoUniform = useFSVQuadShader();
+		displayVideoEffect(&videoUniform, &frame_data_banner, texture_amc_banner);
+		glUseProgram(0);
+		sceneTime(time_scene1);
+	}
+	else if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
@@ -808,6 +850,15 @@ void displayNavras(void)
 		displayParticle();
 		sceneTime(time_scene14);
 	}
+	else if (currentScene == SCENE15_END_CREDITS)
+	{
+		audio(SCENE15_END_CREDITS);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		endCreditsUniform = useFSVQuadShader();
+		displayVideoEffect(&endCreditsUniform, &frame_data_credits, texture_end_credits);
+		glUseProgram(0);
+		sceneTime(time_scene15);
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		//displayScene_PlaceHolderIndoor();
@@ -837,7 +888,11 @@ void updateNavras(void)
 	} 
 
 	// Call Scenes Update Here
-	if (currentScene == SCENE02_EARTH_AND_SPACE)
+	if (currentScene == SCENE00_AMC_BANNER)
+	{
+		updateVideoEffect(amcBanner, &frame_data_banner);
+	}
+	else if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene02_EarthAndSpace();
@@ -885,6 +940,10 @@ void updateNavras(void)
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
+	}
+	else if (currentScene == SCENE15_END_CREDITS)
+	{
+		updateVideoEffect(endCredits, &frame_data_credits);
 	}	
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{

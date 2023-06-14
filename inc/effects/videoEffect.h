@@ -4,10 +4,10 @@
 #include "../helper/geometry.h"
 #include "../shaders/FSVQuadShader.h"
 
-int initializeVideoEffect(const char*);
+int initializeVideoEffect(const char*, struct VideoReaderState , uint8_t*, GLuint);
 
-void displayVideoEffect(struct FSVQuadUniform*);
+void displayVideoEffect(struct FSVQuadUniform*, uint8_t*, GLuint);
 
-void updateVideoEffect(void);
+void updateVideoEffect(struct VideoReaderState, uint8_t*);
 
-void uninitializeVideoEffect(void);
+void uninitializeVideoEffect(struct VideoReaderState, uint8_t*, GLuint);

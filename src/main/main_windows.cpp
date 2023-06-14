@@ -28,6 +28,9 @@
 #include "../../inc/Navras.h"
 
 struct FSVQuadUniform videoUniform;
+struct VideoReaderState amcBanner;
+uint8_t frame_data_banner;
+GLuint texture_amc_banner;
 
 // OpenGL Libraries
 // is same as C:\> link.exe Traingle.obj OpenGL32.lib blah.lib ... /SUBSYTEM:WINDOWS
@@ -445,7 +448,7 @@ int initializeForVideo(void)
     }
 	LOG("Reading VIdeo File.  \n");
 	// here starts OpenGL code
-	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
+	initializeVideoEffect("res/videos/AMCBanner_60fps.mp4", amcBanner, &frame_data_banner, texture_amc_banner);
 	
 	// warm-up resize()
 	resizeAMCBaneer(WIN_WIDTH, WIN_HEIGHT);
@@ -456,7 +459,7 @@ int initializeForVideo(void)
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
 
 	perspectiveProjectionMatrix_AMCBanner = mat4::identity();
-
+	LOG("File Read.  \n");
 	return(0);
 }
 
@@ -538,14 +541,14 @@ void display(void)
 	if (!gTaskFinished.load()) // Navras init not complete yet
     {
 		videoUniform = useFSVQuadShader();
-		displayVideoEffect(&videoUniform); // show video
+		displayVideoEffect(&videoUniform, &frame_data_banner, texture_amc_banner); // show video
 		glUseProgram(0);
 	}
 	else
 	{
 		if (ghrc_AMC_Video)
 		{
-			uninitializeVideoEffect();
+			uninitializeVideoEffect(amcBanner, &frame_data_banner, texture_amc_banner);
 			wglDeleteContext(ghrc_AMC_Video);
 			ghrc_AMC_Video = NULL;
 			if (ghrc)
@@ -576,7 +579,7 @@ void update(void)
 	}
 	else
 	{
-		updateVideoEffect();
+		updateVideoEffect(amcBanner, &frame_data_banner);
 	}
 #else
 	updateNavras();

@@ -16,6 +16,7 @@
 #include "../../inc/shaders/ParticleShader.h"
 #include "../../inc/shaders/SSAOShader.h"
 #include "../../inc/shaders/FontShader.h"
+#include "../../inc/shaders/FSVQuadShader.h"
 
 
 bool initAllShaders(void)
@@ -53,11 +54,12 @@ bool initAllShaders(void)
         return false;
     }
     
-    // if(initializeFSQuadShader() != 0)
-    // {
-    //     return false;
-    // }
-
+#ifndef ENABLE_MULTI_THREADING
+    if(initializeFSVQuadShader() != 0)
+    {
+         return false;
+    }
+#endif
     if (initializeGodraysShader() != 0)
     {
         return false;
@@ -118,6 +120,9 @@ bool initAllShaders(void)
 void uninitializeAllShaders(void)
 {
     // Code
+    uninitializeFSQuadShader();
+    uninitialize_horrizontalBlurShader();
+    uninitialize_verticalBlurShader();
     uninitializeParticleShader();
     uninitializeBillboardingShader();
     uninitializeWaterShader();
@@ -130,5 +135,8 @@ void uninitializeAllShaders(void)
     uninitializeCloudNoiseShader();
     uninitializeAtmosphereShader();
     uninitializeSSAOShader();
+#ifndef ENABLE_MULTI_THREADING
+    uninitializeFSVQuadShader();
+#endif
 }
 
