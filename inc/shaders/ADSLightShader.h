@@ -55,6 +55,8 @@ struct ADSUniform
     GLuint blackOrWhiteRoomMixDeltaUniform;
     GLuint ssaoIntensityDeltaUniform;
 
+    GLuint colorCorrectionUniform;
+
 };
 
 int initializeADSShader(void);

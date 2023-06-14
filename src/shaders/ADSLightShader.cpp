@@ -219,6 +219,8 @@ int initializeADSShader(void)
 		"uniform float u_blackOrWhiteRoomMixDelta; \n" \
 		"uniform float u_ssaoIntensityDelta; \n" \
 
+		"uniform float u_colorCorrection; \n" \
+
 		"out vec4 FragColor; \n" \
 		"out vec4 normal_depth; \n" \
 
@@ -291,7 +293,7 @@ int initializeADSShader(void)
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
 					"phong_ads_light = (ambient + diffuse + specular); \n" \
 					
-					"FragColor = mix((texColor + phong_ads_light), vec4(u_blackOrWhiteRoom), u_blackOrWhiteRoomMixDelta); \n" \
+					"FragColor = mix(((texColor - vec4(u_colorCorrection)) + phong_ads_light), vec4(u_blackOrWhiteRoom), u_blackOrWhiteRoomMixDelta); \n" \
 
 
 		//	        "FragColor = mix(texture(u_textureSampler1,a_texcoord_out),texture(u_textureSampler2,a_texcoord_out),u_alphaBlending); \n" \
@@ -435,6 +437,8 @@ int initializeADSShader(void)
 	adsUniform.blackOrWhiteRoomUniform = glGetUniformLocation(adsShaderProgramObject, "u_blackOrWhiteRoom");
 	adsUniform.blackOrWhiteRoomMixDeltaUniform = glGetUniformLocation(adsShaderProgramObject, "u_blackOrWhiteRoomMixDelta");
 	adsUniform.ssaoIntensityDeltaUniform = glGetUniformLocation(adsShaderProgramObject, "u_ssaoIntensityDelta");
+
+	adsUniform.colorCorrectionUniform = glGetUniformLocation(adsShaderProgramObject, "u_ssaoIntensityDelta");
 
 	glUseProgram(adsShaderProgramObject);
     glUniform1i(adsUniform.textureSamplerUniform_diffuse, 0);

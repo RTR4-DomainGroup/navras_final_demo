@@ -183,6 +183,8 @@ void displayScene12_Hasya(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
 	
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);

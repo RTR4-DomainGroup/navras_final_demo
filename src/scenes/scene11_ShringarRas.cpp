@@ -393,11 +393,11 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//LOG("%f\n", varY);
 
 	//rotateCamera(0.0f, 0.8f, -12.85f, cameraRadius_shringar, cameraAngle_shringar);
-	rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
+	//rotateCamera(0.0f, 0.6f, -15.0f, cameraRadius_shringar, cameraAngle_shringar);
 	//lookAt([0.00, 1.25, 6.00], [0.00, 1.25, 0.00] [0.00, 1.00, 0.00])
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	//setCamera(&camera);
-	//displayCamera();
+	displayCamera();
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -680,6 +680,8 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
+
+	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.4f);
 
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
