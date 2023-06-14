@@ -252,7 +252,7 @@ void displayScene5_karun(void)
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
 	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -278,7 +278,7 @@ void displayScene5_karun(void)
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
 	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -304,7 +304,7 @@ void displayScene5_karun(void)
 	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -355,7 +355,7 @@ void displayScene5_karun(void)
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
 	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-	
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -378,7 +378,7 @@ void displayScene5_karun(void)
 	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
 	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);

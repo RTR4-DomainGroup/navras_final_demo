@@ -44,19 +44,7 @@ GLuint cameraHasyaUpdate = 1;
 int initializeScene12_Hasya(void)
 {
 
-#ifdef ENABLE_MASKSQUADS
-	if (LoadGLTexture_UsingSOIL(&texture_hasyaMask, TEXTURE_DIR"Masks/HasyaMask.jpg") == FALSE)
-	{
-		//uninitialize();
-		LOG("LoadGLTexture for texture_hasyaMask FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("LoadGLTexture texture_hasyaMask Successfull = %u!!!\n", texture_hasyaMask);
-	}
-	initializeQuad();
-#endif
+initializeQuad();
 
 #ifdef ENABLE_STATIC_MODELS
 // 	// function declarations
@@ -66,7 +54,6 @@ int initializeScene12_Hasya(void)
 	
 
 #endif // ENABLE_STATIC_MODELS
-
 //	glEnable(GL_TEXTURE_2D);
 	return 0;
 }

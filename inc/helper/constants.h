@@ -40,8 +40,7 @@
 #define COLR_MAX (255)
 
 #define NO_OF_INSTANCES 50
-#define NO_OF_INSTANCES_DESK 6
-#define NO_OF_INSTANCES_SHELF 2
+
 
 #define X_INCREMENT 2.0f
 #define X_INCREMENT_SHELF 0.0f
@@ -49,7 +48,6 @@
 #define Z_INCREMENT -2.5f
 
 #define X_SEPARTION_OFFSET 0.5f
-#define X_SEPARTION_OFFSET_SHELF 80.0f
 #define Y_SEPARTION_OFFSET 0.0f
 #define Z_SEPARTION_OFFSET 0.0f
 
