@@ -183,6 +183,10 @@ static bool timeFlag = true;
 static time_t now;
 static time_t then;
 
+static bool timeFlag1 = true;
+static time_t now1;
+static time_t then1;
+
 extern float mix_intensity;
 
 extern int windowWidth;
@@ -654,31 +658,31 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_outdoor);
 
-		if(getCurrentScene() == SCENE06_BHAYANK_RAS)
+		if(getCurrentScene() == SCENE06_BHAYANK_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_BhayanakRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
-		else if(getCurrentScene() == SCENE08_BIBHATSA_RAS)
+		else if(getCurrentScene() == SCENE08_BIBHATSA_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_BibhastaRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
-		else if(getCurrentScene() == SCENE09_VEER_RAS)
+		else if(getCurrentScene() == SCENE09_VEER_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_VeerRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
-		else if(getCurrentScene() == SCENE10_ADBHUT_RAS)
+		else if(getCurrentScene() == SCENE10_ADBHUT_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_AdbhutRas, texture_shringarRas, noise_texture_eroded_outdoor);
 
 		}
-		else if(getCurrentScene() == SCENE11_SHRINGAR_RAS)
+		else if(getCurrentScene() == SCENE11_SHRINGAR_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_ShringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
@@ -1145,26 +1149,40 @@ void updateScene_PlaceHolderOutdoor(void)
 		offset_ras_outdoor[2] = 0.17f;
 	}
 
+
+
 	if (((getCurrentScene() == SCENE06_BHAYANK_RAS) ||
 		(getCurrentScene() == SCENE08_BIBHATSA_RAS) ||
 		(getCurrentScene() == SCENE09_VEER_RAS) ||
 		(getCurrentScene() == SCENE10_ADBHUT_RAS) ||
-		(getCurrentScene() == SCENE11_SHRINGAR_RAS)) && 
+		(getCurrentScene() == SCENE11_SHRINGAR_RAS)) &&
 		isBlur == true)
 	{
-		// offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
-		// offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
-		// offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
-		offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.0015f;
-		offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.0015f;
-		offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.0015f;
-		if (offset_ras_outdoor[2] > 0.48f)
+
+		if (timeFlag1)
 		{
-			offset_ras_outdoor[0] = 0.48f;
-			offset_ras_outdoor[1] = 0.48f;
-			offset_ras_outdoor[2] = 0.48f;
+			then1 = time(NULL);
+			timeFlag1 = false;
+		}
+
+		now1 = time(NULL);
+		if (now1 >= (then1 + 5))
+		{
+			// offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
+			// offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
+			// offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
+			offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.0015f;
+			offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.0015f;
+			offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.0015f;
+			if (offset_ras_outdoor[2] > 0.48f)
+			{
+				offset_ras_outdoor[0] = 0.48f;
+				offset_ras_outdoor[1] = 0.48f;
+				offset_ras_outdoor[2] = 0.48f;
+			}
 		}
 	}
+
 #endif // ENABLE_MASKS
 
 if(isBlur){
