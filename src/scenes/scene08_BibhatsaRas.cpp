@@ -479,7 +479,7 @@ void setCameraScene08(void)
 {
 	if (isInitialDisplayScene08_BibhatsaRas == true)
 	{
-		setCamera(5.25f, 0.0f, 99.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(5.4f, 0.0f, 100.0f, 5.4f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene08_BibhatsaRas = false;
 	}
 }
@@ -1347,7 +1347,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.5f, -3.65f, zTranslateWalk));
 		glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.025f, 0.025f, 0.025f));
-		glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 50.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 3.14159f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		//update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
 		glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
@@ -1372,7 +1372,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 0.7f);
 
 		glUseProgram(0);
 
@@ -1405,19 +1405,19 @@ void updateScene08_BibhatsaRas(void)
 	//cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
 	
 	cameraEyeZ -= 0.05f;
-	if (cameraEyeZ <= -33.25f)
-		cameraEyeZ = -33.25f;
+	if (cameraEyeZ <= 35.0f)
+		cameraEyeZ = 35.0f;
 
 	cameraCenterZ -= 0.05f;
-	if (cameraCenterZ <= -39.25f)
-		cameraCenterZ = -39.25f;
+	if (cameraCenterZ <= -65.0f)
+		cameraCenterZ = -65.0f;
 
 #endif // ENABLE_CAMERA_ANIMATION
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	zTranslateWalk = zTranslateWalk - 0.05f;
-	if (zTranslateWalk <= -50.0)
-		zTranslateWalk = -50.0f;
+	if (zTranslateWalk <= 20.0f)
+		zTranslateWalk = 20.0f;
 #endif // ENABLE_DYNAMIC_MODELS
 
 }
