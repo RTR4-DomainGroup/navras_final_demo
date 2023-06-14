@@ -189,7 +189,9 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		setCamera(0.15f, 0.75f, 4.75f, 0.15f, 0.75f, -1.25f, 0.00f, 1.00f, 0.00f);
+		//setCamera(0.15f, 0.75f, 4.75f, 0.15f, 0.75f, -1.25f, 0.00f, 1.00f, 0.00f);
+		//lookAt(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f)
+		setCamera(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
 }
@@ -531,13 +533,28 @@ void updateScene06_BhayanakRas(void)
 {
 	// Code
 
-	cameraAngle += 1.5f;
-	if(cameraAngle >= 1170.0f)
-		cameraAngle =1170.0f;
+	//cameraAngle += 1.5f;
+	//if(cameraAngle >= 1170.0f)
+	//	cameraAngle =1170.0f;
 
-	cameraRadius -= 0.01f;
-	if (cameraRadius <= 3.75f)
-		cameraRadius = 3.75f;
+	//cameraRadius -= 0.01f;
+	//if (cameraRadius <= 3.75f)
+	//	cameraRadius = 3.75f;
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	// lookAt(1.10f, 0.50f, 1.35f, -248.55f, 0.50f, -262.28f, 0.00f, 1.00f, 0.00f)
+	// lookAt(1.05f, 0.40f, 1.25f, -248.60f, 0.40f, -262.38f, 0.00f, 1.00f, 0.00f)
+	// lookAt(0.70f, 0.25f, 0.95f, -248.95f, 0.25f, -262.68f, 0.00f, 1.00f, 0.00f)
+	cameraEyeX = preciselerp(cameraEyeX, 0.70f, 0.002f);
+	cameraEyeY = preciselerp(cameraEyeY, 0.25f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.95f, 0.002f);
+
+	cameraCenterX = preciselerp(cameraCenterX, -248.95f, 0.002f);
+	cameraCenterY = preciselerp(cameraCenterY, 0.25f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -262.68f, 0.002f);
+
+#endif // ENABLE_CAMERA_ANIMATION
+
 
 #ifdef ENABLE_WATER
 
