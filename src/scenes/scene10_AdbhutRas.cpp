@@ -38,6 +38,7 @@
 #include "../../inc/shaders/BillboardingShader.h"
 #endif // ENABLE_BILLBOARDING
 
+
 //#ifdef ENABLE_ATMOSPHERE
 //#include "../../inc/shaders/AtmosphereShader.h"
 //#include "../../inc/effects/AtmosphereEffect.h"
@@ -59,61 +60,44 @@
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 #endif // ENABLE_DYNAMIC_MODELS
 
-#ifdef ENABLE_GAUSSIAN_BLUR
-#include "../../inc/effects/GaussianBlurEffect.h"
-#endif // ENABLE_GAUSSIAN_BLUR
-
-
 #include "../../inc/scenes/scene10_AdbhutRas.h"
 
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
-extern TEXTURE texture_grass;
-extern TEXTURE texture_flower;
-
-extern struct ADSUniform sceneOutdoorADSStaticUniform;
-extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
+static struct ADSUniform sceneOutdoorADSStaticUniform;
+static struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 
 #ifdef ENABLE_TERRIAN
-extern struct TerrainUniform terrainUniform;
+static struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
-float cloudMyScaleAdbhutRas = 1.0f;
-float cloudNoiseScaleAdbhutRas = 2.0f;
-bool cloudNoiseScaleIncrementAdbhutRas = true;
-GLuint noise_texture_adbhut_ras;
-GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+static struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
+static float cloudMyScaleAdbhutRas = 1.0f;
+static float cloudNoiseScaleAdbhutRas = 2.0f;
+static bool cloudNoiseScaleIncrementAdbhutRas = true;
+static GLuint noise_texture_adbhut_ras;
+static GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+static GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 #endif // ENABLE_CLOUD_NOISE
 
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
-extern struct BillboardingUniform billboardingEffectUniform;
-extern GLuint frameTime; // = 0;
+static TEXTURE texture_flower;
+static struct BillboardingUniform billboardingEffectUniform;
+static GLuint frameTime; // = 0;
 #endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 // Water Related Variables
-extern struct WaterUniform waterUniform;
-extern struct TextureVariables waterTextureVariables;
-extern struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
-extern struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+static struct WaterUniform waterUniform;
+static struct TextureVariables waterTextureVariables;
+static struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
+static struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
 #endif // ENABLE_WATER
-
-#ifdef ENABLE_GAUSSIAN_BLUR
-// Gaussian Blur related variables
-extern struct GaussianBlurEffect gaussianBlurEffect;
-extern struct HorrizontalBlurUniform horizontalBlurUniform;
-extern struct VerticalBlurUniform verticalBlurUniform;
-extern struct FrameBufferDetails fullSceneFbo;
-extern struct FSQuadUniform fsGaussBlurQuadUniform;
-#endif // ENABLE_GAUSSIAN_BLUR
-
 
 //#ifdef ENABLE_ATMOSPHERE
 //// Atmosphere Scattering
@@ -124,7 +108,7 @@ extern struct FSQuadUniform fsGaussBlurQuadUniform;
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
-extern mat4 lightSpaceMatrix;
+static mat4 lightSpaceMatrix;
 #endif // ENABLE_SHADOW
 
 extern GLfloat waterHeight; // = 0.0f;
@@ -132,23 +116,8 @@ extern GLfloat moveFactor; // = 0.0f;
 extern GLfloat planeReflection[]; // = { 0.0f, 1.0f, 0.0f, -waterHeight };
 extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight }; 
 
-extern GLfloat angleCube;
-
 extern mat4 perspectiveProjectionMatrix;
 
-
-#ifdef ENABLE_SKYBOX
-// Variables For Skybox
-extern GLuint texture_skybox;
-extern struct SkyboxUniform sceneSkyBoxUniform;
-#endif // ENABLE_SKYBOX
-
-#ifdef ENABLE_STARFIELD
-// Variables For Starfieldx
-extern GLuint texture_star; 
-extern double deltaTime;
-extern struct StarfieldUniform sceneStarfieldUniform;
-#endif // ENABLE_STARFIELD
 
 extern GLfloat density; // = 0.15;
 extern GLfloat gradient; // = 0.5;
@@ -193,16 +162,16 @@ static bool stopCameraRotation = false;
 
 static int activeObject = 0;
 
-quad_instancing_buffers_t instBuffers_leftflowers;
-quad_instancing_buffers_t instBuffers_rightflowers;
+static quad_instancing_buffers_t instBuffers_leftflowers;
+static quad_instancing_buffers_t instBuffers_rightflowers;
 
-float distance10;
+static float distance10;
 
-bool isInitialDisplay_Scene10AdbhutRas = true;
+static bool isInitialDisplay_Scene10AdbhutRas = true;
 
-GLuint texture_adbhutMask;
+static GLuint texture_adbhutMask;
 
-mat4 finalViewMatrix = mat4::identity();
+static mat4 finalViewMatrix = mat4::identity();
 
 // static float leaf_translate = 1.5f;
 static float leaf_translate = 0.35f;
@@ -219,7 +188,6 @@ struct line {
 };
 
 bool checkInside(Point poly[], int n, Point p);
-
 
 int initializeScene10_AdbhutRas(void)
 {
@@ -300,6 +268,13 @@ int initializeScene10_AdbhutRas(void)
 
 	void generate_instance_positions(float instance_positions[], int numInstances, Point bondryPolygone[], int numPoints) ;
 
+	char imagefile[64] = {};
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower5.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
+	{
+		LOG("Texture loading failed for image %s\n", imagefile);
+		return (-6);
+	}
 
 	
 	GLfloat instance_positions[BB_NO_OF_INSTANCES * 4] = {};
@@ -680,13 +655,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-#ifdef ENABLE_FOG
-	glUniform1i(terrainUniform.fogEnableUniform, 1);
-	glUniform1f(terrainUniform.densityUniform, density);
-	glUniform1f(terrainUniform.gradientUniform, gradient);
-	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
-#endif // DEBUG - ENABLE_FOG
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
 
@@ -870,10 +838,10 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	// ------ Bridge Model ------
 	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
+	modelMatrix = mat4::identity();
 
 	translationMatrix = vmath::translate(-4.99f, -1.63f, -36.50f);
 	scaleMatrix = vmath::scale( 4.21f,  4.21f,  4.21f);
@@ -1062,9 +1030,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
 		glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
-		/// /////////////////////////
+		/// /////////////////////////////
 		/// Flower on left side of river
-		/// /////////////////////////
+		/// /////////////////////////////
 		/// 
 
 		// instanced quads with grass texture
@@ -1165,8 +1133,6 @@ void updateScene10_AdbhutRas(void)
 	// cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.002f);
 	// cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.002f);
 
-
-
 // (20.26f, -1.11f, -4.41f, 20.26f, -1.11f, -10.41f, 0.00f, 1.00f, 0.00f)
 // (4.72f, -1.11f, -28.46f, 4.72f, -1.11f, -34.46f, 0.00f, 1.00f, 0.00f)
 // (2.87f, -1.11f, -34.75f, -241.36f, -1.11f, -268.55f, 0.00f, 1.00f, 0.00f)
@@ -1261,6 +1227,14 @@ void uninitializeScene10_AdbhutRas(void)
 #ifdef ENABLE_BILLBOARDING
     uninitializeInstancedQuads(instBuffers_rightflowers);
     uninitializeInstancedQuads(instBuffers_leftflowers);
+
+	// texture
+    if(texture_flower.id)
+    {
+        glDeleteTextures(1, &texture_flower.id);
+        texture_flower.id = 0;
+    }
+
 #endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_TERRIAN
