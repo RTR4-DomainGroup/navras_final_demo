@@ -130,6 +130,12 @@ void displayScene12_Hasya(void)
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomUniform, 1.0f);
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
+
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
+
 #ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
 	translationMatrix = mat4::identity();
