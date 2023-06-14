@@ -118,6 +118,7 @@ bool sceneFadeOut = false;
 
 #ifdef ENABLE_ATMOSPHERE
 extern AtmosphericVariables atmosVariables;
+extern AtmosphericVariables atmosVariables_10;
 extern AtmosphericVariables atmosVariables_11;
 #endif
 
@@ -192,96 +193,96 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		 case '1':
 		 case '!':
 		 	if (wParam == '!')
-		 		atmosVariables_11.m_Kr = max(0.0f, atmosVariables_11.m_Kr - 0.0001f);
+		 		atmosVariables_10.m_Kr = max(0.0f, atmosVariables_10.m_Kr - 0.0001f);
 		 	else
-		 		atmosVariables_11.m_Kr += 0.0001f;
-		 	atmosVariables_11.m_Kr4PI = atmosVariables_11.m_Kr * 4.0f * M_PI;
+		 		atmosVariables_10.m_Kr += 0.0001f;
+		 	atmosVariables_10.m_Kr4PI = atmosVariables_10.m_Kr * 4.0f * M_PI;
 		 	break;
 
 		 case '2':
 		 case '@':
 		 	if (wParam == '@')
-		 		atmosVariables_11.m_Km = max(0.0f, atmosVariables_11.m_Km - 0.0001f);
+		 		atmosVariables_10.m_Km = max(0.0f, atmosVariables_10.m_Km - 0.0001f);
 		 	else
-		 		atmosVariables_11.m_Km += 0.0001f;
-		 	atmosVariables_11.m_Km4PI = atmosVariables_11.m_Km * 4.0f * M_PI;
+		 		atmosVariables_10.m_Km += 0.0001f;
+		 	atmosVariables_10.m_Km4PI = atmosVariables_10.m_Km * 4.0f * M_PI;
 		 	break;
 
 		 case '3':
 		 case '#':
 		 	if (wParam == '#')
-		 		atmosVariables_11.m_g = max(-1.0f, atmosVariables_11.m_g - 0.001f);
+		 		atmosVariables_10.m_g = max(-1.0f, atmosVariables_10.m_g - 0.001f);
 		 	else
-		 		atmosVariables_11.m_g = min(1.0f, atmosVariables_11.m_g + 0.001f);
+		 		atmosVariables_10.m_g = min(1.0f, atmosVariables_10.m_g + 0.001f);
 		 	break;
 
 		 case '4':
 		 case '$':
 		 	if (wParam == '$')
-		 		atmosVariables_11.m_ESun = max(0.0f, atmosVariables_11.m_ESun - 0.1f);
+		 		atmosVariables_10.m_ESun = max(0.0f, atmosVariables_10.m_ESun - 0.1f);
 		 	else
-		 		atmosVariables_11.m_ESun += 0.1f;
+		 		atmosVariables_10.m_ESun += 0.1f;
 		 	break;
 
 		 case '5':
 		 case '%':
 		 	if (wParam == '%')
-		 		atmosVariables_11.m_fWavelength[0] = max(0.001f, atmosVariables_11.m_fWavelength[0] -= 0.001f);
+		 		atmosVariables_10.m_fWavelength[0] = max(0.001f, atmosVariables_10.m_fWavelength[0] -= 0.001f);
 		 	else
-		 		atmosVariables_11.m_fWavelength[0] += 0.001f;
-		 	atmosVariables_11.m_fWavelength4[0] = powf(atmosVariables_11.m_fWavelength[0], 4.0f);
+		 		atmosVariables_10.m_fWavelength[0] += 0.001f;
+		 	atmosVariables_10.m_fWavelength4[0] = powf(atmosVariables_10.m_fWavelength[0], 4.0f);
 		 	break;
 
 		 case '6':
 		 case '^':
 		 	if (wParam == '^')
-		 		atmosVariables_11.m_fWavelength[1] = max(0.001f, atmosVariables_11.m_fWavelength[1] -= 0.001f);
+		 		atmosVariables_10.m_fWavelength[1] = max(0.001f, atmosVariables_10.m_fWavelength[1] -= 0.001f);
 		 	else
-		 		atmosVariables_11.m_fWavelength[1] += 0.001f;
-		 	atmosVariables_11.m_fWavelength4[1] = powf(atmosVariables_11.m_fWavelength[1], 4.0f);
+		 		atmosVariables_10.m_fWavelength[1] += 0.001f;
+		 	atmosVariables_10.m_fWavelength4[1] = powf(atmosVariables_10.m_fWavelength[1], 4.0f);
 		 	break;
 
 		 case '7':
 		 case '&':
 		 	if (wParam == '&')
-		 		atmosVariables_11.m_fWavelength[2] = max(0.001f, atmosVariables_11.m_fWavelength[2] -= 0.001f);
+		 		atmosVariables_10.m_fWavelength[2] = max(0.001f, atmosVariables_10.m_fWavelength[2] -= 0.001f);
 		 	else
-		 		atmosVariables_11.m_fWavelength[2] += 0.001f;
-		 	atmosVariables_11.m_fWavelength4[2] = powf(atmosVariables_11.m_fWavelength[2], 4.0f);
+		 		atmosVariables_10.m_fWavelength[2] += 0.001f;
+		 	atmosVariables_10.m_fWavelength4[2] = powf(atmosVariables_10.m_fWavelength[2], 4.0f);
 		 	break;
 
 		 case '8':
 		 case '*':
 		 	if (wParam == '*')
-		 		atmosVariables_11.m_fExposure = max(0.1f, atmosVariables_11.m_fExposure - 0.1f);
+		 		atmosVariables_10.m_fExposure = max(0.1f, atmosVariables_10.m_fExposure - 0.1f);
 		 	else
-		 		atmosVariables_11.m_fExposure += 0.1f;
+		 		atmosVariables_10.m_fExposure += 0.1f;
 		 	break;
 
 		case '/':
 			LOG("-----------------------------------------------------------------------------------------------\n");
-			LOG("m_nSamples = %d\n", atmosVariables_11.m_nSamples);
-			LOG("m_Kr = %f\n", atmosVariables_11.m_Kr);
-			LOG("m_Kr4PI = %f\n", atmosVariables_11.m_Kr4PI);
-			LOG("m_Km = %f\n", atmosVariables_11.m_Km);
-			LOG("m_Km4PI = %f\n", atmosVariables_11.m_Km4PI);
-			LOG("m_ESun = %f\n", atmosVariables_11.m_ESun);
-			LOG("m_g = %f\n", atmosVariables_11.m_g);
-			LOG("m_fExposure = %f\n", atmosVariables_11.m_fExposure);
+			LOG("m_nSamples = %d\n", atmosVariables_10.m_nSamples);
+			LOG("m_Kr = %f\n", atmosVariables_10.m_Kr);
+			LOG("m_Kr4PI = %f\n", atmosVariables_10.m_Kr4PI);
+			LOG("m_Km = %f\n", atmosVariables_10.m_Km);
+			LOG("m_Km4PI = %f\n", atmosVariables_10.m_Km4PI);
+			LOG("m_ESun = %f\n", atmosVariables_10.m_ESun);
+			LOG("m_g = %f\n", atmosVariables_10.m_g);
+			LOG("m_fExposure = %f\n", atmosVariables_10.m_fExposure);
 			
-			LOG("m_fInnerRadius = %f\n", atmosVariables_11.m_fInnerRadius);
-			LOG("m_fOuterRadius = %f\n", atmosVariables_11.m_fOuterRadius);
-			LOG("m_fScale = %f\n", atmosVariables_11.m_fScale);
+			LOG("m_fInnerRadius = %f\n", atmosVariables_10.m_fInnerRadius);
+			LOG("m_fOuterRadius = %f\n", atmosVariables_10.m_fOuterRadius);
+			LOG("m_fScale = %f\n", atmosVariables_10.m_fScale);
 			
-			LOG("m_fWavelength[0] = %f\n", atmosVariables_11.m_fWavelength[0]);
-			LOG("m_fWavelength[1] = %f\n", atmosVariables_11.m_fWavelength[1]);
-			LOG("m_fWavelength[2] = %f\n", atmosVariables_11.m_fWavelength[2]);
-			LOG("m_fWavelength4[0] = %f\n", atmosVariables_11.m_fWavelength4[0]);
-			LOG("m_fWavelength4[1] = %f\n", atmosVariables_11.m_fWavelength4[1]);
-			LOG("m_fWavelength4[2] = %f\n", atmosVariables_11.m_fWavelength4[2]);
+			LOG("m_fWavelength[0] = %f\n", atmosVariables_10.m_fWavelength[0]);
+			LOG("m_fWavelength[1] = %f\n", atmosVariables_10.m_fWavelength[1]);
+			LOG("m_fWavelength[2] = %f\n", atmosVariables_10.m_fWavelength[2]);
+			LOG("m_fWavelength4[0] = %f\n", atmosVariables_10.m_fWavelength4[0]);
+			LOG("m_fWavelength4[1] = %f\n", atmosVariables_10.m_fWavelength4[1]);
+			LOG("m_fWavelength4[2] = %f\n", atmosVariables_10.m_fWavelength4[2]);
 
-			LOG("m_fRayleighScaleDepth = %f\n", atmosVariables_11.m_fRayleighScaleDepth);
-			LOG("m_fMieScaleDepth = %f\n", atmosVariables_11.m_fMieScaleDepth);
+			LOG("m_fRayleighScaleDepth = %f\n", atmosVariables_10.m_fRayleighScaleDepth);
+			LOG("m_fMieScaleDepth = %f\n", atmosVariables_10.m_fMieScaleDepth);
 			LOG("-----------------------------------------------------------------------------------------------\n");
 			break;
 
@@ -764,7 +765,7 @@ void displayNavras(void)
 		{
 			isGaussianBlurRequired = true;
 		}
-		isGodRequired = true;
+		isGodRequired = false;
 		isWaterRequired = true;
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
