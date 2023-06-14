@@ -526,12 +526,12 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE09
-	if (initializeScene09_VeerRas() != 0)
-	{
-		LOG("initializeScene09_VeerRas() FAILED !!!\n");
-		return (-8);
-	}
+	// // SCENE09
+	// if (initializeScene09_VeerRas() != 0)
+	// {
+	// 	LOG("initializeScene09_VeerRas() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
 	// SCENE10
 	if (initializeScene10_AdbhutRas() != 0)
@@ -574,7 +574,7 @@ int initializeNavras(void) {
 	// scenePush(SCENE12_HASYA_RAS);
 	// scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
-	scenePush(SCENE09_VEER_RAS);
+	// scenePush(SCENE09_VEER_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
 	// scenePush(SCENE07_RAUDRA_RAS);
 	// scenePush(SCENE06_BHAYANK_RAS);

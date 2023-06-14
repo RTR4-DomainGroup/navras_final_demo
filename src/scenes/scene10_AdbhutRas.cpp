@@ -66,7 +66,7 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
-static struct ADSUniform sceneOutdoorADSStaticUniform;
+static struct ADSUniform sceneOutdoorADSStaticUniform_10;
 static struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 
 #ifdef ENABLE_TERRIAN
@@ -673,40 +673,38 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
-	sceneOutdoorADSStaticUniform = useADSShader();
+	sceneOutdoorADSStaticUniform_10 = useADSShader();
+	//glUniform1f(sceneOutdoorADSStaticUniform_10.isInstanced, 0);
 
 	// Sending Light Related Uniforms
-	glUniform1i(sceneOutdoorADSStaticUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
-	// glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.lightingEnableUniform, 1);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.lsUniform, 1, lightSpecular);
+	// glUniform4fv(sceneOutdoorADSStaticUniform_10.lightPositionUniform, 1, lightPosition);
 	TRANFORM lightPos = { 104.0f, 103.0f, 3.0f, 1.0f };
 	// update_transformations(NULL, NULL, NULL, &lightPos);
 	vmath::vec4 lp = {lightPos.x, lightPos.y, lightPos.z, lightPos.w}; 
-	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lp);
-	glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
-	glUniform1f(sceneOutdoorADSStaticUniform.isInstanced, 0);
-
-	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.7f);
-
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.lightPositionUniform, 1, lp);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.materialShininessUniform, materialShininess);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.colorCorrectionUniform, 0.7f);
 
 	//normal mapping
-	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
-	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
-	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.fogEnableUniform, 0);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.densityUniform, density);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.gradientUniform, gradient);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.godrays_blackpass_sphere, 0);
 
     // once for all static models drawing
- 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+ 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	// ------ Rock Model ------
 	translationMatrix = mat4::identity();
@@ -728,17 +726,17 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1) {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
 	} else {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.depthSceneUniform, 0);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
@@ -761,7 +759,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(treeModel);
 
@@ -787,7 +785,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(leafModel);
 
@@ -809,7 +807,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(farmhouseModel);
 
@@ -831,7 +829,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(adbhutmanModel);
 
@@ -855,7 +853,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix *= vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(bridgeModel);
 
@@ -872,11 +870,11 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture_adbhutMask);
-	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.textureSamplerUniform_diffuse, 0);
 	displayQuad();
 #endif // ENABLE_MASKSQUADS
 

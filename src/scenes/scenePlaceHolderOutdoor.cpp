@@ -1169,8 +1169,7 @@ if(isBlur){
 	{
 		if(mix_intensity <= 1.0f)
 		{
-
-			LOG("mix_in = %f\n", mix_intensity);
+			// LOG("mix_in = %f\n", mix_intensity);
 			mix_intensity += 0.115f;
 			timeFlag = true;
 		}

@@ -818,7 +818,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
+		//glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		drawStaticModel(buildingTwoModel);
 		// ################################### Building Two LHS Set of 5 Left Front ###################################  
 
@@ -1309,6 +1309,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		{
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
+
+		glUniform1f(sceneOutdoorADSStaticUniform.isInstanced, 0);
 
 		// Un-use ShaderProgramObject
 		glUseProgram(0);
