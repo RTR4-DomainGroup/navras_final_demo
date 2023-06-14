@@ -647,7 +647,7 @@ void resizeNavras(int width, int height) {
 	// 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 5000.0f);
 
 }
 
@@ -791,7 +791,7 @@ void displayNavras(void)
 			isGaussianBlurRequired = true;
 		}
 		
-		displayScene12_Hasya();
+		displayScene_PlaceHolderIndoor(setCameraScene12_Hasya, displayScene12_Hasya, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene12);
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
@@ -882,6 +882,7 @@ void updateNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
+		updateScene12_Hasya();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
