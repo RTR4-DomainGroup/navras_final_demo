@@ -34,6 +34,10 @@ static bool timeFlag = true;
 static time_t now;
 static time_t then;
 
+static bool timeFlag1 = true;
+static time_t now1;
+static time_t then1;
+
 
 scene_types_t  getCurrentScene(void);
 
@@ -237,19 +241,19 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_indoor);
 
-		if (getCurrentScene() == SCENE05_KARUN_RAS)
+		if (getCurrentScene() == SCENE05_KARUN_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_KarunRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
-		else if (getCurrentScene() == SCENE07_RAUDRA_RAS)
+		else if (getCurrentScene() == SCENE07_RAUDRA_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_RaudraRas, texture_mask_indoor, noise_texture_eroded_indoor);
 
 		}
-		else if (getCurrentScene() == SCENE12_HASYA_RAS)
+		else if (getCurrentScene() == SCENE12_HASYA_RAS && now1 >= (then1 + 5))
 		{
 
 			drawCustomTextureStaticModel(maskModel_HasyaRas, texture_mask_indoor, noise_texture_eroded_indoor);
@@ -418,24 +422,39 @@ void updateScene_PlaceHolderIndoor(void)
 		offset_ras_indoor[2] = 0.17f;
 	}
 
+
 	if (((getCurrentScene() == SCENE05_KARUN_RAS) ||
 		(getCurrentScene() == SCENE07_RAUDRA_RAS) ||
 		(getCurrentScene() == SCENE12_HASYA_RAS)) &&
 		isBlurI == true)
 	{
-		// offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
-		// offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
-		// offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
-		offset_ras_indoor[0] = offset_ras_indoor[0] + 0.0015f;
-		offset_ras_indoor[1] = offset_ras_indoor[1] + 0.0015f;
-		offset_ras_indoor[2] = offset_ras_indoor[2] + 0.0015f;
-		if (offset_ras_indoor[2] > 0.48f)
+
+		if (timeFlag1)
 		{
-			offset_ras_indoor[0] = 0.48f;
-			offset_ras_indoor[1] = 0.48f;
-			offset_ras_indoor[2] = 0.48f;
+			then1 = time(NULL);
+			timeFlag1 = false;
+		}
+
+		now1 = time(NULL);
+		if (now1 >= (then1 + 5))
+		{
+
+			// offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
+			// offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
+			// offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
+			offset_ras_indoor[0] = offset_ras_indoor[0] + 0.0015f;
+			offset_ras_indoor[1] = offset_ras_indoor[1] + 0.0015f;
+			offset_ras_indoor[2] = offset_ras_indoor[2] + 0.0015f;
+			if (offset_ras_indoor[2] > 0.48f)
+			{
+				offset_ras_indoor[0] = 0.48f;
+				offset_ras_indoor[1] = 0.48f;
+				offset_ras_indoor[2] = 0.48f;
+			}
 		}
 	}
+
+	
 #endif // ENABLE_MASKS
 }
 
