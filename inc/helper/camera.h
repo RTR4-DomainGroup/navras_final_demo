@@ -35,8 +35,9 @@ void displayCamera(void);
 
 GLfloat impreciselerp(GLfloat, GLfloat, GLfloat);
 GLfloat preciselerp(GLfloat, GLfloat, GLfloat);
+void preciselerp_lookat(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX = 0.0f, GLfloat upY = 1.0f, GLfloat upZ = 0.0f);
 
-void rotateCamera(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat);
+void rotateCamera(GLfloat, GLfloat, GLfloat, GLfloat, GLfloat, bool centerYConfigured = true);
 void resetCamera(void);
 
 

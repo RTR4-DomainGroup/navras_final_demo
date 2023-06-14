@@ -5,6 +5,9 @@ struct FSQuadUniform
 {
     GLuint textureSamplerUniform1;
     GLuint textureSamplerUniform2;
+    GLuint textureSamplerUniform3;
+    GLuint singleTexture;
+    GLuint intensity;
 };
 
 

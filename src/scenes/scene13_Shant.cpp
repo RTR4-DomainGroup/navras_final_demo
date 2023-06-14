@@ -68,25 +68,29 @@ static STATIC_MODEL maskModel_shringarRas;
 static STATIC_MODEL maskModel_hasyaRas;
 static STATIC_MODEL maskModel_shantRas;
 
+static STATIC_MODEL shantaManModel;
+
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_EROSION
+bool startMaskAnimation = false;
+bool startCameraZoomToMan = false;
 struct ErosionNoiseUniform sceneErosionNoiseUniform;
-GLuint noise_texture_eroded;
+GLuint noise_texture_eroded[9];
 GLuint texture_Marble_Shant;
-float myScale_erosion = 2.0f;
+float myScale_erosion = 0.08f;
 float noiseScale_erosion = 2.0f;
 bool offsetIncrement = true;
 // Mask Textures
-GLuint texture_karunRas;
-GLuint texture_bhayanakRas;
-GLuint texture_raudraRas;
-GLuint texture_bibhatsaRas;
-GLuint texture_veerRas;
-GLuint texture_adbhutRas;
-GLuint texture_shringarRas;
-GLuint texture_hasyaRas;
-GLuint texture_shantRas;
+static GLuint texture_karunRas;
+static GLuint texture_bhayanakRas;
+static GLuint texture_raudraRas;
+static GLuint texture_bibhatsaRas;
+static GLuint texture_veerRas;
+static GLuint texture_adbhutRas;
+static GLuint texture_shringarRas;
+static GLuint texture_hasyaRas;
+static GLuint texture_shantRas;
 
 GLuint textures_masks[9];
 
@@ -108,6 +112,19 @@ GLfloat offset_ras[9][3] =
 bool isMaskQuadEnabled[9] = { true, true, true, true, true, true, true, true, true };
 
 GLfloat maskTranslationRadii[9] =
+{
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f
+};
+
+GLfloat maskTranslationRadiiY[9] =
 {
 	0.0f,
 	0.0f,
@@ -166,6 +183,7 @@ int initializeScene13_Shant(void)
 	loadStaticModel("res/models/masks/ShantaMask.obj", &maskModel_shantRas);
 
 	loadStaticModel("res/models/scene13_shanta/room/shantaRoom11.obj", &shantRoomModel);
+	loadStaticModel("res/models/scene13_shanta/man/tempShantaMan.obj", &shantaManModel);
 
 	initializeQuad();
 
@@ -380,15 +398,25 @@ int initializeScene13_Shant(void)
 
 	LOG("Shant Ras coming here in initialize 1\n");
 
-	model_masks[0] = maskModel_karunRas;
-	model_masks[1] = maskModel_bhayanakRas;
-	model_masks[2] = maskModel_raudraRas;
-	model_masks[3] = maskModel_bibhatsaRas;
+	//model_masks[0] = maskModel_karunRas;
+	//model_masks[1] = maskModel_bhayanakRas;
+	//model_masks[2] = maskModel_raudraRas;
+	//model_masks[3] = maskModel_bibhatsaRas;
+	//model_masks[4] = maskModel_veerRas;
+	//model_masks[5] = maskModel_adbhutRas;
+	//model_masks[6] = maskModel_shringarRas;
+	//model_masks[7] = maskModel_hasyaRas;
+	//model_masks[8] = maskModel_shantRas;
+
+	model_masks[0] = maskModel_shantRas;
+	model_masks[1] = maskModel_hasyaRas;
+	model_masks[2] = maskModel_shringarRas;
+	model_masks[3] = maskModel_adbhutRas;
 	model_masks[4] = maskModel_veerRas;
-	model_masks[5] = maskModel_adbhutRas;
-	model_masks[6] = maskModel_shringarRas;
-	model_masks[7] = maskModel_hasyaRas;
-	model_masks[8] = maskModel_shantRas;
+	model_masks[5] = maskModel_bibhatsaRas;
+	model_masks[6] = maskModel_raudraRas;
+	model_masks[7] = maskModel_bhayanakRas;
+	model_masks[8] = maskModel_karunRas;
 
 	LOG("Shant Ras coming here in initialize 2\n");
 
@@ -460,15 +488,18 @@ int initializeScene13_Shant(void)
 		LOG("LoadGLTexture Successfull = %u!!!\n", texture_Marble_Shant);
 	}
 
-	noise_texture_eroded = initializeErosion();
-	if (noise_texture_eroded == 0)
+	for (int i = 0; i < 9; i++)
 	{
-		LOG("initializeErosion() FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeErosion() Successfull!!!\n");
+		noise_texture_eroded[i] = initializeErosion();
+		if (noise_texture_eroded[i] == 0)
+		{
+			LOG("initializeErosion() FAILED for noise_texture_eroded[%d]!!!\n", i);
+			return(-1);
+		}
+		else
+		{
+			LOG("initializeErosion() Successfull for noise_texture_eroded[%d]!!!\n", i);
+		}
 	}
 #endif // ENABLE_EROSION
 
@@ -484,7 +515,8 @@ void setCameraScene13_ShantRas(void)
 		//setCamera(-0.70, 0.00, -1.85, -0.70, 0.00, -7.85, 0.0f, 1.0f, 0.0f);
 		// updated initial position
 		// lookAt(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f)
-		setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
+		// lookAt(-0.70f, 0.00f, -1.41f, -0.70f, 0.00f, -7.41f, 0.00f, 1.00f, 0.00f)
+		setCamera(-0.70f, 0.00f, -1.41f, -0.70f, 0.00f, -7.41f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene13_ShantRas = false;
 	}
 }
@@ -533,6 +565,13 @@ void displayScene13_Shant(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
+
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomUniform, 1.0f);
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
+
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
 
 	// ################################### ROOM ###################################  
 	translationMatrix = mat4::identity();
@@ -552,12 +591,43 @@ void displayScene13_Shant(void)
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
-	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE,perspectiveProjectionMatrix);
 
 	drawStaticModel(shantRoomModel);
 
+	// glUseProgram(0);
+	// ################################### ROOM ###################################
+	
+	// ################################### MAN ###################################  
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+	// ------ Room Model ------
+	//translationMatrix = vmath::translate(- 1.0f, -2.0f, -6.0f);
+	//translationMatrix = vmath::translate(-0.85f, -1.75f, -8.36f);
+	translationMatrix = vmath::translate(-0.85f, -1.75f, -8.06f);
+	scaleMatrix = vmath::scale(0.02f, 0.02f, 0.02f);
+	rotationMatrix_y = vmath::rotate(0.0f, 0.0f, 1.0f, 0.0f);
+
+	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix_y);
+	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
+
+	drawStaticModel(shantaManModel);
+
 	glUseProgram(0);
-	// ################################### ROOM ###################################  
+	// ################################### MAN ###################################
 
 	// ################################### MASK ###################################  
 	translationMatrix = mat4::identity();
@@ -695,7 +765,7 @@ void displayScene13_Shant(void)
 	//// Unuse the shaderProgramObject
 	//glUseProgram(0);
 
-	float angle = 0.0;
+	float angle = 30.0f;
 
 	glEnable(GL_TEXTURE_3D);
 	glEnable(GL_TEXTURE_2D);
@@ -709,9 +779,9 @@ void displayScene13_Shant(void)
 		modelMatrix = mat4::identity();
 
 		float xPos = maskTranslationRadii[i] * cos(angle * M_PI / 180.0);
-		float yPos = maskTranslationRadii[i] * sin(angle * M_PI / 180.0);
+		float yPos = maskTranslationRadiiY[i] * sin(angle * M_PI / 180.0);
 
-		translationMatrix = vmath::translate(xPos - 0.765f, yPos - 0.5f, -7.0f);
+		translationMatrix = vmath::translate(xPos - 0.765f /* - 0.08f*/, yPos - 0.5f - 0.8f, -8.06f);
 		scaleMatrix = vmath::scale(maskScales[i], maskScales[i], maskScales[i]);
 		modelMatrix = translationMatrix * scaleMatrix/* * rotationMatrix*/;
 
@@ -756,9 +826,9 @@ void displayScene13_Shant(void)
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras[i]);
 
 		if (isMaskQuadEnabled[i])
-			drawCustomTextureStaticModel(model_masks[i], textures_masks[i], noise_texture_eroded);
+			drawCustomTextureStaticModel(model_masks[i], textures_masks[i], noise_texture_eroded[i]);
 
-		angle = angle + 22.5f;
+		angle = angle + 15.0f;
 	}
 	glUseProgram(0);
 	glDisable(GL_TEXTURE_3D);
@@ -768,52 +838,74 @@ void displayScene13_Shant(void)
 
 void updateScene13_ShantRas(void)
 {
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	//setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
+	cameraEyeZ = preciselerp(cameraEyeZ, -2.75f, 0.01f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -8.75f, 0.01f);
+	if (cameraEyeZ <= -2.0f)
+		startMaskAnimation = true;
+	if (startCameraZoomToMan == true)
+	{
+		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
+		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
+		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.005f);
+		cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -18.51f, 0.005f);
+		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.005f);
+		cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -24.51f, 0.005f);
+	}
+#endif // ENABLE_CAMERA_ANIMATION
+
+	if (startMaskAnimation == true)
+	{
 #ifdef ENABLE_EROSION
-	// update Cloud
-	//if (offset_ras_1[0] <= 0.48f)
-	//	updateErosion(offsetIncrement, offset_ras_1, 0.001f);
 
-	//if (offset_ras_1[0] <= 0.33f)
-	//	updateErosion(offsetIncrement, offset_ras_2, 0.001f);
-
-	maskTranslationRadii[0] += 0.008f;
-	maskScales[0] += 0.0001f;
-	for (int i = 0; i < 9; i++)
-	{
-		if (maskTranslationRadii[i] >= 0.433f)
+		maskTranslationRadii[0] += 0.005f;
+		maskTranslationRadiiY[0] += 0.005f;
+		maskScales[0] += 0.00001f;
+		for (int i = 0; i < 9; i++)
 		{
-			maskTranslationRadii[i + 1] += 0.008f;
-			maskScales[i + 1] += 0.0001f;
+			//if (maskTranslationRadii[i] >= 0.433f)
+			if (maskTranslationRadiiY[i] >= 0.733f)
+			{
+				maskTranslationRadii[i + 1] += 0.005f;
+				maskTranslationRadiiY[i + 1] += 0.005f;
+				maskScales[i + 1] += 0.00001f;
+			}
+			if (maskTranslationRadii[i] >= 2.1f)
+				maskTranslationRadii[i] = 2.1f;
+
+			if (maskTranslationRadiiY[i] >= 2.1f)
+				maskTranslationRadiiY[i] = 2.1f;
+
+			//if (maskTranslationRadii[8] == 1.3f)
+			//	masksTransformationsComplete = true;
+
+			if (maskTranslationRadiiY[8] == 2.1f)
+				masksTransformationsComplete = true;
+
+			if (maskScales[i] >= 0.007f)
+				maskScales[i] = 0.007f;
 		}
-		if (maskTranslationRadii[i] >= 1.3f)
-			maskTranslationRadii[i] = 1.3;
 
-		if (maskTranslationRadii[8] == 1.3f)
-			masksTransformationsComplete = true;
-
-		//if (maskScales[i] >= 0.009375f)
-		//	maskScales[i] = 0.009375f;
-		if (maskScales[i] >= 0.005f)
-			maskScales[i] = 0.005f;
-
-		/*if (maskScales[i] >= 0.1125f)
-			maskScales[i + 1] += 0.01f;
-		if (maskScales[i] >= 0.25f)
-			maskScales[i] = 0.025f;*/
-	}
-
-	if (masksTransformationsComplete == true)
-	{
-		updateErosion(offsetIncrement, offset_ras[8], 0.005f);
-		for (int i = 8; i > -1; i--)
+		if (masksTransformationsComplete == true)
 		{
-			if (offset_ras[i][0] <= 0.33f)
-				updateErosion(offsetIncrement, offset_ras[i - 1], 0.005f);
-			if (offset_ras[i][0] <= 0.17f)
-				isMaskQuadEnabled[i] = false;
+			updateErosion(offsetIncrement, offset_ras[8], 0.002f);
+			for (int i = 8; i > -1; i--)
+			{
+				if (offset_ras[i][0] <= 0.40f)
+					updateErosion(offsetIncrement, offset_ras[i - 1], 0.002f);
+				if (offset_ras[i][0] <= 0.17f)
+					isMaskQuadEnabled[i] = false;
+				if (isMaskQuadEnabled[0] == false)
+					startCameraZoomToMan = true;
+			}
 		}
-	}
 #endif // ENABLE_EROSION
+	}
+
 
 }
 
@@ -822,7 +914,8 @@ void uninitializeScene13_Shant(void)
     //UNINIT models
 #ifdef ENABLE_STATIC_MODELS
 	unloadStaticModel(&shantRoomModel);
-	//unloadStaticModel(&maskModel);
+
+	unloadStaticModel(&shantaManModel);
 
 	unloadStaticModel(&maskModel_karunRas);
 	unloadStaticModel(&maskModel_bhayanakRas);
@@ -903,11 +996,15 @@ void uninitializeScene13_Shant(void)
 	}
 #ifdef ENABLE_EROSION
 	uninitializeErosion();
-	if (noise_texture_eroded)
+	for (int i = 0; i < 9; i++)
 	{
-		glDeleteTextures(1, &noise_texture_eroded);
-		noise_texture_eroded = 0;
+		if (noise_texture_eroded[i])
+		{
+			glDeleteTextures(1, &noise_texture_eroded[i]);
+			noise_texture_eroded[i] = 0;
+		}
 	}
+	
 #endif // ENABLE_EROSION
 }
 

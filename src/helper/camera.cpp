@@ -14,6 +14,11 @@ GLfloat cameraUpX;
 GLfloat cameraUpY;
 GLfloat cameraUpZ;
 
+
+// initial camera
+static Camera iCamera;
+
+
 // camera related variables for movement in scene during debugging
 float cameraCounterSideWays = 3.2f;
 float cameraCounterUpDownWays = 3.2f;
@@ -38,6 +43,8 @@ void setCamera(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloa
 	cameraUpX = upX;
 	cameraUpY = upY;
 	cameraUpZ = upZ;
+
+	iCamera = {{ cameraEyeX, cameraEyeY, cameraEyeZ }, { cameraCenterX, cameraCenterY, cameraCenterZ }, { cameraUpX, cameraUpY, cameraUpZ }};
 }
 
 void displayCamera(void)
@@ -50,17 +57,17 @@ void displayCamera(void)
 
 void resetCamera(void)
 {
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
+	cameraEyeX = iCamera.eye[0];
+	cameraEyeY = iCamera.eye[1];
+	cameraEyeZ = iCamera.eye[2];
 
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
+	cameraCenterX = iCamera.center[0];
+	cameraCenterY = iCamera.center[1];
+	cameraCenterZ = iCamera.center[2];
 
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
+	cameraUpX = iCamera.up[0];
+	cameraUpY = iCamera.up[1];
+	cameraUpZ = iCamera.up[2];
 
 	cameraCounterSideWays = 3.2f;
 	cameraCounterUpDownWays = 3.2f;
@@ -83,16 +90,34 @@ GLfloat preciselerp(GLfloat v0, GLfloat v1, GLfloat t)
 	return (1 - t) * v0 + t * v1;
 }
 
-void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat radius, GLfloat angle)
+void preciselerp_lookat(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ)
+{
+		cameraEyeX = preciselerp(cameraEyeX, eyeX, 0.002f);
+		cameraEyeY = preciselerp(cameraEyeY, eyeY, 0.002f);
+		cameraEyeZ = preciselerp(cameraEyeZ, eyeZ, 0.002f);
+
+		cameraCenterX = preciselerp(cameraCenterX, centerX, 0.002f);
+		cameraCenterY = preciselerp(cameraCenterY, centerY, 0.002f);
+		cameraCenterZ = preciselerp(cameraCenterZ, centerZ, 0.002f);
+
+		cameraUpX = upX;
+		cameraUpY = upY;
+		cameraUpZ = upZ;
+}
+
+void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat radius, GLfloat angle, bool centerYConfigured)
 {
 	// code
 	float angleRadian = angle * M_PI / 180.0f;
 	cameraEyeX = centerX + (radius * cos(angleRadian));
-	cameraEyeY = centerY;
+	if (centerYConfigured == true)
+		cameraEyeY = centerY;
+		
 	cameraEyeZ = centerZ + (radius * sin(angleRadian));
 
 	cameraCenterX = centerX;
-	cameraCenterY = centerY;
+	if (centerYConfigured == true)
+		cameraCenterY = cameraEyeY;
 	cameraCenterZ = centerZ;
 
 	camera.eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
