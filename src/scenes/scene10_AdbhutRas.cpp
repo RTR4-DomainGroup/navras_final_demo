@@ -600,6 +600,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
 		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
 
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
 
@@ -721,6 +722,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
 	glUniform1f(sceneOutdoorADSStaticUniform.isInstanced, 0);
+
+	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.7f);
+
 
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
