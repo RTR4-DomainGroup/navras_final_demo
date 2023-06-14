@@ -938,7 +938,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 		glUniform1f(waterUniform.moveFactorUniform, moveFactor);
 
 		glUniform1f(waterUniform.uniform_waveStrength, 0.04f);
-		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.0f, 1.0));
+		glUniform4fv(waterUniform.uniform_watercolor, 1, vec4(0.0f, 0.0f, 0.1f, 1.0));
 
 		glUniform1f(waterUniform.uniform_enable_godRays, godRays);
 

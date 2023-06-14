@@ -308,6 +308,7 @@ void displayScene07_Raudra()
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 
+
 	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.7f);
 	
 
