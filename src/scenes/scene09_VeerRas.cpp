@@ -474,6 +474,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
 	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
 
+	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.7f);
+
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 

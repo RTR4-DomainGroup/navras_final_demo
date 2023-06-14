@@ -791,7 +791,7 @@ void displayNavras(void)
 			isGaussianBlurRequired = true;
 		}
 		
-		displayScene12_Hasya();
+		displayScene_PlaceHolderIndoor(setCameraScene12_Hasya, displayScene12_Hasya, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene12);
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
