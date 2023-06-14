@@ -301,7 +301,8 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneIndoorFbo.textureWidth / fullSceneIndoorFbo.textureHeight,
 			0.1f, 1000.0f);
 		
-		displayPasses();
+		//displayPasses();
+		displaySSAO(&ssaoFrameBufferDetails);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		displayBlur();
