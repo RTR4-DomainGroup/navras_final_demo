@@ -90,7 +90,7 @@ int time_scene14 = 10;
 
 int blurTime = 3;
 #else
-int time_scene1 = 5;
+int time_scene1 = 45;
 int time_scene2 = 40;
 int time_scene3 = 40;
 int time_scene4 = 40;
@@ -104,6 +104,7 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
+int time_scene15 = 180;
 int blurTime = 10;
 #endif
 
@@ -111,6 +112,8 @@ int blurTime = 10;
 // Audio
 static bool audioFlag = true;
 
+// End Credit
+static bool isEndCreditsIntialized = false;
 //
 static scene_types_t currentScene = SCENE_INVALID;
 
@@ -362,18 +365,10 @@ int initializeNavras(void) {
 
 	// Code
 
-
 	// Here starts OpenGL code
-    // GLEW initialization
-    // codes related to PP requires Core profile
-    // if(glewInit() != GLEW_OK)
-    // {
-    //     LOG("Error: glewInit() failed\n");
-    //     return (-5);
-    // }
-
+    
 	// Print OpenGLInfo
-	printGLInfo();
+	//printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -386,7 +381,6 @@ int initializeNavras(void) {
         return (-6);
     }
 	
-
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
@@ -490,7 +484,11 @@ int initializeNavras(void) {
 	LOG("current scene changed: %d\n", currentScene);
 
 #else
-
+	if (initializeVideoEffect("res/videos/AMCBanner_60fps.mp4") != 0)
+	{
+		LOG("initializeScene00() FAILED !!!\n");
+		return (-8);
+	}
 	// SCENE02
 	if (initializeScene02_EarthAndSpace() != 0)
 	{
@@ -571,6 +569,7 @@ int initializeNavras(void) {
 	 }
 
 	scenePush(MAX_SCENES);
+	scenePush(SCENE15_END_CREDITS);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	scenePush(SCENE12_HASYA_RAS);
@@ -583,7 +582,7 @@ int initializeNavras(void) {
 	scenePush(SCENE06_BHAYANK_RAS);
 	scenePush(SCENE05_KARUN_RAS);
 	scenePush(SCENE02_EARTH_AND_SPACE);
-
+	scenePush(SCENE00_AMC_BANNER);
 	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
 
@@ -672,7 +671,13 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if ( currentScene == SCENE02_EARTH_AND_SPACE)
+	if (currentScene == SCENE00_AMC_BANNER)
+	{
+		audio(SCENE00_AMC_BANNER);
+		displayVideoEffect();
+		sceneTime(time_scene1);
+	}
+	else if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
@@ -808,6 +813,23 @@ void displayNavras(void)
 		displayParticle();
 		sceneTime(time_scene14);
 	}
+	else if (currentScene == SCENE15_END_CREDITS)
+	{
+		if (!isEndCreditsIntialized)
+		{
+			if(initializeVideoEffect("res/videos/EndCredits.mp4") != 0)
+			{
+				LOG("Unable to open End Credits Video. \n");
+				PostQuitMessage(-1);
+			}
+			isEndCreditsIntialized = true;
+		}
+		
+		audio(SCENE15_END_CREDITS);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		displayVideoEffect();
+		sceneTime(time_scene15);
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		//displayScene_PlaceHolderIndoor();
@@ -837,6 +859,10 @@ void updateNavras(void)
 	} 
 
 	// Call Scenes Update Here
+	if (currentScene == SCENE00_AMC_BANNER)
+	{
+		updateVideoEffect();
+	}
 	if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		updateScene_PlaceHolderOutdoor();
@@ -885,6 +911,10 @@ void updateNavras(void)
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
+	}
+	if (currentScene == SCENE15_END_CREDITS)
+	{
+		updateVideoEffect();
 	}	
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -977,6 +1007,7 @@ void uninitializeNavras(void) {
 	uninitializeScene02_EarthAndSpace();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene_PlaceHolderOutdoor();
+	uninitializeVideoEffect();
 	LOG("All scenes uninitialized\n");
 
 
