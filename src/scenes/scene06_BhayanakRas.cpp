@@ -279,6 +279,8 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 
+	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.5f);
+
 	//normal mapping
 	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
 
@@ -293,7 +295,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
 
 	modelMatrix = translationMatrix * scaleMatrix;
-
+	glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1)
 	{

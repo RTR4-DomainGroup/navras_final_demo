@@ -565,6 +565,13 @@ void displayScene13_Shant(void)
 	glUniform1i(sceneIndoorADSUniform.actualSceneUniform, 1);
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
+
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomUniform, 1.0f);
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
+
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
 
 	// ################################### ROOM ###################################  
 	translationMatrix = mat4::identity();
@@ -609,10 +616,13 @@ void displayScene13_Shant(void)
 
 	// update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix_y);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
-
+	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
+	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
 
 	drawStaticModel(shantaManModel);
 
