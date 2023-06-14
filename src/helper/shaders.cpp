@@ -16,7 +16,6 @@
 #include "../../inc/shaders/ParticleShader.h"
 #include "../../inc/shaders/SSAOShader.h"
 #include "../../inc/shaders/FontShader.h"
-#include "../../inc/shaders/GaussianBlurShader.h"
 
 
 bool initAllShaders(void)
@@ -75,11 +74,6 @@ bool initAllShaders(void)
     }
 
     if(intializeErosionNoiseShader() != 0)
-    {
-        return false;
-    }
-
-    if(initialize_gaussianBlur() != 0)
     {
         return false;
     }
