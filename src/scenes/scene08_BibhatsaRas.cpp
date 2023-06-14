@@ -129,7 +129,7 @@ STATIC_MODEL extraTrash6;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-static DYNAMIC_MODEL skeletonModel;
+DYNAMIC_MODEL beebhatsaManModel;
 #endif // ENABLE_STATIC_MODELS
 
 GLuint texture_road;
@@ -239,10 +239,11 @@ int initializeScene08_BibhatsaRas(void)
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
-	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/scene08-beebhatsa/man/beebhatsaManAnim.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &beebhatsaManModel);
+	//loadDynamicModel("res/models/exo/Walking.dae", &beebhatsaManModel);
+	loadDynamicModel("res/models/scene08-beebhatsa/man/beebhatsaManAnim.fbx", &beebhatsaManModel);
 #endif // ENABLE_DYNAMIC_MODELS
+
 
 	return 0;
 }
@@ -1372,7 +1373,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 0.7f);
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, beebhatsaManModel, 0.7f);
 
 		glUseProgram(0);
 
@@ -1415,9 +1416,16 @@ void updateScene08_BibhatsaRas(void)
 #endif // ENABLE_CAMERA_ANIMATION
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	zTranslateWalk = zTranslateWalk - 0.05f;
+
+
+	if(beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
+		zTranslateWalk = zTranslateWalk - 0.05f;
+
+
+
+	/*zTranslateWalk = zTranslateWalk - 0.05f;
 	if (zTranslateWalk <= 20.0f)
-		zTranslateWalk = 20.0f;
+		zTranslateWalk = 20.0f;*/
 #endif // ENABLE_DYNAMIC_MODELS
 
 }
@@ -1487,7 +1495,7 @@ void uninitializeScene08_BibhatsaRas(void)
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&skeletonModel);
+	unloadDynamicModel(&beebhatsaManModel);
 #endif
 	//uninitializeCamera(&camera);
 
