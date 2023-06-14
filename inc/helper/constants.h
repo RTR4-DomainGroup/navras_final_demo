@@ -94,7 +94,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-#define ENABLE_MULTI_THREADING
+// #define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -127,7 +127,7 @@ static const char *szAudios[] = {
 
 //#define ENABLE_MASKS
 
-#define ENABLE_SINGLE_SCENE
+// #define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
@@ -142,9 +142,9 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
-//#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
+#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
-#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
+// #define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDIS          // End Credits
 
 #else
