@@ -231,6 +231,8 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		
 		adsEarthAndSpaceUniform = useADSShader();
 
+		glUniform1f(adsEarthAndSpaceUniform.colorCorrectionUniform, 1.0f);
+
 		glUniform4fv(adsEarthAndSpaceUniform.laUniform, 1, lightAmbient);
 		glUniform4fv(adsEarthAndSpaceUniform.ldUniform, 1, lightDiffuse);
 		glUniform4fv(adsEarthAndSpaceUniform.lsUniform, 1, lightSpecular);

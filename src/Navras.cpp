@@ -65,6 +65,7 @@ int winHeight;
 
 // Indoor Gaussian Blur
 bool shouldSceneRaudraMaskAppear = false;
+extern float mix_intensity;
 
 // Time
 bool timeFlag = true;
@@ -569,7 +570,7 @@ int initializeNavras(void) {
 	scenePush(MAX_SCENES);
 	scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
-	////scenePush(SCENE12_HASYA_RAS);
+	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
 	scenePush(SCENE09_VEER_RAS);
@@ -647,7 +648,7 @@ void resizeNavras(int width, int height) {
 	// 
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 5000.0f);
 
 }
 
@@ -693,7 +694,7 @@ void displayNavras(void)
 		}
 
 		audio(SCENE05_KARUN_RAS);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
@@ -716,6 +717,8 @@ void displayNavras(void)
 	else if (currentScene == SCENE07_RAUDRA_RAS)
 	{
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene7) - 10);
+		
+		//shouldSceneRaudraMaskAppear = true;
 		
 		audio(SCENE07_RAUDRA_RAS);
 		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra, shouldSceneRaudraMaskAppear);
@@ -784,14 +787,8 @@ void displayNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		audio(SCENE12_HASYA_RAS);
-		isGaussianBlurRequired = false;
 		shouldSceneRaudraMaskAppear = now >= ((then + time_scene12) - 10);
-		if (shouldSceneRaudraMaskAppear)
-		{
-			isGaussianBlurRequired = true;
-		}
-		
-		displayScene12_Hasya();
+		displayScene_PlaceHolderIndoor(setCameraScene12_Hasya, displayScene12_Hasya, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene12);
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
@@ -882,6 +879,7 @@ void updateNavras(void)
 	else if (currentScene == SCENE12_HASYA_RAS)
 	{
 		updateScene_PlaceHolderIndoor();
+		updateScene12_Hasya();
 	}
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
@@ -916,6 +914,7 @@ void sceneTime(int scenetime){
 	{
 		then = time(NULL);
 		currentScene = scenePop();
+		mix_intensity = 0.0f;
 		LOG("current scene changed: %d\n", currentScene);
 
 		audioFlag = true;

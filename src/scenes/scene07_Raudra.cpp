@@ -306,6 +306,8 @@ void displayScene07_Raudra()
 	glUniform1i(sceneIndoorADSUniform.depthSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.depthQuadSceneUniform, 0);
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 1);
+
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.7f);
 	
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -1.0f);

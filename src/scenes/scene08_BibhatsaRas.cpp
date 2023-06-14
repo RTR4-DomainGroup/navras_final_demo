@@ -586,7 +586,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(bibhatsaRasObject.kaUniform, 1, GL_FALSE, materialAmbient_bibhatsa);
 		glUniformMatrix4fv(bibhatsaRasObject.kdUniform, 1, GL_FALSE, materialDiffuse_bibhatsa);
 		glUniformMatrix4fv(bibhatsaRasObject.ksUniform, 1, GL_FALSE, materialSpecular_bibhatsa);
-		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess_bibhatsa);		
+		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess_bibhatsa);	
+
+		glUniform1f(bibhatsaRasObject.colorCorrectionUniform, 0.7f);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_road);
@@ -708,6 +710,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse_bibhatsa);
 		glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular_bibhatsa);
 		glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess_bibhatsa);
+
+		glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.7f);
 
 		//normal mapping
 		glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
