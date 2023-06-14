@@ -35,6 +35,8 @@ extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
 extern TEXTURE texture_flower;
 
+GLfloat zTranslateWalk = 85.0f;
+
 extern struct ADSUniform sceneOutdoorADSStaticUniform;
 extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 
@@ -127,7 +129,7 @@ STATIC_MODEL extraTrash6;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-static DYNAMIC_MODEL skeletonModel;
+DYNAMIC_MODEL beebhatsaManModel;
 #endif // ENABLE_STATIC_MODELS
 
 GLuint texture_road;
@@ -237,10 +239,11 @@ int initializeScene08_BibhatsaRas(void)
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
-	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &beebhatsaManModel);
+	//loadDynamicModel("res/models/exo/Walking.dae", &beebhatsaManModel);
+	loadDynamicModel("res/models/scene08-beebhatsa/man/beebhatsaManAnim.fbx", &beebhatsaManModel);
 #endif // ENABLE_DYNAMIC_MODELS
+
 
 	return 0;
 }
@@ -477,7 +480,7 @@ void setCameraScene08(void)
 {
 	if (isInitialDisplayScene08_BibhatsaRas == true)
 	{
-		setCamera(0.0f, 0.0f, 99.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(5.4f, 0.0f, 100.0f, 5.4f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene08_BibhatsaRas = false;
 	}
 }
@@ -1343,13 +1346,15 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		// ------ Dancing Vampire Model ------
 
-		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
-		glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-		//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.5f, -3.65f, zTranslateWalk));
+		glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.025f, 0.025f, 0.025f));
+		glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 3.14159f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+		//update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
+		glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+
 		if (actualDepthQuadScene == 1)
 		{
 			glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
@@ -1368,7 +1373,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, beebhatsaManModel, 0.7f);
 
 		glUseProgram(0);
 
@@ -1401,14 +1406,27 @@ void updateScene08_BibhatsaRas(void)
 	//cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
 	
 	cameraEyeZ -= 0.05f;
-	if (cameraEyeZ <= -33.25f)
-		cameraEyeZ = -33.25f;
+	if (cameraEyeZ <= 35.0f)
+		cameraEyeZ = 35.0f;
 
 	cameraCenterZ -= 0.05f;
-	if (cameraCenterZ <= -39.25f)
-		cameraCenterZ = -39.25f;
+	if (cameraCenterZ <= -65.0f)
+		cameraCenterZ = -65.0f;
 
 #endif // ENABLE_CAMERA_ANIMATION
+
+#ifdef ENABLE_DYNAMIC_MODELS
+
+
+	if(beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
+		zTranslateWalk = zTranslateWalk - 0.05f;
+
+
+
+	/*zTranslateWalk = zTranslateWalk - 0.05f;
+	if (zTranslateWalk <= 20.0f)
+		zTranslateWalk = 20.0f;*/
+#endif // ENABLE_DYNAMIC_MODELS
 
 }
 
@@ -1477,7 +1495,7 @@ void uninitializeScene08_BibhatsaRas(void)
 
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	unloadDynamicModel(&skeletonModel);
+	unloadDynamicModel(&beebhatsaManModel);
 #endif
 	//uninitializeCamera(&camera);
 

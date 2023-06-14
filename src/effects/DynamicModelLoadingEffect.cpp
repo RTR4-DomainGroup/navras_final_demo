@@ -289,6 +289,12 @@ void Animator::PlayAnimation(Animation* pAnimation)
     m_CurrentTime = 0.0f;
 }
 
+float Animator::GetCurrentFrame()
+{
+    return m_CurrentTime;
+}
+
+
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;
