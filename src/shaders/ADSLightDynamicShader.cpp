@@ -282,7 +282,7 @@ int initializeADSDynamicShader(void)
 			"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
 		"		phong_ads_light = ambient + (1.0 - shadow) * (diffuse + specular); \n" \
 		
-		"		FragColor = phong_ads_light; \n" \
+		"		FragColor = texColor + phong_ads_light; \n" \
 
 		"		if (u_fogEnable == 1) \n" \
 		"		{ \n" \
