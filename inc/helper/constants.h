@@ -80,7 +80,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-#define ENABLE_MULTI_THREADING
+//#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -111,7 +111,7 @@ static const char *szAudios[] = {
 
 #define ENABLE_SSAO
 
-//#define ENABLE_MASKS
+#define ENABLE_MASKS
 
 //#define ENABLE_SINGLE_SCENE
 

@@ -498,12 +498,12 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE05
-	if (initializeScene5_karun() != 0)
-	{
-		LOG("initializeScene5_karun() FAILED !!!\n");
-		return (-8);
-	}
+	//// SCENE05
+	//if (initializeScene5_karun() != 0)
+	//{
+	//	LOG("initializeScene5_karun() FAILED !!!\n");
+	//	return (-8);
+	//}
 
 	// SCENE06
 	if (initializeScene06_BhayanakRas() != 0)
@@ -512,66 +512,66 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	//// SCENE07
-	if (initializeScene07_Raudra() != 0)
-	{
-		LOG("initializeScene7_Raudra() FAILED !!!\n");
-		return (-8);
-	}
+	////// SCENE07
+	//if (initializeScene07_Raudra() != 0)
+	//{
+	//	LOG("initializeScene7_Raudra() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	//// SCENE08
-	if (initializeScene08_BibhatsaRas() != 0)
-	{
-		LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
-		return (-8);
-	}
+	////// SCENE08
+	//if (initializeScene08_BibhatsaRas() != 0)
+	//{
+	//	LOG("initializeScene08_BibhatsaRas() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	// SCENE09
-	if (initializeScene09_VeerRas() != 0)
-	{
-		LOG("initializeScene09_VeerRas() FAILED !!!\n");
-		return (-8);
-	}
+	//// SCENE09
+	//if (initializeScene09_VeerRas() != 0)
+	//{
+	//	LOG("initializeScene09_VeerRas() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	// SCENE10
-	if (initializeScene10_AdbhutRas() != 0)
-	{
-		LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
-		return (-8);
-	}
+	//// SCENE10
+	//if (initializeScene10_AdbhutRas() != 0)
+	//{
+	//	LOG("initializeScene10_AdbhutRas() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	// SCENE11
-	if (initializeScene11_ShringarRas() != 0)
-	{
-		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
-		return (-8);
-	}
+	//// SCENE11
+	//if (initializeScene11_ShringarRas() != 0)
+	//{
+	//	LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	// SCENE12
-	if (initializeScene12_Hasya() != 0)
-	{
-		LOG("initializeScene12_Hasya() FAILED !!!\n");
-		return (-8);
-	}
+	//// SCENE12
+	//if (initializeScene12_Hasya() != 0)
+	//{
+	//	LOG("initializeScene12_Hasya() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	// SCENE13
-	if (initializeScene13_Shant() != 0)
-	{
-		LOG("initializeScene13_Shant() FAILED !!!\n");
-		return (-8);
-	}
+	//// SCENE13
+	//if (initializeScene13_Shant() != 0)
+	//{
+	//	LOG("initializeScene13_Shant() FAILED !!!\n");
+	//	return (-8);
+	//}
 
-	////LOG("initializeScene13_Shant() DONE !!!\n");
+	//////LOG("initializeScene13_Shant() DONE !!!\n");
 
-	// SCENE14
-	 if (initializeParticle() != 0)
-	 {
-	 	LOG("initializeParticle() FAILED !!!\n");
-	 	return (-8);
-	 }
+	//// SCENE14
+	// if (initializeParticle() != 0)
+	// {
+	// 	LOG("initializeParticle() FAILED !!!\n");
+	// 	return (-8);
+	// }
 
 	scenePush(MAX_SCENES);
-	scenePush(SCENE14_PARTICLE);
+	/*scenePush(SCENE14_PARTICLE);
 	scenePush(SCENE13_SHANT_RAS);
 	scenePush(SCENE12_HASYA_RAS);
 	scenePush(SCENE11_SHRINGAR_RAS);
@@ -579,9 +579,9 @@ int initializeNavras(void) {
 	scenePush(SCENE09_VEER_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
 
-	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE07_RAUDRA_RAS);*/
 	scenePush(SCENE06_BHAYANK_RAS);
-	scenePush(SCENE05_KARUN_RAS);
+	/*scenePush(SCENE05_KARUN_RAS); */
 	scenePush(SCENE02_EARTH_AND_SPACE);
 
 	currentScene = scenePop();

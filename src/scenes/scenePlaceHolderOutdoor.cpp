@@ -12,6 +12,7 @@
 #include "../../inc/scenes/scenePlaceHolderOutdoor.h"
 #include "../../inc/Navras.h"
 #include "../../inc/effects/StaticModelLoadingEffect.h"
+#include "../../inc/scenes/fontRendering.h"
 
 
 #ifdef ENABLE_WATER
@@ -149,6 +150,8 @@ struct FrameBufferDetails fboGodRayPass;
 
 struct FrameBufferDetails fboEarthAndSpace;
 
+struct FrameBufferDetails fboFont;
+
 #ifdef ENABLE_MASKS
 // Masks
 static struct FrameBufferDetails fboMaskPass_Outdoor;
@@ -182,6 +185,7 @@ static bool isBlur = false;
 static bool timeFlag = true;
 static time_t now;
 static time_t then;
+GLfloat alpha = 0.0f;
 
 static bool timeFlag1 = true;
 static time_t now1;
@@ -492,6 +496,21 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 #endif // ENABLE_MASKS
 
+	fboFont.textureWidth = WIN_WIDTH;
+	fboFont.textureHeight = WIN_HEIGHT;
+
+	if (createFBO(&fboFont) == false)
+	{
+		LOG("Unable to create FBO for entire scene");
+		return (-8);
+	}
+
+	if (initializeFont() != 0)
+	{
+		LOG("initializeFont() FAILED in initializeScene02_EarthAndSpace in scene02_EarthAndSpace.cpp !!!\n");
+		return (-8);
+	}
+
 	return 0;
 }
 
@@ -700,6 +719,46 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif // ENABLE_MASKS
+
+	// Font
+	glBindFramebuffer(GL_FRAMEBUFFER, fboFont.frameBuffer);
+	glViewport(0, 0, (GLsizei)fboFont.textureWidth, (GLsizei)fboFont.textureHeight);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboFont.textureWidth / fboFont.textureHeight, 0.1f, 100.0f);
+
+	if (mix_intensity >  0.0f)
+	{
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		vec4 textColor = vec4(1.0f, 1.0f, 1.0f, alpha);
+		// TRANFORM vector = {-0.5f, 0.23f, -3.0f};
+		// update_transformations(NULL, NULL, NULL, &vector);
+		// displayFont("Presenting", vec3(vector.x, vector.y, vector.z), 0.003f, textColor);
+		displayFont("Presenting", vec3(-0.5f, 0.23f, -3.0f), 0.003f, textColor);
+
+
+		textColor = vec4(1.0f, 1.0f, 1.0f, alpha);
+		displayFont("NAVRAS", vec3(-1.25f, -0.25f, -3.0f), 0.010f, textColor);
+		// TRANFORM vector = {-1.25f, -0.25f, -3.0f};
+		// update_transformations(NULL, NULL, NULL, &vector);
+		// displayFont("NAVRAS", vec3(vector.x, vector.y, vector.z), 0.010f, textColor);
+
+
+		glDisable(GL_CULL_FACE);
+		glDisable(GL_BLEND);
+
+		// update
+		alpha = alpha + 0.001;
+		if (alpha >= 1.0)
+		{
+			alpha = 1.0f;
+		}
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
 	//
@@ -1036,6 +1095,20 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		}
 #endif
+
+		if (getCurrentScene() == SCENE02_EARTH_AND_SPACE) {
+
+			glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, fboFont.frameBufferTexture);
+			glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
+
+			displayQuad();
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+		}
+
+
 		glUseProgram(0);
 	}
 

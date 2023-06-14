@@ -80,6 +80,8 @@ int initializeFSQuadShader(void)
         "\n" \
         "uniform sampler2D u_textureSampler3;" \
         "\n" \
+        "uniform int maskOrFont;" \
+        "\n" \
         "out vec4 FragColor;" \
         "\n" \
 
@@ -94,7 +96,7 @@ int initializeFSQuadShader(void)
             "if(u_singleTexture == 1)\n" \
             "{\n" \
                 "FragColor = texture(u_textureSampler0, a_texcoord_out);\n" \
-                "if(FragColor.rgb == vec3(0.0f, 1.0f, 0.0f)) discard;\n" \
+                    "if(FragColor.rgb == vec3(0.0, 1.0, 0.0)) discard;\n" \
              "}\n" \
             "else if(u_singleTexture == 2)\n" \
             "{\n" \
@@ -208,6 +210,7 @@ int initializeFSQuadShader(void)
     fsQuadUniform.textureSamplerUniform4 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler3");
     fsQuadUniform.intensity  = glGetUniformLocation(fsQuadShaderProgramObject, "u_blurMixDelta");
+    fsQuadUniform.maskOrFont = glGetUniformLocation(fsQuadShaderProgramObject, "maskOrFont");
 
     return 0;
 }
