@@ -36,24 +36,11 @@
 #define Z_MIN_ROUDRA_SHELF (0.0f)
 #define Z_MAX (-3.0f)
 
-// Bibhatsa
-#define X_MIN_BR (-6.0f)
-#define X_MAX_BR (6.0f)
-
-#define Y_MIN_BR (-3.0f)
-#define Y_MAX_BR (0.0f)
-
-#define Z_MIN_BR (-14.5f)
-#define Z_MAX_BR (-9.0f)
-
-#define NO_OF_INSTANCES_KACHARA 200
-
 #define COLR_MIN (0)
 #define COLR_MAX (255)
 
 #define NO_OF_INSTANCES 50
-#define NO_OF_INSTANCES_DESK 6
-#define NO_OF_INSTANCES_SHELF 2
+
 
 #define X_INCREMENT 2.0f
 #define X_INCREMENT_SHELF 0.0f
@@ -61,7 +48,6 @@
 #define Z_INCREMENT -2.5f
 
 #define X_SEPARTION_OFFSET 0.5f
-#define X_SEPARTION_OFFSET_SHELF 80.0f
 #define Y_SEPARTION_OFFSET 0.0f
 #define Z_SEPARTION_OFFSET 0.0f
 
@@ -138,10 +124,10 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
 //#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
-//#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
+#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
-#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
+//#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
 //#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
