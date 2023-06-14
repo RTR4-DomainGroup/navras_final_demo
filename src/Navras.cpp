@@ -561,7 +561,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	////LOG("initializeScene13_Shant() DONE !!!\n");
+	//////LOG("initializeScene13_Shant() DONE !!!\n");
 
 	// SCENE14
 	 if (initializeParticle() != 0)
