@@ -128,7 +128,7 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
 //#define CURRENT_SCENE SCENE10_ADBHUT_RAS          // Adbhut Ras
 //#define CURRENT_SCENE SCENE11_SHRINGAR_RAS        // Shringar Ras
-//#define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
+// #define CURRENT_SCENE SCENE12_HASYA_RAS           // Hasya Ras
 //#define CURRENT_SCENE SCENE13_SHANT_RAS           // Shant Ras
 //#define CURRENT_SCENE SCENE14_PARTICLE            // Particle Simulation
 //#define CURRENT_SCENE SCENE15_END_CREDITS          // End Credits
