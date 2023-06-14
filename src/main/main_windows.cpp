@@ -545,6 +545,7 @@ void display(void)
 	{
 		if (ghrc_AMC_Video)
 		{
+			uninitializeVideoEffect();
 			wglDeleteContext(ghrc_AMC_Video);
 			ghrc_AMC_Video = NULL;
 			if (ghrc)
@@ -553,7 +554,7 @@ void display(void)
 				// make the rendering context as the current context
 				wglMakeCurrent(ghdc, ghrc); 
 			}		
-			uninitializeVideoEffect();			
+						
 		}
 		displayNavras();
 	}
