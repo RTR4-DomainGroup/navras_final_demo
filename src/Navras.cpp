@@ -552,7 +552,7 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// SCENE12
+	//// SCENE12
 	if (initializeScene12_Hasya() != 0)
 	{
 		LOG("initializeScene12_Hasya() FAILED !!!\n");
@@ -569,11 +569,11 @@ int initializeNavras(void) {
 	////LOG("initializeScene13_Shant() DONE !!!\n");
 
 	// SCENE14
-	 if (initializeParticle() != 0)
-	 {
-	 	LOG("initializeParticle() FAILED !!!\n");
-	 	return (-8);
-	 }
+	if (initializeParticle() != 0)
+	{
+		LOG("initializeParticle() FAILED !!!\n");
+		return (-8);
+	}
 
 	scenePush(MAX_SCENES);
 	scenePush(SCENE15_END_CREDITS);

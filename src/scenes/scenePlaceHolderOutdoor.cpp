@@ -606,7 +606,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 	glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 100.0f);
+	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.01f, 100.0f);
 	displayPasses(1, true, true, false, 1);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
