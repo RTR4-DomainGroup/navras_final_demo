@@ -872,6 +872,7 @@ void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamic
     m_lastFrame = currentFrame;
 
     dynamicModel.pAnimator->UpdateAnimation(m_deltaTime/1000.0f);
+    //dynamicModel.pAnimator->UpdateAnimation(deltaTime);
 
     std::vector<glm::mat4> transforms = dynamicModel.pAnimator->GetFinalBoneMatrices();
     for (int i = 0; i < transforms.size(); i++)

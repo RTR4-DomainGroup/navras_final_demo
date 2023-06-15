@@ -90,15 +90,15 @@ GLfloat preciselerp(GLfloat v0, GLfloat v1, GLfloat t)
 	return (1 - t) * v0 + t * v1;
 }
 
-void preciselerp_lookat(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ)
+void preciselerp_lookat(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat speed)
 {
-		cameraEyeX = preciselerp(cameraEyeX, eyeX, 0.002f);
-		cameraEyeY = preciselerp(cameraEyeY, eyeY, 0.002f);
-		cameraEyeZ = preciselerp(cameraEyeZ, eyeZ, 0.002f);
+		cameraEyeX = preciselerp(cameraEyeX, eyeX, speed);
+		cameraEyeY = preciselerp(cameraEyeY, eyeY, speed);
+		cameraEyeZ = preciselerp(cameraEyeZ, eyeZ, speed);
 
-		cameraCenterX = preciselerp(cameraCenterX, centerX, 0.002f);
-		cameraCenterY = preciselerp(cameraCenterY, centerY, 0.002f);
-		cameraCenterZ = preciselerp(cameraCenterZ, centerZ, 0.002f);
+		cameraCenterX = preciselerp(cameraCenterX, centerX, speed);
+		cameraCenterY = preciselerp(cameraCenterY, centerY, speed);
+		cameraCenterZ = preciselerp(cameraCenterZ, centerZ, speed);
 
 		cameraUpX = upX;
 		cameraUpY = upY;
