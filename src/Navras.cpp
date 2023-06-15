@@ -82,15 +82,16 @@ int time_scene6 = 10;
 int time_scene7 = 10;
 int time_scene8 = 10;
 int time_scene9 = 10;
-int time_scene10 = 10;
+int time_scene10 = 10000;
 int time_scene11 = 10;
 int time_scene12 = 10;
 int time_scene13 = 10;
 int time_scene14 = 10;
-
+int time_scene15 = 180;
 int blurTime = 3;
+
 #else
-int time_scene1 = 45;
+int time_scene1 = 43;
 int time_scene2 = 40;
 int time_scene3 = 40;
 int time_scene4 = 40;
@@ -190,6 +191,10 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		case ']':	
 			currentScene = sceneNext();
 			LOG("current scene changed: %d\n", currentScene);
+			break;
+
+		case 'u':
+			currentScene = SCENE14_PARTICLE;
 			break;
 
 #ifdef ENABLE_ATMOSPHERE
