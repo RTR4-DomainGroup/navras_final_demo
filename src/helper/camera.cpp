@@ -109,7 +109,9 @@ bool preciselerp_lookat(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat center
 	cameraUpY = upY;
 	cameraUpZ = upZ;
 
+#ifdef ENABLE_CAMERA_LOGS
 	print_lookat();
+#endif // ENABLE_CAMERA_LOGS
 
 	if (
 		fabsf(cameraEyeX - eyeX) < 0.002f &&

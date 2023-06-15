@@ -213,7 +213,7 @@ int initializeScene10_AdbhutRas(void)
 	atmosVariables_10.m_fRayleighScaleDepth = 0.250000;
 	atmosVariables_10.m_fMieScaleDepth = 0.100000;
 
-	atmosVariables_10.m_vLight = vec3(0, 90, -350);
+	atmosVariables_10.m_vLight = vec3(-5, 90, -350);
 	atmosVariables_10.m_vLightDirection = atmosVariables_10.m_vLight / sqrtf(atmosVariables_10.m_vLight[0] * atmosVariables_10.m_vLight[0] + atmosVariables_10.m_vLight[1] * atmosVariables_10.m_vLight[1] + atmosVariables_10.m_vLight[2] * atmosVariables_10.m_vLight[2]);
 
 	//
@@ -496,6 +496,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		modelMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -80.0f);					// glTranslatef() is replaced by this line.
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);					// glTranslatef() is replaced by this line.
 		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
 		if('k' == tf_Object)
 			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
@@ -526,7 +527,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 			atmosphereUniform_10 = useAtmosphereShader();
 			
-			modelMatrix = rotate(90.0f, 0.0f, 1.0f, 0.0f);
+			modelMatrix = vmath::scale(5.0f, 5.0f, 5.0f) * vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
 			glUniform3f(atmosphereUniform_10.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
 			glUniform3f(atmosphereUniform_10.lightPosUniform, atmosVariables_10.m_vLightDirection[0], atmosVariables_10.m_vLightDirection[1], atmosVariables_10.m_vLightDirection[2]);
@@ -645,7 +646,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
 	sceneOutdoorADSStaticUniform_10 = useADSShader();
-	//glUniform1f(sceneOutdoorADSStaticUniform_10.isInstanced, 0);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.isInstanced, 0);
 
 	// Sending Light Related Uniforms
 	glUniform1i(sceneOutdoorADSStaticUniform_10.lightingEnableUniform, 1);
@@ -895,7 +896,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 2.0f);
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.6f);
 
 	glUseProgram(0);
 

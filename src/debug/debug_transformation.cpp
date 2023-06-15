@@ -268,7 +268,9 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 
 	if(cameraMovement)
 	{
+#ifdef ENABLE_CAMERA_LOGS
 		print_lookat();
+#endif // ENABLE_CAMERA_LOGS
 	}
 
 	if(keyPressed)
