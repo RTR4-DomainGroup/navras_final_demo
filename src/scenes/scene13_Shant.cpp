@@ -434,10 +434,11 @@ void displayScene13_Shant(void)
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Room Model ------
-	translationMatrix = vmath::translate(1.0f, 0.0f, -10.0f);
+	translationMatrix = vmath::translate(-0.06f, 0.00f, -6.44f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix_y);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -570,11 +571,11 @@ void updateScene13_ShantRas(void)
 		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
 		// -1.70f, -2.25f, -9.85f, -1.70f, -2.25f, -15.85f, 0.00f, 1.00f, 0.00f
 		//cameraEyeX = preciselerp(cameraEyeX, -1.70f, 0.005f);
-		cameraEyeY = preciselerp(cameraEyeY, -2.25f, 0.05f);
-		cameraEyeZ = preciselerp(cameraEyeZ, -9.85f, 0.05f);
+		cameraEyeY = preciselerp(cameraEyeY, -2.25f, 0.08f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -8.85f, 0.08f);
 		//cameraCenterX = preciselerp(cameraCenterX, -1.70f, 0.005f);
-		cameraCenterY = preciselerp(cameraCenterY, -2.25f, 0.05f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -15.85f, 0.05f);
+		cameraCenterY = preciselerp(cameraCenterY, -2.25f, 0.08f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -14.85f, 0.08f);
 	}
 #endif // ENABLE_CAMERA_ANIMATION
 
