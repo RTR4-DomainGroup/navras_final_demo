@@ -35,6 +35,7 @@ extern GLuint texture_Marble;
 GLuint texture_earth;
 GLuint texture_sun;
 GLfloat earthAngle = 90.0f;
+
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
@@ -263,7 +264,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 		scaleMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -15.0f);					// glTranslatef() is replaced by this line.
-		scaleMatrix = vmath::scale(25.0f, 25.0f, 25.0f);
+		scaleMatrix = vmath::scale(15.0f, 15.0f, 15.0f);
 
 		rotationMatrix_x = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = rotationMatrix * rotationMatrix_x;
