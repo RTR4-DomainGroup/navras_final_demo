@@ -145,6 +145,7 @@ int initializeAtmosphereShader(void)
             "float fCos = dot(v3LightPos, v3Direction) / length(v3Direction); \n" \
             "float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos*fCos) / pow(1.0 + g2 - 2.0*g*fCos, 1.5); \n" \
             "FragColor = vec4(vColor,  1.0) + fMiePhase * vec4(vSecondaryColor, 1.0); \n" \
+            "if(FragColor.rgb == vec3(0.0, 0.0, 0.0)) discard; \n" \
         "} \n";
     
      // Create the Fragment Shader object.
