@@ -165,7 +165,7 @@ static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
 static STATIC_MODEL leafModel;
 static STATIC_MODEL farmhouseModel;
-static STATIC_MODEL adbhutmanModel;
+// static STATIC_MODEL adbhutmanModel;
 static STATIC_MODEL bridgeModel;
 #endif // ENABLE_STATIC_MODELS
 
@@ -336,14 +336,15 @@ int initializeScene10_AdbhutRas(void)
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 	loadStaticModel("res/models/tree_adbhut/leaf.obj", &leafModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
-	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
+	// loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 	loadStaticModel("res/models/bridge/bridge.obj", &bridgeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	// loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	loadDynamicModel("res/models/scene10_adbhut/adbhutManAnim.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_BILLBOARDING
@@ -589,6 +590,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -80.0f);					// glTranslatef() is replaced by this line.
 		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+		if('k' == tf_Object)
+			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
@@ -930,26 +933,26 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	drawStaticModel(farmhouseModel);
 
 
-	// ------ adbhutmanModel Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationAngles = {0.0f, 0.0f, 0.0f};
+	// // ------ adbhutmanModel Model ------
+	// translationMatrix = mat4::identity();
+	// rotationMatrix = mat4::identity();
+	// modelMatrix = mat4::identity();
+	// scaleMatrix = mat4::identity();
+	// rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
-	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
-	rotationAngles = {0.0f, 99.55f, 0.0f};
+	// translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
+	// scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+	// rotationAngles = {0.0f, 99.55f, 0.0f};
 
-	// usage type 1 
-	if('5' == tf_Object) // adbhutman model
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	// // usage type 1 
+	// if('5' == tf_Object) // adbhutman model
+	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	// rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	// glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
-	drawStaticModel(adbhutmanModel);
+	// drawStaticModel(adbhutmanModel);
 
 
 	// ------ Bridge Model ------
@@ -1039,11 +1042,11 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-19.94, -2.13f, -34.31f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 1.80f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
 	if (actualDepthQuadScene == 1) {
@@ -1282,7 +1285,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 1)
 	{
-		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
 		if (cameraEyeZ < (-35.99f - 0.2f))
 		{
 			camera_update = 2;
@@ -1292,7 +1295,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 2)
 	{
-		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
 		if (cameraEyeX < (-4.21f - 0.2f))
 		{
 			camera_update = 3;
@@ -1302,7 +1305,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 3)
 	{
-		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.001f);
 		if (cameraEyeX < (-16.28f - 0.2f))
 		{
 			camera_update = 4;
@@ -1330,8 +1333,8 @@ if(camera_update == 4)
 	if(leaf_translate < -1.75f) {
 		leaf_translate = 0.35f;
 		leaf_rotate = 0.0f;	
+		camera_update = 5;
 	}
-	camera_update = 5;
 }
 //#ifdef ENABLE_CLOUD_NOISE
 //	// update Cloud
@@ -1354,7 +1357,7 @@ void uninitializeScene10_AdbhutRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&bridgeModel);
-	unloadStaticModel(&adbhutmanModel);
+	// unloadStaticModel(&adbhutmanModel);
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&leafModel);
