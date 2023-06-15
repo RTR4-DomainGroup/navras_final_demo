@@ -36,6 +36,7 @@ static GLfloat materialShininess = 128.0f;
 
 //Model variables
 STATIC_MODEL hasya_roomModel;
+STATIC_MODEL manBabyModel;
 GLuint texture_hasyaMask;
 bool isInitialDisplayScene12_hasya = true;
 
@@ -51,6 +52,7 @@ initializeQuad();
 	
 	//load models
 	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
+	loadStaticModel("res/models/scene12_hasya/man/manWithBaby.obj", &manBabyModel);
 	
 
 #endif // ENABLE_STATIC_MODELS
@@ -169,6 +171,31 @@ void displayScene12_Hasya(void)
 
 	drawStaticModel(hasya_roomModel);
 
+	//man
+
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+
+	translationMatrix = vmath::translate(0.68f, -0.99f, -3.41f);
+	scaleMatrix = vmath::scale(0.87f, 0.87f, 0.87f);
+	rotationMatrix = vmath::rotate(41.38f, 0.0f, 1.0f, 0.0f);
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+
+	modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(manBabyModel);
+
 	glUseProgram(0);
 #endif // ENABLE_STATIC_MODELS
 }
@@ -216,6 +243,7 @@ void uninitializeScene12_Hasya(void)
 {
     //UNINIT models
 	unloadStaticModel(&hasya_roomModel);
+	unloadStaticModel(&manBabyModel);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_hasyaMask)
