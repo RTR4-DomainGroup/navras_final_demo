@@ -35,7 +35,7 @@ extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
 extern TEXTURE texture_flower;
 
-GLfloat zTranslateWalk = 85.0f;
+GLfloat zTranslateWalk = 30.0f;
 
 extern struct ADSUniform sceneOutdoorADSStaticUniform;
 extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
@@ -74,8 +74,8 @@ extern mat4 viewMatrix;
 extern mat4 perspectiveProjectionMatrix;
 
 // Bibhatsa
-#define X_MIN_BR (-6.0f)
-#define X_MAX_BR (6.0f)
+#define X_MIN_BR (-12.0f)
+#define X_MAX_BR (12.0f)
 
 #define X_MIN_BR_TRASHPILE (-12.0f)
 #define X_MAX_BR_TRASHPILE (12.0f)
@@ -83,11 +83,11 @@ extern mat4 perspectiveProjectionMatrix;
 #define Y_MIN_BR (-3.0f)
 #define Y_MAX_BR (0.0f)
 
-#define Z_MIN_BR (-14.5f)
-#define Z_MAX_BR (-9.0f)
+#define Z_MIN_BR (-50.5f)
+#define Z_MAX_BR (50.0f)
 
 #define Z_MIN_BR_TRASHPILE (-55.0f)
-#define Z_MAX_BR_TRASHPILE (-10.0f)
+#define Z_MAX_BR_TRASHPILE (50.0f)
 
 #define NO_OF_INSTANCES_KACHARA 200
 
@@ -480,7 +480,7 @@ void setCameraScene08(void)
 {
 	if (isInitialDisplayScene08_BibhatsaRas == true)
 	{
-		setCamera(5.4f, 0.0f, 100.0f, 5.4f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+		setCamera(5.4f, 0.0f, 50.0f, 5.4f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 		isInitialDisplayScene08_BibhatsaRas = false;
 	}
 }
@@ -925,7 +925,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Streetlight Model ------
-		translationMatrix = vmath::translate(-15.0f, -3.0f, 56.65f);
+		translationMatrix = vmath::translate(-15.0f, -3.0f, 20.65f);
 		scaleMatrix = vmath::scale(0.07f, 0.07f, 0.07f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
@@ -947,7 +947,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Streetlight Model ------
-		translationMatrix = vmath::translate(17.75f, -3.0f, 80.0f);
+		translationMatrix = vmath::translate(17.75f, -3.0f, 50.0f);
 		scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
 		//rotationMatrix_x = vmath::rotate(3.15f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(-45.00f, 0.0f, 1.0f, 0.0f);
@@ -971,7 +971,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Trash Pile ------
-		translationMatrix = vmath::translate(42.0f, -4.85f, 56.0f);
+		translationMatrix = vmath::translate(45.0f, -4.85f, 10.0f);
 		scaleMatrix = vmath::scale(3.75f, 6.0f, 2.0f);
 		rotationMatrix_x = vmath::rotate(0.45f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(90.10f, 0.0f, 1.0f, 0.0f);
@@ -985,7 +985,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
-		drawStaticModelInstanced(pileOfTrash, 30);
+		drawStaticModelInstanced(pileOfTrash, 35);
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		// ################################### Trash Pile At Center ###################################  
 
@@ -996,7 +996,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Streetlight Model ------
-		translationMatrix = vmath::translate(24.0f, -5.0f, -22.0f);
+		translationMatrix = vmath::translate(24.0f, -5.0f, -44.0f);
 		scaleMatrix = vmath::scale(33.85f, 30.0f, 30.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1038,7 +1038,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Red Can Model ------
-		translationMatrix = vmath::translate(15.30f, -5.0f, 32.0f);
+		translationMatrix = vmath::translate(15.30f, -5.0f, 0.0f);
 		scaleMatrix = vmath::scale(8.0f, 8.0f, 8.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1084,7 +1084,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Cigarette 2 Model ------
-		translationMatrix = vmath::translate(5.5f, -5.0f, 86.0f);
+		translationMatrix = vmath::translate(15.5f, -5.0f, -25.0f);
 		scaleMatrix = vmath::scale(10.0f, 10.2f, 10.0f);
 		rotationMatrix = vmath::rotate(45.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1154,7 +1154,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		// ------ Trash 1 ------
 		//translationMatrix = vmath::translate(-8.0f, -2.7f, -30.0f);
-		translationMatrix = vmath::translate(-7.5f, -4.8f, 49.0f);
+		translationMatrix = vmath::translate(-7.5f, -4.8f, 20.50f);
 		scaleMatrix = vmath::scale(1.09f, 1.07f, 1.75f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1175,7 +1175,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = mat4::identity();
 
 		// ------ Trash 3 ------
-		translationMatrix = vmath::translate(40.80f, -4.84f, 80.25f);
+		translationMatrix = vmath::translate(40.80f, -4.84f, -30.25f);
 		scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -1276,7 +1276,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 3 ------
-		translationMatrix = vmath::translate(-17.5f, -4.6f, 54.0f);
+		translationMatrix = vmath::translate(-17.5f, -4.6f, 0.0f);
 		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
 		rotationMatrix_x = vmath::rotate(-0.5f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(-86.10f, 0.0f, 1.0f, 0.0f);
@@ -1396,12 +1396,12 @@ void updateScene08_BibhatsaRas(void)
 	if (beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
 	{
 		cameraEyeZ -= 0.05f;
-		if (cameraEyeZ <= 35.0f)
-			cameraEyeZ = 35.0f;
+		//if (cameraEyeZ <= 35.0f)
+		//	cameraEyeZ = 35.0f;
 
 		cameraCenterZ -= 0.05f;
-		if (cameraCenterZ <= -65.0f)
-			cameraCenterZ = -65.0f;
+		//if (cameraCenterZ <= -15.0f)
+		//	cameraCenterZ = -15.0f;
 	}
 
 #endif // ENABLE_CAMERA_ANIMATION
