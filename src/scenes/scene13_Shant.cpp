@@ -583,7 +583,7 @@ void displayScene13_Shant(void)
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Room Model ------
-	translationMatrix = vmath::translate(0.0f, 0.0f, -10.0f);
+	translationMatrix = vmath::translate(1.0f, 0.0f, -10.0f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
 	rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
@@ -608,13 +608,13 @@ void displayScene13_Shant(void)
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Room Model ------
-	translationMatrix = vmath::translate(- 1.0f, -2.0f, -6.0f);
+	translationMatrix = vmath::translate(-0.85f, -2.35f, -8.0f);
 	//translationMatrix = vmath::translate(-0.85f, -1.75f, -8.36f);
 	//translationMatrix = vmath::translate(-0.85f, -1.75f, -8.06f);
 	scaleMatrix = vmath::scale(0.02f, 0.02f, 0.02f);
 	rotationMatrix_y = vmath::rotate(0.0f, 0.0f, 1.0f, 0.0f);
 
-	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix_y);
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix_y);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
