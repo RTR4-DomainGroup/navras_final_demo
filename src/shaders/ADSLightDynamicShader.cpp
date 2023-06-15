@@ -240,7 +240,7 @@ int initializeADSDynamicShader(void)
 			"shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; \n" \
 			"} \n" \
 			"} \n" \
-			"shadow /= 9.0; \n" \
+			"shadow /= 12.0; \n" \
 
 			"if (projCoords.z > 1.0) \n" \
 			"shadow = 0.0; \n" \
