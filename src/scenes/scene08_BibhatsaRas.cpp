@@ -101,8 +101,8 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL manModel;
-static STATIC_MODEL streetLightModel;
+//STATIC_MODEL manModel;
+//static STATIC_MODEL streetLightModel;
 STATIC_MODEL buildingOneModel;
 STATIC_MODEL buildingTwoModel;
 STATIC_MODEL buildingThreeModel;
@@ -214,8 +214,8 @@ int initializeScene08_BibhatsaRas(void)
 	initializeplasticBottleInstancePositions();
 
 	//load models
-	loadStaticModel("res/models/scene08-beebhatsa/man/tempBeebhatsaMan.obj", &manModel);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+	//loadStaticModel("res/models/scene08-beebhatsa/man/tempBeebhatsaMan.obj", &manModel);
+	//loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
 
 	// Buildings Model Loading
 	loadStaticModel("res/models/scene08-beebhatsa/bld1/building1.obj", &buildingOneModel);
@@ -753,7 +753,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawStaticModel(manModel);
+		//drawStaticModel(manModel);
 
 		//translationMatrix = mat4::identity();
 		//rotationMatrix = mat4::identity();
@@ -1461,8 +1461,8 @@ void uninitializeScene08_BibhatsaRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&manModel);
-	unloadStaticModel(&streetLightModel);
+	//unloadStaticModel(&manModel);
+	//unloadStaticModel(&streetLightModel);
 
 	// Unloading 4 June Models
 
