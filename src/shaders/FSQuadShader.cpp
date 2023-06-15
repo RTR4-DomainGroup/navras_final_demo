@@ -80,7 +80,7 @@ int initializeFSQuadShader(void)
         "\n" \
         "uniform sampler2D u_textureSampler3;" \
         "\n" \
-        "uniform int maskOrFont;" \
+        "uniform int maskOrFont = 0;" \
         "\n" \
         "out vec4 FragColor;" \
         "\n" \
@@ -96,7 +96,12 @@ int initializeFSQuadShader(void)
             "if(u_singleTexture == 1)\n" \
             "{\n" \
                 "FragColor = texture(u_textureSampler0, a_texcoord_out);\n" \
-                    "if(FragColor.rgb == vec3(0.0, 1.0, 0.0)) discard;\n" \
+                    "if(maskOrFont == 1){\n" \
+                        "if(FragColor.rgb == vec3(0.0, 0.0, 0.0)) discard;\n" \
+                    "} \n" \
+                    "else{ \n" \
+                        "if(FragColor.rgb == vec3(0.0, 0.0, 1.0)) discard; \n" \
+                    "} \n" \
              "}\n" \
             "else if(u_singleTexture == 2)\n" \
             "{\n" \

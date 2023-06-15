@@ -6,7 +6,7 @@
 
 int initializeVideoEffect(const char*);
 
-void displayVideoEffect(struct FSVQuadUniform*);
+void displayVideoEffect();
 
 void updateVideoEffect(void);
 

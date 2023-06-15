@@ -195,7 +195,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 	// Masks
 	glBindFramebuffer(GL_FRAMEBUFFER, fboMaskPass_Indoor.frameBuffer);
 		glViewport(0, 0, (GLsizei)fboMaskPass_Indoor.textureWidth, (GLsizei)fboMaskPass_Indoor.textureHeight);
-		glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -329,6 +329,7 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		////
 		#ifdef ENABLE_MASKS
 				glUniform1i(fsGaussBlurIndoorQuadUniform.singleTexture, 1);
+				glUniform1i(fsGaussBlurIndoorQuadUniform.maskOrFont, 0);
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, fboMaskPass_Indoor.frameBufferTexture);
 				glUniform1i(fsGaussBlurIndoorQuadUniform.textureSamplerUniform1, 0);

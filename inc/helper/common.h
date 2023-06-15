@@ -141,4 +141,6 @@ char* vararg2string(const char* format, ...);
 
 #define LOG(format, ...) \
 	log_printf(__FILE__, __FUNCTION__, __LINE__, format, ##__VA_ARGS__)
-	
+
+//degree to radian
+float degToRad(float degrees);
