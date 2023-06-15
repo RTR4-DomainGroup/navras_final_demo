@@ -84,7 +84,7 @@ static const char *szAudios[] = {
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-#define SHORTS
+//#define SHORTS
 
 // always ON
 #define ENABLE_WATER

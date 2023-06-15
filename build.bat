@@ -10,8 +10,8 @@ cls
 
 del Navras.exe
 del log.txt
-@REM del .\obj\*.obj
-@REM del res\resources.res
+del .\obj\*.obj
+del res\resources.res
 
 mkdir .\obj\
 

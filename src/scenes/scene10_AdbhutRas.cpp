@@ -962,9 +962,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(-4.99f, -1.3f, -36.50f);
+	translationMatrix = vmath::translate(-7.41f, -1.30f, -36.65f);
 	scaleMatrix = vmath::scale( 2.21f,  2.21f,  2.21f);
-	rotationAngles = {0.0f, 184.96f, -5.46f};
+	rotationAngles = { 3.92f, 198.60f, -3.26f };
 
 	// usage type 1 
 	if('9' == tf_Object) // bridge model
