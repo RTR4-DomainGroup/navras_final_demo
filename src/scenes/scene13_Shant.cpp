@@ -56,7 +56,7 @@ static GLuint textures[4];
 
 #ifdef ENABLE_STATIC_MODELS
 static STATIC_MODEL shantRoomModel;
-//static STATIC_MODEL maskModel;
+static STATIC_MODEL maskModel;
 
 static STATIC_MODEL maskModel_karunRas;
 static STATIC_MODEL maskModel_bhayanakRas;
@@ -77,11 +77,14 @@ bool startMaskAnimation = false;
 bool startCameraZoomToMan = false;
 struct ErosionNoiseUniform sceneErosionNoiseUniform;
 GLuint noise_texture_eroded[9];
+GLuint noise_texture_eroded_maskModel;
 GLuint texture_Marble_Shant;
 float myScale_erosion = 0.08f;
+float myScale_erosion_model = 0.06f;
 float noiseScale_erosion = 2.0f;
 bool offsetIncrement = true;
 // Mask Textures
+static GLuint texture_maskModel;
 static GLuint texture_karunRas;
 static GLuint texture_bhayanakRas;
 static GLuint texture_raudraRas;
@@ -108,6 +111,8 @@ GLfloat offset_ras[9][3] =
 	{ 0.48f, 0.48f, 0.48f },
 	{ 0.48f, 0.48f, 0.48f }
 };
+
+static GLfloat offset_ras_model[] = { 0.17f, 0.17f, 0.17f };
 
 bool isMaskQuadEnabled[9] = { true, true, true, true, true, true, true, true, true };
 
@@ -150,7 +155,14 @@ GLfloat maskScales[9] =
 	0.00125f
 };
 
+GLfloat maskModelScale = 0.02f;
+
+GLfloat maskModelTranslateX = -1.0f;
+GLfloat maskModelTranslateY = -1.0f;
+GLfloat maskModelTranslateZ = -6.0f;
+
 bool masksTransformationsComplete = false;
+bool animateMaskModel = false;
 
 static GLfloat lightAmbient_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 static GLfloat lightDiffuse_shantRas_mask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -171,7 +183,7 @@ int initializeScene13_Shant(void)
 {
 #ifdef ENABLE_STATIC_MODELS
 	// function declarations
-	//loadStaticModel("res/models/rock/rock.obj", &maskModel);
+	loadStaticModel("res/models/masks/individualScenes/ShantaWithText.obj", &maskModel);
 
 	loadStaticModel("res/models/masks/KarunMask.obj", &maskModel_karunRas);
 	loadStaticModel("res/models/masks/BhayanakMask.obj", &maskModel_bhayanakRas);
@@ -187,6 +199,17 @@ int initializeScene13_Shant(void)
 	loadStaticModel("res/models/scene13_shanta/man/ShantaManMeditatingNew15.obj", &shantaManModel);
 
 	initializeQuad();
+
+	if (LoadGLTexture_UsingSOIL(&texture_maskModel, "res/models/masks/copper.jpg") == FALSE)
+	{
+		//uninitialize();
+		LOG("LoadGLTexture for texture_maskModel FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_maskModel Successfull = %u!!!\n", texture_maskModel);
+	}
 
 	if (LoadGLTexture_UsingSOIL(&texture_bhayanakRas, "res/models/masks/copper.jpg") == FALSE)
 	{
@@ -356,6 +379,17 @@ int initializeScene13_Shant(void)
 		{
 			LOG("initializeErosion() Successfull for noise_texture_eroded[%d]!!!\n", i);
 		}
+	}
+
+	noise_texture_eroded_maskModel = initializeErosion();
+	if (noise_texture_eroded_maskModel == 0)
+	{
+		LOG("initializeErosion() FAILED for noise_texture_eroded_maskModel!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("initializeErosion() Successfull for noise_texture_eroded_maskModel!!!\n");
 	}
 #endif // ENABLE_EROSION
 
@@ -550,6 +584,20 @@ void displayScene13_Shant(void)
 
 		angle = angle + 15.0f;
 	}
+
+	translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
+	scaleMatrix = vmath::scale(maskModelScale, maskModelScale, maskModelScale);
+	modelMatrix = translationMatrix * scaleMatrix/* * rotationMatrix*/;
+
+	glUniformMatrix4fv(sceneErosionNoiseUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_model);
+	glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_model);
+
+	drawCustomTextureStaticModel(maskModel, texture_maskModel, noise_texture_eroded_maskModel);
+
 	glUseProgram(0);
 	glDisable(GL_TEXTURE_3D);
 
@@ -559,42 +607,62 @@ void displayScene13_Shant(void)
 void updateScene13_ShantRas(void)
 {
 
+	shantaRasFrameCounter++;
+
 #ifdef ENABLE_CAMERA_ANIMATION
 	//setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
 	/*cameraEyeZ = preciselerp(cameraEyeZ, -2.75f, 0.01f);
 	cameraCenterZ = preciselerp(cameraCenterZ, -8.75f, 0.01f);
 	if (cameraEyeZ <= -2.0f)*/
-		startMaskAnimation = true;
+	startMaskAnimation = true;
 	if (startCameraZoomToMan == true)
 	{
 		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
 		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
-		// -1.70f, -2.25f, -9.85f, -1.70f, -2.25f, -15.85f, 0.00f, 1.00f, 0.00f
-		//cameraEyeX = preciselerp(cameraEyeX, -1.70f, 0.005f);
-		cameraEyeY = preciselerp(cameraEyeY, -2.25f, 0.08f);
-		cameraEyeZ = preciselerp(cameraEyeZ, -8.85f, 0.08f);
-		//cameraCenterX = preciselerp(cameraCenterX, -1.70f, 0.005f);
-		cameraCenterY = preciselerp(cameraCenterY, -2.25f, 0.08f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -14.85f, 0.08f);
+		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.005f);
+		cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -18.51f, 0.005f);
+		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.005f);
+		cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -24.51f, 0.005f);
 	}
 #endif // ENABLE_CAMERA_ANIMATION
 
-	if (startMaskAnimation == true)
+	//if (startMaskAnimation == true)
+	if ((1 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 180)) // shanta main mask erode in
 	{
-#ifdef ENABLE_EROSION
+		//updateErosion(offsetIncrement, offset_ras_model, 0.005166f);
+		updateErosion(offsetIncrement, offset_ras_model, 0.001722f);
+		if (offset_ras_model >= 48.0f)
+			animateMaskModel = true;
+	}
+	if ((181 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 420)) // static main mask
+	{	
+		maskModelScale -= 0.000083682f;
 
-		maskTranslationRadii[0] += 0.014f;
-		maskTranslationRadiiY[0] += 0.016f;
-		maskScales[0] += 0.0002f;
+		maskModelTranslateX = preciselerp(maskModelTranslateX, -0.80f, 0.005f);
+		maskModelTranslateY = preciselerp(maskModelTranslateY, -1.30f, 0.05f);
+		maskModelTranslateZ = preciselerp(maskModelTranslateZ, -18.51f, 0.005f);
+	}
+	if ((421 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 600)) // translate shanta main mask to man chest
+	{
+
+	}
+	if ((601 <= shantaRasFrameCounter) &&  (shantaRasFrameCounter <= 1200))
+	{
+		maskTranslationRadii[0] += 0.05833f;
+		maskTranslationRadiiY[0] += 0.06666f;
+		//maskScales[0] += 0.00001f;
+		maskScales[0] += 0.000145833f;
 		for (int i = 0; i < 9; i++)
 		{
 			//if (maskTranslationRadii[i] >= 0.433f)
-			//if (maskTranslationRadiiY[i] >= 0.733f)
-			if (maskTranslationRadiiY[i] >= 1.3333f)
+			if (maskTranslationRadiiY[i] >= 1.1666f)
 			{
-				maskTranslationRadii[i + 1] += 0.014f;
-				maskTranslationRadiiY[i + 1] += 0.016f;
-				maskScales[i + 1] += 0.0001f;
+				maskTranslationRadii[i + 1] += 0.05833f;
+				maskTranslationRadiiY[i + 1] += 0.06666f;
+				//maskScales[i + 1] += 0.00001f;
+				maskScales[i + 1] += 0.00014583333f;
 			}
 			if (maskTranslationRadii[i] >= 3.5f)
 				maskTranslationRadii[i] = 3.5f;
@@ -611,25 +679,55 @@ void updateScene13_ShantRas(void)
 			if (maskScales[i] >= 0.01f)
 				maskScales[i] = 0.01f;
 		}
-
-		if (masksTransformationsComplete == true)
-		{
-			updateErosion(offsetIncrement, offset_ras[8], 0.002f);
-			for (int i = 8; i > -1; i--)
-			{
-				if (offset_ras[i][0] <= 0.40f)
-					updateErosion(offsetIncrement, offset_ras[i - 1], 0.002f);
-				if (offset_ras[i][0] <= 0.17f)
-					isMaskQuadEnabled[i] = false;
-				if (isMaskQuadEnabled[0] == false)
-					startCameraZoomToMan = true;
-			}
-		}
-#endif // ENABLE_EROSION
+		//if (masksTransformationsComplete == true)
+		//{
+		//	updateErosion(offsetIncrement, offset_ras[8], 0.002f);
+		//	for (int i = 8; i > -1; i--)
+		//	{
+		//		if (offset_ras[i][0] <= 0.40f)
+		//			updateErosion(offsetIncrement, offset_ras[i - 1], 0.002f);
+		//		if (offset_ras[i][0] <= 0.17f)
+		//			isMaskQuadEnabled[i] = false;
+		//		if (isMaskQuadEnabled[0] == false)
+		//			startCameraZoomToMan = true;
+		//	}
+		//}
 	}
+	if ((1201 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 1500)) // show the masks here
+	{
 
-
+	}
+#ifdef ENABLE_EROSION
+	if ((1501 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 2100))
+	{
+		//updateErosion(offsetIncrement, offset_ras[8], 0.002f);
+		updateErosion(offsetIncrement, offset_ras[8], 0.005166f);
+		for (int i = 8; i > -1; i--)
+		{
+			if (offset_ras[i][0] <= 0.1033f)
+				//updateErosion(offsetIncrement, offset_ras[i - 1], 0.002f);
+				updateErosion(offsetIncrement, offset_ras[i - 1], 0.005166f);
+			if (offset_ras[i][0] <= 0.17f)
+				isMaskQuadEnabled[i] = false;
+			if (isMaskQuadEnabled[0] == false)
+				startCameraZoomToMan = true;
+		}
+	}
+#endif // ENABLE_EROSION
+	//if (startCameraZoomToMan == true)
+	if ((2101 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 2400))
+	{
+		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
+		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
+		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.005f);
+		cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -18.51f, 0.005f);
+		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.005f);
+		cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -24.51f, 0.005f);
+	}
 }
+
 
 void uninitializeScene13_Shant(void)
 {
@@ -638,6 +736,8 @@ void uninitializeScene13_Shant(void)
 	unloadStaticModel(&shantRoomModel);
 
 	unloadStaticModel(&shantaManModel);
+
+	unloadStaticModel(&maskModel);
 
 	unloadStaticModel(&maskModel_karunRas);
 	unloadStaticModel(&maskModel_bhayanakRas);
@@ -650,6 +750,11 @@ void uninitializeScene13_Shant(void)
 	unloadStaticModel(&maskModel_shantRas);
 #endif // ENABLE_STATIC_MODELS
 
+	if (texture_maskModel)
+	{
+		glDeleteTextures(1, &texture_maskModel);
+		texture_maskModel = 0;
+	}
 	if (texture_shantRas)
 	{
 		glDeleteTextures(1, &texture_shantRas);
