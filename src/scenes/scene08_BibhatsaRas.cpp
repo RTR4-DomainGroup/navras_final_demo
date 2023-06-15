@@ -1299,6 +1299,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
+		glUniform1f(sceneOutdoorADSStaticUniform.isInstanced, 0);
+
 		// Un-use ShaderProgramObject
 		glUseProgram(0);
 #endif // ENABLE_STATIC_MODELS

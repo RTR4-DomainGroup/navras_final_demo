@@ -6,6 +6,7 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/scenes/scene08_BibhatsaRas.h"
 
 #ifdef ENABLE_SHADOW
 #include "../../inc/helper/shadowframebuffer.h"
@@ -227,6 +228,7 @@ void setCameraScene09_VeerRas(void)
 		//setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f); // Reset camera position for debugging
 		setCamera(17.50f, 3.35f, -4.70f, 15.40f, 5.00f, -19.70f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
 		//setCamera(15.75f, 5.10f, -17.20f, -21.01f, -3.03f, -359.39f, 0.0f, 1.0f, 0.0f); // static camera position
+		uninitializeScene08_BibhatsaRas();
 		isInitialDisplayScene09_VeerRas = false;
 	}
 }
