@@ -90,7 +90,7 @@ int time_scene14 = 10;
 
 int blurTime = 3;
 #else
-int time_scene1 = 5;
+int time_scene1 = 45;
 int time_scene2 = 40;
 int time_scene3 = 40;
 int time_scene4 = 40;
@@ -104,6 +104,7 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
+int time_scene15 = 180;
 int blurTime = 10;
 #endif
 
@@ -111,6 +112,8 @@ int blurTime = 10;
 // Audio
 static bool audioFlag = true;
 
+// End Credit
+static bool isEndCreditsIntialized = false;
 //
 static scene_types_t currentScene = SCENE_INVALID;
 
@@ -118,7 +121,6 @@ bool sceneFadeOut = false;
 
 #ifdef ENABLE_ATMOSPHERE
 extern AtmosphericVariables atmosVariables;
-extern AtmosphericVariables atmosVariables_10;
 extern AtmosphericVariables atmosVariables_11;
 #endif
 
@@ -193,96 +195,96 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 		 case '1':
 		 case '!':
 		 	if (wParam == '!')
-		 		atmosVariables_10.m_Kr = max(0.0f, atmosVariables_10.m_Kr - 0.0001f);
+		 		atmosVariables_11.m_Kr = max(0.0f, atmosVariables_11.m_Kr - 0.0001f);
 		 	else
-		 		atmosVariables_10.m_Kr += 0.0001f;
-		 	atmosVariables_10.m_Kr4PI = atmosVariables_10.m_Kr * 4.0f * M_PI;
+		 		atmosVariables_11.m_Kr += 0.0001f;
+		 	atmosVariables_11.m_Kr4PI = atmosVariables_11.m_Kr * 4.0f * M_PI;
 		 	break;
 
 		 case '2':
 		 case '@':
 		 	if (wParam == '@')
-		 		atmosVariables_10.m_Km = max(0.0f, atmosVariables_10.m_Km - 0.0001f);
+		 		atmosVariables_11.m_Km = max(0.0f, atmosVariables_11.m_Km - 0.0001f);
 		 	else
-		 		atmosVariables_10.m_Km += 0.0001f;
-		 	atmosVariables_10.m_Km4PI = atmosVariables_10.m_Km * 4.0f * M_PI;
+		 		atmosVariables_11.m_Km += 0.0001f;
+		 	atmosVariables_11.m_Km4PI = atmosVariables_11.m_Km * 4.0f * M_PI;
 		 	break;
 
 		 case '3':
 		 case '#':
 		 	if (wParam == '#')
-		 		atmosVariables_10.m_g = max(-1.0f, atmosVariables_10.m_g - 0.001f);
+		 		atmosVariables_11.m_g = max(-1.0f, atmosVariables_11.m_g - 0.001f);
 		 	else
-		 		atmosVariables_10.m_g = min(1.0f, atmosVariables_10.m_g + 0.001f);
+		 		atmosVariables_11.m_g = min(1.0f, atmosVariables_11.m_g + 0.001f);
 		 	break;
 
 		 case '4':
 		 case '$':
 		 	if (wParam == '$')
-		 		atmosVariables_10.m_ESun = max(0.0f, atmosVariables_10.m_ESun - 0.1f);
+		 		atmosVariables_11.m_ESun = max(0.0f, atmosVariables_11.m_ESun - 0.1f);
 		 	else
-		 		atmosVariables_10.m_ESun += 0.1f;
+		 		atmosVariables_11.m_ESun += 0.1f;
 		 	break;
 
 		 case '5':
 		 case '%':
 		 	if (wParam == '%')
-		 		atmosVariables_10.m_fWavelength[0] = max(0.001f, atmosVariables_10.m_fWavelength[0] -= 0.001f);
+		 		atmosVariables_11.m_fWavelength[0] = max(0.001f, atmosVariables_11.m_fWavelength[0] -= 0.001f);
 		 	else
-		 		atmosVariables_10.m_fWavelength[0] += 0.001f;
-		 	atmosVariables_10.m_fWavelength4[0] = powf(atmosVariables_10.m_fWavelength[0], 4.0f);
+		 		atmosVariables_11.m_fWavelength[0] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[0] = powf(atmosVariables_11.m_fWavelength[0], 4.0f);
 		 	break;
 
 		 case '6':
 		 case '^':
 		 	if (wParam == '^')
-		 		atmosVariables_10.m_fWavelength[1] = max(0.001f, atmosVariables_10.m_fWavelength[1] -= 0.001f);
+		 		atmosVariables_11.m_fWavelength[1] = max(0.001f, atmosVariables_11.m_fWavelength[1] -= 0.001f);
 		 	else
-		 		atmosVariables_10.m_fWavelength[1] += 0.001f;
-		 	atmosVariables_10.m_fWavelength4[1] = powf(atmosVariables_10.m_fWavelength[1], 4.0f);
+		 		atmosVariables_11.m_fWavelength[1] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[1] = powf(atmosVariables_11.m_fWavelength[1], 4.0f);
 		 	break;
 
 		 case '7':
 		 case '&':
 		 	if (wParam == '&')
-		 		atmosVariables_10.m_fWavelength[2] = max(0.001f, atmosVariables_10.m_fWavelength[2] -= 0.001f);
+		 		atmosVariables_11.m_fWavelength[2] = max(0.001f, atmosVariables_11.m_fWavelength[2] -= 0.001f);
 		 	else
-		 		atmosVariables_10.m_fWavelength[2] += 0.001f;
-		 	atmosVariables_10.m_fWavelength4[2] = powf(atmosVariables_10.m_fWavelength[2], 4.0f);
+		 		atmosVariables_11.m_fWavelength[2] += 0.001f;
+		 	atmosVariables_11.m_fWavelength4[2] = powf(atmosVariables_11.m_fWavelength[2], 4.0f);
 		 	break;
 
 		 case '8':
 		 case '*':
 		 	if (wParam == '*')
-		 		atmosVariables_10.m_fExposure = max(0.1f, atmosVariables_10.m_fExposure - 0.1f);
+		 		atmosVariables_11.m_fExposure = max(0.1f, atmosVariables_11.m_fExposure - 0.1f);
 		 	else
-		 		atmosVariables_10.m_fExposure += 0.1f;
+		 		atmosVariables_11.m_fExposure += 0.1f;
 		 	break;
 
 		case '/':
 			LOG("-----------------------------------------------------------------------------------------------\n");
-			LOG("m_nSamples = %d\n", atmosVariables_10.m_nSamples);
-			LOG("m_Kr = %f\n", atmosVariables_10.m_Kr);
-			LOG("m_Kr4PI = %f\n", atmosVariables_10.m_Kr4PI);
-			LOG("m_Km = %f\n", atmosVariables_10.m_Km);
-			LOG("m_Km4PI = %f\n", atmosVariables_10.m_Km4PI);
-			LOG("m_ESun = %f\n", atmosVariables_10.m_ESun);
-			LOG("m_g = %f\n", atmosVariables_10.m_g);
-			LOG("m_fExposure = %f\n", atmosVariables_10.m_fExposure);
+			LOG("m_nSamples = %d\n", atmosVariables_11.m_nSamples);
+			LOG("m_Kr = %f\n", atmosVariables_11.m_Kr);
+			LOG("m_Kr4PI = %f\n", atmosVariables_11.m_Kr4PI);
+			LOG("m_Km = %f\n", atmosVariables_11.m_Km);
+			LOG("m_Km4PI = %f\n", atmosVariables_11.m_Km4PI);
+			LOG("m_ESun = %f\n", atmosVariables_11.m_ESun);
+			LOG("m_g = %f\n", atmosVariables_11.m_g);
+			LOG("m_fExposure = %f\n", atmosVariables_11.m_fExposure);
 			
-			LOG("m_fInnerRadius = %f\n", atmosVariables_10.m_fInnerRadius);
-			LOG("m_fOuterRadius = %f\n", atmosVariables_10.m_fOuterRadius);
-			LOG("m_fScale = %f\n", atmosVariables_10.m_fScale);
+			LOG("m_fInnerRadius = %f\n", atmosVariables_11.m_fInnerRadius);
+			LOG("m_fOuterRadius = %f\n", atmosVariables_11.m_fOuterRadius);
+			LOG("m_fScale = %f\n", atmosVariables_11.m_fScale);
 			
-			LOG("m_fWavelength[0] = %f\n", atmosVariables_10.m_fWavelength[0]);
-			LOG("m_fWavelength[1] = %f\n", atmosVariables_10.m_fWavelength[1]);
-			LOG("m_fWavelength[2] = %f\n", atmosVariables_10.m_fWavelength[2]);
-			LOG("m_fWavelength4[0] = %f\n", atmosVariables_10.m_fWavelength4[0]);
-			LOG("m_fWavelength4[1] = %f\n", atmosVariables_10.m_fWavelength4[1]);
-			LOG("m_fWavelength4[2] = %f\n", atmosVariables_10.m_fWavelength4[2]);
+			LOG("m_fWavelength[0] = %f\n", atmosVariables_11.m_fWavelength[0]);
+			LOG("m_fWavelength[1] = %f\n", atmosVariables_11.m_fWavelength[1]);
+			LOG("m_fWavelength[2] = %f\n", atmosVariables_11.m_fWavelength[2]);
+			LOG("m_fWavelength4[0] = %f\n", atmosVariables_11.m_fWavelength4[0]);
+			LOG("m_fWavelength4[1] = %f\n", atmosVariables_11.m_fWavelength4[1]);
+			LOG("m_fWavelength4[2] = %f\n", atmosVariables_11.m_fWavelength4[2]);
 
-			LOG("m_fRayleighScaleDepth = %f\n", atmosVariables_10.m_fRayleighScaleDepth);
-			LOG("m_fMieScaleDepth = %f\n", atmosVariables_10.m_fMieScaleDepth);
+			LOG("m_fRayleighScaleDepth = %f\n", atmosVariables_11.m_fRayleighScaleDepth);
+			LOG("m_fMieScaleDepth = %f\n", atmosVariables_11.m_fMieScaleDepth);
 			LOG("-----------------------------------------------------------------------------------------------\n");
 			break;
 
@@ -363,18 +365,10 @@ int initializeNavras(void) {
 
 	// Code
 
-
 	// Here starts OpenGL code
-    // GLEW initialization
-    // codes related to PP requires Core profile
-    // if(glewInit() != GLEW_OK)
-    // {
-    //     LOG("Error: glewInit() failed\n");
-    //     return (-5);
-    // }
-
+    
 	// Print OpenGLInfo
-	printGLInfo();
+	//printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -387,7 +381,6 @@ int initializeNavras(void) {
         return (-6);
     }
 	
-
 	if(initializeScene_PlaceHolderOutdoor() != 0)
 	{
 		LOG("initializeScene_PlaceHolderOutdoor() FAILED !!!\n");
@@ -491,34 +484,38 @@ int initializeNavras(void) {
 	LOG("current scene changed: %d\n", currentScene);
 
 #else
+	if (initializeVideoEffect("res/videos/AMCBanner_60fps.mp4") != 0)
+	{
+		LOG("initializeScene00() FAILED !!!\n");
+		return (-8);
+	}
+	// SCENE02
+	if (initializeScene02_EarthAndSpace() != 0)
+	{
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE02
-	// if (initializeScene02_EarthAndSpace() != 0)
-	// {
-	// 	LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE05
+	if (initializeScene5_karun() != 0)
+	{
+		LOG("initializeScene5_karun() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE05
-	// if (initializeScene5_karun() != 0)
-	// {
-	// 	LOG("initializeScene5_karun() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE06
+	if (initializeScene06_BhayanakRas() != 0)
+	{
+		LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE06
-	// if (initializeScene06_BhayanakRas() != 0)
-	// {
-	// 	LOG("initializeScene02_EarthAndSpace() FAILED !!!\n");
-	// 	return (-8);
-	// }
-
-	// //// SCENE07
-	// if (initializeScene07_Raudra() != 0)
-	// {
-	// 	LOG("initializeScene7_Raudra() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	//// SCENE07
+	if (initializeScene07_Raudra() != 0)
+	{
+		LOG("initializeScene7_Raudra() FAILED !!!\n");
+		return (-8);
+	}
 
 	//// SCENE08
 	if (initializeScene08_BibhatsaRas() != 0)
@@ -527,12 +524,12 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// // SCENE09
-	// if (initializeScene09_VeerRas() != 0)
-	// {
-	// 	LOG("initializeScene09_VeerRas() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE09
+	if (initializeScene09_VeerRas() != 0)
+	{
+		LOG("initializeScene09_VeerRas() FAILED !!!\n");
+		return (-8);
+	}
 
 	// SCENE10
 	if (initializeScene10_AdbhutRas() != 0)
@@ -541,47 +538,51 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	// // SCENE11
-	// if (initializeScene11_ShringarRas() != 0)
-	// {
-	// 	LOG("initializeScene11_ShringarRas() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE11
+	if (initializeScene11_ShringarRas() != 0)
+	{
+		LOG("initializeScene11_ShringarRas() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE12
-	// if (initializeScene12_Hasya() != 0)
-	// {
-	// 	LOG("initializeScene12_Hasya() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE12
+	if (initializeScene12_Hasya() != 0)
+	{
+		LOG("initializeScene12_Hasya() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE13
-	// if (initializeScene13_Shant() != 0)
-	// {
-	// 	LOG("initializeScene13_Shant() FAILED !!!\n");
-	// 	return (-8);
-	// }
+	// SCENE13
+	if (initializeScene13_Shant() != 0)
+	{
+		LOG("initializeScene13_Shant() FAILED !!!\n");
+		return (-8);
+	}
 
-	// // SCENE14
-	//  if (initializeParticle() != 0)
-	//  {
-	//  	LOG("initializeParticle() FAILED !!!\n");
-	//  	return (-8);
-	//  }
+	////LOG("initializeScene13_Shant() DONE !!!\n");
+
+	// SCENE14
+	 if (initializeParticle() != 0)
+	 {
+	 	LOG("initializeParticle() FAILED !!!\n");
+	 	return (-8);
+	 }
 
 	scenePush(MAX_SCENES);
-	// scenePush(SCENE14_PARTICLE);
-	// scenePush(SCENE13_SHANT_RAS);
-	// scenePush(SCENE12_HASYA_RAS);
-	// scenePush(SCENE11_SHRINGAR_RAS);
+	scenePush(SCENE15_END_CREDITS);
+	scenePush(SCENE14_PARTICLE);
+	scenePush(SCENE13_SHANT_RAS);
+	scenePush(SCENE12_HASYA_RAS);
+	scenePush(SCENE11_SHRINGAR_RAS);
 	scenePush(SCENE10_ADBHUT_RAS);
-	// scenePush(SCENE09_VEER_RAS);
+	scenePush(SCENE09_VEER_RAS);
 	scenePush(SCENE08_BIBHATSA_RAS);
-	// scenePush(SCENE07_RAUDRA_RAS);
-	// scenePush(SCENE06_BHAYANK_RAS);
-	// scenePush(SCENE05_KARUN_RAS);
-	// scenePush(SCENE02_EARTH_AND_SPACE);
 
+	scenePush(SCENE07_RAUDRA_RAS);
+	scenePush(SCENE06_BHAYANK_RAS);
+	scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE02_EARTH_AND_SPACE);
+	scenePush(SCENE00_AMC_BANNER);
 	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
 
@@ -670,7 +671,13 @@ void displayNavras(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Call Scenes Display Here
-	if ( currentScene == SCENE02_EARTH_AND_SPACE)
+	if (currentScene == SCENE00_AMC_BANNER)
+	{
+		audio(SCENE00_AMC_BANNER);
+		displayVideoEffect();
+		sceneTime(time_scene1);
+	}
+	else if ( currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		audio(SCENE02_EARTH_AND_SPACE);
 
@@ -762,7 +769,7 @@ void displayNavras(void)
 		{
 			isGaussianBlurRequired = true;
 		}
-		isGodRequired = false;
+		isGodRequired = true;
 		isWaterRequired = true;
 		displayScene_PlaceHolderOutdoor(setCameraScene10, displayScene10_Passes, isGodRequired, isWaterRequired, isGaussianBlurRequired);
 		sceneTime(time_scene10);
@@ -806,6 +813,23 @@ void displayNavras(void)
 		displayParticle();
 		sceneTime(time_scene14);
 	}
+	else if (currentScene == SCENE15_END_CREDITS)
+	{
+		if (!isEndCreditsIntialized)
+		{
+			if(initializeVideoEffect("res/videos/EndCredits.mp4") != 0)
+			{
+				LOG("Unable to open End Credits Video. \n");
+				PostQuitMessage(-1);
+			}
+			isEndCreditsIntialized = true;
+		}
+		
+		audio(SCENE15_END_CREDITS);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		displayVideoEffect();
+		sceneTime(time_scene15);
+	}
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
 		//displayScene_PlaceHolderIndoor();
@@ -835,6 +859,10 @@ void updateNavras(void)
 	} 
 
 	// Call Scenes Update Here
+	if (currentScene == SCENE00_AMC_BANNER)
+	{
+		updateVideoEffect();
+	}
 	if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		updateScene_PlaceHolderOutdoor();
@@ -883,6 +911,10 @@ void updateNavras(void)
 	else if (currentScene == SCENE13_SHANT_RAS)
 	{
 		updateScene13_ShantRas();
+	}
+	if (currentScene == SCENE15_END_CREDITS)
+	{
+		updateVideoEffect();
 	}	
 	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
 	{
@@ -975,6 +1007,7 @@ void uninitializeNavras(void) {
 	uninitializeScene02_EarthAndSpace();
 	uninitializeScene_PlaceHolderIndoor();
 	uninitializeScene_PlaceHolderOutdoor();
+	uninitializeVideoEffect();
 	LOG("All scenes uninitialized\n");
 
 

@@ -84,7 +84,7 @@ static const char *szAudios[] = {
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
-//#define SHORTS
+#define SHORTS
 
 // always ON
 #define ENABLE_WATER
@@ -102,23 +102,23 @@ static const char *szAudios[] = {
 //#define ENABLE_VIDEO_RENDER
 #define ENABLE_SHADOW
 #define ENABLE_STATIC_MODELS
-#define ENABLE_DYNAMIC_MODELS
+// #define ENABLE_DYNAMIC_MODELS
 #define ENABLE_CAMERA_ANIMATION
 #define ENABLE_EROSION
 //#define ENABLE_MASKSQUADS
 #define ENABLE_AUDIO
-#define ENABLE_FONT_RENDERING
+// #define ENABLE_FONT_RENDERING
 
-#define ENABLE_SSAO
+// #define ENABLE_SSAO
 
 //#define ENABLE_MASKS
 
-// #define ENABLE_SINGLE_SCENE
+#define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
- //#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
 //#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
@@ -135,7 +135,7 @@ static const char *szAudios[] = {
 
 #else
 
-// #define AUTOSWITCH_SCENE
+#define AUTOSWITCH_SCENE
 
 #endif // ENABLE_SINGLE_SCENE
 

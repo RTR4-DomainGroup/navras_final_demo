@@ -69,22 +69,19 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
-static struct ADSUniform sceneOutdoorADSStaticUniform_10;
-static struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
-
 #ifdef ENABLE_TERRIAN
 static struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-static struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
-static float cloudMyScaleAdbhutRas = 1.0f;
-static float cloudNoiseScaleAdbhutRas = 2.0f;
-static bool cloudNoiseScaleIncrementAdbhutRas = true;
-static GLuint noise_texture_adbhut_ras;
-static GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-static GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-#endif // ENABLE_CLOUD_NOISE
+// #ifdef ENABLE_CLOUD_NOISE
+// static struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
+// static float cloudMyScaleAdbhutRas = 1.0f;
+// static float cloudNoiseScaleAdbhutRas = 2.0f;
+// static bool cloudNoiseScaleIncrementAdbhutRas = true;
+// static GLuint noise_texture_adbhut_ras;
+// static GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+// static GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+// #endif // ENABLE_CLOUD_NOISE
 
 
 #ifdef ENABLE_BILLBOARDING
@@ -134,6 +131,8 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 #ifdef ENABLE_STATIC_MODELS
+static struct ADSUniform sceneOutdoorADSStaticUniform_10;
+
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
@@ -145,8 +144,8 @@ static STATIC_MODEL bridgeModel;
 
 #ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
-
-#endif // ENABLE_STATIC_MODELS
+static struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
+#endif // ENABLE_DYNAMIC_MODELS
 
 static struct TextureVariables terrainTextureVariables;
 static TRANFORM displacementmap_depth; // onl
