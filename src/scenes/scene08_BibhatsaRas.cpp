@@ -790,11 +790,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = vmath::rotate(-90.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		drawStaticModel(buildingOneModel);
@@ -821,7 +819,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		drawStaticModel(buildingTwoModel);
 		// ################################### Building Two LHS Set of 5 Left Front ###################################  
 
@@ -840,7 +837,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = vmath::rotate(-90.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -864,7 +860,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -888,7 +883,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -933,7 +927,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(0.07f, 0.07f, 0.07f);
 
 		modelMatrix = translationMatrix * scaleMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -961,7 +954,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -986,7 +978,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1009,7 +1000,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1031,7 +1021,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1053,14 +1042,14 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		drawStaticModelInstanced(canTrash3, NO_OF_INSTANCES_KACHARA/2);
-		
+		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
+
 		// ################################### RED TRASH 3 ###################################  
 
 		// ################################### Cigarette 1 ###################################  
@@ -1080,6 +1069,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		drawStaticModelInstanced(cigarette1, NO_OF_INSTANCES_KACHARA/3);
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
@@ -1098,7 +1088,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1169,7 +1158,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1191,7 +1179,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1242,7 +1229,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1270,7 +1256,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
@@ -1298,7 +1283,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
