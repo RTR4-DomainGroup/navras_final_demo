@@ -38,18 +38,18 @@
 #include "../../inc/shaders/BillboardingShader.h"
 #endif // ENABLE_BILLBOARDING
 
-//#ifdef ENABLE_ATMOSPHERE
-//#include "../../inc/shaders/AtmosphereShader.h"
-//#include "../../inc/effects/AtmosphereEffect.h"
-//#endif // ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+#include "../../inc/shaders/AtmosphereShader.h"
+#include "../../inc/effects/AtmosphereEffect.h"
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_TERRIAN
 #include "../../inc/effects/TerrainEffect.h"
 #endif // ENABLE_TERRIAN
-
-#ifdef ENABLE_CLOUD_NOISE
-#include "../../inc/effects/CloudEffect.h"
-#endif // ENABLE_CLOUD_NOISE
+//
+//#ifdef ENABLE_CLOUD_NOISE
+//#include "../../inc/effects/CloudEffect.h"
+//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_STATIC_MODELS
 #include "../../inc/effects/StaticModelLoadingEffect.h"
@@ -63,6 +63,10 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
 
+
+#ifdef ENABLE_STARFIELD
+#include "../../inc/effects/StarfieldEffect.h"
+#endif // ENABLE_STARFIELD
 
 #include "../../inc/scenes/scene10_AdbhutRas.h"
 
@@ -80,15 +84,15 @@ extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 extern struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
-float cloudMyScaleAdbhutRas = 1.0f;
-float cloudNoiseScaleAdbhutRas = 2.0f;
-bool cloudNoiseScaleIncrementAdbhutRas = true;
-GLuint noise_texture_adbhut_ras;
-GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
+//float cloudMyScaleAdbhutRas = 1.0f;
+//float cloudNoiseScaleAdbhutRas = 2.0f;
+//bool cloudNoiseScaleIncrementAdbhutRas = true;
+//GLuint noise_texture_adbhut_ras;
+//GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
+//GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+//#endif // ENABLE_CLOUD_NOISE
 
 
 #ifdef ENABLE_BILLBOARDING
@@ -115,11 +119,11 @@ extern struct FSQuadUniform fsGaussBlurQuadUniform;
 #endif // ENABLE_GAUSSIAN_BLUR
 
 
-//#ifdef ENABLE_ATMOSPHERE
-//// Atmosphere Scattering
-//static AtmosphereUniform atmosphereUniform_10;
-//static AtmosphericVariables atmosVariables_10;
-//#endif // ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+// Atmosphere Scattering
+static AtmosphereUniform atmosphereUniform_10;
+AtmosphericVariables atmosVariables_10;
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
 // Shadow
@@ -147,7 +151,7 @@ extern struct SkyboxUniform sceneSkyBoxUniform;
 // Variables For Starfieldx
 extern GLuint texture_star; 
 extern double deltaTime;
-extern struct StarfieldUniform sceneStarfieldUniform;
+static struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
 
 extern GLfloat density; // = 0.15;
@@ -161,7 +165,7 @@ static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
 static STATIC_MODEL leafModel;
 static STATIC_MODEL farmhouseModel;
-static STATIC_MODEL adbhutmanModel;
+// static STATIC_MODEL adbhutmanModel;
 static STATIC_MODEL bridgeModel;
 #endif // ENABLE_STATIC_MODELS
 
@@ -229,40 +233,80 @@ int initializeScene10_AdbhutRas(void)
 	// Code.
 	// initializeCamera(&camera);
 
-//#ifdef ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+
 //
-////
-//	atmosVariables_10.m_nSamples = 3;		// Number of sample rays to use in integral equation
-//	atmosVariables_10.m_Kr = 0.0035f;		// Rayleigh scattering constant
-//	atmosVariables_10.m_Kr4PI = atmosVariables_10.m_Kr * 4.0f * M_PI;
-//	atmosVariables_10.m_Km = 0.0015f;		// Mie scattering constant
-//	atmosVariables_10.m_Km4PI = atmosVariables_10.m_Km * 4.0f * M_PI;
-//	atmosVariables_10.m_ESun = 20.0f;		// Sun brightness constant
-//	atmosVariables_10.m_g = -0.990f;		// The Mie phase asymmetry factor
-//	atmosVariables_10.m_fExposure = 2.0f;
-//
-//	atmosVariables_10.m_fInnerRadius = 10.0f;
-//	atmosVariables_10.m_fOuterRadius = 50.0f;
-//	//atmosVariables_10.m_fOuterRadius = atmosVariables_10.m_fInnerRadius + (atmosVariables_10.m_fInnerRadius * 2.5f);
-//	atmosVariables_10.m_fScale = 1 / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius);
-//
-//	atmosVariables_10.m_fWavelength[0] = 0.650f;		// 650 nm for red
-//	atmosVariables_10.m_fWavelength[1] = 0.570f;		// 570 nm for green
-//	atmosVariables_10.m_fWavelength[2] = 0.475f;		// 475 nm for blue
-//	atmosVariables_10.m_fWavelength4[0] = powf(atmosVariables_10.m_fWavelength[0], 4.0f);
-//	atmosVariables_10.m_fWavelength4[1] = powf(atmosVariables_10.m_fWavelength[1], 4.0f);
-//	atmosVariables_10.m_fWavelength4[2] = powf(atmosVariables_10.m_fWavelength[2], 4.0f);
-//
-//	atmosVariables_10.m_fRayleighScaleDepth = 0.25f;
-//	atmosVariables_10.m_fMieScaleDepth = 0.1f;
-//
-//	atmosVariables_10.m_vLight = vec3(0, 0, -350);
-//	atmosVariables_10.m_vLightDirection = atmosVariables_10.m_vLight / sqrtf(atmosVariables_10.m_vLight[0] * atmosVariables_10.m_vLight[0] + atmosVariables_10.m_vLight[1] * atmosVariables_10.m_vLight[1] + atmosVariables_10.m_vLight[2] * atmosVariables_10.m_vLight[2]);
-//
-//	//
-//	initializeAtmosphere(atmosVariables_10);
-//
-//#endif // ENABLE_ATMOSPHERE
+	//atmosVariables_10.m_nSamples = 3;		// Number of sample rays to use in integral equation
+	//atmosVariables_10.m_Kr = 0.0035f;		// Rayleigh scattering constant
+	//atmosVariables_10.m_Kr4PI = atmosVariables_10.m_Kr * 4.0f * M_PI;
+	//atmosVariables_10.m_Km = 0.0015f;		// Mie scattering constant
+	//atmosVariables_10.m_Km4PI = atmosVariables_10.m_Km * 4.0f * M_PI;
+	//atmosVariables_10.m_ESun = 20.0f;		// Sun brightness constant
+	//atmosVariables_10.m_g = -0.990f;		// The Mie phase asymmetry factor
+	//atmosVariables_10.m_fExposure = 2.0f;
+
+	//atmosVariables_10.m_fInnerRadius = 0.0f;
+	//atmosVariables_10.m_fOuterRadius = 102.0f;
+	////atmosVariables_10.m_fOuterRadius = atmosVariables_10.m_fInnerRadius + (atmosVariables_10.m_fInnerRadius * 2.5f);
+	//atmosVariables_10.m_fScale = 1 / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius);
+
+	//atmosVariables_10.m_fWavelength[0] = 0.650f;		// 650 nm for red
+	//atmosVariables_10.m_fWavelength[1] = 0.570f;		// 570 nm for green
+	//atmosVariables_10.m_fWavelength[2] = 0.475f;		// 475 nm for blue
+	//atmosVariables_10.m_fWavelength4[0] = powf(atmosVariables_10.m_fWavelength[0], 4.0f);
+	//atmosVariables_10.m_fWavelength4[1] = powf(atmosVariables_10.m_fWavelength[1], 4.0f);
+	//atmosVariables_10.m_fWavelength4[2] = powf(atmosVariables_10.m_fWavelength[2], 4.0f);
+
+	//atmosVariables_10.m_fRayleighScaleDepth = 0.25f;
+	//atmosVariables_10.m_fMieScaleDepth = 0.1f;
+
+	/*atmosVariables_10.m_nSamples = 3;
+	atmosVariables_10.m_Kr = 0.003500;
+	atmosVariables_10.m_Kr4PI = 0.043982;
+	atmosVariables_10.m_Km = 0.017300;
+	atmosVariables_10.m_Km4PI = 0.217398;
+	atmosVariables_10.m_ESun = 3.899959;
+	atmosVariables_10.m_g = -0.977000;
+	atmosVariables_10.m_fExposure = 2.000000;
+	atmosVariables_10.m_fInnerRadius = 0.000000;
+	atmosVariables_10.m_fOuterRadius = 102.000000;
+	atmosVariables_10.m_fScale = 0.009804;
+	atmosVariables_10.m_fWavelength[0] = 0.697999;
+	atmosVariables_10.m_fWavelength[1] = 0.570000;
+	atmosVariables_10.m_fWavelength[2] = 0.475000;
+	atmosVariables_10.m_fWavelength4[0] = 0.237367;
+	atmosVariables_10.m_fWavelength4[1] = 0.105560;
+	atmosVariables_10.m_fWavelength4[2] = 0.050907;
+	atmosVariables_10.m_fRayleighScaleDepth = 0.250000;
+	atmosVariables_10.m_fMieScaleDepth = 0.100000;*/
+
+	atmosVariables_10.m_nSamples = 3;
+	atmosVariables_10.m_Kr = 0.026200;
+	atmosVariables_10.m_Kr4PI = 0.329238;
+	atmosVariables_10.m_Km = 0.017300;
+	atmosVariables_10.m_Km4PI = 0.217398;
+	atmosVariables_10.m_ESun = 3.899959;
+	atmosVariables_10.m_g = -0.984000;
+	atmosVariables_10.m_fExposure = 2.000000;
+	atmosVariables_10.m_fInnerRadius = 0.000000;
+	atmosVariables_10.m_fOuterRadius = 102.000000;
+	atmosVariables_10.m_fScale = 0.009804;
+	atmosVariables_10.m_fWavelength[0] = 0.697999;
+	atmosVariables_10.m_fWavelength[1] = 0.570000;
+	atmosVariables_10.m_fWavelength[2] = 0.475000;
+	atmosVariables_10.m_fWavelength4[0] = 0.237367;
+	atmosVariables_10.m_fWavelength4[1] = 0.105560;
+	atmosVariables_10.m_fWavelength4[2] = 0.050907;
+	atmosVariables_10.m_fRayleighScaleDepth = 0.250000;
+	atmosVariables_10.m_fMieScaleDepth = 0.100000;
+
+	atmosVariables_10.m_vLight = vec3(0, 90, -350);
+	atmosVariables_10.m_vLightDirection = atmosVariables_10.m_vLight / sqrtf(atmosVariables_10.m_vLight[0] * atmosVariables_10.m_vLight[0] + atmosVariables_10.m_vLight[1] * atmosVariables_10.m_vLight[1] + atmosVariables_10.m_vLight[2] * atmosVariables_10.m_vLight[2]);
+
+	//
+	initializeAtmosphere(atmosVariables_10);
+
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
@@ -279,20 +323,28 @@ int initializeScene10_AdbhutRas(void)
 	}
 #endif
 
+#ifdef ENABLE_STARFIELD
+	initializeQuad();
+	initializeCube();
+	initializeCubeWithTilingTexcoords();
+
+#endif  // ENABLE_STARFIELD
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 	loadStaticModel("res/models/tree_adbhut/leaf.obj", &leafModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
-	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
+	// loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 	loadStaticModel("res/models/bridge/bridge.obj", &bridgeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	// loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	loadDynamicModel("res/models/scene10_adbhut/adbhutManAnim.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_BILLBOARDING
@@ -355,7 +407,6 @@ int initializeScene10_AdbhutRas(void)
 	initializeInstancedQuad(instBuffers_leftflowers, BB_NO_OF_INSTANCES, instance_positions);
 
 
-
 	// /// Right flowers
 	// Point pentaPos_rf[] = {
 	// 	{13.46f, -35.49f},
@@ -402,18 +453,18 @@ int initializeScene10_AdbhutRas(void)
 	
 #endif // ENABLE_TERRIAN
 
-#ifdef ENABLE_CLOUD_NOISE
-	noise_texture_adbhut_ras = initializeCloud();
-	if (noise_texture_adbhut_ras == 0)
-	{
-		LOG("initializeCloud() - noise_texture_adbhut_ras FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeCloud() - noise_texture_adbhut_ras Successfull!!!\n");
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	noise_texture_adbhut_ras = initializeCloud();
+//	if (noise_texture_adbhut_ras == 0)
+//	{
+//		LOG("initializeCloud() - noise_texture_adbhut_ras FAILED!!!\n");
+//		return(-1);
+//	}
+//	else
+//	{
+//		LOG("initializeCloud() - noise_texture_adbhut_ras Successfull!!!\n");
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 	return 0;
 }
@@ -522,97 +573,133 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	if (actualDepthQuadScene == 0) {
 
-		if (godRays == 1) {
+#ifdef ENABLE_STARFIELD
 
-//#ifdef ENABLE_ATMOSPHERE
-//
-//			translationMatrix = mat4::identity();
-//			rotationMatrix = mat4::identity();
-//			modelMatrix = mat4::identity();
-//
-//			//glBlendFunc(GL_ONE, GL_ONE);
-//
-//			atmosphereUniform_10 = useAtmosphereShader();
-//
-//			glUniform3f(atmosphereUniform_10.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
-//			glUniform3f(atmosphereUniform_10.lightPosUniform, atmosVariables_10.m_vLightDirection[0], atmosVariables_10.m_vLightDirection[1], atmosVariables_10.m_vLightDirection[2]);
-//			glUniform3f(atmosphereUniform_10.invWavelengthUniform, 1 / atmosVariables_10.m_fWavelength4[0], 1 / atmosVariables_10.m_fWavelength4[1], 1 / atmosVariables_10.m_fWavelength4[2]);
-//			glUniform1f(atmosphereUniform_10.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
-//			glUniform1f(atmosphereUniform_10.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
-//			glUniform1f(atmosphereUniform_10.innerRadiusUniform, atmosVariables_10.m_fInnerRadius);
-//			glUniform1f(atmosphereUniform_10.innerRadius2Uniform, atmosVariables_10.m_fInnerRadius * atmosVariables_10.m_fInnerRadius);
-//			glUniform1f(atmosphereUniform_10.outerRadiusUniform, atmosVariables_10.m_fOuterRadius);
-//			glUniform1f(atmosphereUniform_10.outerRadius2Uniform, atmosVariables_10.m_fOuterRadius * atmosVariables_10.m_fOuterRadius);
-//			glUniform1f(atmosphereUniform_10.KrESunUniform, atmosVariables_10.m_Kr * atmosVariables_10.m_ESun);
-//			glUniform1f(atmosphereUniform_10.KmESunUniform, atmosVariables_10.m_Km * atmosVariables_10.m_ESun);
-//			glUniform1f(atmosphereUniform_10.Kr4PIUniform, atmosVariables_10.m_Kr4PI);
-//			glUniform1f(atmosphereUniform_10.Km4PIUniform, atmosVariables_10.m_Km4PI);
-//			glUniform1f(atmosphereUniform_10.scaleUniform, 1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius));
-//			glUniform1f(atmosphereUniform_10.scaleDepthUniform, atmosVariables_10.m_fRayleighScaleDepth);
-//			glUniform1f(atmosphereUniform_10.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius)) / atmosVariables_10.m_fRayleighScaleDepth);
-//			glUniform1f(atmosphereUniform_10.gUniform, atmosVariables_10.m_g);
-//			glUniform1f(atmosphereUniform_10.g2Uniform, atmosVariables_10.m_g * atmosVariables_10.m_g);
-//
-//			glUniformMatrix4fv(atmosphereUniform_10.modelMatrix, 1, GL_FALSE, modelMatrix);
-//			glUniformMatrix4fv(atmosphereUniform_10.viewMatrix, 1, GL_FALSE, viewMatrix);
-//			glUniformMatrix4fv(atmosphereUniform_10.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-//
-//			displayAtmosphere();
-//
-//			glUseProgram(0);
-//
-//#endif // ENABLE_ATMOSPHERE
+		sceneStarfieldUniform = useStarfieldShader();
 
-		} // if(godRays == 1)
+		float time = (float)deltaTime;
 
-#ifdef ENABLE_CLOUD_NOISE
+		time = time * 0.05f;
+		time = time - floor(time);
 
-		glEnable(GL_TEXTURE_3D);
-		sceneAdbhutRasCloudNoiseUniform = useCloudNoiseShader();
-
+		// Transformations
 		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
 		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
+		translationMatrix = vmath::translate(0.0f, 0.0f, -80.0f);					// glTranslatef() is replaced by this line.
+		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+		if('k' == tf_Object)
+			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
-		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
-		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneAdbhutRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+		//glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
+		glUniform1f(sceneStarfieldUniform.timeUniform, time);
 
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneAdbhutRasCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-		glUniform1f(sceneAdbhutRasCloudNoiseUniform.scaleUniform, cloudMyScaleAdbhutRas);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.skyColorUniform, 1, skyColorForAdbhutRas);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorFOrAdbhutRas);
-		glUniform1f(sceneAdbhutRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleAdbhutRas);
-		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
-
-		float color[3] = {1.0f, 1.0f, 1.0f};
-		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
-		displaySphere(color);
-
+		displayStarfield(texture_star);
 		glUseProgram(0);
 
-		glDisable(GL_TEXTURE_3D);
+#endif // ENABLE_STARFIELD
 
-#endif // ENABLE_CLOUD_NOISE
+		if (godRays == 1) {
+
+#ifdef ENABLE_ATMOSPHERE
+
+			translationMatrix = mat4::identity();
+			rotationMatrix = mat4::identity();
+			modelMatrix = mat4::identity();
+
+			//glBlendFunc(GL_ONE, GL_ONE);
+
+			atmosphereUniform_10 = useAtmosphereShader();
+			
+			modelMatrix = rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+			glUniform3f(atmosphereUniform_10.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+			glUniform3f(atmosphereUniform_10.lightPosUniform, atmosVariables_10.m_vLightDirection[0], atmosVariables_10.m_vLightDirection[1], atmosVariables_10.m_vLightDirection[2]);
+			glUniform3f(atmosphereUniform_10.invWavelengthUniform, 1 / atmosVariables_10.m_fWavelength4[0], 1 / atmosVariables_10.m_fWavelength4[1], 1 / atmosVariables_10.m_fWavelength4[2]);
+			glUniform1f(atmosphereUniform_10.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+			glUniform1f(atmosphereUniform_10.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+			glUniform1f(atmosphereUniform_10.innerRadiusUniform, atmosVariables_10.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_10.innerRadius2Uniform, atmosVariables_10.m_fInnerRadius * atmosVariables_10.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_10.outerRadiusUniform, atmosVariables_10.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_10.outerRadius2Uniform, atmosVariables_10.m_fOuterRadius * atmosVariables_10.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_10.KrESunUniform, atmosVariables_10.m_Kr * atmosVariables_10.m_ESun);
+			glUniform1f(atmosphereUniform_10.KmESunUniform, atmosVariables_10.m_Km * atmosVariables_10.m_ESun);
+			glUniform1f(atmosphereUniform_10.Kr4PIUniform, atmosVariables_10.m_Kr4PI);
+			glUniform1f(atmosphereUniform_10.Km4PIUniform, atmosVariables_10.m_Km4PI);
+			glUniform1f(atmosphereUniform_10.scaleUniform, 1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius));
+			glUniform1f(atmosphereUniform_10.scaleDepthUniform, atmosVariables_10.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_10.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius)) / atmosVariables_10.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_10.gUniform, atmosVariables_10.m_g);
+			glUniform1f(atmosphereUniform_10.g2Uniform, atmosVariables_10.m_g * atmosVariables_10.m_g);
+
+			glUniformMatrix4fv(atmosphereUniform_10.modelMatrix, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+			displayAtmosphere();
+
+			glUseProgram(0);
+
+#endif // ENABLE_ATMOSPHERE
+
+		} // if(godRays == 1)
+//
+//#ifdef ENABLE_CLOUD_NOISE
+//
+//		glEnable(GL_TEXTURE_3D);
+//		sceneAdbhutRasCloudNoiseUniform = useCloudNoiseShader();
+//
+//		translationMatrix = mat4::identity();
+//		scaleMatrix = mat4::identity();
+//		rotationMatrix = mat4::identity();
+//		modelMatrix = mat4::identity();
+//
+//		rotationMatrix_x = mat4::identity();
+//		rotationMatrix_y = mat4::identity();
+//		rotationMatrix_z = mat4::identity();
+//
+//		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
+//		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
+//		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+//
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
+//		glUniform4fv(sceneAdbhutRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
+//
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
+//		glUniform1f(sceneAdbhutRasCloudNoiseUniform.materialShininessUniform, materialShininess);
+//
+//		glUniform1f(sceneAdbhutRasCloudNoiseUniform.scaleUniform, cloudMyScaleAdbhutRas);
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.skyColorUniform, 1, skyColorForAdbhutRas);
+//		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorFOrAdbhutRas);
+//		glUniform1f(sceneAdbhutRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleAdbhutRas);
+//		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
+//		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
+//
+//		
+//		glActiveTexture(GL_TEXTURE0);
+//		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
+//
+//		float color[3] = {1.0f, 1.0f, 1.0f};
+//		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
+//		displaySphere(color);
+//
+//		glUseProgram(0);
+//
+//		glDisable(GL_TEXTURE_3D);
+//
+//#endif // ENABLE_CLOUD_NOISE
 	} // (actualDepthQuadScene == 0)
 
 #ifdef ENABLE_TERRIAN
@@ -846,26 +933,26 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	drawStaticModel(farmhouseModel);
 
 
-	// ------ adbhutmanModel Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationAngles = {0.0f, 0.0f, 0.0f};
+	// // ------ adbhutmanModel Model ------
+	// translationMatrix = mat4::identity();
+	// rotationMatrix = mat4::identity();
+	// modelMatrix = mat4::identity();
+	// scaleMatrix = mat4::identity();
+	// rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
-	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
-	rotationAngles = {0.0f, 99.55f, 0.0f};
+	// translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
+	// scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+	// rotationAngles = {0.0f, 99.55f, 0.0f};
 
-	// usage type 1 
-	if('5' == tf_Object) // adbhutman model
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	// // usage type 1 
+	// if('5' == tf_Object) // adbhutman model
+	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	// rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	// glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
-	drawStaticModel(adbhutmanModel);
+	// drawStaticModel(adbhutmanModel);
 
 
 	// ------ Bridge Model ------
@@ -955,11 +1042,11 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-19.94, -2.13f, -34.31f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 1.80f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
 	if (actualDepthQuadScene == 1) {
@@ -1198,7 +1285,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 1)
 	{
-		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
 		if (cameraEyeZ < (-35.99f - 0.2f))
 		{
 			camera_update = 2;
@@ -1208,7 +1295,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 2)
 	{
-		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
 		if (cameraEyeX < (-4.21f - 0.2f))
 		{
 			camera_update = 3;
@@ -1218,7 +1305,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 3)
 	{
-		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.001f);
 		if (cameraEyeX < (-16.28f - 0.2f))
 		{
 			camera_update = 4;
@@ -1246,13 +1333,13 @@ if(camera_update == 4)
 	if(leaf_translate < -1.75f) {
 		leaf_translate = 0.35f;
 		leaf_rotate = 0.0f;	
+		camera_update = 5;
 	}
-	camera_update = 5;
 }
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	// update Cloud
+//	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
+//#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -1270,7 +1357,7 @@ void uninitializeScene10_AdbhutRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&bridgeModel);
-	unloadStaticModel(&adbhutmanModel);
+	// unloadStaticModel(&adbhutmanModel);
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&leafModel);
@@ -1292,14 +1379,14 @@ void uninitializeScene10_AdbhutRas(void)
 #endif
 	//uninitializeCamera(&camera);
 
-#ifdef ENABLE_CLOUD_NOISE
-	uninitializeCloud();
-	if (noise_texture_adbhut_ras)
-	{
-		glDeleteTextures(1, &noise_texture_adbhut_ras);
-		noise_texture_adbhut_ras = 0;
-	}
-#endif // ENABLE_CLOUD_NOISE
+//#ifdef ENABLE_CLOUD_NOISE
+//	uninitializeCloud();
+//	if (noise_texture_adbhut_ras)
+//	{
+//		glDeleteTextures(1, &noise_texture_adbhut_ras);
+//		noise_texture_adbhut_ras = 0;
+//	}
+//#endif // ENABLE_CLOUD_NOISE
 
 }
  
