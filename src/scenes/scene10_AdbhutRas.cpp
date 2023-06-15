@@ -47,10 +47,6 @@
 #include "../../inc/effects/TerrainEffect.h"
 #endif // ENABLE_TERRIAN
 //
-//#ifdef ENABLE_CLOUD_NOISE
-//#include "../../inc/effects/CloudEffect.h"
-//#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_STATIC_MODELS
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #endif // ENABLE_STATIC_MODELS
@@ -72,17 +68,6 @@
 #ifdef ENABLE_TERRIAN
 static struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
-
-// #ifdef ENABLE_CLOUD_NOISE
-// static struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
-// static float cloudMyScaleAdbhutRas = 1.0f;
-// static float cloudNoiseScaleAdbhutRas = 2.0f;
-// static bool cloudNoiseScaleIncrementAdbhutRas = true;
-// static GLuint noise_texture_adbhut_ras;
-// static GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-// static GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-// #endif // ENABLE_CLOUD_NOISE
-
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
@@ -388,19 +373,6 @@ int initializeScene10_AdbhutRas(void)
 	
 #endif // ENABLE_TERRIAN
 
-//#ifdef ENABLE_CLOUD_NOISE
-//	noise_texture_adbhut_ras = initializeCloud();
-//	if (noise_texture_adbhut_ras == 0)
-//	{
-//		LOG("initializeCloud() - noise_texture_adbhut_ras FAILED!!!\n");
-//		return(-1);
-//	}
-//	else
-//	{
-//		LOG("initializeCloud() - noise_texture_adbhut_ras Successfull!!!\n");
-//	}
-//#endif // ENABLE_CLOUD_NOISE
-
 	return 0;
 }
 
@@ -587,55 +559,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 		} // if(godRays == 1)
 
-
-// #ifdef ENABLE_CLOUD_NOISE
-
-// 		glEnable(GL_TEXTURE_3D);
-// 		sceneAdbhutRasCloudNoiseUniform = useCloudNoiseShader();
-
-// 		translationMatrix = mat4::identity();
-// 		scaleMatrix = mat4::identity();
-// 		rotationMatrix = mat4::identity();
-// 		modelMatrix = mat4::identity();
-
-// 		rotationMatrix_x = mat4::identity();
-// 		rotationMatrix_y = mat4::identity();
-// 		rotationMatrix_z = mat4::identity();
-
-// 		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
-// 		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
-// 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
-// 		glUniform4fv(sceneAdbhutRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
-// 		glUniform1f(sceneAdbhutRasCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-// 		glUniform1f(sceneAdbhutRasCloudNoiseUniform.scaleUniform, cloudMyScaleAdbhutRas);
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.skyColorUniform, 1, skyColorForAdbhutRas);
-// 		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorFOrAdbhutRas);
-// 		glUniform1f(sceneAdbhutRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleAdbhutRas);
-// 		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
-// 		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
-		
-// 		glActiveTexture(GL_TEXTURE0);
-// 		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
-
-// 		float color[3] = {1.0f, 1.0f, 1.0f};
-// 		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
-// 		displaySphere(color);
-
-// 		glUseProgram(0);
-
-// 		glDisable(GL_TEXTURE_3D);
-
-// #endif // ENABLE_CLOUD_NOISE
 	} // (actualDepthQuadScene == 0)
 
 #ifdef ENABLE_TERRIAN
@@ -799,12 +722,12 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(-20.75f, -2.27f, -34.25f);
-	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
+	translationMatrix = vmath::translate(-20.75f, -2.27f, -34.19f);
+	scaleMatrix = vmath::scale(0.34f,  0.34f,  0.34f);
 
 	// usage type 1 
-	// if('3' == tf_Object) // Tree model
-	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	if('3' == tf_Object) // Tree model
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -819,18 +742,19 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
 	// start
-	translationMatrix = vmath::translate(-20.19f, leaf_translate, -34.25f);
-	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
-	rotationAngles = {0.0f, leaf_rotate, 0.0f};
+	translationMatrix = vmath::translate(-19.55f, leaf_translate, -34.20f);
+	scaleMatrix = vmath::scale(0.14f,  0.14f,  0.14f);
+	rotationAngles = {674.35f, leaf_rotate, -976.88f};
 	// // end
-	// translationMatrix = vmath::translate(-20.19f, 0.0f, -34.25f);
-	// scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
-	// // rotationAngles = {leaf_rotate, 0.0f, 0.0f};
+	// translationMatrix = vmath::translate(-19.55f, -1.83f, -34.20f);
+	// rotationAngles = {674.35f, 247.20f, -976.88f};
 
 	// usage type 1 
-	if('3' == tf_Object) // Leaf model
-		update_transformations(NULL, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	// if('3' == tf_Object) // Leaf model
+	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	rotationMatrix = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -889,9 +813,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 	modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(-7.41f, -1.30f, -36.65f);
-	scaleMatrix = vmath::scale( 2.21f,  2.21f,  2.21f);
-	rotationAngles = { 3.92f, 198.60f, -3.26f };
+	translationMatrix = vmath::translate(-6.86f, -1.40f, -36.00f);
+	scaleMatrix = vmath::scale(1.81f, 1.81f, 1.81f);
+	rotationAngles = {2.32f, 189.75f, -5.41f};
 
 	// usage type 1 
 	if('9' == tf_Object) // bridge model
@@ -971,7 +895,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 2.0f);
 
 	glUseProgram(0);
 
@@ -1152,15 +1076,6 @@ void updateScene10_AdbhutRas(void)
 	//cameraCenterZ -= speedVector.x;
 
 	// lookAt(-17.10f, -1.40f, -33.85f, -320.07f, -1.40f, -177.19f, 0.00f, 1.00f, 0.00f)
-	// cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.002f);
-	// cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.002f);
-	// cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.002f);
-
-	// cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.002f);
-	// cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.002f);
-	// cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.002f);
-
-
 
 // (20.26f, -1.11f, -4.41f, 20.26f, -1.11f, -10.41f, 0.00f, 1.00f, 0.00f)
 // (4.72f, -1.11f, -28.46f, 4.72f, -1.11f, -34.46f, 0.00f, 1.00f, 0.00f)
@@ -1246,22 +1161,21 @@ void updateScene10_AdbhutRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
-if(camera_update == 4) 
-{
-	
-	leaf_translate -= 0.015f;
-	leaf_rotate += 9.52f;	
-	if(leaf_translate < -1.75f) {
-		leaf_translate = 0.35f;
-		leaf_rotate = 0.0f;	
-		camera_update = 5;
+	if(camera_update == 4) 
+	{
+		
+		leaf_translate -= 0.015f;
+		leaf_rotate += 9.52f;	
+		if(leaf_translate < -1.83f) {
+			leaf_translate = -1.83f;
+			leaf_rotate = 247.20f;	
+			camera_update = 5;
+		}
+		if(leaf_rotate > 360.0f) {
+			leaf_rotate = 0.0f;
+		}
 	}
-}
 
-//#ifdef ENABLE_CLOUD_NOISE
-//	// update Cloud
-//	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
-//#endif // ENABLE_CLOUD_NOISE
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -1308,15 +1222,6 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadDynamicModel(&skeletonModel);
 #endif
 	//uninitializeCamera(&camera);
-
-//#ifdef ENABLE_CLOUD_NOISE
-//	uninitializeCloud();
-//	if (noise_texture_adbhut_ras)
-//	{
-//		glDeleteTextures(1, &noise_texture_adbhut_ras);
-//		noise_texture_adbhut_ras = 0;
-//	}
-//#endif // ENABLE_CLOUD_NOISE
 
 }
  
