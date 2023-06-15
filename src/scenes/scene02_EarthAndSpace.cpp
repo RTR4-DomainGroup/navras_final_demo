@@ -113,11 +113,13 @@ int initializeScene02_EarthAndSpace(void)
 	// Code.
 	// initializeCamera(&camera);
 
+#ifdef ENABLE_TEXTRENDERING
 	if(initializeFont() != 0)
 	{
 		LOG("initializeFont() FAILED in initializeScene02_EarthAndSpace in scene02_EarthAndSpace.cpp !!!\n");
 		return (-8);
 	}
+#endif // ENABLE_TEXTRENDERING
 
 #ifdef ENABLE_ADSLIGHT
 	// Texture

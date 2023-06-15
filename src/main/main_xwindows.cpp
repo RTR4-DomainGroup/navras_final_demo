@@ -299,6 +299,17 @@ int main(void)
             {
             case MapNotify: // similiar to WM_Create
                 break;
+            case FocusIn:
+                // window has got focus
+                bActiveWindow = True;
+                eventHandlerNavras(WM_SETFOCUS, keySym);
+                break;
+                // wm activate / set focus
+            case FocusOut:
+                // window has loose focus
+                bActiveWindow = False;
+                eventHandlerNavras(WM_KILLFOCUS, keySym);
+                break;
             case ButtonPress:
                 switch (event.xbutton.button)
                 {
@@ -386,15 +397,7 @@ int main(void)
             case Expose:
                 break;
                 // wm activate / set focus
-            case FocusIn:
-                // window has got focus
-                bActiveWindow = True;
-                break;
-                // wm activate / set focus
-            case FocusOut:
-                // window has loose focus
-                bActiveWindow = False;
-                break;
+
             case 33:
                 gbDone = True;
                 break;

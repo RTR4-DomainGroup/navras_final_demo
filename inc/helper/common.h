@@ -94,6 +94,9 @@ struct TextureVariables {
 #define VK_PRIOR XK_Prior //XK_Page_Up
 #define VK_NEXT  XK_Next // XK_Page_Down
 
+#define WM_SETFOCUS  FocusIn // XK_Page_Down
+#define WM_KILLFOCUS  FocusOut // XK_Page_Down
+
 #define WM_KEYDOWN 999
 #define WM_CHAR 998
 
