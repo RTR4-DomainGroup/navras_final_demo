@@ -269,7 +269,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	else if (actualDepthQuadScene == 1)
 	{
 		finalViewMatrix = mat4::identity();
-		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		finalViewMatrix = lookat(vec3(15.34f, 5.25f, -19.79f), vec3(-89.07f, -220.27f, 348.81f), vec3(0.0f, 1.0f, 0.0f));
+		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
