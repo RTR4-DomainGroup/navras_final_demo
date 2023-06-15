@@ -242,4 +242,7 @@ int log_close(void)
     return (0);
 }
 
+float degToRad(float degrees) {
 
+    return (degrees * M_PI / 180.0f);
+}
