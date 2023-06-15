@@ -16,6 +16,8 @@ struct VideoReaderState vr_state;
 
 bool flagAudio = true;
 
+struct FSVQuadUniform fsvqUniform;
+
 int initializeVideoEffect(const char* videoFile)
 {
     // Code
@@ -25,12 +27,8 @@ int initializeVideoEffect(const char* videoFile)
         return -1;
     }
    
-    if(initializeFSVQuadShader() != 0)
-    {
-        LOG("Failed to initializeFSVQuadShader().\n");
-        return -2;
-    }
     initializeQuadForVideo();
+   
     frameWidth = vr_state.width;
     frameHeight = vr_state.height;
     frame_data = new uint8_t[frameWidth * frameHeight * 4];
@@ -47,7 +45,7 @@ int initializeVideoEffect(const char* videoFile)
     return 0;
 }
 
-void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
+void displayVideoEffect()
 {
 
 #ifdef ENABLE_AUDIO
@@ -58,26 +56,16 @@ void displayVideoEffect( struct FSVQuadUniform* fsvqUniform)
  #endif
 
     // Function declaration
-    static bool myFlag = true;
     // Code
-    // if (myFlag)
-    // {
-    //     if (!video_reader_read_frame(&vr_state, frame_data))
-    //     {
-    //         LOG("Couldn't load video frame.\n");
-    //     }
-    //     LoadGLTexture(&texture_frame, (GLsizei)frameWidth, (GLsizei)frameHeight, frame_data);
-    //     myFlag = false;
-    // }   
-    //LoadGLTexture(&texture_frame, frameWidth, frameHeight, frame_data);
-    
+    fsvqUniform = useFSVQuadShader();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_frame);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frameWidth, frameHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, frame_data);
-    glUniform1i(fsvqUniform->textureSamplerUniform1, 0);
-    glUniform1i(fsvqUniform->textureSamplerUniform2, 1);  
+    glUniform1i(fsvqUniform.textureSamplerUniform1, 0);
+    glUniform1i(fsvqUniform.textureSamplerUniform2, 1);  
     displayVideoQuad();
     glBindTexture(GL_TEXTURE_2D, 0);
+    glUseProgram(0);
     
 }
 
@@ -99,4 +87,5 @@ void uninitializeVideoEffect(void)
 	}
     video_reader_close(&vr_state);
     uninitializeVideoQuad();
+    uninitializeFSVQuadShader();
 }

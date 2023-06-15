@@ -36,6 +36,7 @@ static GLfloat materialShininess = 128.0f;
 
 //Model variables
 STATIC_MODEL hasya_roomModel;
+STATIC_MODEL manBabyModel;
 GLuint texture_hasyaMask;
 bool isInitialDisplayScene12_hasya = true;
 
@@ -51,6 +52,7 @@ initializeQuad();
 	
 	//load models
 	loadStaticModel("res/models/scene12_hasya/room/HasyaRoom7.obj", &hasya_roomModel);
+	loadStaticModel("res/models/scene12_hasya/man/manWithBaby.obj", &manBabyModel);
 	
 
 #endif // ENABLE_STATIC_MODELS
@@ -64,8 +66,9 @@ void setCameraScene12_Hasya(void)
 	{
 		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
 		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
-		setCamera(1.75f, 0.45f, 1.90f, 1.75f, 0.45f, -4.10f, 0.00f, 1.00f, 0.00f);
-		// setCamera(1.75f, 0.60f, -2.95f, 1.75f, 0.60f, -8.95f, 0.00f, 1.00f, 0.00f);
+		// setCamera(1.75f, 0.45f, 1.90f, 1.75f, 0.45f, -4.10f, 0.00f, 1.00f, 0.00f);
+		setCamera(1.75f, 0.60f, -2.95f, 1.75f, 0.60f, -8.95f, 0.00f, 1.00f, 0.00f);	
+
 
 		isInitialDisplayScene12_hasya = false;
 	}
@@ -168,6 +171,31 @@ void displayScene12_Hasya(void)
 
 	drawStaticModel(hasya_roomModel);
 
+	//man
+
+
+	translationMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
+	modelMatrix = mat4::identity();
+	scaleMatrix = mat4::identity();
+	rotationMatrix_x = mat4::identity();
+	rotationMatrix_y = mat4::identity();
+	rotationMatrix_z = mat4::identity();
+
+
+	translationMatrix = vmath::translate(0.68f, -0.99f, -3.41f);
+	scaleMatrix = vmath::scale(0.87f, 0.87f, 0.87f);
+	rotationMatrix = vmath::rotate(41.38f, 0.0f, 1.0f, 0.0f);
+	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+
+	modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
+	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	drawStaticModel(manBabyModel);
+
 	glUseProgram(0);
 #endif // ENABLE_STATIC_MODELS
 }
@@ -178,14 +206,15 @@ void updateScene12_Hasya()
 
 	if(cameraHasyaUpdate==1)
 	{
+		
 
-		cameraEyeX = preciselerp(cameraEyeX, 1.75f, 0.002f);
-		cameraEyeY = preciselerp(cameraEyeY, 0.05f, 0.002f);
-		cameraEyeZ = preciselerp(cameraEyeZ, 1.30f, 0.002f);
+		cameraEyeX = preciselerp(cameraEyeX, 1.75f, 0.005f);
+		cameraEyeY = preciselerp(cameraEyeY, 0.05f, 0.005f);
+		cameraEyeZ = preciselerp(cameraEyeZ, 1.30f, 0.005f);
 
-		cameraCenterX = preciselerp(cameraCenterX, 1.75f, 0.002f);
-		cameraCenterY = preciselerp(cameraCenterY, 0.05f, 0.002f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -4.70f, 0.002f);
+		cameraCenterX = preciselerp(cameraCenterX, 1.75f, 0.005f);
+		cameraCenterY = preciselerp(cameraCenterY, 0.05f, 0.005f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -4.70f, 0.005f);
 
 		if(cameraEyeZ>=1.0f)
 		{
@@ -194,17 +223,15 @@ void updateScene12_Hasya()
 	}
 	if(cameraHasyaUpdate == 2)
 	{
-		cameraEyeX = preciselerp(cameraEyeX, 1.75f, 0.002f);
-		cameraEyeY = preciselerp(cameraEyeY, 0.00f, 0.002f);
-		// cameraEyeZ = preciselerp(cameraEyeZ, 1.20f, 0.002f);
-		cameraEyeZ = preciselerp(cameraEyeZ, -1.0f, 0.002f);
 
-		if(cameraEyeZ<=-1.5f)
-		{
-			cameraCenterX = preciselerp(cameraCenterX, -142.97f, 0.00005f);
-			cameraCenterY = preciselerp(cameraCenterY, 0.00f, 0.002f);
-			cameraCenterZ = preciselerp(cameraCenterZ, -330.29f, 0.00005f);
-		}
+		cameraEyeX = preciselerp(cameraEyeX, 0.65f, 0.005f);
+		cameraEyeY = preciselerp(cameraEyeY, -0.25f, 0.005f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -1.05f, 0.005f);
+
+
+		cameraCenterX = preciselerp(cameraCenterX, -0.65f, 0.005f);
+		cameraCenterY = preciselerp(cameraCenterY, -0.25f, 0.005f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -7.05f, 0.005f);
 	}
 	
 
@@ -216,6 +243,7 @@ void uninitializeScene12_Hasya(void)
 {
     //UNINIT models
 	unloadStaticModel(&hasya_roomModel);
+	unloadStaticModel(&manBabyModel);
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_hasyaMask)

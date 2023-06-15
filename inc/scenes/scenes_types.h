@@ -17,7 +17,7 @@ typedef enum {
     SCENE12_HASYA_RAS,          // Hasya Ras
     SCENE13_SHANT_RAS,          // Shant Ras
     SCENE14_PARTICLE,           // Particle Simulation
-    SCENE15_END_CREDIS,         // End Credits
+    SCENE15_END_CREDITS,         // End Credits
     SCENE_PLACEHOLDER_INDOOR,
     MAX_SCENES
 } scene_types_t;
