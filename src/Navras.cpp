@@ -495,6 +495,7 @@ int initializeNavras(void) {
 		LOG("initializeScene00() FAILED !!!\n");
 		return (-8);
 	}
+
 	// SCENE02
 	if (initializeScene02_EarthAndSpace() != 0)
 	{
@@ -586,9 +587,9 @@ int initializeNavras(void) {
 
 	scenePush(SCENE07_RAUDRA_RAS);
 	scenePush(SCENE06_BHAYANK_RAS);
-	scenePush(SCENE05_KARUN_RAS);
+	scenePush(SCENE05_KARUN_RAS); 
 	scenePush(SCENE02_EARTH_AND_SPACE);
-	scenePush(SCENE00_AMC_BANNER);
+	scenePush(SCENE00_AMC_BANNER); 
 	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
 
