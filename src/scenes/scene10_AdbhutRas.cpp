@@ -918,8 +918,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(7.80f, -2.15f, -37.75f);
-	scaleMatrix = vmath::scale(0.7f, 0.7f, 0.7f);
+	translationMatrix = vmath::translate(9.80f, -2.15f, -37.75f);
+	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
 	rotationAngles = {0.0f, -59.25f, 0.0f};
 
 	// usage type 1 
@@ -962,8 +962,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	scaleMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(-4.99f, -1.63f, -36.50f);
-	scaleMatrix = vmath::scale( 4.21f,  4.21f,  4.21f);
+	translationMatrix = vmath::translate(-4.99f, -1.3f, -36.50f);
+	scaleMatrix = vmath::scale( 2.21f,  2.21f,  2.21f);
 	rotationAngles = {0.0f, 184.96f, -5.46f};
 
 	// usage type 1 
@@ -1285,7 +1285,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 1)
 	{
-		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
+		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeZ < (-35.99f - 0.2f))
 		{
 			camera_update = 2;
@@ -1295,7 +1295,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 2)
 	{
-		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
+		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeX < (-4.21f - 0.2f))
 		{
 			camera_update = 3;
@@ -1305,7 +1305,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (camera_update == 3)
 	{
-		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.001f);
+		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeX < (-16.28f - 0.2f))
 		{
 			camera_update = 4;
