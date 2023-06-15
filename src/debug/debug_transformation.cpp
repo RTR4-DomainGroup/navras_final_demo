@@ -26,7 +26,6 @@ static bool debugObjectChanged = true;
 extern float cameraCounterSideWays;
 extern float cameraCounterUpDownWays;
 
-void print_camera_transformations(void);
 void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 {
 	// local trnasformation
@@ -34,6 +33,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 	static TRANFORM ltf_s; // local scale
 	static TRANFORM ltf_r; // local rotation
 	static GLfloat ltf_Speed;
+	bool cameraMovement = false;
 	if(debugObjectChanged)
 	{
 		ltf_t = tf_t;  
@@ -58,6 +58,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			{
 				cameraEyeZ = cameraEyeZ + tf_Speed;
 				cameraCenterZ = cameraCenterZ + tf_Speed;
+				cameraMovement = true;
 			}
 			else {
 				translateMode = scaleMode = rotateMode = cameraMode = false;
@@ -200,6 +201,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			{
 				cameraEyeZ = cameraEyeZ - tf_Speed;
 				cameraCenterZ = cameraCenterZ - tf_Speed;
+				cameraMovement = true;
 			}
 			break;
 
@@ -209,6 +211,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			{
 				cameraEyeX = cameraEyeX - tf_Speed;
 				cameraCenterX = cameraCenterX - tf_Speed;
+				cameraMovement = true;
 			}
 			break;
 		case 'D':
@@ -217,6 +220,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			{
 				cameraEyeX = cameraEyeX + tf_Speed;
 				cameraCenterX = cameraCenterX + tf_Speed;
+				cameraMovement = true;
 			}
 			break;
 		case 'Q':
@@ -225,6 +229,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			{
 				cameraEyeY = cameraEyeY - tf_Speed;
 				cameraCenterY = cameraCenterY - tf_Speed;
+				cameraMovement = true;
 			}
 			break;
 		case 'E':
@@ -233,6 +238,7 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 			{
 				cameraEyeY = cameraEyeY + tf_Speed;
 				cameraCenterY = cameraCenterY + tf_Speed;
+				cameraMovement = true;
 			}
 			break;
 	// characters you want to handle in your scene
@@ -258,6 +264,13 @@ void debug_tranformation(GLbyte charPressed, GLuint keyPressed)
 		default:
 			break;
 		}
+	}
+
+	if(cameraMovement)
+	{
+#ifdef ENABLE_CAMERA_LOGS
+		print_lookat();
+#endif // ENABLE_CAMERA_LOGS
 	}
 
 	if(keyPressed)
@@ -432,13 +445,24 @@ void print_matrices(const vmath::mat4 *const translationMatrix, const vmath::mat
 	}
 }
 
-void print_camera_transformations(void) {
+void print_camera_transformations(void)
+{
+	print_lookat();
+	print_transformations();
+}
+
+void print_lookat(void)
+{
 	LOG("lookAt(%.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff, %.02ff)\n", 
 		cameraEyeX, cameraEyeY, cameraEyeZ, 
 		cameraCenterX, cameraCenterY, cameraCenterZ, 
 		cameraUpX, cameraUpY, cameraUpZ);
+}
+
+void print_transformations(void) {
 	LOG("Translation is %.02ff, %.02ff, %.02ff\n", tf_t.x, tf_t.y, tf_t.z);
 	LOG("Scale is %.02ff, %.02ff, %.02ff\n", tf_s.x, tf_s.y, tf_s.z);
 	LOG("Rotation is %.02ff, %.02ff, %.02ff\n", tf_r.x, tf_r.y, tf_r.z);
+
 }
 

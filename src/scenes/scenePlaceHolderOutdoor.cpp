@@ -26,10 +26,6 @@
 #include "../../inc/helper/shadowframebuffer.h"
 #endif // ENABLE_SHADOW
 
-#ifdef ENABLE_BILLBOARDING
-#include "../../inc/shaders/BillboardingShader.h"
-#endif // ENABLE_BILLBOARDING
-
 #ifdef ENABLE_ATMOSPHERE
 #include "../../inc/shaders/AtmosphereShader.h"
 #include "../../inc/effects/AtmosphereEffect.h"
@@ -79,7 +75,6 @@
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
-TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneOutdoorADSStaticUniform;
@@ -101,11 +96,6 @@ struct TerrainUniform terrainUniform;
 // GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
 //#endif // ENABLE_CLOUD_NOISE
 
-#ifdef ENABLE_BILLBOARDING
-// variables for billboarding
-struct BillboardingUniform billboardingEffectUniform;
-GLuint frameTime = 0;
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 // Water Related Variables
@@ -440,24 +430,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 	
 #endif // ENABLE_GAUSSIAN_BLUR
-
-#ifdef ENABLE_BILLBOARDING
-	char imagefile[64] = {};
-	// sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower3.png");
-	// if (LoadGLTextureData_UsingSOIL(&texture_grass, imagefile) == GL_FALSE)
-	// {
-	// 	LOG("Texture loading failed for image %s\n", imagefile);
-	// 	return (-6);
-	// }
-
-	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower5.png");
-	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
-	{
-		LOG("Texture loading failed for image %s\n", imagefile);
-		return (-6);
-	}
-
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_MASKS
 	fboMaskPass_Outdoor.textureWidth = 1920;
@@ -1272,8 +1244,7 @@ if(isBlur){
 	{
 		if(mix_intensity <= 1.0f)
 		{
-
-			LOG("mix_in = %f\n", mix_intensity);
+			// LOG("mix_in = %f\n", mix_intensity);
 			mix_intensity += 0.115f;
 			timeFlag = true;
 		}
@@ -1299,21 +1270,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	unloadStaticModel(&maskModel_ShringarRas);
 #endif // ENABLE_MASKS
 	
-
-#ifdef ENABLE_BILLBOARDING
-
-	// texture
-    if(texture_flower.id)
-    {
-        glDeleteTextures(1, &texture_flower.id);
-        texture_flower.id = 0;
-    }
-    if(texture_grass.id)
-    {
-        glDeleteTextures(1, &texture_grass.id);
-        texture_grass.id = 0;
-    }
-#endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
 	uninitializeWater(&waterTextureVariables);

@@ -39,7 +39,7 @@ int initializeADSShader(void)
 		"uniform int u_depthQuadScene; \n" \
 
 		"uniform mat4 lightSpaceMatrix; \n" \
-		"uniform int u_isInstanced = 1; \n" \
+		"uniform int u_isInstanced; \n" \
 		"out VS_OUT{ \n" \
 			"vec4 FragPos; \n" \
 			"vec3 Normal; \n" \
