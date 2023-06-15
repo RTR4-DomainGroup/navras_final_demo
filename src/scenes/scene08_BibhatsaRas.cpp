@@ -560,6 +560,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		displayStarfield(texture_star);
 		glUseProgram(0);
 
+#endif // ENABLE_STARFIELD
+
 		// Road Drawing
 		bibhatsaRasObject = useADSShader();
 
@@ -697,7 +699,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glUseProgram(0);
 
-#endif // ENABLE_STARFIELD
+
 	}
 
 #ifdef ENABLE_STATIC_MODELS
