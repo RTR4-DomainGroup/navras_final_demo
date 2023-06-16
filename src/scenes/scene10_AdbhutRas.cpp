@@ -579,8 +579,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	//normal mapping
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
-	if('1' == tf_Object) // terrain
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	// viewMatrix = finalViewMatrix;
@@ -896,7 +894,14 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	if (camera_update == 1) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		camera_update = 2;
+	}
+	else
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
 
 	glUseProgram(0);
 
@@ -1076,66 +1081,6 @@ void updateScene10_AdbhutRas(void)
 	//cameraEyeZ -= speedVector.x;
 	//cameraCenterZ -= speedVector.x;
 
-	// lookAt(-17.10f, -1.40f, -33.85f, -320.07f, -1.40f, -177.19f, 0.00f, 1.00f, 0.00f)
-
-// (20.26f, -1.11f, -4.41f, 20.26f, -1.11f, -10.41f, 0.00f, 1.00f, 0.00f)
-// (4.72f, -1.11f, -28.46f, 4.72f, -1.11f, -34.46f, 0.00f, 1.00f, 0.00f)
-// (2.87f, -1.11f, -34.75f, -241.36f, -1.11f, -268.55f, 0.00f, 1.00f, 0.00f)
-// (1.76f, -1.11f, -37.71f, -359.66f, -1.11f, 21.05f, 0.00f, 1.00f, 0.00f)
-// (-0.36f, -1.11f, -36.99f, -361.78f, -1.11f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-0.71f, -0.76f, -36.99f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-1.06f, -0.41f, -36.99f, -362.48f, -0.41f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-1.41f, -0.06f, -36.99f, -362.83f, -0.06f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-1.76f, 0.29f, -36.99f, -363.18f, 0.29f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-2.11f, 0.64f, -36.99f, -363.53f, 0.64f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-2.46f, 0.99f, -36.99f, -363.88f, 0.99f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-2.81f, 0.64f, -36.99f, -364.23f, 0.64f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-3.16f, 0.29f, -36.99f, -364.58f, 0.29f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-3.51f, -0.06f, -36.99f, -364.93f, -0.06f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-3.86f, -0.41f, -36.99f, -365.28f, -0.41f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-4.21f, -0.76f, -36.99f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-16.81f, -1.11f, -34.89f, -357.37f, -1.11f, 40.81f, 0.00f, 1.00f, 0.00f)
-
-
-	// if (camera_update == 0)
-	// {
-	// 	preciselerp_lookat((21.90f, -1.11f, -1.13f, -150.37f, -1.11f, -327.12f, 0.00f, 1.00f, 0.00f););
-	// 	if (cameraEyeX < (1.50f - 0.2f))
-	// 	{
-	// 		camera_update = 2;
-	// 		LOG("Switching to camera update %d\n", camera_update);
-	// 	}
-	// }
-
-	if (camera_update == 1)
-	{
-		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
-		if (cameraEyeZ < (-35.99f - 0.2f))
-		{
-			camera_update = 2;
-			LOG("Switching to camera update %d\n", camera_update);
-		}
-	}
-
-	if (camera_update == 2)
-	{
-		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
-		if (cameraEyeX < (-4.21f - 0.2f))
-		{
-			camera_update = 3;
-			LOG("Switching to camera update %d\n", camera_update);
-		}
-	}
-
-	if (camera_update == 3)
-	{
-		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.002f);
-		if (cameraEyeX < (-16.28f - 0.2f))
-		{
-			camera_update = 4;
-		}
-	}
-
 //	if (i <= 524)
 //	{
 //		preciselerp_lookat(cam_mov[i][0], cam_mov[i][1], cam_mov[i][2], cam_mov[i][3], cam_mov[i][4],
@@ -1148,33 +1093,81 @@ void updateScene10_AdbhutRas(void)
 //		interval++;
 //	}
 
-	if('i' == tf_Object) // farmhouse model
+	// if (camera_update == 0)
+	// {
+	// 	preciselerp_lookat((21.90f, -1.11f, -1.13f, -150.37f, -1.11f, -327.12f, 0.00f, 1.00f, 0.00f););
+	// 	if (cameraEyeX < (1.50f - 0.2f))
+	// 	{
+	// 		camera_update = 2;
+	// 		LOG("Switching to camera update %d\n", camera_update);
+	// 	}
+	// }
+
+	if (camera_update == 2) // straight to front to bridge
 	{
-		isInitialDisplay_Scene10AdbhutRas = true;
-		tf_Object = 0;
-		i = 0;
+		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
+		if (cameraEyeZ < (-35.99f - 0.2f))
+		{
+			camera_update = 3;
+			LOG("Switching to camera update %d\n", camera_update);
+		}
 	}
+
+	if (camera_update == 3) // top of the bridge
+	{
+		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
+		if (cameraEyeX < (-4.21f - 0.2f))
+		{
+			camera_update = 4;
+			LOG("Switching to camera update %d\n", camera_update);
+		}
+	}
+
+	if (camera_update == 4) // down to bridge
+	{
+		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.002f);
+		if (cameraEyeX < (-16.28f - 0.2f))
+		{
+			camera_update = 5;
+		}
+	}
+
 #endif
 
-
-#ifdef ENABLE_BILLBOARDING
-	frameTime += 4;
-
-#endif // ENABLE_BILLBOARDING
-
-	if(camera_update == 4 && skeletonModel.pAnimator->GetCurrentFrame() >= 1315.0) 
+	if(camera_update == 5 && skeletonModel.pAnimator->GetCurrentFrame() >= 1315.0) 
 	{
 		leaf_translate -= 0.015f;
 		leaf_rotate += 9.52f;	
 		if(leaf_translate < -1.83f) {
 			leaf_translate = -1.83f;
 			leaf_rotate = 247.20f;	
-			camera_update = 5;
+			camera_update = 6;
 		}
 		if(leaf_rotate > 360.0f) {
 			leaf_rotate = 0.0f;
 		}
 	}
+
+	if('i' == tf_Object) // farmhouse model
+	{
+		isInitialDisplay_Scene10AdbhutRas = true;
+		tf_Object = 0;
+		leaf_translate = 0.35f;
+		i = 0;
+	}
+
+	if ('n' == tf_Object) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		tf_Object = 0;
+	}
+
+#ifdef ENABLE_BILLBOARDING
+	frameTime += 4;
+
+#endif // ENABLE_BILLBOARDING
+
 
 }
 
@@ -1314,24 +1307,6 @@ bool checkInside(Point poly[], int n, Point p)
     // When count is odd
     return count & 1;
 }
-
-//////////////
-
-
-// static bool firstcall = 1;
-// if(firstcall)
-// {
-// 	LOG("Before update tranform\n");
-// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
-// }
-
-// if(firstcall)
-// {
-// 	LOG("After update tranform\n");
-// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
-// 	firstcall = 0;
-// }
-
 
 float cam_mov[][9] = {{21.90f, -1.11f, -1.18f, -150.37f, -1.11f, -327.17f, 0.00f, 1.00f, 0.00f},
 {21.85f, -1.11f, -1.18f, -150.42f, -1.11f, -327.17f, 0.00f, 1.00f, 0.00f},
