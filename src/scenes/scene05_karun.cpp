@@ -358,6 +358,7 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(sceneIndoorADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(sceneIndoorADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.8f);
 
 	glUniform1f(sceneIndoorADSUniform.blendingUniform, blendingValue);
 	glUniform1i(sceneIndoorADSUniform.uniform_enable_blending, 1);
@@ -427,6 +428,7 @@ void displayScene5_karun(void)
 	glUniform1i(karynDynamicADSUniform.depthSceneUniform, 0);
 	glUniform1i(karynDynamicADSUniform.depthQuadSceneUniform, 0);
 
+	glUniform1f(karynDynamicADSUniform.colorCorrectionUniform, 0.4f);
 
 	glUniformMatrix4fv(karynDynamicADSUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
 	glUniformMatrix4fv(karynDynamicADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
