@@ -72,6 +72,7 @@ int initializeFSQuadShader(void)
         "uniform float u_blurMixDelta;"
         "\n" \
         "uniform int u_singleTexture = 0; \n" \
+        "uniform float alphablend; \n" \
         "uniform sampler2D u_textureSampler0;" \
         "\n" \
         "uniform sampler2D u_textureSampler1;" \
@@ -95,9 +96,10 @@ int initializeFSQuadShader(void)
         "{" \
             "if(u_singleTexture == 1)\n" \
             "{\n" \
-                "FragColor = texture(u_textureSampler0, a_texcoord_out);\n" \
+                "vec4 tex = texture(u_textureSampler0, a_texcoord_out);\n" \
+                "FragColor = tex;\n" \
                     "if(maskOrFont == 1){\n" \
-                        "if(FragColor.rgb == vec3(0.0, 0.0, 0.0)) discard;\n" \
+                        "FragColor = vec4(tex.rgb, alphablend);\n" \
                     "} \n" \
                     "else{ \n" \
                         "if(FragColor.rgb == vec3(0.0, 0.0, 1.0)) discard; \n" \
@@ -119,9 +121,9 @@ int initializeFSQuadShader(void)
                 "\n" \
             "}\n" \
 
-           /* "float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
-            "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \
-            "FragColor = vec4(vec3(depthValue), 1.0); \n" \*/
+            /*"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
+            "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \*/
+            //"FragColor = vec4(vec3(depthValue), 1.0); \n" \/
         "}";
     
     // Create the Fragment Shader object.
@@ -206,6 +208,8 @@ int initializeFSQuadShader(void)
 
     fsQuadUniform.singleTexture = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_singleTexture");
+    fsQuadUniform.alphablend = glGetUniformLocation(
+        fsQuadShaderProgramObject, "alphablend");
     fsQuadUniform.textureSamplerUniform1 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler0");
     fsQuadUniform.textureSamplerUniform2 = glGetUniformLocation(
