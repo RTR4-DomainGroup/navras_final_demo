@@ -301,15 +301,6 @@ int initializeScene13_Shant(void)
 
 	LOG("Shant Ras coming here in initialize 1\n");
 
-	//model_masks[0] = maskModel_karunRas;
-	//model_masks[1] = maskModel_bhayanakRas;
-	//model_masks[2] = maskModel_raudraRas;
-	//model_masks[3] = maskModel_bibhatsaRas;
-	//model_masks[4] = maskModel_veerRas;
-	//model_masks[5] = maskModel_adbhutRas;
-	//model_masks[6] = maskModel_shringarRas;
-	//model_masks[7] = maskModel_hasyaRas;
-	//model_masks[8] = maskModel_shantRas;
 
 	model_masks[0] = maskModel_shantRas;
 	model_masks[1] = maskModel_hasyaRas;
@@ -325,12 +316,6 @@ int initializeScene13_Shant(void)
 
 #endif // ENABLE_EROSION
 
-	// external debugging varaible
-    tf_t = {2.0f, 0.0f, -3.35f}; // tree pos 
-    // tf_s = {0.75f, 0.75f, 0.75f}; // tree scale 
-    // tf_r = {0.0f, 0.0f, 0.0f}; // tree rotation 
-	tf_Speed = 0.05f;
-//	glEnable(GL_TEXTURE_2D);
 
 #ifdef ENABLE_EROSION
 
@@ -447,7 +432,6 @@ void displayScene13_Shant(void)
 
 	drawStaticModel(shantRoomModel);
 
-	// glUseProgram(0);
 	// ################################### ROOM ###################################
 	
 	// ################################### MAN ###################################  
@@ -460,13 +444,10 @@ void displayScene13_Shant(void)
 	rotationMatrix_z = mat4::identity();
 
 	// ------ Man Model ------
-	//translationMatrix = vmath::translate(- 1.0f, -2.0f, -6.0f);
-	//translationMatrix = vmath::translate(-0.85f, -1.75f, -8.36f);
 	translationMatrix = vmath::translate(-1.7f, -5.4f, -10.2f);
 	scaleMatrix = vmath::scale(0.06f, 0.06f, 0.06f);
 	rotationMatrix_y = vmath::rotate(0.0f, 0.0f, 1.0f, 0.0f);
 
-	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix_y);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -525,15 +506,11 @@ void displayScene13_Shant(void)
 	{
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
 
 		float xPos = maskTranslationRadii[i] * cos(angle * M_PI / 180.0);
 		float yPos = maskTranslationRadiiY[i] * sin(angle * M_PI / 180.0);
 
-		//-1.7f, -5.4f, -10.2f
-
-		//translationMatrix = vmath::translate(xPos - 0.765f /* - 0.08f*/, yPos - 0.5f - 0.8f, -8.06f);
 		translationMatrix = vmath::translate(xPos + -1.7f /* - 0.08f*/, yPos + -2.20f, -10.0f);
 		scaleMatrix = vmath::scale(maskScales[i], maskScales[i], maskScales[i]);
 		modelMatrix = translationMatrix * scaleMatrix/* * rotationMatrix*/;
@@ -560,20 +537,11 @@ void updateScene13_ShantRas(void)
 {
 
 #ifdef ENABLE_CAMERA_ANIMATION
-	//setCamera(-0.70f, 0.00f, -2.75f, -0.70f, 0.00f, -8.75f, 0.00f, 1.00f, 0.00f);
-	/*cameraEyeZ = preciselerp(cameraEyeZ, -2.75f, 0.01f);
-	cameraCenterZ = preciselerp(cameraCenterZ, -8.75f, 0.01f);
-	if (cameraEyeZ <= -2.0f)*/
 		startMaskAnimation = true;
 	if (startCameraZoomToMan == true)
 	{
-		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
-		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
-		// -1.70f, -2.25f, -9.85f, -1.70f, -2.25f, -15.85f, 0.00f, 1.00f, 0.00f
-		//cameraEyeX = preciselerp(cameraEyeX, -1.70f, 0.005f);
 		cameraEyeY = preciselerp(cameraEyeY, -2.25f, 0.08f);
 		cameraEyeZ = preciselerp(cameraEyeZ, -8.85f, 0.08f);
-		//cameraCenterX = preciselerp(cameraCenterX, -1.70f, 0.005f);
 		cameraCenterY = preciselerp(cameraCenterY, -2.25f, 0.08f);
 		cameraCenterZ = preciselerp(cameraCenterZ, -14.85f, 0.08f);
 	}
@@ -588,8 +556,6 @@ void updateScene13_ShantRas(void)
 		maskScales[0] += 0.0002f;
 		for (int i = 0; i < 9; i++)
 		{
-			//if (maskTranslationRadii[i] >= 0.433f)
-			//if (maskTranslationRadiiY[i] >= 0.733f)
 			if (maskTranslationRadiiY[i] >= 1.3333f)
 			{
 				maskTranslationRadii[i + 1] += 0.014f;
@@ -601,9 +567,6 @@ void updateScene13_ShantRas(void)
 
 			if (maskTranslationRadiiY[i] >= 4.0f)
 				maskTranslationRadiiY[i] = 4.0f;
-
-			//if (maskTranslationRadii[8] == 1.3f)
-			//	masksTransformationsComplete = true;
 
 			if (maskTranslationRadiiY[8] == 4.0f)
 				masksTransformationsComplete = true;

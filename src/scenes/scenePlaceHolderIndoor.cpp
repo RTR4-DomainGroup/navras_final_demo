@@ -114,12 +114,6 @@ int initializeScene_PlaceHolderIndoor(void)
 
 #ifdef ENABLE_SSAO
 
-
-	// framebuffer related variables
-	//int windowWidth;
-	//int windowHeight;
-
-
 	ssaoFrameBufferDetails.textureWidth = 1920;
 	ssaoFrameBufferDetails.textureHeight = 1080;
 
@@ -150,7 +144,6 @@ int initializeScene_PlaceHolderIndoor(void)
 
 	if (LoadGLTexture_UsingSOIL(&texture_mask_indoor, "res/models/masks/copper.jpg") == FALSE)
 	{
-		//uninitialize();
 		LOG("LoadGLTexture for texture_mask_indoor FAILED!!!\n");
 		return(-1);
 	}
@@ -209,8 +202,6 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		mat4 rotationMatrix_y = mat4::identity();
 		mat4 rotationMatrix_z = mat4::identity();
 
-		//float angle = 0.0;
-
 		glEnable(GL_TEXTURE_3D);
 		glEnable(GL_TEXTURE_2D);
 		sceneErosionNoiseUniform = useErosionNoiseShader();
@@ -225,11 +216,9 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
 		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
 
-		//glDisable(GL_BLEND);
 		// ------ Mask Model ------
 		translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
 		scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
-		//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
@@ -238,7 +227,6 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_indoor);
-		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_indoor);
 
 		if (getCurrentScene() == SCENE05_KARUN_RAS && now1 >= (then1 + 5))
@@ -260,8 +248,6 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 
 		}
 
-
-		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_mask_indoor, noise_texture_eroded_indoor);
 		// ################################### ROOM ###################################  
 
 		glUseProgram(0);
@@ -286,8 +272,6 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		displaySSAO(&ssaoFrameBufferDetails);
-
-
 
 #endif // ENABLE_SSAO
 	}
@@ -339,7 +323,6 @@ void displayScene_PlaceHolderIndoor(SET_CAMERA setCamera, DISPLAY_PASSES_INDOOR 
 		#endif
 
 		glUseProgram(0);
-		//glEnable(GL_BLEND);
 
 	}
 }
@@ -409,13 +392,6 @@ void updateScene_PlaceHolderIndoor(void)
 		}
 	}
 
-// 	}
-//mix_intensity = 0.5f;
-
-	//update camera using lerp
-	/*cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
-	cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);*/
-
 #ifdef ENABLE_MASKS
 	if (isBlurI == false)
 	{
@@ -441,9 +417,6 @@ void updateScene_PlaceHolderIndoor(void)
 		if (now1 >= (then1 + 5))
 		{
 
-			// offset_ras_indoor[0] = offset_ras_indoor[0] + 0.002f;
-			// offset_ras_indoor[1] = offset_ras_indoor[1] + 0.002f;
-			// offset_ras_indoor[2] = offset_ras_indoor[2] + 0.002f;
 			offset_ras_indoor[0] = offset_ras_indoor[0] + 0.0015f;
 			offset_ras_indoor[1] = offset_ras_indoor[1] + 0.0015f;
 			offset_ras_indoor[2] = offset_ras_indoor[2] + 0.0015f;

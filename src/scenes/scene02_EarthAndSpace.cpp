@@ -210,8 +210,7 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
 		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
-		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
-		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
+		
 #endif // ENABLE_SHADOW
 
 	}
@@ -333,44 +332,11 @@ void displayScene02_EarthAndSpace(int godRays = 1, bool recordWaterReflectionRef
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		//// Sun
-		//translationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//translationMatrix = vmath::translate(200.0f, 20.0f, -50.0f);					// glTranslatef() is replaced by this line.
-		////scaleMatrix = vmath::scale(0.0f, 10.0f, -100.0f);
-		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
-		//glUniformMatrix4fv(adsEarthAndSpaceUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//if (actualDepthQuadScene == 1)
-		//{
-		//	glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 0);
-		//	glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 1);
-		//	glUniformMatrix4fv(adsEarthAndSpaceUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-		//}
-		//else
-		//{
-		//	glUniform1i(adsEarthAndSpaceUniform.actualSceneUniform, 1);
-		//	glUniform1i(adsEarthAndSpaceUniform.depthSceneUniform, 0);
-		//	glActiveTexture(GL_TEXTURE3);
-		//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-		//}
-		//glUniformMatrix4fv(adsEarthAndSpaceUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(adsEarthAndSpaceUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture_sun);
-		//glUniform1i(adsEarthAndSpaceUniform.textureSamplerUniform_diffuse, 0);
-		////displaySphere(color);
-		//glBindTexture(GL_TEXTURE_2D, 0);
-
 		glUseProgram(0);
 
 #endif // ENABLE_STARFIELD
 
 	}
-
-	
-	
 
 }
 

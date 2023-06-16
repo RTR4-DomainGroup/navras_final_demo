@@ -129,13 +129,6 @@ int initializeFont() {
 	// Here starts OpenGL code
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// OpenGL state
-    // ------------
-    // glEnable(GL_CULL_FACE);
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
 	// Depth Related Changes (for 3D)
 	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -171,8 +164,7 @@ void displayFont(std::string text, vec3 fontTranslate, float fontScale, vec4 fon
 	
 
 	translationMatrix = translate(fontTranslate);
-	//scaleMatrix = scale(0.1f, 0.1f, 0.1f);
-	//rotationMatrix = rotate(angleC, 1.0f, 1.0f, 1.0f);
+
 	modelViewMatrix = translationMatrix; //* scaleMatrix * rotationMatrix;
 	modelViewProjectionMatrix = perspectiveProjectionMatrix * modelViewMatrix;
 
@@ -180,9 +172,7 @@ void displayFont(std::string text, vec3 fontTranslate, float fontScale, vec4 fon
 
 
     RenderText(text, 0.0f, 0.0f, fontScale, fontColor);
-	// RenderText("ASTROMEDICOMP", 0.0f, 0.0f, 0.1f, fontColor);
-	//RenderText("Presents....", 10.0f, -3.0f, 0.05f, vec4(0.3, 0.7f, 0.9f,1.0));
-
+	
 	// Unuse the shader program object
 	glUseProgram(0);
 

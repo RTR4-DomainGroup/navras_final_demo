@@ -18,30 +18,17 @@ int intializeCloudNoiseShader(void)
 		"#version 460 core\n" \
 	 	"\n" \
 	 	"in vec4 a_position;\n" \
-	 	/*"in vec3 a_normal;\n" \*/
 	 	"uniform mat4 u_modelMatrix;\n" \
 	 	"uniform mat4 u_viewMatrix;\n" \
 	 	"uniform mat4 u_projectionMatrix;\n" \
 	 	"uniform vec4 u_lightPosition;\n" \
 	 	"uniform float u_scale;\n" \
-	 	/*"out float light_intensity;\n" \*/
 	 	"out vec3 MCposition;\n" \
-	 	/*"out vec3 transformedNormals;\n" \
-	 	"out vec3 lightDirection;\n" \
-	 	"out vec3 viewerVector;\n" \*/
 	 	"void main(void)\n" \
 	 	"{\n" \
 	 		"vec4 eyeCoordinates = u_viewMatrix * u_modelMatrix * a_position;\n" \
 			
 	 		"MCposition = a_position.xyz * u_scale;\n" \
-			
-	 		/*"mat3 normalMatrix = mat3(u_viewMatrix * u_modelMatrix);\n" \
-	 		"transformedNormals = normalize(vec3(normalMatrix * a_normal));\n" \
-	 		"lightDirection = vec3(u_lightPosition - eyeCoordinates);\n" \
-	 		"viewerVector = -eyeCoordinates.xyz;\n" \
-	 
-	 		"light_intensity = dot(normalize(vec3(u_lightPosition - eyeCoordinates)), transformedNormals);\n" \
-	 		"light_intensity *= 1.5;\n" \*/
 	 
 	 		"gl_Position = u_projectionMatrix * u_viewMatrix * u_modelMatrix * a_position;\n" \
 	 	"}\n";
@@ -80,17 +67,7 @@ int intializeCloudNoiseShader(void)
 	const GLchar* fragmentShaderSourcecode =
 		"#version 460 core\n" \
 		"\n" \
-		/*"in float light_intensity;\n" \*/
 		"in vec3 MCposition;\n" \
-		/*"in vec3 transformedNormals;\n" \
-		"in vec3 lightDirection;\n" \
-		"in vec3 viewerVector;\n" \*/
-		/*"uniform vec3 u_la;\n" \
-		"uniform vec3 u_ld;\n" \
-		"uniform vec3 u_ls;\n" \
-		"uniform vec3 u_ka;\n" \
-		"uniform vec3 u_kd;\n" \
-		"uniform vec3 u_ks;\n" \*/
 		"uniform float u_materialShininess;\n" \
 		"uniform sampler3D u_noiseSampler;\n" \
 		"uniform vec3 u_skyColor;\n" \
@@ -100,23 +77,9 @@ int intializeCloudNoiseShader(void)
 		"out vec4 fragColor;\n" \
 		"void main(void)\n" \
 		"{\n" \
-			/*"vec3 phong_ads_color;\n" \
-			"vec3 ambient = u_la * u_ka;\n" \
-			"vec3 normalized_transformed_normals = normalize(transformedNormals);\n" \
-			"vec3 normalized_lightDirection = normalize(lightDirection);\n" \
-			"vec3 diffuse = u_ld * u_kd * max(dot(normalized_lightDirection, normalized_transformed_normals), 0.0);\n" \
-			"vec3 reflectionVector = reflect(-normalized_lightDirection, normalized_transformed_normals);\n" \
-			"vec3 normalizedViewerVector = normalize(viewerVector);\n" \
-			"vec3 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalizedViewerVector), 0.0), u_materialShininess);   \n"\
-			"phong_ads_color = ambient + diffuse + specular;\n" \*/
-
 			"vec4 noisevec = texture(u_noiseSampler, MCposition * u_noiseScale);\n" \
 			"float intensity = (noisevec[0] + noisevec[1] + noisevec[2] + noisevec[3] + 0.03125) * 1.5;\n" \
-			/*"vec3 color = mix(skyColor, cloudColor, intensity) * light_intensity;\n" \*/
-			/*"vec3 color = mix(u_skyColor, u_cloudColor, intensity) * phong_ads_color;\n" \*/
 			"vec3 color = mix(u_skyColor, u_cloudColor, intensity);\n" \
-			/*"vec3 color = u_cloudColor * intensity * phong_ads_color;\n" \*/
-			/*"vec3 color = vec3(1.0);\n" \*/
 			"if (enable_godRays) \n" \
 			"{\n" \
 				"fragColor = vec4(color, 1.0);\n" \
@@ -158,7 +121,6 @@ int intializeCloudNoiseShader(void)
 	glAttachShader(cloudNoiseShaderProgramObject, vertexShaderObject);
 	glAttachShader(cloudNoiseShaderProgramObject, fragmentShaderObject);
 	glBindAttribLocation(cloudNoiseShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
-	//glBindAttribLocation(cloudNoiseShaderProgramObject, DOMAIN_ATTRIBUTE_NORMAL, "a_normal");
 
 	glLinkProgram(cloudNoiseShaderProgramObject);
 

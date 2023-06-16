@@ -12,13 +12,6 @@ GLuint initializeCloud(void)
 	// code
 	initializeSphere(1.0f, 60.0f, 60.0f);
 
-	// BLENDING
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//loadNoiseTexture();
-	//noise_texture = CreateNoise3D();
-
 	GLuint texture_id = 0;
 	texture_id = CreateNoise3D();
 
@@ -52,9 +45,4 @@ void uninitializeCloud(void)
 	uninitializeSphere();
 
 	uninitializeNoiseTexture();
-	/*if (noise_texture)
-	{
-		glDeleteTextures(1, &noise_texture);
-		noise_texture = 0;
-	}*/
 }

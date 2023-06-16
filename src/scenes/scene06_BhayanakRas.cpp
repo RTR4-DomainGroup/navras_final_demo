@@ -149,7 +149,6 @@ extern time_t then;
 int initializeScene06_BhayanakRas(void)
 {
     // Code.
-	// initializeCamera(&camera);
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
@@ -176,8 +175,6 @@ int initializeScene06_BhayanakRas(void)
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_06);
-	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_06);
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_06);
 #endif // ENABLE_DYNAMIC_MODEL
 
@@ -189,8 +186,7 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		//setCamera(0.15f, 0.75f, 4.75f, 0.15f, 0.75f, -1.25f, 0.00f, 1.00f, 0.00f);
-		//lookAt(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f)
+		
 		setCamera(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
@@ -212,10 +208,8 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	mat4 rotateX = mat4::identity();
 	float distance;
 
-	//rotateCamera(0.0f, 1.0f, -2.25f, cameraRadius, cameraAngle);
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	displayCamera();
-	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -234,16 +228,10 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
 		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
-		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
-		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
+		
 #endif // ENABLE_SHADOW
 	
 	}
-
-	//lightPosition[0] = cameraEyeX;
-	//lightPosition[1] = cameraEyeY;
-	//lightPosition[2] = cameraEyeZ;
-
 
 	if (recordWaterReflectionRefraction == true) {
 
@@ -257,9 +245,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 			cameraEyeY -= distance;
 			cameraCenterY -= distance;
 			displayCamera();
-			//setCamera(&camera);
 			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-			//setCamera(&camera);
 			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		}
 
@@ -302,7 +288,6 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 
-	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ BOy Model ------
 	translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
@@ -337,8 +322,6 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	scaleMatrix = mat4::identity();
 	translationMatrix = vmath::translate(0.0f, 1.28f, 0.0f);
 	scaleMatrix = vmath::scale(0.1f, 0.1f, 0.1f);
-
-	//update_transformations(&translationMatrix, NULL, NULL);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 
@@ -397,7 +380,6 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	//glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 
 	glUniform1f(sceneOutdoorADSStaticUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
 	// Un-use ShaderProgramObject
@@ -406,69 +388,6 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 #endif // ENABLE_WATER
 
 #ifdef ENABLE_DYNAMIC_MODELS
-
-	//glm::mat4 glm_modelMatrix;
-	//glm::mat4 glm_translateMatrix;
-	//glm::mat4 glm_rotateMatrix;
-	//glm::mat4 glm_scaleMatrix;
-
-	//glm_modelMatrix = glm::mat4(1.0f);
-	//glm_translateMatrix = glm::mat4(1.0f);
-	//glm_rotateMatrix = glm::mat4(1.0f);
-	//glm_scaleMatrix = glm::mat4(1.0f);
-
-	//sceneOutdoorADSDynamicUniform = useADSDynamicShader();
-
-	//// Sending Light Related Uniforms
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular_bhayanak);
-	//glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess_bhayanak);
-
-	//glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
-	//glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
-	//glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	//glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
-	//glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
-
-	//// ------ Dancing Vampire Model ------
-
-	//glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
-
-	//glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	////glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	//glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
-
-	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	//if (actualDepthQuadScene == 1) {
-
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
-	//	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
-	//}
-	//else {
-
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
-
-	//	glActiveTexture(GL_TEXTURE1);
-	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
-	//}
-
-	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	//drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
-
-	//glUseProgram(0);
 
 #endif
 
@@ -533,18 +452,8 @@ void updateScene06_BhayanakRas(void)
 {
 	// Code
 
-	//cameraAngle += 1.5f;
-	//if(cameraAngle >= 1170.0f)
-	//	cameraAngle =1170.0f;
-
-	//cameraRadius -= 0.01f;
-	//if (cameraRadius <= 3.75f)
-	//	cameraRadius = 3.75f;
-
 #ifdef ENABLE_CAMERA_ANIMATION
-	// lookAt(1.10f, 0.50f, 1.35f, -248.55f, 0.50f, -262.28f, 0.00f, 1.00f, 0.00f)
-	// lookAt(1.05f, 0.40f, 1.25f, -248.60f, 0.40f, -262.38f, 0.00f, 1.00f, 0.00f)
-	// lookAt(0.70f, 0.25f, 0.95f, -248.95f, 0.25f, -262.68f, 0.00f, 1.00f, 0.00f)
+	
 	cameraEyeX = preciselerp(cameraEyeX, 0.70f, 0.002f);
 	cameraEyeY = preciselerp(cameraEyeY, 0.25f, 0.002f);
 	cameraEyeZ = preciselerp(cameraEyeZ, 0.95f, 0.002f);
@@ -558,9 +467,6 @@ void updateScene06_BhayanakRas(void)
 
 #ifdef ENABLE_WATER
 
-	//moveFactor += 0.0003f;
-	//if (moveFactor >= 360.0f)
-	//	moveFactor -= 360.0f;
 #endif // ENABLE_WATER
 }
 
@@ -585,7 +491,6 @@ void uninitializeScene06_BhayanakRas(void)
 #ifdef ENABLE_DYNAMIC_MODELS
 	unloadDynamicModel(&skeletonModel_06);
 #endif
-	//uninitializeCamera(&camera);
 
 }
 

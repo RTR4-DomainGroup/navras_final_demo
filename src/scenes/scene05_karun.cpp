@@ -131,8 +131,6 @@ void setCameraScene05_karun(void)
 {
 	if (isInitialDisplayScene05_karun == true)
 	{
-		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
-		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
 		setCamera(8.85f, -1.05f, -8.10f, 8.07f, -1.08f, -7.48f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene05_karun = false;
 	}
@@ -302,7 +300,6 @@ void displayScene5_karun(void)
 	rotationMatrix_z = vmath::rotate(-0.30f, 0.0f, 0.0f, 1.0f); //rotatefZ
 	rotationMatrix = rotationMatrix_x * rotationMatrix_y * rotationMatrix_z;
 	TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
-	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 
 	modelMatrix = translationMatrix * scaleMatrix;
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
@@ -350,8 +347,6 @@ void displayScene5_karun(void)
 	translationMatrix = vmath::translate(-1.14f, -2.49f, 0.42f);
 	scaleMatrix = vmath::scale(0.54f, 0.54f, 0.54f);
 	rotationMatrix = vmath::rotate(90.22f, 1.0f, 0.00f, 0.00f);
-	//TRANFORM speedVector = { 0.0f, 0.0f, 0.0f };
-	//update_transformations(&translationMatrix, NULL, &rotationMatrix,&speedVector);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 	glUniform1i(sceneIndoorADSUniform.isInstanced, 0);
 	glUniformMatrix4fv(sceneIndoorADSUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -451,38 +446,6 @@ void updateScene5_karun(void)
 
 
 #ifdef ENABLE_CAMERA_ANIMATION
-	// setCamera(6.70f, 0.10f, -1.95f, 6.00f, 0.03f, -1.24f, 0.00f, 1.00f, 0.00f);
-	// lookAt   (4.10f, 0.50f, -0.40f, -287.50f, -106.39f, 216.66f, 0.00f, 1.00f, 0.00f)
-
-	//cameraEyeX = preciselerp(cameraEyeX, 4.10f, 0.001f);
-	//cameraEyeY = preciselerp(cameraEyeY, 0.50f, 0.001f);
-	//cameraEyeZ = preciselerp(cameraEyeZ, -0.40f, 0.001);
-
-	//cameraCenterX = preciselerp(cameraCenterX, -287.50f, 0.001f);
-	//cameraCenterZ = preciselerp(cameraCenterZ, 216.66f, 0.001f);
-
-	//if (cameraEyeX <= 5.00f)
-	//	cameraCenterY = preciselerp(cameraCenterY, -106.39f, 0.001f);
-
-
-	// lookAt   (3.45f, 0.60f, -0.05f, 2.89f, -0.03f, 0.49f, 0.00f, 1.00f, 0.00f)
-	// lookAt   (3.55f, 0.70f, -0.00f, -260.29f, -270.46f, 237.59f, 0.00f, 1.00f, 0.00f)
-
-	//cameraEyeX = preciselerp(cameraEyeX, 3.55f, 0.001f);
-	//cameraEyeY = preciselerp(cameraEyeY, 0.70f, 0.001f);
-	//cameraEyeZ = preciselerp(cameraEyeZ, 0.0f, 0.001);
-
-	//cameraCenterX = preciselerp(cameraCenterX, -260.29f, 0.001f);
-	//cameraCenterZ = preciselerp(cameraCenterZ, 237.59f, 0.001f);
-
-	//if (cameraEyeX <= 5.00f)
-	//	cameraCenterY = preciselerp(cameraCenterY, -270.46f, 0.001f);
-
-	// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f) (source)
-	// lookAt(1.05f, -1.10f, -2.00f, 0.40f, -1.58f, -1.41f, 0.00f, 1.00f, 0.00f) (target)
-	// lookAt(1.20f, -1.05f, -1.90f, 0.51f, -1.52f, -1.36f, 0.00f, 1.00f, 0.00f) (target2)
-
-	//lookAt(0.35f, -1.05f, -1.35f, -0.35f, -1.47f, -0.77f, 0.00f, 1.00f, 0.00f)
 
 	cameraEyeX = preciselerp(cameraEyeX, 0.35f, 0.003f);
 	cameraEyeY = preciselerp(cameraEyeY, -1.05f, 0.003f);
@@ -491,7 +454,6 @@ void updateScene5_karun(void)
 	cameraCenterX = preciselerp(cameraCenterX, -0.35f, 0.08f);
 	cameraCenterZ = preciselerp(cameraCenterZ, -0.77f, 0.08f);
 
-	//if (cameraEyeX <= 4.8f)
 	cameraCenterY = preciselerp(cameraCenterY, -1.47f, 0.08f);
 
 #endif // ENABLE_CAMERA_ANIMATION

@@ -78,12 +78,6 @@ void resetCamera(void)
 	cameraCounterUpDownWays = 3.2f;
 }
 
-//void setCamera(Camera *camera)
-//{
-//	camera->eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
-//	camera->center = { cameraCenterX, cameraCenterY, cameraCenterZ };
-//	camera->up = { cameraUpX, cameraUpY, cameraUpZ };
-//}
 
 GLfloat impreciselerp(GLfloat v0, GLfloat v1, GLfloat t)
 {
@@ -144,29 +138,3 @@ void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat rad
 	camera.center = { cameraCenterX, cameraCenterY, cameraCenterZ };
 	camera.up = { cameraUpX, cameraUpY, cameraUpZ };
 }
-
-//void rotateCamera(Camera *camera, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat radius, GLfloat angle)
-//{
-//	// code
-//	float angleRadian = angle * M_PI / 180.0f;
-//	cameraEyeX = centerX + (radius * cos(angleRadian));
-//	cameraEyeY = centerY;
-//	cameraEyeZ = centerZ + (radius * sin(angleRadian));
-//	
-//	cameraCenterX = centerX;
-//	cameraCenterY = centerY;
-//	cameraCenterZ = centerZ;
-//
-//	camera->eye = { cameraEyeX, cameraEyeY, cameraEyeZ };
-//	camera->center = { cameraCenterX, cameraCenterY, cameraCenterZ };
-//	camera->up = { cameraUpX, cameraUpY, cameraUpZ };
-//}
-
-//void uninitializeCamera(Camera *camera)
-//{
-//	if (camera != NULL)
-//	{
-//		free(camera);
-//		camera = NULL;
-//	}
-//}

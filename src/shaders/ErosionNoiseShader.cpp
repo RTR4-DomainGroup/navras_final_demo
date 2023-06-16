@@ -119,7 +119,6 @@ int intializeErosionNoiseShader(void)
 		"vec3 tex = texture(u_textureSampler, a_texcoord_out).rgb;\n" \
 		"vec3 color = tex * phong_ads_color;\n" \
 		"color *= light_intensity;\n" \
-		/*"color = clamp(color, 0.0, 1.0);\n" \*/
 		"fragColor = vec4(color, 1.0);\n" \
 		"}\n";
 
@@ -200,12 +199,7 @@ int intializeErosionNoiseShader(void)
 
 	erosionNoiseUniform.scaleUniform = glGetUniformLocation(erosionNoiseShaderProgramObject, "u_scale");
 	
-	//erosionNoiseUniform.uniform_enable_godRays = glGetUniformLocation(erosionNoiseShaderProgramObject, "enable_godRays");
-
 	glUseProgram(erosionNoiseShaderProgramObject);
-	// some code may come here
-	//glUniform1i(erosionNoiseUniform.textureSamplerUniform, 0);
-	//glUniform1i(erosionNoiseUniform.noiseSamplerUniform, 1);
 
 	glUseProgram(0);
 

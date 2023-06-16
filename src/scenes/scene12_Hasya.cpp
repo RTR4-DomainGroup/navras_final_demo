@@ -64,11 +64,7 @@ void setCameraScene12_Hasya(void)
 {
 	if (isInitialDisplayScene12_hasya == true)
 	{
-		//setCamera(6.750000, 0.000000, -1.500000, -309.215027, 0.000000, 184.353134, 0.000000, 1.000000, 0.000000);
-		// lookAt(5.75f, -1.05f, -4.90f, -289.52f, -3.23f, 214.30f, 0.00f, 1.00f, 0.00f)
-		// setCamera(1.75f, 0.45f, 1.90f, 1.75f, 0.45f, -4.10f, 0.00f, 1.00f, 0.00f);
 		setCamera(1.75f, 0.60f, -2.95f, 1.75f, 0.60f, -8.95f, 0.00f, 1.00f, 0.00f);	
-
 
 		isInitialDisplayScene12_hasya = false;
 	}

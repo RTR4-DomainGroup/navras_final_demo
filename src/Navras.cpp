@@ -48,8 +48,6 @@ mat4 perspectiveProjectionMatrix;
 int windowWidth;
 int windowHeight;
 
-// extern GLbyte charPressed;
-// extern GLuint keyPressed;
 extern bool mouseLeftClickActive;
 extern float mouseX;
 extern float mouseY;
@@ -160,11 +158,9 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_SPACE:
-			// playSong(songId);
 			togglePlayback();
 			break;
 		default:
-			// LOG("keypress : %d\n", wParam);
 			break;
 		}
 		keyPressed = wParam;
@@ -300,7 +296,6 @@ int eventHandlerNavras(unsigned int iMsg, int wParam) {
 #endif
 
 		default:
-			// LOG("keypressed : %d\n", wParam);
 			break;
 		}
 		charPressed = wParam;
@@ -321,27 +316,14 @@ int playSong(int songId)
 	static int lastSongId = -1;
  
 	// code
-	// if(gbPlayback && lastSongId == songId) 
-	// {
-	// 	pauseAudio();
-	// 	gbPlayback = false;
-	// }
-	// else if (!gbPlayback && lastSongId == songId)
-	// {
-	// 	resumeAudio();
-	// 	gbPlayback = true;
-	// }
-	// else
+	char audiopath[64] = {0};
+	snprintf(audiopath, sizeof(audiopath), "%s%s", AUDIO_DIR, szAudios[songId]);
+	if(initializeAudio(audiopath))
 	{
-		char audiopath[64] = {0};
-		snprintf(audiopath, sizeof(audiopath), "%s%s", AUDIO_DIR, szAudios[songId]);
-		if(initializeAudio(audiopath))
-		{
-			LOG("initializeAudio() failed for file: %s\n", audiopath);
-			return (-1);
-		}
-		playAudio();
+		LOG("initializeAudio() failed for file: %s\n", audiopath);
+		return (-1);
 	}
+	playAudio();
 	lastSongId = songId;
 	return (0);
 }
@@ -376,9 +358,6 @@ int initializeNavras(void) {
 
 	// Here starts OpenGL code
     
-	// Print OpenGLInfo
-	//printGLInfo();
-
     // Calling Shaders
     if(initAllShaders())
     {
@@ -569,8 +548,6 @@ int initializeNavras(void) {
 		return (-8);
 	}
 
-	////LOG("initializeScene13_Shant() DONE !!!\n");
-
 	// SCENE14
 	if (initializeParticle() != 0)
 	{
@@ -601,7 +578,6 @@ int initializeNavras(void) {
 
 
 	// initialize camera
-	//resetCamera();
 
 	// Here Starts OpenGL Code
 	// Clear The Screen Using Blue Color
@@ -613,41 +589,12 @@ int initializeNavras(void) {
 	glDepthFunc(GL_LEQUAL);
 	
 	// Enabling The Texture
-	//glEnable(GL_TEXTURE_2D);
 
 	perspectiveProjectionMatrix = mat4::identity();
 
 	sceneTime(time_scene2);
 
 	return(0);
-}
-
-void printGLInfo(void) {
-
-	// Local Variable Declarations
-	GLint numExtensions = 0;
-
-	// Code
-	// ***** Writing Graphics Card Related Info in Log File  ***** //
-	LOG("   **********************************************************\n");
-	LOG("   ***** Graphics Card Information Details *****\n");
-	LOG("   **********************************************************\n");
-	LOG("   OpenGL Vendor	: %s \n", glGetString(GL_VENDOR));
-	LOG("   OpenGL Renderer	: %s \n", glGetString(GL_RENDERER));
-	LOG("   OpenGL Version	: %s \n", glGetString(GL_VERSION));
-	LOG("   GLSL Version	: %s \n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-	// GLSL - Graphics Library Shading Language
-
-	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-	LOG("   **********************************************************\n");
-	LOG("   Number of Supported Extensions: %d \n", numExtensions);
-	LOG("   **********************************************************\n");
-
-	// for (int i = 0; i < numExtensions; i++)
-	// {
-	// 	LOG("   %s \n", glGetStringi(GL_EXTENSIONS, i));
-	// }
-	// LOG("**********************************************************\n");
 }
 
 void resizeNavras(int width, int height) {
@@ -729,7 +676,6 @@ void displayNavras(void)
 		}
 
 		audio(SCENE05_KARUN_RAS);
-		//glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayScene_PlaceHolderIndoor(setCameraScene05_karun, displayScene5_karun, shouldSceneRaudraMaskAppear);
 		sceneTime(time_scene5);
 	}
@@ -755,7 +701,6 @@ void displayNavras(void)
 		
 		audio(SCENE07_RAUDRA_RAS);
 		displayScene_PlaceHolderIndoor(setCameraScene07_RaudraRas, displayScene07_Raudra, shouldSceneRaudraMaskAppear);
-		//displayScene07_Raudra();
 		sceneTime(time_scene7);
 	}
 	else if (currentScene == SCENE08_BIBHATSA_RAS)
@@ -855,10 +800,6 @@ void displayNavras(void)
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayVideoEffect();
 		sceneTime(time_scene15);
-	}
-	else if (currentScene == SCENE_PLACEHOLDER_INDOOR)
-	{
-		//displayScene_PlaceHolderIndoor();
 	}
 	else
 	{
@@ -1008,7 +949,6 @@ void uninitializeNavras(void) {
 	// Function Declarations
 
 	// Code
-	//LOG("Enter\n");
 
 	// audio
 	uninitializeAudio();

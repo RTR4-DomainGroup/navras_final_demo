@@ -84,17 +84,9 @@ struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
 struct FSQuadUniform fsqUniform;
 
 #ifdef ENABLE_TERRIAN
-struct TerrainUniform terrainUniform;
+static struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
 
-//#ifdef ENABLE_CLOUD_NOISE
-//struct CloudNoiseUniform sceneCloudNoiseUniform;
-// float myScale = 1.0f;
-// float noiseScale = 2.0f;
-// bool noiseScaleIncrement = true;
-// GLfloat skyColor[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-// GLfloat cloudColor[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-//#endif // ENABLE_CLOUD_NOISE
 
 
 #ifdef ENABLE_WATER
@@ -288,7 +280,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	atmosVariables_outdoor.m_fInnerRadius = 10.0f;
 	atmosVariables_outdoor.m_fOuterRadius = 50.0f;
-	//atmosVariables_outdoor.m_fOuterRadius = atmosVariables_outdoor.m_fInnerRadius + (atmosVariables_outdoor.m_fInnerRadius * 2.5f);
 	atmosVariables_outdoor.m_fScale = 1 / (atmosVariables_outdoor.m_fOuterRadius - atmosVariables_outdoor.m_fInnerRadius);
 
 	atmosVariables_outdoor.m_fWavelength[0] = 0.650f;		// 650 nm for red
@@ -378,21 +369,6 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 #endif // ENABLE_SKYBOX
 
-//#ifdef ENABLE_CLOUD_NOISE
-//
-//	noise_texture = initializeCloud();
-//	if (noise_texture == 0)
-//	{
-//		LOG("initializeCloud() FAILED!!!\n");
-//		return(-1);
-//	}
-//	else
-//	{
-//		LOG("initializeCloud() Successfull!!!\n");
-//	}
-//
-//#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_STARFIELD
 
 	fboEarthAndSpace.textureWidth = FBO_EARTHANDSPACE_WIDTH;
@@ -444,10 +420,8 @@ int initializeScene_PlaceHolderOutdoor(void)
 	loadStaticModel("res/models/masks/individualScenes/BeebhatsaWithText.obj", &maskModel_BibhastaRas);
 
 
-
 	if (LoadGLTexture_UsingSOIL(&texture_shringarRas, "res/models/masks/copper.jpg") == FALSE)
 	{
-		//uninitialize();
 		LOG("LoadGLTexture for texture_shringarRas FAILED!!!\n");
 		return(-1);
 	}
@@ -499,9 +473,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	isBlur = isGaussianBlurRequired;
 
 	displayCamera();
-	//setCamera(&camera);
-
-	//rotateCamera(0.0f, 10.0f, 0.0f, 50.0f, cameraAngle);
 
 	// Transformations
 	mat4 translationMatrix = mat4::identity();
@@ -556,7 +527,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 
 	translationMatrix = vmath::translate(0.0f, 0.0f, -56.0f);					// glTranslatef() is replaced by this line.
-	//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 	glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
@@ -583,21 +553,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #endif // ENABLE_SHADOW
-
-	//////////////////////////////////////////////////////////////
-	/*glViewport(0, 0, (GLsizei)windowWidth, (GLsizei)windowHeight);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)windowWidth / windowHeight,
-		0.1f, 1000.0f);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	fsqUniform = useFSQuadShader();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-	glUniform1i(fsqUniform.textureSamplerUniform1, 0);
-
-	displayQuad();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glUseProgram(0);*/
 
 #ifdef ENABLE_MASKS
 	// Masks
@@ -633,11 +588,9 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniform3fv(sceneErosionNoiseUniform.ksUniform, 1, materialSpecular_shantRas_mask);
 		glUniform1f(sceneErosionNoiseUniform.materialShininessUniform, materialShininess_shantRas_mask);
 
-		//glDisable(GL_BLEND);
 		// ------ Mask Model ------
 		translationMatrix = vmath::translate(0.0f, -1.0f, -6.0f);
 		scaleMatrix = vmath::scale(0.025f, 0.025f, 0.025f);
-		//rotationMatrix_y = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix_y;
 
@@ -646,7 +599,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glUniformMatrix4fv(sceneErosionNoiseUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 		glUniform1f(sceneErosionNoiseUniform.scaleUniform, myScale_erosion_outdoor);
-		//glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, vec3(0.32, 0.32, 0.32));
 		glUniform3fv(sceneErosionNoiseUniform.offsetUniform, 1, offset_ras_outdoor);
 
 		if(getCurrentScene() == SCENE06_BHAYANK_RAS && now1 >= (then1 + 5))
@@ -680,8 +632,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 		}
 
-
-		//drawCustomTextureStaticModel(maskModel_shringarRas, texture_shringarRas, noise_texture_eroded_outdoor);
 		// ################################### ROOM ###################################  
 
 		glUseProgram(0);
@@ -706,19 +656,13 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			vec4 textColor = vec4(1.0f, 1.0f, 1.0f, alpha);
-			// TRANFORM vector = {-0.5f, 0.23f, -3.0f};
-			// update_transformations(NULL, NULL, NULL, &vector);
-			// displayFont("Presenting", vec3(vector.x, vector.y, vector.z), 0.003f, textColor);
+			
 			displayFont("Presenting", vec3(-0.3f, 0.23f, -3.0f), 0.003f, textColor);
 
 
 			textColor = vec4(1.0f, 1.0f, 1.0f, alpha);
 			displayFont("NAVRAS", vec3(-0.9f, -0.25f, -3.0f), 0.010f, textColor);
-			// TRANFORM vector = {-1.25f, -0.25f, -3.0f};
-			// update_transformations(NULL, NULL, NULL, &vector);
-			// displayFont("NAVRAS", vec3(vector.x, vector.y, vector.z), 0.010f, textColor);
-
-
+			
 			glDisable(GL_CULL_FACE);
 			glDisable(GL_BLEND);
 
@@ -822,7 +766,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 			color[1] = 0.65f;
 			color[2] = 0.01f;
 		}
-		//glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
 
 		displaySphere(color);
 		glUseProgram(0);
@@ -886,7 +829,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		fsqUniform = useFSQuadShader();
-		//glEnable(GL_BLEND);
 
 		glUniform1i(fsqUniform.singleTexture, 0);
 
@@ -898,23 +840,9 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glBindTexture(GL_TEXTURE_2D, fboColorPass.frameBufferTexture);
 		glUniform1i(fsqUniform.textureSamplerUniform2, 1);
 
-		/*glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
-		glUniform1i(fsqUniform.textureSamplerUniform3, 2);*/
-
+		
 		displayQuad();
 		glBindTexture(GL_TEXTURE_2D, 0);
-
-		//glDisable(GL_BLEND);
-
-		//
-		/*glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fboMaskPass_Outdoor.frameBufferTexture);
-		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
-
-		displayQuad();
-		glBindTexture(GL_TEXTURE_2D, 0);*/
 		glUseProgram(0);
 	
 	}
@@ -976,7 +904,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		sceneGodRaysUniform = useGodRaysShader();
 		translationMatrix = mat4::identity();
 		modelMatrix = mat4::identity();
-		//translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix;
 
 		glUniform4fv(sceneGodRaysUniform.lightPositionOnScreen, 1, lightPosition_gr);
@@ -1008,7 +935,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		// Godrays Default Frame Buffer
-		//displayPasses(1, false, false, isWaterRequired, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, fullSceneFbo.frameBuffer);
 		glViewport(0, 0, (GLsizei)fullSceneFbo.textureWidth, (GLsizei)fullSceneFbo.textureHeight);
 		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fullSceneFbo.textureWidth / fullSceneFbo.textureHeight,
@@ -1016,7 +942,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsqUniform = useFSQuadShader();
-		//glEnable(GL_BLEND);
 
 		glUniform1i(fsqUniform.singleTexture, 0);
 
@@ -1043,8 +968,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		fsGaussBlurQuadUniform = useFSQuadShader();
 		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 3);
 		glUniform1f(fsGaussBlurQuadUniform.intensity, mix_intensity);
-		/*glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
-		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform2, 1);*/
+		
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, fullSceneFbo.frameBufferTexture);
 		glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
@@ -1168,10 +1092,6 @@ void updateScene_PlaceHolderOutdoor(void)
 	deltaTime = updateStarfield(deltaTime);
 #endif // ENABLE_STARFIELD
 
-//#ifdef ENABLE_CLOUD_NOISE
-//	// update Cloud
-//	updateCloud(noiseScaleIncrement, noiseScale, 0.0001f);
-//#endif // ENABLE_CLOUD_NOISE
 
 #ifdef ENABLE_WATER
 
@@ -1183,12 +1103,6 @@ void updateScene_PlaceHolderOutdoor(void)
 #ifdef ENABLE_MASKS
 
 	// update camera using lerp
-	//cameraEyeY = preciselerp(cameraEyeY, 25.0f, 0.01f);
-	//cameraCenterY = preciselerp(cameraCenterY, 25.0f, 0.01f);
-	/*cameraAngle = cameraAngle + 0.5f;
-	if (cameraAngle >= 360.0f)
-		cameraAngle -= 360.0f;*/
-	// updateErosion(offsetIncrement_outdoor, offset_ras_outdoor[8], 0.002f);
 	if (isBlur == false)
 	{
 		offset_ras_outdoor[0] = 0.17f;
@@ -1215,9 +1129,6 @@ void updateScene_PlaceHolderOutdoor(void)
 		now1 = time(NULL);
 		if (now1 >= (then1 + 5))
 		{
-			// offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.002f;
-			// offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.002f;
-			// offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.002f;
 			offset_ras_outdoor[0] = offset_ras_outdoor[0] + 0.0015f;
 			offset_ras_outdoor[1] = offset_ras_outdoor[1] + 0.0015f;
 			offset_ras_outdoor[2] = offset_ras_outdoor[2] + 0.0015f;
@@ -1287,16 +1198,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	uninitializeAtmosphere();
 #endif // ENABLE_ATMOSPHERE
 
-//#ifdef ENABLE_CLOUD_NOISE
-//	
-//	uninitializeCloud();
-//	if (noise_texture)
-//	{
-//		glDeleteTextures(1, &noise_texture);
-//		noise_texture = 0;
-//	}
-//#endif // ENABLE_CLOUD_NOISE
-
 #ifdef ENABLE_ADSLIGHT
 	if (texture_Marble)
 	{
@@ -1304,11 +1205,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 		texture_Marble = NULL;
 	}
 
-	// uninitializeTerrain();
-	// uninitializeSphere();
-	// uninitializeTriangle();
-	// uninitializeQuad();
-	// uninitializePyramid();
 	uninitializeCube();
 
 #endif // ENABLE_ADSLIGHT
@@ -1318,7 +1214,6 @@ void uninitializeScene_PlaceHolderOutdoor(void)
 	uninitializeGaussianBlur(&gaussianBlurEffect);
 #endif // ENABLE_GAUSSIAN_BLUR
 
-	//uninitializeCamera(&camera);
 
 }
 

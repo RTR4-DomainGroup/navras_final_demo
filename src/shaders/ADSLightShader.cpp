@@ -296,8 +296,6 @@ int initializeADSShader(void)
 					"FragColor = mix(((texColor - vec4(u_colorCorrection)) + phong_ads_light), vec4(u_blackOrWhiteRoom), u_blackOrWhiteRoomMixDelta); \n" \
 
 
-		//	        "FragColor = mix(texture(u_textureSampler1,a_texcoord_out),texture(u_textureSampler2,a_texcoord_out),u_alphaBlending); \n" \
-
 					"if (u_fogEnable == 1) \n" \
 					"{ \n" \
 						"FragColor = mix(u_skyFogColor, phong_ads_light, visibility); \n" \
@@ -314,7 +312,6 @@ int initializeADSShader(void)
 
 					"float depthValue = texture(depthMap, a_texcoord_out).r; \n" \
 					"FragColor = vec4(vec3(LinearizeDepth(depthValue) / far_plane), 1.0); \n" \
-					//"FragColor = vec4(vec3(depthValue), 1.0); \n" \ /
 
 				"} \n" \
 

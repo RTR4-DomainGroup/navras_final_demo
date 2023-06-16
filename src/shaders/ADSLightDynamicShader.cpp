@@ -265,14 +265,6 @@ int initializeADSDynamicShader(void)
 		"       vec3 normalized_lightDirection = normalize(a_lightDirection_out - a_fragPosNM_out ); \n" \
 		"       vec4 diffuse = u_ld * texColor * max(dot(normalized_lightDirection,normalizedNormals), 0.0); \n" \
 
-		//"		vec3 normalized_transformed_normals = normalize(transformedNormals); \n" \
-		//"		vec3 normalized_light_direction = normalize(lightDirection); \n" \
-		//"		vec4 diffuse = u_ld * u_kd * texColor * max(dot(normalized_light_direction, normalized_transformed_normals), 0.0); \n" \
-		
-		//"		vec3 reflectionVector = reflect(-normalized_light_direction, normalized_transformed_normals); \n" \
-		//"		vec3 normalized_viewer_vector = normalize(viewerVector); \n" \
-		//"		vec4 specular = u_ls * u_ks * pow(max(dot(reflectionVector, normalized_viewer_vector), 0.0), u_materialShininess); \n" \
-		
 					//specular
 		"       vec3 normalized_viewerVector = normalize(a_eyeDirection_out - a_fragPosNM_out); \n" \
 		"       vec3 reflectionVector = reflect(-normalized_lightDirection, normalizedNormals); \n" \

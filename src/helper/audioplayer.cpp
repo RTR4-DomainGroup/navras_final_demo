@@ -101,11 +101,9 @@ int initializeAudio(const char* audio_file)
 
         alBufferData(bufferid, format, data, size, samplerate);
         // NOTE: deleting sourceid result in stopping playback, declare this global scope
-        // unsigned int sourceid;
         alGenSources(1, &sourceid);
         alSourcei(sourceid, AL_BUFFER, bufferid);
-        // alSourcePlay(sourceid);
-        // alDeleteSources(1, &sourceid);
+        
         alDeleteBuffers(1, &bufferid);
         free(data);
         ret = 0;

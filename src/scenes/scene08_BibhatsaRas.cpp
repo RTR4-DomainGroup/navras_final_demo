@@ -101,8 +101,6 @@ extern struct StarfieldUniform sceneStarfieldUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-//STATIC_MODEL manModel;
-//static STATIC_MODEL streetLightModel;
 STATIC_MODEL buildingOneModel;
 STATIC_MODEL buildingTwoModel;
 STATIC_MODEL buildingThreeModel;
@@ -142,13 +140,11 @@ bool isInitialDisplayScene08_BibhatsaRas = true;
 int initializeScene08_BibhatsaRas(void)
 {
     // Code.
-	// initializeCamera(&camera);
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaMask, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
 	{
-		//uninitialize();
 		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");
 		return(-1);
 	}
@@ -165,7 +161,6 @@ int initializeScene08_BibhatsaRas(void)
 
 	if (LoadGLTexture_UsingSOIL(&texture_road, TEXTURE_DIR"Road/road.jpg") == FALSE)
 	{
-		//uninitialize();
 		LOG("LoadGLTexture for texture_road FAILED!!!\n");
 		return(-1);
 	}
@@ -176,7 +171,6 @@ int initializeScene08_BibhatsaRas(void)
 
 	if (LoadGLTexture_UsingSOIL(&texture_footpath, TEXTURE_DIR"Road/foot.jpg") == FALSE)
 	{
-		//uninitialize();
 		LOG("LoadGLTexture for texture_footpath FAILED!!!\n");
 		return(-1);
 	}
@@ -187,7 +181,6 @@ int initializeScene08_BibhatsaRas(void)
 
 	if (LoadGLTexture_UsingSOIL(&texture_wall, TEXTURE_DIR"Bibhatsa/graffitiWall.jpg") == FALSE)
 	{
-		//uninitialize();
 		LOG("LoadGLTexture for texture_wall FAILED!!!\n");
 		return(-1);
 	}
@@ -213,10 +206,6 @@ int initializeScene08_BibhatsaRas(void)
 	initializepaperTrashInstancePositions();
 	initializeplasticBottleInstancePositions();
 
-	//load models
-	//loadStaticModel("res/models/scene08-beebhatsa/man/tempBeebhatsaMan.obj", &manModel);
-	//loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
-
 	// Buildings Model Loading
 	loadStaticModel("res/models/scene08-beebhatsa/bld1/building1.obj", &buildingOneModel);
 	loadStaticModel("res/models/scene08-beebhatsa/bld2/Building2.obj", &buildingTwoModel);
@@ -233,14 +222,11 @@ int initializeScene08_BibhatsaRas(void)
 
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/1.obj", &extraTrash1);
 
-	//loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/8/4.obj", &extraTrash4);
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/1.obj", &extraTrash5);
 	loadStaticModel("res/models/scene08-beebhatsa/Trash_4June/10/2.obj", &extraTrash6);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &beebhatsaManModel);
-	//loadDynamicModel("res/models/exo/Walking.dae", &beebhatsaManModel);
 	loadDynamicModel("res/models/scene08-beebhatsa/man/beebhatsaManAnim.fbx", &beebhatsaManModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
@@ -265,8 +251,6 @@ void initializeplasticBottleInstancePositions(void)
 		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX_BR - X_MIN_BR)) + X_MIN_BR;
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR - Z_MIN_BR)) + Z_MIN_BR;
-
-		//LOG("Paper Trash Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -304,8 +288,6 @@ void initializepaperTrashInstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR_TRASHPILE - Z_MIN_BR_TRASHPILE)) + Z_MIN_BR_TRASHPILE;
 
-		//LOG("Paper Trash Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
-
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
 		{
@@ -341,8 +323,6 @@ void initializepileTrashInstancePositions(void)
 		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX_BR - X_MIN_BR)) + X_MIN_BR;
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX_BR - Z_MIN_BR)) + Z_MIN_BR;
-
-		//LOG("Pile Trash Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -380,8 +360,6 @@ void initializeCiga1InstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
 
-		//LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
-
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
 		{
@@ -418,8 +396,6 @@ void initializeCiga2InstancePositions(void)
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
 
-		//LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
-
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
 		{
@@ -455,8 +431,6 @@ void initializeRedCan3InstancePositions(void)
 		instance_positions[(i * 3) + 0] = (((GLfloat)rand() / RAND_MAX) * (X_MAX - X_MIN)) + X_MIN;;
 		instance_positions[(i * 3) + 1] = 0.0f;
 		instance_positions[(i * 3) + 2] = (((GLfloat)rand() / RAND_MAX) * (Z_MAX - Z_MIN)) + Z_MIN;;
-
-		//LOG("Cigarette Instance %d Position: [%.02f %.02f %.02f]\n", i, instance_positions[(i * 3) + 0], instance_positions[(i * 3) + 1], instance_positions[(i * 3) + 2]);
 
 		xPos += X_INCREMENT + X_SEPARTION_OFFSET;
 		if (xPos >= xMaxLast)
@@ -505,7 +479,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 	viewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
 	displayCamera();
-	//setCamera(&camera);
 
 	mat4 finalViewMatrix = mat4::identity();
 
@@ -516,13 +489,10 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 	{
 		finalViewMatrix = mat4::identity();
 		finalViewMatrix = lookat(vec3(lightPosition_bibhatsa[0], lightPosition_bibhatsa[1], lightPosition_bibhatsa[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
-		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
 		lightSpaceMatrix = perspectiveProjectionMatrix * finalViewMatrix;
-		//lightSpaceMatrix = ortho(-30.0f, 30.0f, -30.0f, 30.0f, -30.0f, 30.0f);
-		//lightSpaceMatrix = lightSpaceMatrix * finalViewMatrix;
 #endif // ENABLE_SHADOW
 	
 	}
@@ -546,14 +516,12 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		modelMatrix = mat4::identity();
 
 		translationMatrix = vmath::translate(0.0f, 0.0f, -80.0f);					// glTranslatef() is replaced by this line.
-		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		//glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
 		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
 		glUniform1f(sceneStarfieldUniform.timeUniform, time);
 
@@ -611,7 +579,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		translationMatrix = vmath::translate(2.0f, 5.0f, -90.0f);					// glTranslatef() is replaced by this line.
 		scaleMatrix = vmath::scale(70.0f, 10.0f, 1.0f);
-		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -657,7 +624,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		translationMatrix = vmath::translate(-60.0f, -5.0f, -10.0f);					// glTranslatef() is replaced by this line.
 		scaleMatrix = vmath::scale(50.0f, 0.1f, 100.0f);
-		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -681,7 +647,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		translationMatrix = vmath::translate(50.0f, -5.0f, -10.0f);					// glTranslatef() is replaced by this line.
 		scaleMatrix = vmath::scale(30.0f, 0.1f, 100.0f);
-		//rotationMatrix = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
 
 		glUniformMatrix4fv(bibhatsaRasObject.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -725,16 +690,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
 		glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
 
-		//glUniform1i(sceneOutdoorADSStaticUniform.)
-		// ------ Man Model ------
-		//translationMatrix = vmath::translate(0.0f, -2.0f, 0.0f);
-		translationMatrix = vmath::translate(5.0f, -5.00f, -52.75f);
-		//scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
-		scaleMatrix = vmath::scale(0.09f, 0.09f, 0.09f);
-		rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		if (actualDepthQuadScene == 1)
@@ -754,28 +709,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		//drawStaticModel(manModel);
-
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-		//rotationMatrix_x = mat4::identity();
-		//rotationMatrix_y = mat4::identity();
-		//rotationMatrix_z = mat4::identity();
-
-		//// ------ Streetlight Model ------
-		//translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-		//scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-
-		//modelMatrix = translationMatrix * scaleMatrix;
-
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		//drawStaticModel(streetLightModel);
 
 		// ################################### Building One RHS First ###################################  
 		translationMatrix = mat4::identity();
@@ -907,7 +840,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
 		rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -949,12 +881,9 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		// ------ Streetlight Model ------
 		translationMatrix = vmath::translate(17.75f, -3.0f, 50.0f);
 		scaleMatrix = vmath::scale(0.03f, 0.03f, 0.03f);
-		//rotationMatrix_x = vmath::rotate(3.15f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(-45.00f, 0.0f, 1.0f, 0.0f);
-		//rotationMatrix_z = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = rotationMatrix_x * rotationMatrix_y;
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -975,10 +904,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(3.75f, 6.0f, 2.0f);
 		rotationMatrix_x = vmath::rotate(0.45f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(90.10f, 0.0f, 1.0f, 0.0f);
-		//rotationMatrix_z = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = rotationMatrix_x * rotationMatrix_y;
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1000,7 +927,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(33.85f, 30.0f, 30.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1021,7 +947,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(25.0f, 25.0f, 25.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1042,7 +967,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(8.0f, 8.0f, 8.0f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1065,7 +989,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(10.0f, 12.0f, 10.0f);
 		rotationMatrix = vmath::rotate(45.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -1110,7 +1033,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 		rotationMatrix = vmath::rotate(120.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -1132,7 +1054,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
 		rotationMatrix = vmath::rotate(120.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
@@ -1153,12 +1074,10 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		rotationMatrix_z = mat4::identity();
 
 		// ------ Trash 1 ------
-		//translationMatrix = vmath::translate(-8.0f, -2.7f, -30.0f);
 		translationMatrix = vmath::translate(-7.5f, -4.8f, 20.50f);
 		scaleMatrix = vmath::scale(1.09f, 1.07f, 1.75f);
 		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1188,29 +1107,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 1);
 		drawStaticModelInstanced(papersTrash1, NO_OF_INSTANCES_KACHARA/2);
 		glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
-		// ################################### Paper Trash 1 ###################################  
-
-		//// ################################### Extra Trash 4 ###################################  
-		//translationMatrix = mat4::identity();
-		//rotationMatrix = mat4::identity();
-		//modelMatrix = mat4::identity();
-		//scaleMatrix = mat4::identity();
-
-		//// ------ Trash 4 ------
-		//translationMatrix = vmath::translate(6.0f, -5.0f, -20.0f);
-		//scaleMatrix = vmath::scale(2.0f, 2.0f, 2.0f);
-		//rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
-
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
-		//modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-		//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-		//glUniform1i(sceneOutdoorADSStaticUniform.isInstanced, 0);
-		//drawStaticModel(extraTrash4);
-		//// ################################### Extra Trash 4 ###################################  
+		// ################################### Paper Trash 1 ###################################   
 
 		// ################################### Extra Trash 5 ###################################  
 		translationMatrix = mat4::identity();
@@ -1253,10 +1150,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
 		rotationMatrix_x = vmath::rotate(-0.5f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(-86.10f, 0.0f, 1.0f, 0.0f);
-		//rotationMatrix_z = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = rotationMatrix_x * rotationMatrix_y;
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1280,10 +1175,8 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		scaleMatrix = vmath::scale(4.0f, 4.0f, 4.0f);
 		rotationMatrix_x = vmath::rotate(-0.5f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix_y = vmath::rotate(-86.10f, 0.0f, 1.0f, 0.0f);
-		//rotationMatrix_z = vmath::rotate(90.0f, 1.0f, 0.0f, 0.0f);
 		rotationMatrix = rotationMatrix_x * rotationMatrix_y;
 
-		//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
 		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
@@ -1338,7 +1231,6 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.025f, 0.025f, 0.025f));
 		glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 3.14159f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		//update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
 		glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
@@ -1390,18 +1282,13 @@ void updateScene08_BibhatsaRas(void)
 {
 	// Code
 #ifdef ENABLE_CAMERA_ANIMATION
-	//cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
-	//cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
+
 	
 	if (beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
 	{
 		cameraEyeZ -= 0.05f;
-		//if (cameraEyeZ <= 35.0f)
-		//	cameraEyeZ = 35.0f;
 
 		cameraCenterZ -= 0.05f;
-		//if (cameraCenterZ <= -15.0f)
-		//	cameraCenterZ = -15.0f;
 	}
 
 #endif // ENABLE_CAMERA_ANIMATION
@@ -1410,10 +1297,6 @@ void updateScene08_BibhatsaRas(void)
 
 	if(beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
 		zTranslateWalk = zTranslateWalk - 0.05f;
-
-	/*zTranslateWalk = zTranslateWalk - 0.05f;
-	if (zTranslateWalk <= 20.0f)
-		zTranslateWalk = 20.0f;*/
 #endif // ENABLE_DYNAMIC_MODELS
 
 }
@@ -1449,14 +1332,8 @@ void uninitializeScene08_BibhatsaRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	//unloadStaticModel(&manModel);
-	//unloadStaticModel(&streetLightModel);
-
-	// Unloading 4 June Models
-
 	unloadStaticModel(&extraTrash6);
 	unloadStaticModel(&extraTrash5);
-	//unloadStaticModel(&extraTrash4);
 	unloadStaticModel(&plasticBottle);
 	unloadStaticModel(&papersTrash1);
 	unloadStaticModel(&extraTrash1);
@@ -1485,6 +1362,5 @@ void uninitializeScene08_BibhatsaRas(void)
 #ifdef ENABLE_DYNAMIC_MODELS
 	unloadDynamicModel(&beebhatsaManModel);
 #endif
-	//uninitializeCamera(&camera);
 
 }
