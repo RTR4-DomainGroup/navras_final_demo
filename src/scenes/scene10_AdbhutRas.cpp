@@ -481,6 +481,31 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	
 	}
 
+	if (recordWaterReflectionRefraction == true) {
+
+#ifdef ENABLE_WATER
+
+	waterUniform = useWaterShader();
+
+		if (isReflection == true)
+		{
+			distance10 = 2.0f * (cameraEyeY - waterHeight);
+			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
+			cameraEyeY -= distance10;
+			cameraCenterY -= distance10;
+			displayCamera();
+			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		}
+		else
+		{
+			glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		}
+
+#endif // ENABLE_WATER
+	}
+
 	if (actualDepthQuadScene == 0) {
 
 #ifdef ENABLE_STARFIELD
@@ -892,24 +917,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 #ifdef ENABLE_WATER
 
 	if(waterDraw == true){
+		
 		waterUniform = useWaterShader();
-
-		if (recordWaterReflectionRefraction == true)
-		{
-			if (isReflection == true)
-			{
-				distance10 = 2.0f * (cameraEyeY - waterHeight);
-				cameraEyeY -= distance10;
-				cameraCenterY -= distance10;
-				displayCamera();
-				finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-				glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-			}
-			else
-			{
-				glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-			}
-		}
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -1047,6 +1056,15 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	}
 
 #endif // ENABLE_BILLBOARDING
+
+	if (isReflection == true) {
+
+		cameraEyeY += distance10;
+		cameraCenterY += distance10;
+		displayCamera();
+		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	}
+
 }
 
 extern float cam_mov[][9];
