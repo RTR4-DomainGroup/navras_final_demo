@@ -129,7 +129,7 @@ STATIC_MODEL extraTrash6;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL beebhatsaManModel;
+static DYNAMIC_MODEL beebhatsaManModel;
 #endif // ENABLE_STATIC_MODELS
 
 GLuint texture_road;

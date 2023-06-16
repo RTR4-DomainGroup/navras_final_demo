@@ -98,7 +98,7 @@ static STATIC_MODEL roomModel2;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel_06;
+static DYNAMIC_MODEL skeletonModel_06;
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_GAUSSIAN_BLUR

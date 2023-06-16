@@ -896,7 +896,7 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.6f);
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
 
 	glUseProgram(0);
 
@@ -1162,9 +1162,8 @@ void updateScene10_AdbhutRas(void)
 
 #endif // ENABLE_BILLBOARDING
 
-	if(camera_update == 4) 
+	if(camera_update == 4 && skeletonModel.pAnimator->GetCurrentFrame() >= 1315.0) 
 	{
-		
 		leaf_translate -= 0.015f;
 		leaf_rotate += 9.52f;	
 		if(leaf_translate < -1.83f) {
