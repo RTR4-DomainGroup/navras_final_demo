@@ -174,7 +174,7 @@ extern struct SkyboxUniform sceneSkyBoxUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL treemodel_11;
+//STATIC_MODEL treemodel_11;
 STATIC_MODEL manModel_11;
 STATIC_MODEL womanModel_11;
 
@@ -277,7 +277,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
-	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
+	//loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
 	loadStaticModel("res/models/scene11_shringar/man/tempShringrMan.obj", &manModel_11);
 	loadStaticModel("res/models/scene11_shringar/woman/tempShringarWoman.obj", &womanModel_11);
 #endif // ENABLE_STATIC_MODELS
@@ -696,42 +696,42 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ TREE Model ------
 
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+	//translationMatrix = mat4::identity();
+	//rotationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+	//scaleMatrix = mat4::identity();
+	//rotationMatrix_x = mat4::identity();
+	//rotationMatrix_y = mat4::identity();
+	//rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
-	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
+	//translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
+	//scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
-	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+	////update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	//modelMatrix = translationMatrix * scaleMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	if (actualDepthQuadScene == 1) {
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//if (actualDepthQuadScene == 1) {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+	//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
-	} else {
+	//} else {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	//	glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
-	}
+	//}
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(treemodel_11);
+	//drawStaticModel(treemodel_11);
 
 	// Man
 	translationMatrix = mat4::identity();
@@ -1108,7 +1108,7 @@ void uninitializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&treemodel_11);
+	//unloadStaticModel(&treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 
