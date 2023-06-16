@@ -614,18 +614,18 @@ void updateScene13_ShantRas(void)
 	/*cameraEyeZ = preciselerp(cameraEyeZ, -2.75f, 0.01f);
 	cameraCenterZ = preciselerp(cameraCenterZ, -8.75f, 0.01f);
 	if (cameraEyeZ <= -2.0f)*/
-	startMaskAnimation = true;
-	if (startCameraZoomToMan == true)
-	{
-		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
-		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
-		cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.005f);
-		cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
-		cameraEyeZ = preciselerp(cameraEyeZ, -18.51f, 0.005f);
-		cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.005f);
-		cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -24.51f, 0.005f);
-	}
+	//startMaskAnimation = true;
+	//if (startCameraZoomToMan == true)
+	//{
+	//	// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
+	//	// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
+	//	cameraEyeX = preciselerp(cameraEyeX, -0.80f, 0.005f);
+	//	cameraEyeY = preciselerp(cameraEyeY, -1.30f, 0.05f);
+	//	cameraEyeZ = preciselerp(cameraEyeZ, -18.51f, 0.005f);
+	//	cameraCenterX = preciselerp(cameraCenterX, -0.80f, 0.005f);
+	//	cameraCenterY = preciselerp(cameraCenterY, -1.30f, 0.05f);
+	//	cameraCenterZ = preciselerp(cameraCenterZ, -24.51f, 0.005f);
+	//}
 #endif // ENABLE_CAMERA_ANIMATION
 
 	//if (startMaskAnimation == true)
@@ -638,17 +638,17 @@ void updateScene13_ShantRas(void)
 	}
 	if ((181 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 420)) // static main mask
 	{	
+		
+	}
+	if ((421 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 600)) // translate shanta main mask to man chest
+	{
 		maskModelScale -= 0.000083682f;
 
 		maskModelTranslateX = preciselerp(maskModelTranslateX, -0.80f, 0.005f);
 		maskModelTranslateY = preciselerp(maskModelTranslateY, -1.30f, 0.05f);
 		maskModelTranslateZ = preciselerp(maskModelTranslateZ, -18.51f, 0.005f);
 	}
-	if ((421 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 600)) // translate shanta main mask to man chest
-	{
-
-	}
-	if ((601 <= shantaRasFrameCounter) &&  (shantaRasFrameCounter <= 1200))
+	if ((601 <= shantaRasFrameCounter) &&  (shantaRasFrameCounter <= 1200)) // translate and scale masks
 	{
 		maskTranslationRadii[0] += 0.05833f;
 		maskTranslationRadiiY[0] += 0.06666f;
@@ -673,8 +673,8 @@ void updateScene13_ShantRas(void)
 			//if (maskTranslationRadii[8] == 1.3f)
 			//	masksTransformationsComplete = true;
 
-			if (maskTranslationRadiiY[8] == 4.0f)
-				masksTransformationsComplete = true;
+			//if (maskTranslationRadiiY[8] == 4.0f)
+			//	masksTransformationsComplete = true;
 
 			if (maskScales[i] >= 0.01f)
 				maskScales[i] = 0.01f;
@@ -693,12 +693,12 @@ void updateScene13_ShantRas(void)
 		//	}
 		//}
 	}
-	if ((1201 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 1500)) // show the masks here
+	if ((1201 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 1500)) // show the masks here static for 5 seconds
 	{
 
 	}
 #ifdef ENABLE_EROSION
-	if ((1501 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 2100))
+	if ((1501 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 2100)) // erode out the masks
 	{
 		//updateErosion(offsetIncrement, offset_ras[8], 0.002f);
 		updateErosion(offsetIncrement, offset_ras[8], 0.005166f);
@@ -715,7 +715,7 @@ void updateScene13_ShantRas(void)
 	}
 #endif // ENABLE_EROSION
 	//if (startCameraZoomToMan == true)
-	if ((2101 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 2400))
+	if ((2101 <= shantaRasFrameCounter) && (shantaRasFrameCounter <= 2400)) // zoom to masks
 	{
 		// lookAt(-0.75f, -1.25f, -8.26f, -0.75f, -1.25f, -14.26f, 0.00f, 1.00f, 0.00f)
 		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
