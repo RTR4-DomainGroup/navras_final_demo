@@ -39,7 +39,7 @@ int initializeADSShader(void)
 		"uniform int u_depthQuadScene; \n" \
 
 		"uniform mat4 lightSpaceMatrix; \n" \
-		"uniform int u_isInstanced = 1; \n" \
+		"uniform int u_isInstanced; \n" \
 		"out VS_OUT{ \n" \
 			"vec4 FragPos; \n" \
 			"vec3 Normal; \n" \
@@ -291,10 +291,9 @@ int initializeADSShader(void)
 			        "vec4 specular = u_ls * pow(max(dot(normalizedNormals, halfwayDir), 0.0), u_materialShininess); \n" \
 					
 					"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
-					"phong_ads_light = (ambient + (1.0 - shadow) * (diffuse + specular)); \n" \
+					"phong_ads_light = (ambient + diffuse + specular); \n" \
 					
-					//"FragColor = mix(((texColor - vec4(u_colorCorrection)) + phong_ads_light), vec4(u_blackOrWhiteRoom), u_blackOrWhiteRoomMixDelta); \n" \/
-					"FragColor = texColor + phong_ads_light; \n" \
+					"FragColor = mix(((texColor - vec4(u_colorCorrection)) + phong_ads_light), vec4(u_blackOrWhiteRoom), u_blackOrWhiteRoomMixDelta); \n" \
 
 
 		//	        "FragColor = mix(texture(u_textureSampler1,a_texcoord_out),texture(u_textureSampler2,a_texcoord_out),u_alphaBlending); \n" \

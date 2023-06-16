@@ -181,7 +181,7 @@ STATIC_MODEL womanModel_11;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel_11;
+static DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
 

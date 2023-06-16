@@ -30,18 +30,10 @@
 #include "../../inc/effects/GaussianBlurEffect.h"
 #endif // ENABLE_GAUSSIAN_BLUR
 
-#ifdef ENABLE_TERRIAN
-#include "../../inc/effects/TerrainEffect.h"
-#endif // ENABLE_TERRIAN
-
 #include "../../inc/scenes/scene06_BhayanakRas.h"
 
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
-
-#ifdef ENABLE_TERRIAN
-extern struct TerrainUniform terrainUniform;
-#endif // ENABLE_TERRIAN
 
 static struct TextureVariables terrainTextureVariables_06;
 
@@ -108,7 +100,7 @@ static STATIC_MODEL roomModel2;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel_06;
+static DYNAMIC_MODEL skeletonModel_06;
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_GAUSSIAN_BLUR
@@ -180,7 +172,7 @@ int initializeScene06_BhayanakRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
-	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom1.obj", &roomModel);
+	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom.obj", &roomModel);
 	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoomWithoutFloor.obj", &roomModel2);
 
 #endif // ENABLE_STATIC_MODELS
@@ -190,26 +182,6 @@ int initializeScene06_BhayanakRas(void)
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_06);
 	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_06);
 #endif // ENABLE_DYNAMIC_MODEL
-
-#ifdef ENABLE_TERRIAN
-	displacementmap_depth = 0.0f;
-
-	terrainTextureVariables_06.albedoPath = "res/models/scene06_bhayanak/room/wall.jpg";
-	terrainTextureVariables_06.displacementPath = TEXTURE_DIR"terrain/Scene11_Shringar/1disp.jpg";
-	terrainTextureVariables_06.normalPath = TEXTURE_DIR"terrain/Scene11_Shringar/normal.jpg";
-
-	if (initializeTerrain(&terrainTextureVariables_06) != 0)
-	{
-		LOG("initializeTerrain() Bhayanak FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeTerrain() Bhyanak Successfull!!!\n");
-	}
-
-#endif // ENABLE_TERRIAN
-
 
 	return 0;
 }
@@ -436,261 +408,70 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 #ifdef ENABLE_DYNAMIC_MODELS
 
-	glm::mat4 glm_modelMatrix;
-	glm::mat4 glm_translateMatrix;
-	glm::mat4 glm_rotateMatrix;
-	glm::mat4 glm_scaleMatrix;
+	//glm::mat4 glm_modelMatrix;
+	//glm::mat4 glm_translateMatrix;
+	//glm::mat4 glm_rotateMatrix;
+	//glm::mat4 glm_scaleMatrix;
 
-	glm_modelMatrix = glm::mat4(1.0f);
-	glm_translateMatrix = glm::mat4(1.0f);
-	glm_rotateMatrix = glm::mat4(1.0f);
-	glm_scaleMatrix = glm::mat4(1.0f);
+	//glm_modelMatrix = glm::mat4(1.0f);
+	//glm_translateMatrix = glm::mat4(1.0f);
+	//glm_rotateMatrix = glm::mat4(1.0f);
+	//glm_scaleMatrix = glm::mat4(1.0f);
 
-	sceneOutdoorADSDynamicUniform = useADSDynamicShader();
+	//sceneOutdoorADSDynamicUniform = useADSDynamicShader();
 
-	// Sending Light Related Uniforms
-	glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient_bhayanak);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse_bhayanak);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular_bhayanak);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition_bhayanak);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient_bhayanak);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse_bhayanak);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular_bhayanak);
-	glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess_bhayanak);
+	//// Sending Light Related Uniforms
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient_bhayanak);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse_bhayanak);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular_bhayanak);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition_bhayanak);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient_bhayanak);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse_bhayanak);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular_bhayanak);
+	//glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess_bhayanak);
 
-	glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
-	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
-	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
+	//glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
+	//glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
+	//glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
+	//glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	//glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	//glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
-	// ------ Dancing Vampire Model ------
+	//// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+	//glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
 
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	//glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	////glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	//glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	if (actualDepthQuadScene == 1) {
+	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	//if (actualDepthQuadScene == 1) {
 
-		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	//	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
+	//	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
-	}
-	else {
+	//}
+	//else {
 
-		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
+	//	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	//	glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
-	}
+	//}
 
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 0.0f);
-
-	glUseProgram(0);
-
-#endif
-
-#ifdef ENABLE_TERRIAN
-	// Terrain
-	terrainUniform = useTerrainShader();
-
-	vmath::mat4 mv_matrix = mat4::identity();
-	vmath::mat4 proj_matrix = mat4::identity();
-
-	translationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-
-	translationMatrix = translate(0.95f, -0.67f, -2.25f);
-	scaleMatrix = scale(0.1f, 0.1f, 0.02f);
-	rotationMatrix = rotate(90.0f, 1.0f, 0.0f, 0.0f);
-
-	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
-
-	//normal mapping
-	vmath::mat4 m_matrix = (translationMatrix * scaleMatrix * rotationMatrix);
-	vmath::mat4 v_matrix = finalViewMatrix;
-
-	mv_matrix = finalViewMatrix * m_matrix;
-
-	proj_matrix = perspectiveProjectionMatrix;
-
-	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, m_matrix);
-	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, v_matrix);
-	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, proj_matrix);
-
-	glUniform3fv(terrainUniform.laUniform, 1, lightAmbient_bhayanak);
-	glUniform3fv(terrainUniform.ldUniform, 1, lightDiffuse_bhayanak);
-	glUniform3fv(terrainUniform.lsUniform, 1, lightSpecular_bhayanak);
-	glUniform4fv(terrainUniform.lightPositionUniform, 1, lightPosition_bhayanak);
-
-	glUniform3fv(terrainUniform.kaUniform, 1, materialAmbient_bhayanak);
-	glUniform3fv(terrainUniform.ksUniform, 1, materialSpecular_bhayanak);
-	glUniform1f(terrainUniform.materialShininessUniform, materialShininess_bhayanak);
-
-	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
-
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
-	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
-	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
-
-	if (actualDepthQuadScene == 1) {
-
-		glUniform1i(terrainUniform.actualSceneUniform, 0);
-		glUniform1i(terrainUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(terrainUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
-	}
-	else {
-
-		glUniform1i(terrainUniform.actualSceneUniform, 1);
-		glUniform1i(terrainUniform.depthSceneUniform, 0);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
-	}
-
-#ifdef ENABLE_FOG
-	glUniform1i(terrainUniform.fogEnableUniform, 1);
-	glUniform1f(terrainUniform.densityUniform, density);
-	glUniform1f(terrainUniform.gradientUniform, gradient);
-	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
-#endif // DEBUG - ENABLE_FOG
-
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables_06.displacement);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables_06.albedo);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables_06.normal);
-	displayTerrain();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	//glDisable(GL_BLEND);
+	//drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 0.0f);
 
 	//glUseProgram(0);
 
-
-
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-	mv_matrix = mat4::identity();
-	proj_matrix = mat4::identity();
-
-	translationMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-
-	translationMatrix = translate(-2.10f, 1.00f, -0.2f);
-	scaleMatrix = scale(0.10f, 0.80f, 0.06f);
-	rotationMatrix = rotate(90.0f, 0.0f, 0.0f, 1.0f);
-
-	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
-
-	//normal mapping
-	m_matrix = (translationMatrix * scaleMatrix * rotationMatrix);
-	v_matrix = finalViewMatrix;
-
-	mv_matrix = finalViewMatrix * m_matrix;
-
-	proj_matrix = perspectiveProjectionMatrix;
-
-	glUniformMatrix4fv(terrainUniform.modelMatrixUniform, 1, GL_FALSE, m_matrix);
-	glUniformMatrix4fv(terrainUniform.viewMatrixUniform, 1, GL_FALSE, v_matrix);
-	glUniformMatrix4fv(terrainUniform.projectionMatrixUniform, 1, GL_FALSE, proj_matrix);
-
-	glUniform3fv(terrainUniform.laUniform, 1, lightAmbient_bhayanak);
-	glUniform3fv(terrainUniform.ldUniform, 1, lightDiffuse_bhayanak);
-	glUniform3fv(terrainUniform.lsUniform, 1, lightSpecular_bhayanak);
-	glUniform4fv(terrainUniform.lightPositionUniform, 1, lightPosition_bhayanak);
-
-	glUniform3fv(terrainUniform.kaUniform, 1, materialAmbient_bhayanak);
-	glUniform3fv(terrainUniform.ksUniform, 1, materialSpecular_bhayanak);
-	glUniform1f(terrainUniform.materialShininessUniform, materialShininess_bhayanak);
-
-	glUniformMatrix4fv(terrainUniform.uniform_mv_matrix, 1, GL_FALSE, mv_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_proj_matrix, 1, GL_FALSE, proj_matrix);
-	glUniformMatrix4fv(terrainUniform.uniform_mvp_matrix, 1, GL_FALSE, proj_matrix * mv_matrix);
-
-	glUniform1f(terrainUniform.uniform_dmap_depth, displacementmap_depth);
-	//glUniform1i(terrainUniform.uniform_enable_fog, enable_fog ? 1 : 0);
-	//glUniform1i(terrainUniform.uniform_enable_fog, 0);
-	glUniform1i(terrainUniform.uniform_enable_godRays, godRays);
-
-	if (actualDepthQuadScene == 1) {
-
-		glUniform1i(terrainUniform.actualSceneUniform, 0);
-		glUniform1i(terrainUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(terrainUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
-	}
-	else {
-
-		glUniform1i(terrainUniform.actualSceneUniform, 1);
-		glUniform1i(terrainUniform.depthSceneUniform, 0);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-
-	}
-
-#ifdef ENABLE_FOG
-	glUniform1i(terrainUniform.fogEnableUniform, 1);
-	glUniform1f(terrainUniform.densityUniform, density);
-	glUniform1f(terrainUniform.gradientUniform, gradient);
-	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
-#endif // DEBUG - ENABLE_FOG
-
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables_06.displacement);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables_06.albedo);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables_06.normal);
-	displayTerrain();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	//glDisable(GL_BLEND);
-
-	glUseProgram(0);
-
-
-
-
-
-
-
-
-
-
-#endif // ENABLE_TERRIAN
+#endif
 
 #ifdef ENABLE_WATER
 
@@ -787,10 +568,6 @@ void updateScene06_BhayanakRas(void)
 void uninitializeScene06_BhayanakRas(void)
 {
 	// Code
-
-#ifdef ENABLE_TERRIAN
-	uninitializeTerrain(&terrainTextureVariables_06);
-#endif // ENABLE_TERRIAN
 
 #ifdef ENABLE_MASKSQUADS
 	if (texture_bhayanakMask)
