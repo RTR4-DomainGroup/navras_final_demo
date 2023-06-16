@@ -183,7 +183,7 @@ void displayScene12_Hasya(void)
 	rotationMatrix_z = mat4::identity();
 
 
-	translationMatrix = vmath::translate(0.7f, -0.99f, -3.41f);
+	translationMatrix = vmath::translate(0.8f, -0.99f, -3.41f);
 	scaleMatrix = vmath::scale(0.87f, 0.87f, 0.87f);
 	rotationMatrix = vmath::rotate(41.38f, 0.0f, 1.0f, 0.0f);
 	//update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);

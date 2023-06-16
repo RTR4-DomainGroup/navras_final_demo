@@ -94,7 +94,7 @@ static float displacementmap_depth;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-static STATIC_MODEL rockModel;
+//static STATIC_MODEL rockModel;
 static STATIC_MODEL roomModel;
 static STATIC_MODEL roomModel2;
 #endif // ENABLE_STATIC_MODELS
@@ -171,7 +171,7 @@ int initializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
+	//loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
 	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom.obj", &roomModel);
 	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoomWithoutFloor.obj", &roomModel2);
 
@@ -180,7 +180,7 @@ int initializeScene06_BhayanakRas(void)
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_06);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_06);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_06);
+	loadDynamicModel("res/models/scene06_bhayanak/boy/bhayanakBoyAnim01.fbx", &skeletonModel_06);
 #endif // ENABLE_DYNAMIC_MODEL
 
 	return 0;
@@ -305,7 +305,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ BOy Model ------
-	translationMatrix = mat4::identity();
+	/*translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 	translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -331,7 +331,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(rockModel);
+	drawStaticModel(rockModel);*/
 
 	// ------ Room Model ------
 	translationMatrix = mat4::identity();
@@ -408,68 +408,70 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 #ifdef ENABLE_DYNAMIC_MODELS
 
-	//glm::mat4 glm_modelMatrix;
-	//glm::mat4 glm_translateMatrix;
-	//glm::mat4 glm_rotateMatrix;
-	//glm::mat4 glm_scaleMatrix;
+	glm::mat4 glm_modelMatrix;
+	glm::mat4 glm_translateMatrix;
+	glm::mat4 glm_rotateMatrix;
+	glm::mat4 glm_scaleMatrix;
 
-	//glm_modelMatrix = glm::mat4(1.0f);
-	//glm_translateMatrix = glm::mat4(1.0f);
-	//glm_rotateMatrix = glm::mat4(1.0f);
-	//glm_scaleMatrix = glm::mat4(1.0f);
+	glm_modelMatrix = glm::mat4(1.0f);
+	glm_translateMatrix = glm::mat4(1.0f);
+	glm_rotateMatrix = glm::mat4(1.0f);
+	glm_scaleMatrix = glm::mat4(1.0f);
 
-	//sceneOutdoorADSDynamicUniform = useADSDynamicShader();
+	sceneOutdoorADSDynamicUniform = useADSDynamicShader();
 
-	//// Sending Light Related Uniforms
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse_bhayanak);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular_bhayanak);
-	//glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess_bhayanak);
+	// Sending Light Related Uniforms
+	glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient_bhayanak);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse_bhayanak);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular_bhayanak);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition_bhayanak);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient_bhayanak);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse_bhayanak);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular_bhayanak);
+	glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess_bhayanak);
 
-	//glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
-	//glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
-	//glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
-	//glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	//glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
-	//glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
+	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
+	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
+	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
-	//// ------ Dancing Vampire Model ------
+	// ------ Dancing Vampire Model ------
 
-	//glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
-	//glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	////glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
+	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	//glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
-	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	//if (actualDepthQuadScene == 1) {
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	if (actualDepthQuadScene == 1) {
 
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
-	//	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
-	//}
-	//else {
+	}
+	else {
 
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
-	//	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
 
-	//	glActiveTexture(GL_TEXTURE1);
-	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
-	//}
+	}
 
-	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	//drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 0.0f);
+	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.1f);
 
-	//glUseProgram(0);
+	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
+
+	glUseProgram(0);
 
 #endif
 
@@ -579,7 +581,7 @@ void uninitializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&rockModel);
+	//unloadStaticModel(&rockModel);
 
 #endif // ENABLE_STATIC_MODELS
 
