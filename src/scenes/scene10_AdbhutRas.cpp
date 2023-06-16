@@ -1125,7 +1125,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (scene10_state == 4) // down to bridge
 	{
-		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.0027f);
+		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.0028f);
 		if (cameraEyeX < (-16.28f - 0.2f))
 		{
 			scene10_state = 5;
