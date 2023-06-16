@@ -174,6 +174,7 @@ LOG("fragmentShaderSrcCode in initializeFSQuadShader().\n");
         fsvQuadShaderProgramObject, "u_textureSampler0");
     fsvQuadUniform.textureSamplerUniform2 = glGetUniformLocation(
         fsvQuadShaderProgramObject, "u_textureSampler1");
+	LOG("Shader initialized\n");
 
     return 0;
 }

@@ -6,7 +6,8 @@ struct FSQuadUniform fsQuadUniform;
 int initializeFSQuadShader(void)
 {
     // Code
-    ZeroMemory((void*)&fsQuadUniform, sizeof(FSQuadUniform));
+    LOG("Enter\n");
+    // ZeroMemory((void*)&fsQuadUniform, sizeof(FSQuadUniform));
     // Vertex Shader
     const GLchar* vertexShaderSrcCode = 
         "#version 460 core" \
@@ -27,26 +28,34 @@ int initializeFSQuadShader(void)
 
     // Create the Vertex Shader object.
     
+    LOG("Enter\n");
     GLuint vertexShaderObj = glCreateShader(GL_VERTEX_SHADER);
+    LOG("Enter\n");
 
     // Give the shader source to shader object.
     // Actually 3rd parameter is array if you have multiple shader source code
     // However, we have only one source code string
+    LOG("Enter\n");
     glShaderSource(vertexShaderObj, 1, (const GLchar **)&vertexShaderSrcCode, NULL);
+    LOG("Enter\n");
+
 
     // Compile the Shader source code for GPU format
     glCompileShader(vertexShaderObj);
+    LOG("Enter\n");
 
     GLint status;
     GLint infoLogLength;
     char* log = NULL;
 
     glGetShaderiv(vertexShaderObj, GL_COMPILE_STATUS, &status);
+    LOG("Enter\n");
 
     // If there is an error
     if (status == GL_FALSE)
     {
         glGetShaderiv(vertexShaderObj, GL_INFO_LOG_LENGTH, &infoLogLength);
+        LOG("Enter\n");
         if (infoLogLength > 0)
         {
             log = (char*) malloc(infoLogLength);
@@ -123,15 +132,18 @@ int initializeFSQuadShader(void)
     // Actually 3rd parameter is array if you have multiple shader source code
     // However, we have only one source code string
     glShaderSource(fragementShaderObj, 1, (const GLchar **)&fragmentShaderSrcCode, NULL);
+    LOG("Enter\n");
 
     // Compile the Shader source code for GPU format
     glCompileShader(fragementShaderObj);
+    LOG("Enter\n");
 
     status = 0;
     infoLogLength = 0;
     log = NULL;
 
     glGetShaderiv(fragementShaderObj, GL_COMPILE_STATUS, &status);
+    LOG("Enter\n");
 
     // If there is an error
     if (status == GL_FALSE)
@@ -204,6 +216,7 @@ int initializeFSQuadShader(void)
     fsQuadUniform.textureSamplerUniform3 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler2");
     fsQuadUniform.intensity  = glGetUniformLocation(fsQuadShaderProgramObject, "u_blurMixDelta");
+	LOG("Shader initialized\n");
 
     return 0;
 }

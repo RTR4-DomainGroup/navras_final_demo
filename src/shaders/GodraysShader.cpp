@@ -271,6 +271,7 @@ int initializeGodraysShader(void)
     godRaysUniform.dispersalUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_dispersal");
     godRaysUniform.haloWidthUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_haloWidth");
     godRaysUniform.intensityUniform = glGetUniformLocation(shaderProgramObj_godrays, "u_intensity");
+	LOG("Shader initialized\n");
 
     return (0);
 }

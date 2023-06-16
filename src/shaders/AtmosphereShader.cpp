@@ -248,6 +248,7 @@ int initializeAtmosphereShader(void)
     atmosUniform.gUniform = glGetUniformLocation(shaderProgramObj_atmos, "g");
     atmosUniform.g2Uniform = glGetUniformLocation(shaderProgramObj_atmos, "g2");
 
+	LOG("Shader initialized\n");
     return (0);
 }
 

@@ -209,6 +209,7 @@ int intializeCloudNoiseShader(void)
 	glUniform1i(cloudNoiseUniform.noiseSamplerUniform, 0);
 
 	glUseProgram(0);
+	LOG("Shader initialized\n");
 
 	return(0);
 }

@@ -153,6 +153,7 @@ int initializeFontShader(void)
 	fontShaderUniform.textureSamplerUniform = glGetUniformLocation(fontShaderProgramObject, "u_textureSampler");
 	fontShaderUniform.textColorUniform = glGetUniformLocation(fontShaderProgramObject, "textColor");
 
+	LOG("Shader initialized\n");
 	return 0;
 }
 

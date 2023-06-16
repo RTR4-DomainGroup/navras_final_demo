@@ -23,26 +23,34 @@ bool initAllShaders(void)
     // Variable Declarations
 
     // Code
+
+    LOG("Enter\n");
+#ifdef ENABLE_FONT_RENDERING
     if(initializeFontShader() != 0)
     {
         return false;
     }
+#endif // ENABLE_FONT_RENDERING
     
+    LOG("Enter\n");
     if (initializeFSQuadShader() != 0)
     {
         return false;
     }
 
+    LOG("Enter\n");
     if (initializeAtmosphereShader() != 0)
     {
         return false;
     }
 
+    LOG("Enter\n");
     if (initializeADSShader() != 0)
     {
         return false;
     }
 
+    LOG("Enter\n");
     if (initializeADSDynamicShader() != 0)
     {
         return false;

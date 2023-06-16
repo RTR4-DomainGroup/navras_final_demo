@@ -421,9 +421,8 @@ int initializeADSDynamicShader(void)
 	glUniform1i(adsDynamicUniform.textureSamplerUniform_normal, 2);   //don't change
 	glUseProgram(0);
 
-
+	LOG("Shader initialized\n");
 	return(0);
-
 }
 
 struct ADSDynamicUniform useADSDynamicShader(void)

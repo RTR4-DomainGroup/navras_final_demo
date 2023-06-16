@@ -187,6 +187,8 @@ int initialize_horrizontalBlur()
     hBlurUniform.targetWidth = glGetUniformLocation(shaderProgram_horrizontalBlur, "u_targetWidth");
     hBlurUniform.hblurTexSamplerUniform = glGetUniformLocation(shaderProgram_horrizontalBlur,"u_blurTexture");
     hBlurUniform.blurFactor = glGetUniformLocation(shaderProgram_horrizontalBlur,"u_blurFactor");
+    LOG("Shader initialized\n");
+
     return (0);
 }
 

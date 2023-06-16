@@ -91,8 +91,8 @@ int log_printf_internal(char const* const filewithpath, char const* const funcna
 	}
     else
     {
-        // _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), filename(filewithpath), linenum, funcname, myBuffer);
-        _Result = fprintf(_pFile, "%s %s(%d):%s(): %s", currentDateTime(), filewithpath, linenum, funcname, buffer);
+        _Result = fprintf(_pFile, "%s %s(%d): %s: %s", currentDateTime(), filename(filewithpath), linenum, funcname, buffer);
+        // _Result = fprintf(_pFile, "%s %s(%d):%s(): %s", currentDateTime(), filewithpath, linenum, funcname, buffer);
         // _Result = fprintf(_pFile, "%s", buffer);
 		fclose(_pFile);
         _pFile = NULL;

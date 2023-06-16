@@ -447,8 +447,9 @@ int initializeADSShader(void)
 	glUseProgram(0);
 
 
-	return(0);
+	LOG("Shader initialized\n");
 
+	return(0);
 }
 
 struct ADSUniform useADSShader(void)

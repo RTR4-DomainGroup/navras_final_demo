@@ -208,6 +208,7 @@ int intializeErosionNoiseShader(void)
 	//glUniform1i(erosionNoiseUniform.noiseSamplerUniform, 1);
 
 	glUseProgram(0);
+	LOG("Shader initialized\n");
 
 	return(0);
 }

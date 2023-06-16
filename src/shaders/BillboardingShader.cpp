@@ -161,6 +161,7 @@ int initializeBillboardingShader(void)
 	billboardingUniform.billboardingEnableUniform = glGetUniformLocation(billboardingShaderProgramObject, "u_billboarding");
 	billboardingUniform.uniform_enable_godRays = glGetUniformLocation(billboardingShaderProgramObject, "enable_godRays");
     billboardingUniform.frameTimeUniform =glGetUniformLocation(billboardingShaderProgramObject, "u_fTime"); // Andhar #2
+	LOG("Shader initialized\n");
 	return(0);
 
 }
