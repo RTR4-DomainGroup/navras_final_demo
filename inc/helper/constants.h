@@ -80,7 +80,7 @@ static const char *szAudios[] = {
 // Feature enable / disable
 
 //multithreading
-#define ENABLE_MULTI_THREADING
+//#define ENABLE_MULTI_THREADING
  
 //#define ENABLE_ADSLIGHT		##### ONLY FOR REF.. KEEP COMMENTED #####
 
@@ -111,17 +111,18 @@ static const char *szAudios[] = {
 
 #define ENABLE_SSAO
 
-//#define ENABLE_MASKS
+#define ENABLE_MASKS
+// #define ENABLE_CAMERA_LOGS
 
-//#define ENABLE_SINGLE_SCENE
+ #define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
 //#define CURRENT_SCENE SCENE01_DOMAIN_LOGO         // Domain Logo animation
- //#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
+//#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
-//#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
+#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
 //#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
 //#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
@@ -138,4 +139,3 @@ static const char *szAudios[] = {
 #define AUTOSWITCH_SCENE
 
 #endif // ENABLE_SINGLE_SCENE
-

@@ -47,7 +47,7 @@ int initializeFont() {
 
 	// find path to font
     // std::string font_name = "res/fonts/arial.ttf";
-    std::string font_name = "res/fonts/PostersItalicPersonalUseBoldItalic.ttf";
+    std::string font_name = "res/fonts/Philosopher-Bold.ttf";
     if (font_name.empty())
     {
         LOG("ERROR::FREETYPE: Failed to load font_name");

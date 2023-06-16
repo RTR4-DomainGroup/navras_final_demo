@@ -9,6 +9,7 @@ struct FSQuadUniform
     GLuint textureSamplerUniform4;
     GLuint singleTexture;
     GLuint intensity;
+    GLuint maskOrFont;
 };
 
 

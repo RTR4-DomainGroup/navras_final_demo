@@ -80,6 +80,8 @@ int initializeFSQuadShader(void)
         "\n" \
         "uniform sampler2D u_textureSampler3;" \
         "\n" \
+        "uniform int maskOrFont = 0;" \
+        "\n" \
         "out vec4 FragColor;" \
         "\n" \
 
@@ -94,7 +96,12 @@ int initializeFSQuadShader(void)
             "if(u_singleTexture == 1)\n" \
             "{\n" \
                 "FragColor = texture(u_textureSampler0, a_texcoord_out);\n" \
-                "if(FragColor.rgb == vec3(0.0f, 1.0f, 0.0f)) discard;\n" \
+                    "if(maskOrFont == 1){\n" \
+                        "if(FragColor.rgb == vec3(0.0, 0.0, 0.0)) discard;\n" \
+                    "} \n" \
+                    "else{ \n" \
+                        "if(FragColor.rgb == vec3(0.0, 0.0, 1.0)) discard; \n" \
+                    "} \n" \
              "}\n" \
             "else if(u_singleTexture == 2)\n" \
             "{\n" \
@@ -112,9 +119,9 @@ int initializeFSQuadShader(void)
                 "\n" \
             "}\n" \
 
-            /*"float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
-            "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \*/
-            //"FragColor = vec4(vec3(depthValue), 1.0); \n" \/
+           /* "float depthValue = texture(u_textureSampler0, a_texcoord_out).r;" \
+            "FragColor = vec4(vec3(LinearizeDepth(depthValue) / 100.0), 1.0); \n" \
+            "FragColor = vec4(vec3(depthValue), 1.0); \n" \*/
         "}";
     
     // Create the Fragment Shader object.
@@ -208,6 +215,7 @@ int initializeFSQuadShader(void)
     fsQuadUniform.textureSamplerUniform4 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler3");
     fsQuadUniform.intensity  = glGetUniformLocation(fsQuadShaderProgramObject, "u_blurMixDelta");
+    fsQuadUniform.maskOrFont = glGetUniformLocation(fsQuadShaderProgramObject, "maskOrFont");
 
     return 0;
 }
