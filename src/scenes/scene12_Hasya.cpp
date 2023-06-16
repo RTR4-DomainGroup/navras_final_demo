@@ -229,7 +229,7 @@ void updateScene12_Hasya()
 		cameraEyeZ = preciselerp(cameraEyeZ, -1.05f, 0.005f);
 
 
-		cameraCenterX = preciselerp(cameraCenterX, -0.65f, 0.005f);
+		cameraCenterX = preciselerp(cameraCenterX, 0.0f, 0.005f);
 		cameraCenterY = preciselerp(cameraCenterY, -0.25f, 0.005f);
 		cameraCenterZ = preciselerp(cameraCenterZ, -7.05f, 0.005f);
 	}
