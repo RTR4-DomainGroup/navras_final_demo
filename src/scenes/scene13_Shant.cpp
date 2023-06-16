@@ -310,6 +310,7 @@ int initializeScene13_Shant(void)
 	//model_masks[6] = maskModel_shringarRas;
 	//model_masks[7] = maskModel_hasyaRas;
 	//model_masks[8] = maskModel_shantRas;
+#ifdef ENABLE_STATIC_MODELS
 
 	model_masks[0] = maskModel_shantRas;
 	model_masks[1] = maskModel_hasyaRas;
@@ -320,6 +321,7 @@ int initializeScene13_Shant(void)
 	model_masks[6] = maskModel_raudraRas;
 	model_masks[7] = maskModel_bhayanakRas;
 	model_masks[8] = maskModel_karunRas;
+#endif // ENABLE_STATIC_MODELS
 
 	LOG("Shant Ras coming here in initialize 2\n");
 

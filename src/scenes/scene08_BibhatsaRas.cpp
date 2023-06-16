@@ -1392,7 +1392,8 @@ void updateScene08_BibhatsaRas(void)
 #ifdef ENABLE_CAMERA_ANIMATION
 	//cameraEyeZ = preciselerp(cameraEyeZ, -33.25f, 0.005f);
 	//cameraCenterZ = preciselerp(cameraCenterZ, -39.25f, 0.005f);
-	
+#ifdef ENABLE_DYNAMIC_MODELS
+
 	if (beebhatsaManModel.pAnimator->GetCurrentFrame() < 1258.0)
 	{
 		cameraEyeZ -= 0.05f;
@@ -1403,6 +1404,7 @@ void updateScene08_BibhatsaRas(void)
 		//if (cameraCenterZ <= -15.0f)
 		//	cameraCenterZ = -15.0f;
 	}
+#endif // ENABLE_DYNAMIC_MODELS
 
 #endif // ENABLE_CAMERA_ANIMATION
 

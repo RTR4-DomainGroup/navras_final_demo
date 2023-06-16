@@ -126,7 +126,7 @@ static float displacementmap_depth;
 #ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
 GLfloat model_y = 4.5f;
-#endif // ENABLE_STATIC_MODELS
+#endif // ENABLE_DYNAMIC_MODELS
 
 extern GLfloat density; // = 0.15;
 extern GLfloat gradient; // = 0.5;
@@ -661,9 +661,12 @@ void updateScene09_VeerRas(void)
 	cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);*/
 
 	/*[15.75, 6.85, -17.20], [-21.01, -75.48, -359.39]*/
+#ifdef ENABLE_DYNAMIC_MODELS
+
 	model_y += 0.001f;
 	if (model_y >= 5.03f)
 		model_y = 5.03f;
+#endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_CAMERA_ANIMATION
 	if (isCameraRotation == false)
