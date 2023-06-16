@@ -1105,7 +1105,7 @@ void updateScene10_AdbhutRas(void)
 
 	if (scene10_state == 2) // straight to front to bridge
 	{
-		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.001f);
+		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeZ < (-35.99f - 0.2f))
 		{
 			scene10_state = 3;
