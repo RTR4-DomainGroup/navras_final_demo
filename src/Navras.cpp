@@ -73,7 +73,8 @@ time_t now;
 time_t then;
 
 #ifdef SHORTS
-int time_scene1 = 5;
+int time_scene0 = 5;
+int time_scene1 = 11;
 int time_scene2 = 10;
 int time_scene3 = 10;
 int time_scene4 = 10;
@@ -91,7 +92,8 @@ int time_scene15 = 180;
 int blurTime = 3;
 
 #else
-int time_scene1 = 43;
+int time_scene0 = 43;
+int time_scene1 = 11;
 int time_scene2 = 40;
 int time_scene3 = 40;
 int time_scene4 = 40;
@@ -105,7 +107,7 @@ int time_scene11 = 40;
 int time_scene12 = 40;
 int time_scene13 = 40;
 int time_scene14 = 40;
-int time_scene15 = 180;
+int time_scene15 = 170;
 int blurTime = 10;
 #endif
 
@@ -115,6 +117,7 @@ static bool audioFlag = true;
 
 // End Credit
 static bool isEndCreditsIntialized = false;
+static bool isDomainLogoIntialized = false;
 //
 static scene_types_t currentScene = SCENE_INVALID;
 
@@ -589,6 +592,7 @@ int initializeNavras(void) {
 	scenePush(SCENE06_BHAYANK_RAS);
 	scenePush(SCENE05_KARUN_RAS); 
 	scenePush(SCENE02_EARTH_AND_SPACE);
+	scenePush(SCENE01_DOMAIN_LOGO);
 	scenePush(SCENE00_AMC_BANNER); 
 	currentScene = scenePop();
 	LOG("current scene changed: %d\n", currentScene);
@@ -681,6 +685,22 @@ void displayNavras(void)
 	if (currentScene == SCENE00_AMC_BANNER)
 	{
 		audio(SCENE00_AMC_BANNER);
+		displayVideoEffect();
+		sceneTime(time_scene0);
+	}
+	else if (currentScene == SCENE01_DOMAIN_LOGO)
+	{
+		audio(SCENE01_DOMAIN_LOGO);
+		if (!isDomainLogoIntialized)
+		{
+			if (initializeVideoEffect("res/videos/DomainLogoAnim60.mp4") != 0)
+			{
+				LOG("Unable to open End Credits Video. \n");
+				PostQuitMessage(-1);
+			}
+			isDomainLogoIntialized = true;
+		}
+		
 		displayVideoEffect();
 		sceneTime(time_scene1);
 	}
@@ -810,7 +830,6 @@ void displayNavras(void)
 		
 		audio(SCENE13_SHANT_RAS);
 		displayScene_PlaceHolderIndoor(setCameraScene13_ShantRas, displayScene13_Shant, shouldSceneRaudraMaskAppear);
-		//displayScene13_Shant();
 		sceneTime(time_scene13);
 	}
 	else if (currentScene == SCENE14_PARTICLE)
@@ -870,7 +889,11 @@ void updateNavras(void)
 	{
 		updateVideoEffect();
 	}
-	if (currentScene == SCENE02_EARTH_AND_SPACE)
+	else if (currentScene == SCENE01_DOMAIN_LOGO)
+	{
+		updateVideoEffect();
+	}
+	else if (currentScene == SCENE02_EARTH_AND_SPACE)
 	{
 		updateScene_PlaceHolderOutdoor();
 		updateScene02_EarthAndSpace();

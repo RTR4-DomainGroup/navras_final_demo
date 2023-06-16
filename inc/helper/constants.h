@@ -59,7 +59,7 @@
 #define NUM_AUDIO   3
 static const char *szAudios[] = {
     "AMC_Banner_Audio.wav",
-    "\0",
+    "DomainLogoAnimation.wav",
     "Scene02_EarthAndSpace_40_seconds.wav",
     "\0",
     "\0",
@@ -114,7 +114,7 @@ static const char *szAudios[] = {
 #define ENABLE_MASKS
 // #define ENABLE_CAMERA_LOGS
 
- #define ENABLE_SINGLE_SCENE
+ //#define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
