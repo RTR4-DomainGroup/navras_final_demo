@@ -438,7 +438,7 @@ void displayScene5_karun(void)
 	if (replay_animation) // replay animation
 	{
 		LOG("Replaying model animation\n");
-		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		reDrawDynamicModel(karynDynamicADSUniform, boyModel, 1.0f);
 		replay_animation = false;
 	}
 	else
