@@ -475,7 +475,7 @@ void displayScene13_Shant(void)
 
 	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
 	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
-	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.3f);
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
 
 	drawStaticModel(shantaManModel);
 
@@ -572,11 +572,11 @@ void updateScene13_ShantRas(void)
 		// lookAt(-0.80f, -1.30f, -8.51f, -0.80f, -1.30f, -14.51f, 0.00f, 1.00f, 0.00f)
 		// -1.70f, -2.25f, -9.85f, -1.70f, -2.25f, -15.85f, 0.00f, 1.00f, 0.00f
 		//cameraEyeX = preciselerp(cameraEyeX, -1.70f, 0.005f);
-		cameraEyeY = preciselerp(cameraEyeY, -2.25f, 0.08f);
-		cameraEyeZ = preciselerp(cameraEyeZ, -8.85f, 0.08f);
+		cameraEyeY = preciselerp(cameraEyeY, -2.25f, 0.008f);
+		cameraEyeZ = preciselerp(cameraEyeZ, -9.9f, 0.008f);
 		//cameraCenterX = preciselerp(cameraCenterX, -1.70f, 0.005f);
-		cameraCenterY = preciselerp(cameraCenterY, -2.25f, 0.08f);
-		cameraCenterZ = preciselerp(cameraCenterZ, -14.85f, 0.08f);
+		cameraCenterY = preciselerp(cameraCenterY, -2.25f, 0.008f);
+		cameraCenterZ = preciselerp(cameraCenterZ, -15.85f, 0.008f);
 	}
 #endif // ENABLE_CAMERA_ANIMATION
 
@@ -615,11 +615,11 @@ void updateScene13_ShantRas(void)
 
 		if (masksTransformationsComplete == true)
 		{
-			updateErosion(offsetIncrement, offset_ras[8], 0.002f);
+			updateErosion(offsetIncrement, offset_ras[8], 0.001f);
 			for (int i = 8; i > -1; i--)
 			{
 				if (offset_ras[i][0] <= 0.40f)
-					updateErosion(offsetIncrement, offset_ras[i - 1], 0.002f);
+					updateErosion(offsetIncrement, offset_ras[i - 1], 0.001f);
 				if (offset_ras[i][0] <= 0.17f)
 					isMaskQuadEnabled[i] = false;
 				if (isMaskQuadEnabled[0] == false)

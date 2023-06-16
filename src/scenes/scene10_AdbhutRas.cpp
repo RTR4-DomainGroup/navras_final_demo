@@ -78,10 +78,10 @@ static GLuint frameTime; // = 0;
 
 #ifdef ENABLE_WATER
 // Water Related Variables
-static struct WaterUniform waterUniform;
-static struct TextureVariables waterTextureVariables;
-static struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
-static struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
+extern struct WaterUniform waterUniform;
+extern struct TextureVariables waterTextureVariables;
+extern struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
+extern struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
 #endif // ENABLE_WATER
 
 #ifdef ENABLE_ATMOSPHERE
@@ -358,7 +358,7 @@ int initializeScene10_AdbhutRas(void)
 	// displacementmap_depth = 0.5f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg"; // albedo, color, diffuse, base color, are one and same
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/test2.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/adbhutTerrain.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
