@@ -38,19 +38,15 @@
 #include "../../inc/shaders/BillboardingShader.h"
 #endif // ENABLE_BILLBOARDING
 
-//#ifdef ENABLE_ATMOSPHERE
-//#include "../../inc/shaders/AtmosphereShader.h"
-//#include "../../inc/effects/AtmosphereEffect.h"
-//#endif // ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+#include "../../inc/shaders/AtmosphereShader.h"
+#include "../../inc/effects/AtmosphereEffect.h"
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_TERRIAN
 #include "../../inc/effects/TerrainEffect.h"
 #endif // ENABLE_TERRIAN
-
-#ifdef ENABLE_CLOUD_NOISE
-#include "../../inc/effects/CloudEffect.h"
-#endif // ENABLE_CLOUD_NOISE
-
+//
 #ifdef ENABLE_STATIC_MODELS
 #include "../../inc/effects/StaticModelLoadingEffect.h"
 #endif // ENABLE_STATIC_MODELS
@@ -59,10 +55,9 @@
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
 #endif // ENABLE_DYNAMIC_MODELS
 
-#ifdef ENABLE_GAUSSIAN_BLUR
-#include "../../inc/effects/GaussianBlurEffect.h"
-#endif // ENABLE_GAUSSIAN_BLUR
-
+#ifdef ENABLE_STARFIELD
+#include "../../inc/effects/StarfieldEffect.h"
+#endif // ENABLE_STARFIELD
 
 #include "../../inc/scenes/scene10_AdbhutRas.h"
 
@@ -70,31 +65,15 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
-extern TEXTURE texture_grass;
-extern TEXTURE texture_flower;
-
-extern struct ADSUniform sceneOutdoorADSStaticUniform;
-extern struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
-
 #ifdef ENABLE_TERRIAN
-extern struct TerrainUniform terrainUniform;
+static struct TerrainUniform terrainUniform;
 #endif // ENABLE_TERRIAN
-
-#ifdef ENABLE_CLOUD_NOISE
-struct CloudNoiseUniform sceneAdbhutRasCloudNoiseUniform;
-float cloudMyScaleAdbhutRas = 1.0f;
-float cloudNoiseScaleAdbhutRas = 2.0f;
-bool cloudNoiseScaleIncrementAdbhutRas = true;
-GLuint noise_texture_adbhut_ras;
-GLfloat skyColorForAdbhutRas[] = { 0.0f, 0.0f, 0.8f, 0.0f };
-GLfloat cloudColorFOrAdbhutRas[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-#endif // ENABLE_CLOUD_NOISE
-
 
 #ifdef ENABLE_BILLBOARDING
 // variables for billboarding
-extern struct BillboardingUniform billboardingEffectUniform;
-extern GLuint frameTime; // = 0;
+static TEXTURE texture_flower;
+static struct BillboardingUniform billboardingEffectUniform;
+static GLuint frameTime; // = 0;
 #endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_WATER
@@ -105,26 +84,16 @@ extern struct WaterFrameBufferDetails waterReflectionFrameBufferDetails;
 extern struct WaterFrameBufferDetails waterRefractionFrameBufferDetails;
 #endif // ENABLE_WATER
 
-#ifdef ENABLE_GAUSSIAN_BLUR
-// Gaussian Blur related variables
-extern struct GaussianBlurEffect gaussianBlurEffect;
-extern struct HorrizontalBlurUniform horizontalBlurUniform;
-extern struct VerticalBlurUniform verticalBlurUniform;
-extern struct FrameBufferDetails fullSceneFbo;
-extern struct FSQuadUniform fsGaussBlurQuadUniform;
-#endif // ENABLE_GAUSSIAN_BLUR
-
-
-//#ifdef ENABLE_ATMOSPHERE
-//// Atmosphere Scattering
-//static AtmosphereUniform atmosphereUniform_10;
-//static AtmosphericVariables atmosVariables_10;
-//#endif // ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+// Atmosphere Scattering
+static AtmosphereUniform atmosphereUniform_10;
+AtmosphericVariables atmosVariables_10;
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_SHADOW
 // Shadow
 extern ShadowFrameBufferDetails shadowFramebuffer;
-extern mat4 lightSpaceMatrix;
+static mat4 lightSpaceMatrix;
 #endif // ENABLE_SHADOW
 
 extern GLfloat waterHeight; // = 0.0f;
@@ -132,22 +101,13 @@ extern GLfloat moveFactor; // = 0.0f;
 extern GLfloat planeReflection[]; // = { 0.0f, 1.0f, 0.0f, -waterHeight };
 extern GLfloat planeRefration[]; // = { 0.0f, -1.0f, 0.0f, waterHeight }; 
 
-extern GLfloat angleCube;
-
 extern mat4 perspectiveProjectionMatrix;
-
-
-#ifdef ENABLE_SKYBOX
-// Variables For Skybox
-extern GLuint texture_skybox;
-extern struct SkyboxUniform sceneSkyBoxUniform;
-#endif // ENABLE_SKYBOX
 
 #ifdef ENABLE_STARFIELD
 // Variables For Starfieldx
 extern GLuint texture_star; 
 extern double deltaTime;
-extern struct StarfieldUniform sceneStarfieldUniform;
+static struct StarfieldUniform sceneStarfieldUniform;
 #endif // ENABLE_STARFIELD
 
 extern GLfloat density; // = 0.15;
@@ -156,19 +116,21 @@ extern GLfloat skyFogColor[]; // = { 0.25f, 0.25f, 0.25f, 1.0f };
 
 
 #ifdef ENABLE_STATIC_MODELS
+static struct ADSUniform sceneOutdoorADSStaticUniform_10;
+
 //Model variables
 static STATIC_MODEL rockModel;
 static STATIC_MODEL treeModel;
 static STATIC_MODEL leafModel;
 static STATIC_MODEL farmhouseModel;
-static STATIC_MODEL adbhutmanModel;
+// static STATIC_MODEL adbhutmanModel;
 static STATIC_MODEL bridgeModel;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 static DYNAMIC_MODEL skeletonModel;
-
-#endif // ENABLE_STATIC_MODELS
+static struct ADSDynamicUniform sceneOutdoorADSDynamicUniform;
+#endif // ENABLE_DYNAMIC_MODELS
 
 static struct TextureVariables terrainTextureVariables;
 static TRANFORM displacementmap_depth; // onl
@@ -193,22 +155,22 @@ static bool stopCameraRotation = false;
 
 static int activeObject = 0;
 
-quad_instancing_buffers_t instBuffers_leftflowers;
-quad_instancing_buffers_t instBuffers_rightflowers;
+static quad_instancing_buffers_t instBuffers_leftflowers;
+static quad_instancing_buffers_t instBuffers_rightflowers;
 
-float distance10;
+static float distance10;
 
-bool isInitialDisplay_Scene10AdbhutRas = true;
+static bool isInitialDisplay_Scene10AdbhutRas = true;
 
-GLuint texture_adbhutMask;
+static GLuint texture_adbhutMask;
 
-mat4 finalViewMatrix = mat4::identity();
+static mat4 finalViewMatrix = mat4::identity();
 
 // static float leaf_translate = 1.5f;
 static float leaf_translate = 0.35f;
 // static float leaf_rotate = 31.45f;
 static float leaf_rotate = 0.0f;
-static int camera_update = 1; 
+static int scene10_state = 1; 
 
 struct Point {
     float x, y ;
@@ -220,7 +182,6 @@ struct line {
 
 bool checkInside(Point poly[], int n, Point p);
 
-
 int initializeScene10_AdbhutRas(void)
 {
 	// Function Declarations
@@ -229,40 +190,36 @@ int initializeScene10_AdbhutRas(void)
 	// Code.
 	// initializeCamera(&camera);
 
-//#ifdef ENABLE_ATMOSPHERE
-//
-////
-//	atmosVariables_10.m_nSamples = 3;		// Number of sample rays to use in integral equation
-//	atmosVariables_10.m_Kr = 0.0035f;		// Rayleigh scattering constant
-//	atmosVariables_10.m_Kr4PI = atmosVariables_10.m_Kr * 4.0f * M_PI;
-//	atmosVariables_10.m_Km = 0.0015f;		// Mie scattering constant
-//	atmosVariables_10.m_Km4PI = atmosVariables_10.m_Km * 4.0f * M_PI;
-//	atmosVariables_10.m_ESun = 20.0f;		// Sun brightness constant
-//	atmosVariables_10.m_g = -0.990f;		// The Mie phase asymmetry factor
-//	atmosVariables_10.m_fExposure = 2.0f;
-//
-//	atmosVariables_10.m_fInnerRadius = 10.0f;
-//	atmosVariables_10.m_fOuterRadius = 50.0f;
-//	//atmosVariables_10.m_fOuterRadius = atmosVariables_10.m_fInnerRadius + (atmosVariables_10.m_fInnerRadius * 2.5f);
-//	atmosVariables_10.m_fScale = 1 / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius);
-//
-//	atmosVariables_10.m_fWavelength[0] = 0.650f;		// 650 nm for red
-//	atmosVariables_10.m_fWavelength[1] = 0.570f;		// 570 nm for green
-//	atmosVariables_10.m_fWavelength[2] = 0.475f;		// 475 nm for blue
-//	atmosVariables_10.m_fWavelength4[0] = powf(atmosVariables_10.m_fWavelength[0], 4.0f);
-//	atmosVariables_10.m_fWavelength4[1] = powf(atmosVariables_10.m_fWavelength[1], 4.0f);
-//	atmosVariables_10.m_fWavelength4[2] = powf(atmosVariables_10.m_fWavelength[2], 4.0f);
-//
-//	atmosVariables_10.m_fRayleighScaleDepth = 0.25f;
-//	atmosVariables_10.m_fMieScaleDepth = 0.1f;
-//
-//	atmosVariables_10.m_vLight = vec3(0, 0, -350);
-//	atmosVariables_10.m_vLightDirection = atmosVariables_10.m_vLight / sqrtf(atmosVariables_10.m_vLight[0] * atmosVariables_10.m_vLight[0] + atmosVariables_10.m_vLight[1] * atmosVariables_10.m_vLight[1] + atmosVariables_10.m_vLight[2] * atmosVariables_10.m_vLight[2]);
-//
-//	//
-//	initializeAtmosphere(atmosVariables_10);
-//
-//#endif // ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+
+
+	atmosVariables_10.m_nSamples = 3;
+	atmosVariables_10.m_Kr = 0.026200;
+	atmosVariables_10.m_Kr4PI = 0.329238;
+	atmosVariables_10.m_Km = 0.017300;
+	atmosVariables_10.m_Km4PI = 0.217398;
+	atmosVariables_10.m_ESun = 3.899959;
+	atmosVariables_10.m_g = -0.984000;
+	atmosVariables_10.m_fExposure = 2.000000;
+	atmosVariables_10.m_fInnerRadius = 0.000000;
+	atmosVariables_10.m_fOuterRadius = 102.000000;
+	atmosVariables_10.m_fScale = 0.009804;
+	atmosVariables_10.m_fWavelength[0] = 0.697999;
+	atmosVariables_10.m_fWavelength[1] = 0.570000;
+	atmosVariables_10.m_fWavelength[2] = 0.475000;
+	atmosVariables_10.m_fWavelength4[0] = 0.237367;
+	atmosVariables_10.m_fWavelength4[1] = 0.105560;
+	atmosVariables_10.m_fWavelength4[2] = 0.050907;
+	atmosVariables_10.m_fRayleighScaleDepth = 0.250000;
+	atmosVariables_10.m_fMieScaleDepth = 0.100000;
+
+	atmosVariables_10.m_vLight = vec3(-5, 90, -350);
+	atmosVariables_10.m_vLightDirection = atmosVariables_10.m_vLight / sqrtf(atmosVariables_10.m_vLight[0] * atmosVariables_10.m_vLight[0] + atmosVariables_10.m_vLight[1] * atmosVariables_10.m_vLight[1] + atmosVariables_10.m_vLight[2] * atmosVariables_10.m_vLight[2]);
+
+	//
+	initializeAtmosphere(atmosVariables_10);
+
+#endif // ENABLE_ATMOSPHERE
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
@@ -279,20 +236,28 @@ int initializeScene10_AdbhutRas(void)
 	}
 #endif
 
+#ifdef ENABLE_STARFIELD
+	initializeQuad();
+	initializeCube();
+	initializeCubeWithTilingTexcoords();
+
+#endif  // ENABLE_STARFIELD
+
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	loadStaticModel("res/models/rock/rock.obj", &rockModel);
 	loadStaticModel("res/models/tree_adbhut/tree.fbx", &treeModel);
 	loadStaticModel("res/models/tree_adbhut/leaf.obj", &leafModel);
 	loadStaticModel("res/models/farmhouse/farmhouse.obj", &farmhouseModel);
-	loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
+	// loadStaticModel("res/models/scene10_adbhut/tempAdbhutMan.obj", &adbhutmanModel);
 	loadStaticModel("res/models/bridge/bridge.obj", &bridgeModel);
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	// loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	loadDynamicModel("res/models/scene10_adbhut/adbhutManAnim.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_BILLBOARDING
@@ -300,6 +265,13 @@ int initializeScene10_AdbhutRas(void)
 
 	void generate_instance_positions(float instance_positions[], int numInstances, Point bondryPolygone[], int numPoints) ;
 
+	char imagefile[64] = {};
+	sprintf(imagefile, "%s", TEXTURE_DIR"/billboarding/flower5.png");
+	if (LoadGLTextureData_UsingSOIL(&texture_flower, imagefile) == GL_FALSE)
+	{
+		LOG("Texture loading failed for image %s\n", imagefile);
+		return (-6);
+	}
 
 	
 	GLfloat instance_positions[BB_NO_OF_INSTANCES * 4] = {};
@@ -355,7 +327,6 @@ int initializeScene10_AdbhutRas(void)
 	initializeInstancedQuad(instBuffers_leftflowers, BB_NO_OF_INSTANCES, instance_positions);
 
 
-
 	// /// Right flowers
 	// Point pentaPos_rf[] = {
 	// 	{13.46f, -35.49f},
@@ -387,7 +358,7 @@ int initializeScene10_AdbhutRas(void)
 	// displacementmap_depth = 0.5f;
 
 	terrainTextureVariables.albedoPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_diff_2k.jpg"; // albedo, color, diffuse, base color, are one and same
-	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/test2.jpg";
+	terrainTextureVariables.displacementPath = TEXTURE_DIR"terrain/Scene10_Adbhut/adbhutTerrain.jpg";
 	terrainTextureVariables.normalPath = TEXTURE_DIR"terrain/Scene10_Adbhut/aerial_grass_rock_nor_gl_2k.jpg";
 
 	if (initializeTerrain(&terrainTextureVariables) != 0) 
@@ -401,19 +372,6 @@ int initializeScene10_AdbhutRas(void)
 	}
 	
 #endif // ENABLE_TERRIAN
-
-#ifdef ENABLE_CLOUD_NOISE
-	noise_texture_adbhut_ras = initializeCloud();
-	if (noise_texture_adbhut_ras == 0)
-	{
-		LOG("initializeCloud() - noise_texture_adbhut_ras FAILED!!!\n");
-		return(-1);
-	}
-	else
-	{
-		LOG("initializeCloud() - noise_texture_adbhut_ras Successfull!!!\n");
-	}
-#endif // ENABLE_CLOUD_NOISE
 
 	return 0;
 }
@@ -472,8 +430,8 @@ void setCameraScene10(void)
 		// setCamera(-15.78f, -1.20f, -34.73f, -362.21f, 49.98f, -14.27f, 0.00f, 1.00f, 0.00f);
 		setCamera(21.90f, -1.11f, -1.13f, -150.37f, -1.11f, -327.12f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplay_Scene10AdbhutRas = false;
-		camera_update = 1;
-		LOG("Switching to camera update %d\n", camera_update);
+		scene10_state = 1;
+		LOG("Switching to state %d\n", scene10_state);
 	}
 }
 
@@ -520,99 +478,113 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	
 	}
 
+	if (recordWaterReflectionRefraction == true) {
+
+#ifdef ENABLE_WATER
+
+	waterUniform = useWaterShader();
+
+		if (isReflection == true)
+		{
+			distance10 = 2.0f * (cameraEyeY - waterHeight);
+			glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
+			cameraEyeY -= distance10;
+			cameraCenterY -= distance10;
+			displayCamera();
+			finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		}
+		else
+		{
+			glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
+			glUniformMatrix4fv(waterUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+		}
+
+#endif // ENABLE_WATER
+	}
+
 	if (actualDepthQuadScene == 0) {
+
+#ifdef ENABLE_STARFIELD
+
+		sceneStarfieldUniform = useStarfieldShader();
+
+		float time = (float)deltaTime;
+
+		time = time * 0.05f;
+		time = time - floor(time);
+
+		// Transformations
+		translationMatrix = mat4::identity();
+		rotationMatrix = mat4::identity();
+		scaleMatrix = mat4::identity();
+		modelMatrix = mat4::identity();
+
+		translationMatrix = vmath::translate(0.0f, 0.0f, -80.0f);					// glTranslatef() is replaced by this line.
+		rotationMatrix = vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);					// glTranslatef() is replaced by this line.
+		//scaleMatrix = vmath::scale(12.0f, 12.0f, 12.0f);
+		if('k' == tf_Object)
+			update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix);
+		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;				// ORDER IS VERY IMPORTANT
+
+		glUniformMatrix4fv(sceneStarfieldUniform.modelMatrix, 1, GL_FALSE, modelMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+		glUniformMatrix4fv(sceneStarfieldUniform.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+		//glUniform1i(sceneStarfieldUniform.textureSamplerUniform, 0);
+		glUniform1i(sceneStarfieldUniform.uniform_enable_godRays, godRays);
+		glUniform1f(sceneStarfieldUniform.timeUniform, time);
+
+		displayStarfield(texture_star);
+		glUseProgram(0);
+
+#endif // ENABLE_STARFIELD
 
 		if (godRays == 1) {
 
-//#ifdef ENABLE_ATMOSPHERE
-//
-//			translationMatrix = mat4::identity();
-//			rotationMatrix = mat4::identity();
-//			modelMatrix = mat4::identity();
-//
-//			//glBlendFunc(GL_ONE, GL_ONE);
-//
-//			atmosphereUniform_10 = useAtmosphereShader();
-//
-//			glUniform3f(atmosphereUniform_10.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
-//			glUniform3f(atmosphereUniform_10.lightPosUniform, atmosVariables_10.m_vLightDirection[0], atmosVariables_10.m_vLightDirection[1], atmosVariables_10.m_vLightDirection[2]);
-//			glUniform3f(atmosphereUniform_10.invWavelengthUniform, 1 / atmosVariables_10.m_fWavelength4[0], 1 / atmosVariables_10.m_fWavelength4[1], 1 / atmosVariables_10.m_fWavelength4[2]);
-//			glUniform1f(atmosphereUniform_10.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
-//			glUniform1f(atmosphereUniform_10.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
-//			glUniform1f(atmosphereUniform_10.innerRadiusUniform, atmosVariables_10.m_fInnerRadius);
-//			glUniform1f(atmosphereUniform_10.innerRadius2Uniform, atmosVariables_10.m_fInnerRadius * atmosVariables_10.m_fInnerRadius);
-//			glUniform1f(atmosphereUniform_10.outerRadiusUniform, atmosVariables_10.m_fOuterRadius);
-//			glUniform1f(atmosphereUniform_10.outerRadius2Uniform, atmosVariables_10.m_fOuterRadius * atmosVariables_10.m_fOuterRadius);
-//			glUniform1f(atmosphereUniform_10.KrESunUniform, atmosVariables_10.m_Kr * atmosVariables_10.m_ESun);
-//			glUniform1f(atmosphereUniform_10.KmESunUniform, atmosVariables_10.m_Km * atmosVariables_10.m_ESun);
-//			glUniform1f(atmosphereUniform_10.Kr4PIUniform, atmosVariables_10.m_Kr4PI);
-//			glUniform1f(atmosphereUniform_10.Km4PIUniform, atmosVariables_10.m_Km4PI);
-//			glUniform1f(atmosphereUniform_10.scaleUniform, 1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius));
-//			glUniform1f(atmosphereUniform_10.scaleDepthUniform, atmosVariables_10.m_fRayleighScaleDepth);
-//			glUniform1f(atmosphereUniform_10.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius)) / atmosVariables_10.m_fRayleighScaleDepth);
-//			glUniform1f(atmosphereUniform_10.gUniform, atmosVariables_10.m_g);
-//			glUniform1f(atmosphereUniform_10.g2Uniform, atmosVariables_10.m_g * atmosVariables_10.m_g);
-//
-//			glUniformMatrix4fv(atmosphereUniform_10.modelMatrix, 1, GL_FALSE, modelMatrix);
-//			glUniformMatrix4fv(atmosphereUniform_10.viewMatrix, 1, GL_FALSE, viewMatrix);
-//			glUniformMatrix4fv(atmosphereUniform_10.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
-//
-//			displayAtmosphere();
-//
-//			glUseProgram(0);
-//
-//#endif // ENABLE_ATMOSPHERE
+#ifdef ENABLE_ATMOSPHERE
+
+			translationMatrix = mat4::identity();
+			rotationMatrix = mat4::identity();
+			modelMatrix = mat4::identity();
+
+			//glBlendFunc(GL_ONE, GL_ONE);
+
+			atmosphereUniform_10 = useAtmosphereShader();
+			
+			modelMatrix = vmath::scale(5.0f, 5.0f, 5.0f) * vmath::rotate(90.0f, 0.0f, 1.0f, 0.0f);
+
+			glUniform3f(atmosphereUniform_10.cameraPosUniform, cameraEyeX, cameraEyeY, cameraEyeZ);
+			glUniform3f(atmosphereUniform_10.lightPosUniform, atmosVariables_10.m_vLightDirection[0], atmosVariables_10.m_vLightDirection[1], atmosVariables_10.m_vLightDirection[2]);
+			glUniform3f(atmosphereUniform_10.invWavelengthUniform, 1 / atmosVariables_10.m_fWavelength4[0], 1 / atmosVariables_10.m_fWavelength4[1], 1 / atmosVariables_10.m_fWavelength4[2]);
+			glUniform1f(atmosphereUniform_10.cameraHeightUniform, sqrtf(cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ));
+			glUniform1f(atmosphereUniform_10.cameraHeight2Uniform, cameraEyeX * cameraEyeX + cameraEyeY * cameraEyeY + cameraEyeZ * cameraEyeZ);
+			glUniform1f(atmosphereUniform_10.innerRadiusUniform, atmosVariables_10.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_10.innerRadius2Uniform, atmosVariables_10.m_fInnerRadius * atmosVariables_10.m_fInnerRadius);
+			glUniform1f(atmosphereUniform_10.outerRadiusUniform, atmosVariables_10.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_10.outerRadius2Uniform, atmosVariables_10.m_fOuterRadius * atmosVariables_10.m_fOuterRadius);
+			glUniform1f(atmosphereUniform_10.KrESunUniform, atmosVariables_10.m_Kr * atmosVariables_10.m_ESun);
+			glUniform1f(atmosphereUniform_10.KmESunUniform, atmosVariables_10.m_Km * atmosVariables_10.m_ESun);
+			glUniform1f(atmosphereUniform_10.Kr4PIUniform, atmosVariables_10.m_Kr4PI);
+			glUniform1f(atmosphereUniform_10.Km4PIUniform, atmosVariables_10.m_Km4PI);
+			glUniform1f(atmosphereUniform_10.scaleUniform, 1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius));
+			glUniform1f(atmosphereUniform_10.scaleDepthUniform, atmosVariables_10.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_10.scaleOverScaleDepthUniform, (1.0f / (atmosVariables_10.m_fOuterRadius - atmosVariables_10.m_fInnerRadius)) / atmosVariables_10.m_fRayleighScaleDepth);
+			glUniform1f(atmosphereUniform_10.gUniform, atmosVariables_10.m_g);
+			glUniform1f(atmosphereUniform_10.g2Uniform, atmosVariables_10.m_g * atmosVariables_10.m_g);
+
+			glUniformMatrix4fv(atmosphereUniform_10.modelMatrix, 1, GL_FALSE, modelMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.viewMatrix, 1, GL_FALSE, finalViewMatrix);
+			glUniformMatrix4fv(atmosphereUniform_10.projectionMatrix, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+			displayAtmosphere();
+
+			glUseProgram(0);
+
+#endif // ENABLE_ATMOSPHERE
 
 		} // if(godRays == 1)
 
-#ifdef ENABLE_CLOUD_NOISE
-
-		glEnable(GL_TEXTURE_3D);
-		sceneAdbhutRasCloudNoiseUniform = useCloudNoiseShader();
-
-		translationMatrix = mat4::identity();
-		scaleMatrix = mat4::identity();
-		rotationMatrix = mat4::identity();
-		modelMatrix = mat4::identity();
-
-		rotationMatrix_x = mat4::identity();
-		rotationMatrix_y = mat4::identity();
-		rotationMatrix_z = mat4::identity();
-
-		translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
-		scaleMatrix = vmath::scale(100.0f, 100.0f, 100.0f);
-		modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.laUniform, 1, lightAmbient);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ldUniform, 1, lightDiffuse);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.lsUniform, 1, lightSpecular);
-		glUniform4fv(sceneAdbhutRasCloudNoiseUniform.lightPositionUniform, 1, lightPosition);
-
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kaUniform, 1, materialAmbient);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.kdUniform, 1, materialDiffuse);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.ksUniform, 1, materialSpecular);
-		glUniform1f(sceneAdbhutRasCloudNoiseUniform.materialShininessUniform, materialShininess);
-
-		glUniform1f(sceneAdbhutRasCloudNoiseUniform.scaleUniform, cloudMyScaleAdbhutRas);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.skyColorUniform, 1, skyColorForAdbhutRas);
-		glUniform3fv(sceneAdbhutRasCloudNoiseUniform.cloudColorUniform, 1, cloudColorFOrAdbhutRas);
-		glUniform1f(sceneAdbhutRasCloudNoiseUniform.noiseScaleUniform, cloudNoiseScaleAdbhutRas);
-		glUniform1i(sceneAdbhutRasCloudNoiseUniform.uniform_enable_godRays, godRays);
-		//glUniform1f(sceneAdbhutRasCloudNoiseUniform.alphaBlendingUniform, alphaBlending);
-
-		
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_3D, noise_texture_adbhut_ras);
-
-		float color[3] = {1.0f, 1.0f, 1.0f};
-		glVertexAttrib3fv(DOMAIN_ATTRIBUTE_COLOR, vec3(1.0f,1.0f,1.0f));
-		displaySphere(color);
-
-		glUseProgram(0);
-
-		glDisable(GL_TEXTURE_3D);
-
-#endif // ENABLE_CLOUD_NOISE
 	} // (actualDepthQuadScene == 0)
 
 #ifdef ENABLE_TERRIAN
@@ -632,8 +604,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	//normal mapping
 	translationMatrix = vmath::translate(-0.25f, -4.0f, -20.0f);
-	if('1' == tf_Object) // terrain
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
 	modelMatrix = translationMatrix * scaleMatrix;
 
 	// viewMatrix = finalViewMatrix;
@@ -680,13 +650,6 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-#ifdef ENABLE_FOG
-	glUniform1i(terrainUniform.fogEnableUniform, 1);
-	glUniform1f(terrainUniform.densityUniform, density);
-	glUniform1f(terrainUniform.gradientUniform, gradient);
-	glUniform4fv(terrainUniform.skyFogColorUniform, 1, skyFogColor);
-#endif // DEBUG - ENABLE_FOG
-
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, terrainTextureVariables.displacement);
 
@@ -705,40 +668,38 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 #ifdef ENABLE_STATIC_MODELS
 	//MODELS
-	sceneOutdoorADSStaticUniform = useADSShader();
+	sceneOutdoorADSStaticUniform_10 = useADSShader();
+	glUniform1f(sceneOutdoorADSStaticUniform_10.isInstanced, 0);
 
 	// Sending Light Related Uniforms
-	glUniform1i(sceneOutdoorADSStaticUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
-	// glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.lightingEnableUniform, 1);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.laUniform, 1, lightAmbient);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.ldUniform, 1, lightDiffuse);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.lsUniform, 1, lightSpecular);
+	// glUniform4fv(sceneOutdoorADSStaticUniform_10.lightPositionUniform, 1, lightPosition);
 	TRANFORM lightPos = { 104.0f, 103.0f, 3.0f, 1.0f };
 	// update_transformations(NULL, NULL, NULL, &lightPos);
 	vmath::vec4 lp = {lightPos.x, lightPos.y, lightPos.z, lightPos.w}; 
-	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lp);
-	glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
-	glUniform1f(sceneOutdoorADSStaticUniform.isInstanced, 0);
-
-	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.7f);
-
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.lightPositionUniform, 1, lp);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.kaUniform, 1, materialAmbient);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.kdUniform, 1, materialDiffuse);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.ksUniform, 1, materialSpecular);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.materialShininessUniform, materialShininess);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.colorCorrectionUniform, 0.7f);
 
 	//normal mapping
-	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.viewpositionUniform, 1, camera.eye);
 
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
-	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
-	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.fogEnableUniform, 0);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.densityUniform, density);
+	glUniform1f(sceneOutdoorADSStaticUniform_10.gradientUniform, gradient);
+	glUniform4fv(sceneOutdoorADSStaticUniform_10.skyFogColorUniform, 1, skyFogColor);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.uniform_enable_godRays, godRays);
+	glUniform1i(sceneOutdoorADSStaticUniform_10.godrays_blackpass_sphere, 0);
 
     // once for all static models drawing
- 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+ 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
 	// ------ Rock Model ------
 	translationMatrix = mat4::identity();
@@ -760,17 +721,17 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 	if (actualDepthQuadScene == 1) {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.actualSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.depthSceneUniform, 1);
+		glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
 	} else {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.actualSceneUniform, 1);
+		glUniform1i(sceneOutdoorADSStaticUniform_10.depthSceneUniform, 0);
 
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
@@ -785,15 +746,15 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(-20.75f, -2.27f, -34.25f);
-	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
+	translationMatrix = vmath::translate(-20.75f, -2.27f, -34.19f);
+	scaleMatrix = vmath::scale(0.34f,  0.34f,  0.34f);
 
 	// usage type 1 
-	// if('3' == tf_Object) // Tree model
-	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
+	if('3' == tf_Object) // Tree model
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix) ;
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(treeModel);
 
@@ -805,21 +766,22 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
 	// start
-	translationMatrix = vmath::translate(-20.19f, leaf_translate, -34.25f);
-	scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
-	rotationAngles = {0.0f, leaf_rotate, 0.0f};
+	translationMatrix = vmath::translate(-19.57f, leaf_translate, -34.25f);
+	scaleMatrix = vmath::scale(0.14f,  0.14f,  0.14f);
+	rotationAngles = {674.35f, leaf_rotate, -976.88f};
 	// // end
-	// translationMatrix = vmath::translate(-20.19f, 0.0f, -34.25f);
-	// scaleMatrix = vmath::scale(0.59f, 0.59f, 0.59f);
-	// // rotationAngles = {leaf_rotate, 0.0f, 0.0f};
+	// translationMatrix = vmath::translate(-19.55f, -1.83f, -34.20f);
+	// rotationAngles = {674.35f, 247.20f, -976.88f};
 
 	// usage type 1 
-	if('3' == tf_Object) // Leaf model
-		update_transformations(NULL, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	if('1' == tf_Object) // Leaf model
+		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	rotationMatrix = vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	rotationMatrix *= vmath::rotate(rotationAngles.z, 0.0f, 0.0f, 1.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(leafModel);
 
@@ -831,8 +793,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(7.80f, -2.15f, -37.75f);
-	scaleMatrix = vmath::scale(0.7f, 0.7f, 0.7f);
+	translationMatrix = vmath::translate(9.80f, -2.15f, -37.75f);
+	scaleMatrix = vmath::scale(0.5f, 0.5f, 0.5f);
 	rotationAngles = {0.0f, -59.25f, 0.0f};
 
 	// usage type 1 
@@ -841,43 +803,43 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(farmhouseModel);
 
 
-	// ------ adbhutmanModel Model ------
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationAngles = {0.0f, 0.0f, 0.0f};
+	// // ------ adbhutmanModel Model ------
+	// translationMatrix = mat4::identity();
+	// rotationMatrix = mat4::identity();
+	// modelMatrix = mat4::identity();
+	// scaleMatrix = mat4::identity();
+	// rotationAngles = {0.0f, 0.0f, 0.0f};
 
-	translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
-	scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
-	rotationAngles = {0.0f, 99.55f, 0.0f};
+	// translationMatrix = vmath::translate(-19.94f, -2.18f, -34.25f);
+	// scaleMatrix = vmath::scale(0.05f, 0.05f, 0.05f);
+	// rotationAngles = {0.0f, 99.55f, 0.0f};
 
-	// usage type 1 
-	if('5' == tf_Object) // adbhutman model
-		update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
-	rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+	// // usage type 1 
+	// if('5' == tf_Object) // adbhutman model
+	// 	update_transformations(&translationMatrix, &scaleMatrix, &rotationMatrix, &rotationAngles) ;
+	// rotationMatrix = vmath::rotate(rotationAngles.y, 0.0f, 1.0f, 0.0f);
+	// modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	// glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
-	drawStaticModel(adbhutmanModel);
+	// drawStaticModel(adbhutmanModel);
 
 
 	// ------ Bridge Model ------
 	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
+	rotationMatrix = mat4::identity();
 	rotationAngles = {0.0f, 0.0f, 0.0f};
+	modelMatrix = mat4::identity();
 
-	translationMatrix = vmath::translate(-4.99f, -1.63f, -36.50f);
-	scaleMatrix = vmath::scale( 4.21f,  4.21f,  4.21f);
-	rotationAngles = {0.0f, 184.96f, -5.46f};
+	translationMatrix = vmath::translate(-6.86f, -1.40f, -36.00f);
+	scaleMatrix = vmath::scale(1.81f, 1.81f, 1.81f);
+	rotationAngles = {2.32f, 189.75f, -5.41f};
 
 	// usage type 1 
 	if('9' == tf_Object) // bridge model
@@ -887,30 +849,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	rotationMatrix *= vmath::rotate(rotationAngles.x, 1.0f, 0.0f, 0.0f);
 	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	glUniformMatrix4fv(sceneOutdoorADSStaticUniform_10.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
 
 	drawStaticModel(bridgeModel);
-
-
-#ifdef ENABLE_MASKSQUADS
-	// Quad For Mask
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	translationMatrix = vmath::translate(2.0f, 1.0f, -3.0f);
-	scaleMatrix = vmath::scale(1.0f, 1.0f, 1.0f);
-	//rotationMatrix = vmath::rotate(72.45f, 0.0f, 1.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_adbhutMask);
-	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
-	displayQuad();
-#endif // ENABLE_MASKSQUADS
 
 	if (actualDepthQuadScene == 0) 
 	{
@@ -955,11 +896,10 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(4.0f, 1.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-19.94f, -2.13f, -34.31f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 1.80f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
 	if (actualDepthQuadScene == 1) {
@@ -979,7 +919,17 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	static bool replay_animation = true;
+	if (replay_animation) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		replay_animation = false;
+	}
+	else
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.0f);
+
 
 	glUseProgram(0);
 
@@ -988,24 +938,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 #ifdef ENABLE_WATER
 
 	if(waterDraw == true){
+		
 		waterUniform = useWaterShader();
-
-		if (recordWaterReflectionRefraction == true)
-		{
-			if (isReflection == true)
-			{
-				distance10 = 2.0f * (cameraEyeY - waterHeight);
-				cameraEyeY -= distance10;
-				cameraCenterY -= distance10;
-				displayCamera();
-				finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
-				glUniform4fv(waterUniform.planeUniform, 1, planeReflection);
-			}
-			else
-			{
-				glUniform4fv(waterUniform.planeUniform, 1, planeRefration);
-			}
-		}
 
 		translationMatrix = mat4::identity();
 		scaleMatrix = mat4::identity();
@@ -1062,9 +996,9 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 		glUniform1i(billboardingEffectUniform.frameTimeUniform, frameTime);
 		glUniform1i(billboardingEffectUniform.uniform_enable_godRays, godRays);
 
-		/// /////////////////////////
+		/// /////////////////////////////
 		/// Flower on left side of river
-		/// /////////////////////////
+		/// /////////////////////////////
 		/// 
 
 		// instanced quads with grass texture
@@ -1143,8 +1077,20 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 	}
 
 #endif // ENABLE_BILLBOARDING
+
+	if (isReflection == true) {
+
+		cameraEyeY += distance10;
+		cameraCenterY += distance10;
+		displayCamera();
+		finalViewMatrix = vmath::lookat(camera.eye, camera.center, camera.up);
+	}
+
 }
 
+extern float cam_mov[][9];
+int i = 0;
+int interval = 5; 
 void updateScene10_AdbhutRas(void)
 {
 	// Code
@@ -1156,72 +1102,70 @@ void updateScene10_AdbhutRas(void)
 	//cameraEyeZ -= speedVector.x;
 	//cameraCenterZ -= speedVector.x;
 
-	// lookAt(-17.10f, -1.40f, -33.85f, -320.07f, -1.40f, -177.19f, 0.00f, 1.00f, 0.00f)
-	// cameraEyeX = preciselerp(cameraEyeX, -17.10f, 0.002f);
-	// cameraEyeY = preciselerp(cameraEyeY, -1.40f, 0.002f);
-	// cameraEyeZ = preciselerp(cameraEyeZ, -33.85f, 0.002f);
+//	if (i <= 524)
+//	{
+//		preciselerp_lookat(cam_mov[i][0], cam_mov[i][1], cam_mov[i][2], cam_mov[i][3], cam_mov[i][4],
+//						   cam_mov[i][5], cam_mov[i][6], cam_mov[i][7], cam_mov[i][8]);
+//		if(interval > 6)
+//		{
+//			i++;
+//			interval = 0;
+//		}
+//		interval++;
+//	}
 
-	// cameraCenterX = preciselerp(cameraCenterX, -320.07f, 0.002f);
-	// cameraCenterY = preciselerp(cameraCenterY, -1.40f, 0.002f);
-	// cameraCenterZ = preciselerp(cameraCenterZ, -177.19f, 0.002f);
-
-
-
-// (20.26f, -1.11f, -4.41f, 20.26f, -1.11f, -10.41f, 0.00f, 1.00f, 0.00f)
-// (4.72f, -1.11f, -28.46f, 4.72f, -1.11f, -34.46f, 0.00f, 1.00f, 0.00f)
-// (2.87f, -1.11f, -34.75f, -241.36f, -1.11f, -268.55f, 0.00f, 1.00f, 0.00f)
-// (1.76f, -1.11f, -37.71f, -359.66f, -1.11f, 21.05f, 0.00f, 1.00f, 0.00f)
-// (-0.36f, -1.11f, -36.99f, -361.78f, -1.11f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-0.71f, -0.76f, -36.99f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-1.06f, -0.41f, -36.99f, -362.48f, -0.41f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-1.41f, -0.06f, -36.99f, -362.83f, -0.06f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-1.76f, 0.29f, -36.99f, -363.18f, 0.29f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-2.11f, 0.64f, -36.99f, -363.53f, 0.64f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-2.46f, 0.99f, -36.99f, -363.88f, 0.99f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-2.81f, 0.64f, -36.99f, -364.23f, 0.64f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-3.16f, 0.29f, -36.99f, -364.58f, 0.29f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-3.51f, -0.06f, -36.99f, -364.93f, -0.06f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-3.86f, -0.41f, -36.99f, -365.28f, -0.41f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-4.21f, -0.76f, -36.99f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f)
-// (-16.81f, -1.11f, -34.89f, -357.37f, -1.11f, 40.81f, 0.00f, 1.00f, 0.00f)
-
-
-	// if (camera_update == 0)
+	// if (scene10_state == 0)
 	// {
 	// 	preciselerp_lookat((21.90f, -1.11f, -1.13f, -150.37f, -1.11f, -327.12f, 0.00f, 1.00f, 0.00f););
 	// 	if (cameraEyeX < (1.50f - 0.2f))
 	// 	{
-	// 		camera_update = 2;
-	// 		LOG("Switching to camera update %d\n", camera_update);
+	// 		scene10_state = 2;
+	// 		LOG("Switching to state %d\n", scene10_state);
 	// 	}
 	// }
 
-	if (camera_update == 1)
+	if (scene10_state == 1) // straight to front to bridge
 	{
-		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeZ < (-35.99f - 0.2f))
 		{
-			camera_update = 2;
-			LOG("Switching to camera update %d\n", camera_update);
+			scene10_state = 2;
+			LOG("Switching to state %d\n", scene10_state);
 		}
 	}
 
-	if (camera_update == 2)
+	if (scene10_state == 2) // top of the bridge
 	{
-		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeX < (-4.21f - 0.2f))
 		{
-			camera_update = 3;
-			LOG("Switching to camera update %d\n", camera_update);
+			scene10_state = 3;
+			LOG("Switching to state %d\n", scene10_state);
 		}
 	}
 
-	if (camera_update == 3)
+	if (scene10_state == 3) // down to bridge
 	{
-		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f);
+		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeX < (-16.28f - 0.2f))
 		{
-			camera_update = 4;
+			scene10_state = 4;
+		}
+	}
+
+#endif
+
+	if(scene10_state == 4 && skeletonModel.pAnimator->GetCurrentFrame() >= 1315.0) 
+	{
+		leaf_translate -= 0.015f;
+		leaf_rotate += 9.52f;	
+		if(leaf_translate < -1.83f) {
+			leaf_translate = -1.83f;
+			leaf_rotate = 247.20f;	
+			scene10_state = 5;
+		}
+		if(leaf_rotate > 360.0f) {
+			leaf_rotate = 0.0f;
 		}
 	}
 
@@ -1229,30 +1173,23 @@ void updateScene10_AdbhutRas(void)
 	{
 		isInitialDisplay_Scene10AdbhutRas = true;
 		tf_Object = 0;
+		leaf_translate = 0.35f;
+		i = 0;
 	}
-#endif
 
+	if ('n' == tf_Object) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+		tf_Object = 0;
+	}
 
 #ifdef ENABLE_BILLBOARDING
 	frameTime += 4;
 
 #endif // ENABLE_BILLBOARDING
 
-if(camera_update == 4) 
-{
-	
-	leaf_translate -= 0.015f;
-	leaf_rotate += 9.52f;	
-	if(leaf_translate < -1.75f) {
-		leaf_translate = 0.35f;
-		leaf_rotate = 0.0f;	
-	}
-	camera_update = 5;
-}
-#ifdef ENABLE_CLOUD_NOISE
-	// update Cloud
-	updateCloud(cloudNoiseScaleIncrementAdbhutRas, cloudNoiseScaleAdbhutRas, 0.0001f);
-#endif // ENABLE_CLOUD_NOISE
+
 }
 
 void uninitializeScene10_AdbhutRas(void)
@@ -1261,6 +1198,14 @@ void uninitializeScene10_AdbhutRas(void)
 #ifdef ENABLE_BILLBOARDING
     uninitializeInstancedQuads(instBuffers_rightflowers);
     uninitializeInstancedQuads(instBuffers_leftflowers);
+
+	// texture
+    if(texture_flower.id)
+    {
+        glDeleteTextures(1, &texture_flower.id);
+        texture_flower.id = 0;
+    }
+
 #endif // ENABLE_BILLBOARDING
 
 #ifdef ENABLE_TERRIAN
@@ -1270,7 +1215,7 @@ void uninitializeScene10_AdbhutRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
 	unloadStaticModel(&bridgeModel);
-	unloadStaticModel(&adbhutmanModel);
+	// unloadStaticModel(&adbhutmanModel);
 	unloadStaticModel(&farmhouseModel);
 	unloadStaticModel(&rockModel);
 	unloadStaticModel(&leafModel);
@@ -1291,15 +1236,6 @@ void uninitializeScene10_AdbhutRas(void)
 	unloadDynamicModel(&skeletonModel);
 #endif
 	//uninitializeCamera(&camera);
-
-#ifdef ENABLE_CLOUD_NOISE
-	uninitializeCloud();
-	if (noise_texture_adbhut_ras)
-	{
-		glDeleteTextures(1, &noise_texture_adbhut_ras);
-		noise_texture_adbhut_ras = 0;
-	}
-#endif // ENABLE_CLOUD_NOISE
 
 }
  
@@ -1393,21 +1329,529 @@ bool checkInside(Point poly[], int n, Point p)
     return count & 1;
 }
 
-//////////////
-
-
-// static bool firstcall = 1;
-// if(firstcall)
-// {
-// 	LOG("Before update tranform\n");
-// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
-// }
-
-// if(firstcall)
-// {
-// 	LOG("After update tranform\n");
-// 	print_matrices(translationMatrix, scaleMatrix, rotationMatrix, rotationAngles);
-// 	firstcall = 0;
-// }
+float cam_mov[][9] = {{21.90f, -1.11f, -1.18f, -150.37f, -1.11f, -327.17f, 0.00f, 1.00f, 0.00f},
+{21.85f, -1.11f, -1.18f, -150.42f, -1.11f, -327.17f, 0.00f, 1.00f, 0.00f},
+{21.85f, -1.11f, -1.23f, -150.42f, -1.11f, -327.22f, 0.00f, 1.00f, 0.00f},
+{21.80f, -1.11f, -1.23f, -150.47f, -1.11f, -327.22f, 0.00f, 1.00f, 0.00f},
+{21.80f, -1.11f, -1.28f, -150.47f, -1.11f, -327.27f, 0.00f, 1.00f, 0.00f},
+{21.75f, -1.11f, -1.28f, -150.52f, -1.11f, -327.27f, 0.00f, 1.00f, 0.00f},
+{21.75f, -1.11f, -1.33f, -150.52f, -1.11f, -327.32f, 0.00f, 1.00f, 0.00f},
+{21.70f, -1.11f, -1.33f, -150.57f, -1.11f, -327.32f, 0.00f, 1.00f, 0.00f},
+{21.70f, -1.11f, -1.38f, -150.57f, -1.11f, -327.37f, 0.00f, 1.00f, 0.00f},
+{21.65f, -1.11f, -1.38f, -150.62f, -1.11f, -327.37f, 0.00f, 1.00f, 0.00f},
+{21.65f, -1.11f, -1.43f, -150.62f, -1.11f, -327.42f, 0.00f, 1.00f, 0.00f},
+{21.60f, -1.11f, -1.43f, -150.67f, -1.11f, -327.42f, 0.00f, 1.00f, 0.00f},
+{21.60f, -1.11f, -1.48f, -150.67f, -1.11f, -327.47f, 0.00f, 1.00f, 0.00f},
+{21.55f, -1.11f, -1.48f, -150.72f, -1.11f, -327.47f, 0.00f, 1.00f, 0.00f},
+{21.55f, -1.11f, -1.53f, -150.72f, -1.11f, -327.52f, 0.00f, 1.00f, 0.00f},
+{21.50f, -1.11f, -1.53f, -150.77f, -1.11f, -327.52f, 0.00f, 1.00f, 0.00f},
+{21.50f, -1.11f, -1.58f, -150.77f, -1.11f, -327.57f, 0.00f, 1.00f, 0.00f},
+{21.45f, -1.11f, -1.58f, -150.82f, -1.11f, -327.57f, 0.00f, 1.00f, 0.00f},
+{21.45f, -1.11f, -1.63f, -150.82f, -1.11f, -327.62f, 0.00f, 1.00f, 0.00f},
+{21.40f, -1.11f, -1.63f, -150.87f, -1.11f, -327.62f, 0.00f, 1.00f, 0.00f},
+{21.40f, -1.11f, -1.84f, -150.87f, -1.11f, -327.83f, 0.00f, 1.00f, 0.00f},
+{21.19f, -1.11f, -1.84f, -151.08f, -1.11f, -327.83f, 0.00f, 1.00f, 0.00f},
+{21.19f, -1.11f, -2.05f, -151.08f, -1.11f, -328.04f, 0.00f, 1.00f, 0.00f},
+{20.98f, -1.11f, -2.05f, -151.29f, -1.11f, -328.04f, 0.00f, 1.00f, 0.00f},
+{20.98f, -1.11f, -2.26f, -151.29f, -1.11f, -328.25f, 0.00f, 1.00f, 0.00f},
+{20.77f, -1.11f, -2.26f, -151.50f, -1.11f, -328.25f, 0.00f, 1.00f, 0.00f},
+{20.77f, -1.11f, -2.47f, -151.50f, -1.11f, -328.46f, 0.00f, 1.00f, 0.00f},
+{20.56f, -1.11f, -2.47f, -151.71f, -1.11f, -328.46f, 0.00f, 1.00f, 0.00f},
+{20.56f, -1.11f, -2.68f, -151.71f, -1.11f, -328.67f, 0.00f, 1.00f, 0.00f},
+{20.35f, -1.11f, -2.68f, -151.92f, -1.11f, -328.67f, 0.00f, 1.00f, 0.00f},
+{20.35f, -1.11f, -2.89f, -151.92f, -1.11f, -328.88f, 0.00f, 1.00f, 0.00f},
+{20.14f, -1.11f, -2.89f, -152.13f, -1.11f, -328.88f, 0.00f, 1.00f, 0.00f},
+{20.14f, -1.11f, -3.10f, -152.13f, -1.11f, -329.09f, 0.00f, 1.00f, 0.00f},
+{19.93f, -1.11f, -3.10f, -152.34f, -1.11f, -329.09f, 0.00f, 1.00f, 0.00f},
+{19.93f, -1.11f, -3.31f, -152.34f, -1.11f, -329.30f, 0.00f, 1.00f, 0.00f},
+{19.72f, -1.11f, -3.31f, -152.55f, -1.11f, -329.30f, 0.00f, 1.00f, 0.00f},
+{19.72f, -1.11f, -3.52f, -152.55f, -1.11f, -329.51f, 0.00f, 1.00f, 0.00f},
+{19.51f, -1.11f, -3.52f, -152.76f, -1.11f, -329.51f, 0.00f, 1.00f, 0.00f},
+{19.51f, -1.11f, -3.73f, -152.76f, -1.11f, -329.72f, 0.00f, 1.00f, 0.00f},
+{19.30f, -1.11f, -3.73f, -152.97f, -1.11f, -329.72f, 0.00f, 1.00f, 0.00f},
+{19.30f, -1.11f, -3.94f, -152.97f, -1.11f, -329.93f, 0.00f, 1.00f, 0.00f},
+{19.09f, -1.11f, -3.94f, -153.18f, -1.11f, -329.93f, 0.00f, 1.00f, 0.00f},
+{19.09f, -1.11f, -4.15f, -153.18f, -1.11f, -330.14f, 0.00f, 1.00f, 0.00f},
+{18.88f, -1.11f, -4.15f, -153.39f, -1.11f, -330.14f, 0.00f, 1.00f, 0.00f},
+{18.88f, -1.11f, -4.36f, -153.39f, -1.11f, -330.35f, 0.00f, 1.00f, 0.00f},
+{18.67f, -1.11f, -4.36f, -153.60f, -1.11f, -330.35f, 0.00f, 1.00f, 0.00f},
+{18.67f, -1.11f, -4.57f, -153.60f, -1.11f, -330.56f, 0.00f, 1.00f, 0.00f},
+{18.46f, -1.11f, -4.57f, -153.81f, -1.11f, -330.56f, 0.00f, 1.00f, 0.00f},
+{18.46f, -1.11f, -4.78f, -153.81f, -1.11f, -330.77f, 0.00f, 1.00f, 0.00f},
+{18.25f, -1.11f, -4.78f, -154.02f, -1.11f, -330.77f, 0.00f, 1.00f, 0.00f},
+{18.25f, -1.11f, -4.99f, -154.02f, -1.11f, -330.98f, 0.00f, 1.00f, 0.00f},
+{18.04f, -1.11f, -4.99f, -154.23f, -1.11f, -330.98f, 0.00f, 1.00f, 0.00f},
+{18.04f, -1.11f, -5.20f, -154.23f, -1.11f, -331.19f, 0.00f, 1.00f, 0.00f},
+{17.83f, -1.11f, -5.20f, -154.44f, -1.11f, -331.19f, 0.00f, 1.00f, 0.00f},
+{17.83f, -1.11f, -5.41f, -154.44f, -1.11f, -331.40f, 0.00f, 1.00f, 0.00f},
+{17.62f, -1.11f, -5.41f, -154.65f, -1.11f, -331.40f, 0.00f, 1.00f, 0.00f},
+{17.62f, -1.11f, -5.62f, -154.65f, -1.11f, -331.61f, 0.00f, 1.00f, 0.00f},
+{17.41f, -1.11f, -5.62f, -154.86f, -1.11f, -331.61f, 0.00f, 1.00f, 0.00f},
+{17.41f, -1.11f, -5.83f, -154.86f, -1.11f, -331.82f, 0.00f, 1.00f, 0.00f},
+{17.20f, -1.11f, -5.83f, -155.07f, -1.11f, -331.82f, 0.00f, 1.00f, 0.00f},
+{17.20f, -1.11f, -6.04f, -155.07f, -1.11f, -332.03f, 0.00f, 1.00f, 0.00f},
+{16.99f, -1.11f, -6.04f, -155.28f, -1.11f, -332.03f, 0.00f, 1.00f, 0.00f},
+{16.99f, -1.11f, -6.25f, -155.28f, -1.11f, -332.24f, 0.00f, 1.00f, 0.00f},
+{16.78f, -1.11f, -6.25f, -155.49f, -1.11f, -332.24f, 0.00f, 1.00f, 0.00f},
+{16.78f, -1.11f, -6.46f, -155.49f, -1.11f, -332.45f, 0.00f, 1.00f, 0.00f},
+{16.57f, -1.11f, -6.46f, -155.70f, -1.11f, -332.45f, 0.00f, 1.00f, 0.00f},
+{16.57f, -1.11f, -6.67f, -155.70f, -1.11f, -332.66f, 0.00f, 1.00f, 0.00f},
+{16.57f, -1.11f, -6.88f, -155.70f, -1.11f, -332.87f, 0.00f, 1.00f, 0.00f},
+{16.36f, -1.11f, -6.88f, -155.91f, -1.11f, -332.87f, 0.00f, 1.00f, 0.00f},
+{16.36f, -1.11f, -7.09f, -155.91f, -1.11f, -333.08f, 0.00f, 1.00f, 0.00f},
+{16.36f, -1.11f, -7.30f, -155.91f, -1.11f, -333.29f, 0.00f, 1.00f, 0.00f},
+{16.15f, -1.11f, -7.30f, -156.12f, -1.11f, -333.29f, 0.00f, 1.00f, 0.00f},
+{16.15f, -1.11f, -7.51f, -156.12f, -1.11f, -333.50f, 0.00f, 1.00f, 0.00f},
+{16.15f, -1.11f, -7.72f, -156.12f, -1.11f, -333.71f, 0.00f, 1.00f, 0.00f},
+{15.94f, -1.11f, -7.72f, -156.33f, -1.11f, -333.71f, 0.00f, 1.00f, 0.00f},
+{15.94f, -1.11f, -7.93f, -156.33f, -1.11f, -333.92f, 0.00f, 1.00f, 0.00f},
+{15.94f, -1.11f, -8.14f, -156.33f, -1.11f, -334.13f, 0.00f, 1.00f, 0.00f},
+{15.73f, -1.11f, -8.14f, -156.54f, -1.11f, -334.13f, 0.00f, 1.00f, 0.00f},
+{15.73f, -1.11f, -8.35f, -156.54f, -1.11f, -334.34f, 0.00f, 1.00f, 0.00f},
+{15.73f, -1.11f, -8.56f, -156.54f, -1.11f, -334.55f, 0.00f, 1.00f, 0.00f},
+{15.52f, -1.11f, -8.56f, -156.75f, -1.11f, -334.55f, 0.00f, 1.00f, 0.00f},
+{15.52f, -1.11f, -8.77f, -156.75f, -1.11f, -334.76f, 0.00f, 1.00f, 0.00f},
+{15.52f, -1.11f, -8.98f, -156.75f, -1.11f, -334.97f, 0.00f, 1.00f, 0.00f},
+{15.31f, -1.11f, -8.98f, -156.96f, -1.11f, -334.97f, 0.00f, 1.00f, 0.00f},
+{15.31f, -1.11f, -9.19f, -156.96f, -1.11f, -335.18f, 0.00f, 1.00f, 0.00f},
+{15.31f, -1.11f, -9.40f, -156.96f, -1.11f, -335.39f, 0.00f, 1.00f, 0.00f},
+{15.10f, -1.11f, -9.40f, -157.17f, -1.11f, -335.39f, 0.00f, 1.00f, 0.00f},
+{15.10f, -1.11f, -9.61f, -157.17f, -1.11f, -335.60f, 0.00f, 1.00f, 0.00f},
+{15.10f, -1.11f, -9.82f, -157.17f, -1.11f, -335.81f, 0.00f, 1.00f, 0.00f},
+{14.89f, -1.11f, -9.82f, -157.38f, -1.11f, -335.81f, 0.00f, 1.00f, 0.00f},
+{14.89f, -1.11f, -10.03f, -157.38f, -1.11f, -336.02f, 0.00f, 1.00f, 0.00f},
+{14.89f, -1.11f, -10.24f, -157.38f, -1.11f, -336.23f, 0.00f, 1.00f, 0.00f},
+{14.68f, -1.11f, -10.24f, -157.59f, -1.11f, -336.23f, 0.00f, 1.00f, 0.00f},
+{14.68f, -1.11f, -10.45f, -157.59f, -1.11f, -336.44f, 0.00f, 1.00f, 0.00f},
+{14.68f, -1.11f, -10.66f, -157.59f, -1.11f, -336.65f, 0.00f, 1.00f, 0.00f},
+{14.47f, -1.11f, -10.66f, -157.80f, -1.11f, -336.65f, 0.00f, 1.00f, 0.00f},
+{14.47f, -1.11f, -10.87f, -157.80f, -1.11f, -336.86f, 0.00f, 1.00f, 0.00f},
+{14.47f, -1.11f, -11.08f, -157.80f, -1.11f, -337.07f, 0.00f, 1.00f, 0.00f},
+{14.26f, -1.11f, -11.08f, -158.01f, -1.11f, -337.07f, 0.00f, 1.00f, 0.00f},
+{14.26f, -1.11f, -11.29f, -158.01f, -1.11f, -337.28f, 0.00f, 1.00f, 0.00f},
+{14.26f, -1.11f, -11.50f, -158.01f, -1.11f, -337.49f, 0.00f, 1.00f, 0.00f},
+{14.05f, -1.11f, -11.50f, -158.22f, -1.11f, -337.49f, 0.00f, 1.00f, 0.00f},
+{14.05f, -1.11f, -11.71f, -158.22f, -1.11f, -337.70f, 0.00f, 1.00f, 0.00f},
+{14.05f, -1.11f, -11.92f, -158.22f, -1.11f, -337.91f, 0.00f, 1.00f, 0.00f},
+{13.84f, -1.11f, -11.92f, -158.43f, -1.11f, -337.91f, 0.00f, 1.00f, 0.00f},
+{13.84f, -1.11f, -12.13f, -158.43f, -1.11f, -338.12f, 0.00f, 1.00f, 0.00f},
+{13.84f, -1.11f, -12.34f, -158.43f, -1.11f, -338.33f, 0.00f, 1.00f, 0.00f},
+{13.63f, -1.11f, -12.34f, -158.64f, -1.11f, -338.33f, 0.00f, 1.00f, 0.00f},
+{13.63f, -1.11f, -12.55f, -158.64f, -1.11f, -338.54f, 0.00f, 1.00f, 0.00f},
+{13.63f, -1.11f, -12.76f, -158.64f, -1.11f, -338.75f, 0.00f, 1.00f, 0.00f},
+{13.42f, -1.11f, -12.76f, -158.85f, -1.11f, -338.75f, 0.00f, 1.00f, 0.00f},
+{13.42f, -1.11f, -12.97f, -158.85f, -1.11f, -338.96f, 0.00f, 1.00f, 0.00f},
+{13.42f, -1.11f, -13.18f, -158.85f, -1.11f, -339.17f, 0.00f, 1.00f, 0.00f},
+{13.21f, -1.11f, -13.18f, -159.06f, -1.11f, -339.17f, 0.00f, 1.00f, 0.00f},
+{13.21f, -1.11f, -13.39f, -159.06f, -1.11f, -339.38f, 0.00f, 1.00f, 0.00f},
+{13.21f, -1.11f, -13.60f, -159.06f, -1.11f, -339.59f, 0.00f, 1.00f, 0.00f},
+{13.00f, -1.11f, -13.60f, -159.27f, -1.11f, -339.59f, 0.00f, 1.00f, 0.00f},
+{13.00f, -1.11f, -13.81f, -159.27f, -1.11f, -339.80f, 0.00f, 1.00f, 0.00f},
+{13.00f, -1.11f, -14.02f, -159.27f, -1.11f, -340.01f, 0.00f, 1.00f, 0.00f},
+{12.79f, -1.11f, -14.02f, -159.48f, -1.11f, -340.01f, 0.00f, 1.00f, 0.00f},
+{12.79f, -1.11f, -14.23f, -159.48f, -1.11f, -340.22f, 0.00f, 1.00f, 0.00f},
+{12.79f, -1.11f, -14.44f, -159.48f, -1.11f, -340.43f, 0.00f, 1.00f, 0.00f},
+{12.58f, -1.11f, -14.44f, -159.69f, -1.11f, -340.43f, 0.00f, 1.00f, 0.00f},
+{12.58f, -1.11f, -14.65f, -159.69f, -1.11f, -340.64f, 0.00f, 1.00f, 0.00f},
+{12.58f, -1.11f, -14.86f, -159.69f, -1.11f, -340.85f, 0.00f, 1.00f, 0.00f},
+{12.37f, -1.11f, -14.86f, -159.90f, -1.11f, -340.85f, 0.00f, 1.00f, 0.00f},
+{12.37f, -1.11f, -15.07f, -159.90f, -1.11f, -341.06f, 0.00f, 1.00f, 0.00f},
+{12.37f, -1.11f, -15.28f, -159.90f, -1.11f, -341.27f, 0.00f, 1.00f, 0.00f},
+{12.16f, -1.11f, -15.28f, -160.11f, -1.11f, -341.27f, 0.00f, 1.00f, 0.00f},
+{12.16f, -1.11f, -15.49f, -160.11f, -1.11f, -341.48f, 0.00f, 1.00f, 0.00f},
+{12.16f, -1.11f, -15.70f, -160.11f, -1.11f, -341.69f, 0.00f, 1.00f, 0.00f},
+{11.95f, -1.11f, -15.70f, -160.32f, -1.11f, -341.69f, 0.00f, 1.00f, 0.00f},
+{11.95f, -1.11f, -15.91f, -160.32f, -1.11f, -341.90f, 0.00f, 1.00f, 0.00f},
+{11.95f, -1.11f, -16.12f, -160.32f, -1.11f, -342.11f, 0.00f, 1.00f, 0.00f},
+{11.74f, -1.11f, -16.12f, -160.53f, -1.11f, -342.11f, 0.00f, 1.00f, 0.00f},
+{11.74f, -1.11f, -16.33f, -160.53f, -1.11f, -342.32f, 0.00f, 1.00f, 0.00f},
+{11.74f, -1.11f, -16.54f, -160.53f, -1.11f, -342.53f, 0.00f, 1.00f, 0.00f},
+{11.53f, -1.11f, -16.54f, -160.74f, -1.11f, -342.53f, 0.00f, 1.00f, 0.00f},
+{11.53f, -1.11f, -16.75f, -160.74f, -1.11f, -342.74f, 0.00f, 1.00f, 0.00f},
+{11.53f, -1.11f, -16.96f, -160.74f, -1.11f, -342.95f, 0.00f, 1.00f, 0.00f},
+{11.32f, -1.11f, -16.96f, -160.95f, -1.11f, -342.95f, 0.00f, 1.00f, 0.00f},
+{11.32f, -1.11f, -17.17f, -160.95f, -1.11f, -343.16f, 0.00f, 1.00f, 0.00f},
+{11.32f, -1.11f, -17.38f, -160.95f, -1.11f, -343.37f, 0.00f, 1.00f, 0.00f},
+{11.11f, -1.11f, -17.38f, -161.16f, -1.11f, -343.37f, 0.00f, 1.00f, 0.00f},
+{11.11f, -1.11f, -17.59f, -161.16f, -1.11f, -343.58f, 0.00f, 1.00f, 0.00f},
+{11.11f, -1.11f, -17.80f, -161.16f, -1.11f, -343.79f, 0.00f, 1.00f, 0.00f},
+{10.90f, -1.11f, -17.80f, -161.37f, -1.11f, -343.79f, 0.00f, 1.00f, 0.00f},
+{10.90f, -1.11f, -18.01f, -161.37f, -1.11f, -344.00f, 0.00f, 1.00f, 0.00f},
+{10.90f, -1.11f, -18.22f, -161.37f, -1.11f, -344.21f, 0.00f, 1.00f, 0.00f},
+{10.69f, -1.11f, -18.22f, -161.58f, -1.11f, -344.21f, 0.00f, 1.00f, 0.00f},
+{10.69f, -1.11f, -18.43f, -161.58f, -1.11f, -344.42f, 0.00f, 1.00f, 0.00f},
+{10.69f, -1.11f, -18.64f, -161.58f, -1.11f, -344.63f, 0.00f, 1.00f, 0.00f},
+{10.48f, -1.11f, -18.64f, -161.79f, -1.11f, -344.63f, 0.00f, 1.00f, 0.00f},
+{10.48f, -1.11f, -18.85f, -161.79f, -1.11f, -344.84f, 0.00f, 1.00f, 0.00f},
+{10.48f, -1.11f, -19.06f, -161.79f, -1.11f, -345.05f, 0.00f, 1.00f, 0.00f},
+{10.27f, -1.11f, -19.06f, -162.00f, -1.11f, -345.05f, 0.00f, 1.00f, 0.00f},
+{10.27f, -1.11f, -19.27f, -162.00f, -1.11f, -345.26f, 0.00f, 1.00f, 0.00f},
+{10.27f, -1.11f, -19.48f, -162.00f, -1.11f, -345.47f, 0.00f, 1.00f, 0.00f},
+{10.06f, -1.11f, -19.48f, -162.21f, -1.11f, -345.47f, 0.00f, 1.00f, 0.00f},
+{10.06f, -1.11f, -19.69f, -162.21f, -1.11f, -345.68f, 0.00f, 1.00f, 0.00f},
+{10.06f, -1.11f, -19.90f, -162.21f, -1.11f, -345.89f, 0.00f, 1.00f, 0.00f},
+{9.85f, -1.11f, -19.90f, -162.42f, -1.11f, -345.89f, 0.00f, 1.00f, 0.00f},
+{9.85f, -1.11f, -20.11f, -162.42f, -1.11f, -346.10f, 0.00f, 1.00f, 0.00f},
+{9.85f, -1.11f, -20.32f, -162.42f, -1.11f, -346.31f, 0.00f, 1.00f, 0.00f},
+{9.64f, -1.11f, -20.32f, -162.63f, -1.11f, -346.31f, 0.00f, 1.00f, 0.00f},
+{9.64f, -1.11f, -20.53f, -162.63f, -1.11f, -346.52f, 0.00f, 1.00f, 0.00f},
+{9.64f, -1.11f, -20.74f, -162.63f, -1.11f, -346.73f, 0.00f, 1.00f, 0.00f},
+{9.43f, -1.11f, -20.74f, -162.84f, -1.11f, -346.73f, 0.00f, 1.00f, 0.00f},
+{9.43f, -1.11f, -20.95f, -162.84f, -1.11f, -346.94f, 0.00f, 1.00f, 0.00f},
+{9.43f, -1.11f, -21.16f, -162.84f, -1.11f, -347.15f, 0.00f, 1.00f, 0.00f},
+{9.22f, -1.11f, -21.16f, -163.05f, -1.11f, -347.15f, 0.00f, 1.00f, 0.00f},
+{9.22f, -1.11f, -21.37f, -163.05f, -1.11f, -347.36f, 0.00f, 1.00f, 0.00f},
+{9.22f, -1.11f, -21.58f, -163.05f, -1.11f, -347.57f, 0.00f, 1.00f, 0.00f},
+{9.01f, -1.11f, -21.58f, -163.26f, -1.11f, -347.57f, 0.00f, 1.00f, 0.00f},
+{9.01f, -1.11f, -21.79f, -163.26f, -1.11f, -347.78f, 0.00f, 1.00f, 0.00f},
+{9.01f, -1.11f, -22.00f, -163.26f, -1.11f, -347.99f, 0.00f, 1.00f, 0.00f},
+{9.01f, -1.11f, -22.21f, -163.26f, -1.11f, -348.20f, 0.00f, 1.00f, 0.00f},
+{8.80f, -1.11f, -22.21f, -163.47f, -1.11f, -348.20f, 0.00f, 1.00f, 0.00f},
+{8.80f, -1.11f, -22.42f, -163.47f, -1.11f, -348.41f, 0.00f, 1.00f, 0.00f},
+{8.80f, -1.11f, -22.63f, -163.47f, -1.11f, -348.62f, 0.00f, 1.00f, 0.00f},
+{8.59f, -1.11f, -22.63f, -163.68f, -1.11f, -348.62f, 0.00f, 1.00f, 0.00f},
+{8.59f, -1.11f, -22.84f, -163.68f, -1.11f, -348.83f, 0.00f, 1.00f, 0.00f},
+{8.59f, -1.11f, -23.05f, -163.68f, -1.11f, -349.04f, 0.00f, 1.00f, 0.00f},
+{8.38f, -1.11f, -23.05f, -163.89f, -1.11f, -349.04f, 0.00f, 1.00f, 0.00f},
+{8.38f, -1.11f, -23.26f, -163.89f, -1.11f, -349.25f, 0.00f, 1.00f, 0.00f},
+{8.38f, -1.11f, -23.47f, -163.89f, -1.11f, -349.46f, 0.00f, 1.00f, 0.00f},
+{8.17f, -1.11f, -23.47f, -164.10f, -1.11f, -349.46f, 0.00f, 1.00f, 0.00f},
+{8.17f, -1.11f, -23.68f, -164.10f, -1.11f, -349.67f, 0.00f, 1.00f, 0.00f},
+{8.17f, -1.11f, -23.89f, -164.10f, -1.11f, -349.88f, 0.00f, 1.00f, 0.00f},
+{7.96f, -1.11f, -23.89f, -164.31f, -1.11f, -349.88f, 0.00f, 1.00f, 0.00f},
+{7.96f, -1.11f, -24.10f, -164.31f, -1.11f, -350.09f, 0.00f, 1.00f, 0.00f},
+{7.96f, -1.11f, -24.31f, -164.31f, -1.11f, -350.30f, 0.00f, 1.00f, 0.00f},
+{7.75f, -1.11f, -24.31f, -164.52f, -1.11f, -350.30f, 0.00f, 1.00f, 0.00f},
+{7.75f, -1.11f, -24.52f, -164.52f, -1.11f, -350.51f, 0.00f, 1.00f, 0.00f},
+{7.75f, -1.11f, -24.73f, -164.52f, -1.11f, -350.72f, 0.00f, 1.00f, 0.00f},
+{7.54f, -1.11f, -24.73f, -164.73f, -1.11f, -350.72f, 0.00f, 1.00f, 0.00f},
+{7.54f, -1.11f, -24.94f, -164.73f, -1.11f, -350.93f, 0.00f, 1.00f, 0.00f},
+{7.54f, -1.11f, -25.15f, -164.73f, -1.11f, -351.14f, 0.00f, 1.00f, 0.00f},
+{7.33f, -1.11f, -25.15f, -164.94f, -1.11f, -351.14f, 0.00f, 1.00f, 0.00f},
+{7.33f, -1.11f, -25.36f, -164.94f, -1.11f, -351.35f, 0.00f, 1.00f, 0.00f},
+{7.33f, -1.11f, -25.57f, -164.94f, -1.11f, -351.56f, 0.00f, 1.00f, 0.00f},
+{7.33f, -1.11f, -25.78f, -164.94f, -1.11f, -351.77f, 0.00f, 1.00f, 0.00f},
+{7.12f, -1.11f, -25.78f, -165.15f, -1.11f, -351.77f, 0.00f, 1.00f, 0.00f},
+{7.12f, -1.11f, -25.99f, -165.15f, -1.11f, -351.98f, 0.00f, 1.00f, 0.00f},
+{7.12f, -1.11f, -26.20f, -165.15f, -1.11f, -352.19f, 0.00f, 1.00f, 0.00f},
+{6.91f, -1.11f, -26.20f, -165.36f, -1.11f, -352.19f, 0.00f, 1.00f, 0.00f},
+{6.91f, -1.11f, -26.41f, -165.36f, -1.11f, -352.40f, 0.00f, 1.00f, 0.00f},
+{6.91f, -1.11f, -26.62f, -165.36f, -1.11f, -352.61f, 0.00f, 1.00f, 0.00f},
+{6.70f, -1.11f, -26.62f, -165.57f, -1.11f, -352.61f, 0.00f, 1.00f, 0.00f},
+{6.70f, -1.11f, -26.83f, -165.57f, -1.11f, -352.82f, 0.00f, 1.00f, 0.00f},
+{6.70f, -1.11f, -27.04f, -165.57f, -1.11f, -353.03f, 0.00f, 1.00f, 0.00f},
+{6.49f, -1.11f, -27.04f, -165.78f, -1.11f, -353.03f, 0.00f, 1.00f, 0.00f},
+{6.49f, -1.11f, -27.25f, -165.78f, -1.11f, -353.24f, 0.00f, 1.00f, 0.00f},
+{6.49f, -1.11f, -27.46f, -165.78f, -1.11f, -353.45f, 0.00f, 1.00f, 0.00f},
+{6.28f, -1.11f, -27.46f, -165.99f, -1.11f, -353.45f, 0.00f, 1.00f, 0.00f},
+{6.28f, -1.11f, -27.67f, -165.99f, -1.11f, -353.66f, 0.00f, 1.00f, 0.00f},
+{6.28f, -1.11f, -27.88f, -165.99f, -1.11f, -353.87f, 0.00f, 1.00f, 0.00f},
+{6.07f, -1.11f, -27.88f, -166.20f, -1.11f, -353.87f, 0.00f, 1.00f, 0.00f},
+{6.07f, -1.11f, -28.09f, -166.20f, -1.11f, -354.08f, 0.00f, 1.00f, 0.00f},
+{6.07f, -1.11f, -28.30f, -166.20f, -1.11f, -354.29f, 0.00f, 1.00f, 0.00f},
+{5.86f, -1.11f, -28.30f, -166.41f, -1.11f, -354.29f, 0.00f, 1.00f, 0.00f},
+{5.86f, -1.11f, -28.51f, -166.41f, -1.11f, -354.50f, 0.00f, 1.00f, 0.00f},
+{5.86f, -1.11f, -28.72f, -166.41f, -1.11f, -354.71f, 0.00f, 1.00f, 0.00f},
+{5.65f, -1.11f, -28.72f, -166.62f, -1.11f, -354.71f, 0.00f, 1.00f, 0.00f},
+{5.65f, -1.11f, -28.93f, -166.62f, -1.11f, -354.92f, 0.00f, 1.00f, 0.00f},
+{5.65f, -1.11f, -29.14f, -166.62f, -1.11f, -355.13f, 0.00f, 1.00f, 0.00f},
+{5.44f, -1.11f, -29.14f, -166.83f, -1.11f, -355.13f, 0.00f, 1.00f, 0.00f},
+{5.44f, -1.11f, -29.35f, -166.83f, -1.11f, -355.34f, 0.00f, 1.00f, 0.00f},
+{5.44f, -1.11f, -29.56f, -166.83f, -1.11f, -355.55f, 0.00f, 1.00f, 0.00f},
+{5.23f, -1.11f, -29.56f, -167.04f, -1.11f, -355.55f, 0.00f, 1.00f, 0.00f},
+{5.23f, -1.11f, -29.77f, -167.04f, -1.11f, -355.76f, 0.00f, 1.00f, 0.00f},
+{5.23f, -1.11f, -29.98f, -167.04f, -1.11f, -355.97f, 0.00f, 1.00f, 0.00f},
+{5.02f, -1.11f, -29.98f, -167.25f, -1.11f, -355.97f, 0.00f, 1.00f, 0.00f},
+{5.02f, -1.11f, -30.19f, -167.25f, -1.11f, -356.18f, 0.00f, 1.00f, 0.00f},
+{5.02f, -1.11f, -30.40f, -167.25f, -1.11f, -356.39f, 0.00f, 1.00f, 0.00f},
+{4.81f, -1.11f, -30.40f, -167.46f, -1.11f, -356.39f, 0.00f, 1.00f, 0.00f},
+{4.81f, -1.11f, -30.61f, -318.08f, -1.11f, -168.80f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -30.61f, -318.29f, -1.11f, -168.80f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -30.82f, -318.29f, -1.11f, -169.01f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -31.03f, -318.29f, -1.11f, -169.22f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -31.24f, -318.29f, -1.11f, -169.43f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -31.45f, -318.29f, -1.11f, -169.64f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -31.66f, -318.29f, -1.11f, -169.85f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -31.87f, -318.29f, -1.11f, -170.06f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -32.08f, -318.29f, -1.11f, -170.27f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -32.29f, -318.29f, -1.11f, -170.48f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -32.50f, -318.29f, -1.11f, -170.69f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -32.71f, -318.29f, -1.11f, -170.90f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -32.92f, -318.29f, -1.11f, -171.11f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -33.13f, -318.29f, -1.11f, -171.32f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -33.34f, -318.29f, -1.11f, -171.53f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -33.55f, -318.29f, -1.11f, -171.74f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -33.76f, -318.29f, -1.11f, -171.95f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -33.97f, -318.29f, -1.11f, -172.16f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -34.18f, -318.29f, -1.11f, -172.37f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -34.39f, -318.29f, -1.11f, -172.58f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -34.60f, -318.29f, -1.11f, -172.79f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -34.81f, -318.29f, -1.11f, -173.00f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -35.02f, -318.29f, -1.11f, -173.21f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -35.23f, -318.29f, -1.11f, -173.42f, 0.00f, 1.00f, 0.00f},
+{4.60f, -1.11f, -35.44f, -318.29f, -1.11f, -173.63f, 0.00f, 1.00f, 0.00f},
+{4.39f, -1.11f, -35.44f, -318.50f, -1.11f, -173.63f, 0.00f, 1.00f, 0.00f},
+{4.39f, -1.11f, -35.65f, -347.68f, -1.11f, -93.59f, 0.00f, 1.00f, 0.00f},
+{4.18f, -1.11f, -35.65f, -347.89f, -1.11f, -93.59f, 0.00f, 1.00f, 0.00f},
+{4.18f, -1.11f, -35.86f, -347.89f, -1.11f, -93.80f, 0.00f, 1.00f, 0.00f},
+{3.97f, -1.11f, -35.86f, -348.10f, -1.11f, -93.80f, 0.00f, 1.00f, 0.00f},
+{3.97f, -1.11f, -36.07f, -348.10f, -1.11f, -94.01f, 0.00f, 1.00f, 0.00f},
+{3.76f, -1.11f, -36.07f, -348.31f, -1.11f, -94.01f, 0.00f, 1.00f, 0.00f},
+{3.76f, -1.11f, -36.28f, -348.31f, -1.11f, -94.22f, 0.00f, 1.00f, 0.00f},
+{3.55f, -1.11f, -36.28f, -348.52f, -1.11f, -94.22f, 0.00f, 1.00f, 0.00f},
+{3.55f, -1.11f, -36.49f, -348.52f, -1.11f, -94.43f, 0.00f, 1.00f, 0.00f},
+{3.34f, -1.11f, -36.49f, -348.73f, -1.11f, -94.43f, 0.00f, 1.00f, 0.00f},
+{3.34f, -1.11f, -36.70f, -349.90f, -1.11f, -84.87f, 0.00f, 1.00f, 0.00f},
+{3.34f, -1.11f, -36.91f, -353.70f, -1.11f, -67.27f, 0.00f, 1.00f, 0.00f},
+{3.13f, -1.11f, -36.91f, -353.91f, -1.11f, -67.27f, 0.00f, 1.00f, 0.00f},
+{3.13f, -1.11f, -37.12f, -355.26f, -1.11f, -58.41f, 0.00f, 1.00f, 0.00f},
+{3.13f, -1.11f, -37.33f, -357.73f, -1.11f, -40.58f, 0.00f, 1.00f, 0.00f},
+{2.92f, -1.11f, -37.33f, -357.94f, -1.11f, -40.58f, 0.00f, 1.00f, 0.00f},
+{2.92f, -1.11f, -37.54f, -357.94f, -1.11f, -40.79f, 0.00f, 1.00f, 0.00f},
+{2.71f, -1.11f, -37.54f, -359.96f, -1.11f, -13.45f, 0.00f, 1.00f, 0.00f},
+{2.50f, -1.11f, -37.54f, -360.17f, -1.11f, -13.45f, 0.00f, 1.00f, 0.00f},
+{2.29f, -1.11f, -37.54f, -360.38f, -1.11f, -13.45f, 0.00f, 1.00f, 0.00f},
+{2.08f, -1.11f, -37.54f, -360.59f, -1.11f, -13.45f, 0.00f, 1.00f, 0.00f},
+{1.87f, -1.11f, -37.54f, -360.18f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{1.66f, -1.11f, -37.54f, -360.39f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{1.45f, -1.11f, -37.54f, -360.60f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{1.24f, -1.11f, -37.54f, -360.81f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{1.03f, -1.11f, -37.54f, -361.02f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{0.82f, -1.11f, -37.54f, -361.23f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{0.61f, -1.11f, -37.54f, -361.44f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{0.40f, -1.11f, -37.54f, -361.65f, -1.11f, -4.46f, 0.00f, 1.00f, 0.00f},
+{0.40f, -1.11f, -37.33f, -361.65f, -1.11f, -4.25f, 0.00f, 1.00f, 0.00f},
+{0.40f, -1.11f, -37.12f, -361.65f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{0.19f, -1.11f, -37.12f, -361.86f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.02f, -1.11f, -37.12f, -362.07f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.15f, -1.11f, -37.12f, -362.20f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.28f, -1.11f, -37.12f, -362.33f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.41f, -1.11f, -37.12f, -362.46f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.54f, -1.11f, -37.12f, -362.59f, -1.11f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.54f, -0.98f, -37.12f, -362.59f, -0.98f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.67f, -0.98f, -37.12f, -362.72f, -0.98f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.67f, -0.85f, -37.12f, -362.72f, -0.85f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.80f, -0.85f, -37.12f, -362.85f, -0.85f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.80f, -0.72f, -37.12f, -362.85f, -0.72f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.93f, -0.72f, -37.12f, -362.98f, -0.72f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-0.93f, -0.59f, -37.12f, -362.98f, -0.59f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.06f, -0.59f, -37.12f, -363.11f, -0.59f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.06f, -0.46f, -37.12f, -363.11f, -0.46f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.19f, -0.46f, -37.12f, -363.24f, -0.46f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.19f, -0.33f, -37.12f, -363.24f, -0.33f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.32f, -0.33f, -37.12f, -363.37f, -0.33f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.32f, -0.20f, -37.12f, -363.37f, -0.20f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.45f, -0.20f, -37.12f, -363.50f, -0.20f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.45f, -0.07f, -37.12f, -363.50f, -0.07f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.58f, -0.07f, -37.12f, -363.63f, -0.07f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.58f, 0.06f, -37.12f, -363.63f, 0.06f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.71f, 0.06f, -37.12f, -363.76f, 0.06f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.71f, 0.19f, -37.12f, -363.76f, 0.19f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.84f, 0.19f, -37.12f, -363.89f, 0.19f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-1.97f, 0.19f, -37.12f, -364.02f, 0.19f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.10f, 0.19f, -37.12f, -364.15f, 0.19f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.23f, 0.19f, -37.12f, -364.28f, 0.19f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.36f, 0.19f, -37.12f, -364.41f, 0.19f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.36f, 0.06f, -37.12f, -364.41f, 0.06f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.49f, 0.06f, -37.12f, -364.54f, 0.06f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.49f, -0.07f, -37.12f, -364.54f, -0.07f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.62f, -0.07f, -37.12f, -364.67f, -0.07f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.71f, -0.07f, -37.12f, -364.76f, -0.07f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.71f, -0.16f, -37.12f, -364.76f, -0.16f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.80f, -0.16f, -37.12f, -364.85f, -0.16f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.89f, -0.16f, -37.12f, -364.94f, -0.16f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-2.98f, -0.16f, -37.12f, -365.03f, -0.16f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.07f, -0.16f, -37.12f, -365.12f, -0.16f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.07f, -0.25f, -37.12f, -365.12f, -0.25f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.16f, -0.25f, -37.12f, -365.21f, -0.25f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.25f, -0.25f, -37.12f, -365.30f, -0.25f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.25f, -0.34f, -37.12f, -365.30f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.34f, -0.34f, -37.12f, -365.39f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.43f, -0.34f, -37.12f, -365.48f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.52f, -0.34f, -37.12f, -365.57f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.61f, -0.34f, -37.12f, -365.66f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.70f, -0.34f, -37.12f, -365.75f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.79f, -0.34f, -37.12f, -365.84f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.88f, -0.34f, -37.12f, -365.93f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-3.97f, -0.34f, -37.12f, -366.02f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.06f, -0.34f, -37.12f, -366.11f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.15f, -0.34f, -37.12f, -366.20f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.24f, -0.34f, -37.12f, -366.29f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.33f, -0.34f, -37.12f, -366.38f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.42f, -0.34f, -37.12f, -366.47f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.51f, -0.34f, -37.12f, -366.56f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.60f, -0.34f, -37.12f, -366.65f, -0.34f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.60f, -0.43f, -37.12f, -366.65f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.69f, -0.43f, -37.12f, -366.74f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.78f, -0.43f, -37.12f, -366.83f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.87f, -0.43f, -37.12f, -366.92f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-4.96f, -0.43f, -37.12f, -367.01f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.05f, -0.43f, -37.12f, -367.10f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.14f, -0.43f, -37.12f, -367.19f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.23f, -0.43f, -37.12f, -367.28f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.32f, -0.43f, -37.12f, -367.37f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.41f, -0.43f, -37.12f, -367.46f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.50f, -0.43f, -37.12f, -367.55f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.59f, -0.43f, -37.12f, -367.64f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.68f, -0.43f, -37.12f, -367.73f, -0.43f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.68f, -0.52f, -37.12f, -367.73f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.77f, -0.52f, -37.12f, -367.82f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.86f, -0.52f, -37.12f, -367.91f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-5.95f, -0.52f, -37.12f, -368.00f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.04f, -0.52f, -37.12f, -368.09f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.13f, -0.52f, -37.12f, -368.18f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.22f, -0.52f, -37.12f, -368.27f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.31f, -0.52f, -37.12f, -368.36f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.40f, -0.52f, -37.12f, -368.45f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.49f, -0.52f, -37.12f, -368.54f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.58f, -0.52f, -37.12f, -368.63f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.67f, -0.52f, -37.12f, -368.72f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.76f, -0.52f, -37.12f, -368.81f, -0.52f, -4.04f, 0.00f, 1.00f, 0.00f},
+{-6.76f, -0.52f, -37.03f, -368.81f, -0.52f, -3.95f, 0.00f, 1.00f, 0.00f},
+{-6.76f, -0.52f, -36.94f, -368.81f, -0.52f, -3.86f, 0.00f, 1.00f, 0.00f},
+{-6.76f, -0.52f, -36.85f, -368.81f, -0.52f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-6.76f, -0.61f, -36.85f, -368.81f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-6.85f, -0.61f, -36.85f, -368.90f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-6.94f, -0.61f, -36.85f, -368.99f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.03f, -0.61f, -36.85f, -369.08f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.12f, -0.61f, -36.85f, -369.17f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.21f, -0.61f, -36.85f, -369.26f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.30f, -0.61f, -36.85f, -369.35f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.39f, -0.61f, -36.85f, -369.44f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.48f, -0.61f, -36.85f, -369.53f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.57f, -0.61f, -36.85f, -369.62f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.66f, -0.61f, -36.85f, -369.71f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.75f, -0.61f, -36.85f, -369.80f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.84f, -0.61f, -36.85f, -369.89f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-7.93f, -0.61f, -36.85f, -369.98f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.02f, -0.61f, -36.85f, -370.07f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.11f, -0.61f, -36.85f, -370.16f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.20f, -0.61f, -36.85f, -370.25f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.29f, -0.61f, -36.85f, -370.34f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.38f, -0.61f, -36.85f, -370.43f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.47f, -0.61f, -36.85f, -370.52f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.56f, -0.61f, -36.85f, -370.61f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.65f, -0.61f, -36.85f, -370.70f, -0.61f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.65f, -0.70f, -36.85f, -370.70f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.74f, -0.70f, -36.85f, -370.79f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.83f, -0.70f, -36.85f, -370.88f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-8.92f, -0.70f, -36.85f, -370.97f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.01f, -0.70f, -36.85f, -371.06f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.10f, -0.70f, -36.85f, -371.15f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.19f, -0.70f, -36.85f, -371.24f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.28f, -0.70f, -36.85f, -371.33f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.37f, -0.70f, -36.85f, -371.42f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.46f, -0.70f, -36.85f, -371.51f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.55f, -0.70f, -36.85f, -371.60f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.64f, -0.70f, -36.85f, -371.69f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.73f, -0.70f, -36.85f, -371.78f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.82f, -0.70f, -36.85f, -371.87f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-9.91f, -0.70f, -36.85f, -371.96f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.00f, -0.70f, -36.85f, -372.05f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.09f, -0.70f, -36.85f, -372.14f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.18f, -0.70f, -36.85f, -372.23f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.27f, -0.70f, -36.85f, -372.32f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.36f, -0.70f, -36.85f, -372.41f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.45f, -0.70f, -36.85f, -372.50f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.54f, -0.70f, -36.85f, -372.59f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.63f, -0.70f, -36.85f, -372.68f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.72f, -0.70f, -36.85f, -372.77f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.81f, -0.70f, -36.85f, -372.86f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.90f, -0.70f, -36.85f, -372.95f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.99f, -0.70f, -36.85f, -373.04f, -0.70f, -3.77f, 0.00f, 1.00f, 0.00f},
+{-10.99f, -0.70f, -36.76f, -373.04f, -0.70f, -3.68f, 0.00f, 1.00f, 0.00f},
+{-10.99f, -0.70f, -36.67f, -373.04f, -0.70f, -3.59f, 0.00f, 1.00f, 0.00f},
+{-10.99f, -0.70f, -36.58f, -373.04f, -0.70f, -3.50f, 0.00f, 1.00f, 0.00f},
+{-10.99f, -0.70f, -36.49f, -373.04f, -0.70f, -3.41f, 0.00f, 1.00f, 0.00f},
+{-10.99f, -0.79f, -36.49f, -373.04f, -0.79f, -3.41f, 0.00f, 1.00f, 0.00f},
+{-11.08f, -0.79f, -36.49f, -373.13f, -0.79f, -3.41f, 0.00f, 1.00f, 0.00f},
+{-11.17f, -0.79f, -36.49f, -373.22f, -0.79f, -3.41f, 0.00f, 1.00f, 0.00f},
+{-11.26f, -0.79f, -36.49f, -373.31f, -0.79f, -3.41f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -36.49f, -373.40f, -0.79f, -3.41f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -36.40f, -373.40f, -0.79f, -3.32f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -36.31f, -373.40f, -0.79f, -3.23f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -36.22f, -373.40f, -0.79f, -3.14f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -36.13f, -373.40f, -0.79f, -3.05f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -36.04f, -373.40f, -0.79f, -2.96f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -35.95f, -373.40f, -0.79f, -2.87f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -35.86f, -373.40f, -0.79f, -2.78f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -35.77f, -373.40f, -0.79f, -2.69f, 0.00f, 1.00f, 0.00f},
+{-11.35f, -0.79f, -35.68f, -373.40f, -0.79f, -2.60f, 0.00f, 1.00f, 0.00f},
+{-11.44f, -0.79f, -35.68f, -373.49f, -0.79f, -2.60f, 0.00f, 1.00f, 0.00f},
+{-11.44f, -0.88f, -35.68f, -373.49f, -0.88f, -2.60f, 0.00f, 1.00f, 0.00f},
+{-11.53f, -0.88f, -35.68f, -373.58f, -0.88f, -2.60f, 0.00f, 1.00f, 0.00f},
+{-11.53f, -0.88f, -35.59f, -373.58f, -0.88f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.53f, -0.97f, -35.59f, -373.58f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.53f, -1.06f, -35.59f, -373.58f, -1.06f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.53f, -0.97f, -35.59f, -373.58f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.62f, -0.97f, -35.59f, -373.67f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.71f, -0.97f, -35.59f, -373.76f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.80f, -0.97f, -35.59f, -373.85f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.89f, -0.97f, -35.59f, -373.94f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-11.98f, -0.97f, -35.59f, -374.03f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.07f, -0.97f, -35.59f, -374.12f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.16f, -0.97f, -35.59f, -374.21f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.25f, -0.97f, -35.59f, -374.30f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.34f, -0.97f, -35.59f, -374.39f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.43f, -0.97f, -35.59f, -374.48f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.52f, -0.97f, -35.59f, -374.57f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.61f, -0.97f, -35.59f, -374.66f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.70f, -0.97f, -35.59f, -374.75f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.79f, -0.97f, -35.59f, -374.84f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.88f, -0.97f, -35.59f, -374.93f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.97f, -0.97f, -35.59f, -375.02f, -0.97f, -2.51f, 0.00f, 1.00f, 0.00f},
+{-12.97f, -0.97f, -35.50f, -375.02f, -0.97f, -2.42f, 0.00f, 1.00f, 0.00f},
+{-12.97f, -0.97f, -35.41f, -375.02f, -0.97f, -2.33f, 0.00f, 1.00f, 0.00f},
+{-12.97f, -1.06f, -35.41f, -375.02f, -1.06f, -2.33f, 0.00f, 1.00f, 0.00f},
+{-12.97f, -0.97f, -35.41f, -375.02f, -0.97f, -2.33f, 0.00f, 1.00f, 0.00f},
+{-13.06f, -0.97f, -35.41f, -375.11f, -0.97f, -2.33f, 0.00f, 1.00f, 0.00f},
+{-13.06f, -0.97f, -35.32f, -375.11f, -0.97f, -2.24f, 0.00f, 1.00f, 0.00f},
+{-13.15f, -0.97f, -35.32f, -375.20f, -0.97f, -2.24f, 0.00f, 1.00f, 0.00f},
+{-13.24f, -0.97f, -35.32f, -375.29f, -0.97f, -2.24f, 0.00f, 1.00f, 0.00f},
+{-13.24f, -0.97f, -35.23f, -375.29f, -0.97f, -2.15f, 0.00f, 1.00f, 0.00f},
+{-13.33f, -0.97f, -35.23f, -375.38f, -0.97f, -2.15f, 0.00f, 1.00f, 0.00f},
+{-13.42f, -0.97f, -35.23f, -375.47f, -0.97f, -2.15f, 0.00f, 1.00f, 0.00f},
+{-13.42f, -0.97f, -35.14f, -375.47f, -0.97f, -2.06f, 0.00f, 1.00f, 0.00f},
+{-13.51f, -0.97f, -35.14f, -375.56f, -0.97f, -2.06f, 0.00f, 1.00f, 0.00f},
+{-13.60f, -0.97f, -35.14f, -375.65f, -0.97f, -2.06f, 0.00f, 1.00f, 0.00f},
+{-13.60f, -0.97f, -35.05f, -375.65f, -0.97f, -1.97f, 0.00f, 1.00f, 0.00f},
+{-13.69f, -0.97f, -35.05f, -375.74f, -0.97f, -1.97f, 0.00f, 1.00f, 0.00f},
+{-13.78f, -0.97f, -35.05f, -375.83f, -0.97f, -1.97f, 0.00f, 1.00f, 0.00f},
+{-13.78f, -0.97f, -34.96f, -375.83f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-13.87f, -0.97f, -34.96f, -375.92f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-13.96f, -0.97f, -34.96f, -376.01f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-13.96f, -0.97f, -34.87f, -376.01f, -0.97f, -1.79f, 0.00f, 1.00f, 0.00f},
+{-13.96f, -0.97f, -34.96f, -376.01f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.05f, -0.97f, -34.96f, -376.10f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.14f, -0.97f, -34.96f, -376.19f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.23f, -0.97f, -34.96f, -376.28f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.32f, -0.97f, -34.96f, -376.37f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.41f, -0.97f, -34.96f, -376.46f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.50f, -0.97f, -34.96f, -376.55f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.59f, -0.97f, -34.96f, -376.64f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.68f, -0.97f, -34.96f, -376.73f, -0.97f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.68f, -1.06f, -34.96f, -376.73f, -1.06f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.68f, -1.15f, -34.96f, -376.73f, -1.15f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.68f, -1.24f, -34.96f, -376.73f, -1.24f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.77f, -1.24f, -34.96f, -376.82f, -1.24f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.77f, -1.33f, -34.96f, -376.82f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.86f, -1.33f, -34.96f, -376.91f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-14.95f, -1.33f, -34.96f, -377.00f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.04f, -1.33f, -34.96f, -377.09f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.13f, -1.33f, -34.96f, -377.18f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.22f, -1.33f, -34.96f, -377.27f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.31f, -1.33f, -34.96f, -377.36f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.40f, -1.33f, -34.96f, -377.45f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.49f, -1.33f, -34.96f, -377.54f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.58f, -1.33f, -34.96f, -377.63f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.67f, -1.33f, -34.96f, -377.72f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.76f, -1.33f, -34.96f, -377.81f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.85f, -1.33f, -34.96f, -377.90f, -1.33f, -1.88f, 0.00f, 1.00f, 0.00f},
+{-15.85f, -1.33f, -34.87f, -377.90f, -1.33f, -1.79f, 0.00f, 1.00f, 0.00f},
+{-15.85f, -1.33f, -34.78f, -377.90f, -1.33f, -1.70f, 0.00f, 1.00f, 0.00f},
+{-15.94f, -1.33f, -34.78f, -377.99f, -1.33f, -1.70f, 0.00f, 1.00f, 0.00f},
+{-15.94f, -1.33f, -34.69f, -377.99f, -1.33f, -1.61f, 0.00f, 1.00f, 0.00f},
+{-16.03f, -1.33f, -34.69f, -378.08f, -1.33f, -1.61f, 0.00f, 1.00f, 0.00f},
+{-16.03f, -1.33f, -34.69f, -378.08f, -1.33f, -1.61f, 0.00f, 1.00f, 0.00f}};
 
 

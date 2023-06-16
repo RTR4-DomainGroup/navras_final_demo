@@ -16,7 +16,7 @@
 #include "../../inc/shaders/ParticleShader.h"
 #include "../../inc/shaders/SSAOShader.h"
 #include "../../inc/shaders/FontShader.h"
-
+#include "../../inc/shaders/FSVQuadShader.h"
 
 bool initAllShaders(void)
 {
@@ -31,6 +31,11 @@ bool initAllShaders(void)
         return false;
     }
 #endif // ENABLE_FONT_RENDERING
+    if(initializeFSVQuadShader() != 0)
+    {
+        LOG("Failed to initializeFSVQuadShader().\n");
+        return false;
+    }
     
     LOG("Enter\n");
     if (initializeFSQuadShader() != 0)
@@ -59,12 +64,7 @@ bool initAllShaders(void)
     if (initializeSkyboxShader() != 0)
     {
         return false;
-    }
-    
-    // if(initializeFSQuadShader() != 0)
-    // {
-    //     return false;
-    // }
+    }    
 
     if (initializeGodraysShader() != 0)
     {

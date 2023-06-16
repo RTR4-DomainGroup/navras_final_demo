@@ -39,7 +39,7 @@ int initializeADSShader(void)
 		"uniform int u_depthQuadScene; \n" \
 
 		"uniform mat4 lightSpaceMatrix; \n" \
-		"uniform int u_isInstanced = 1; \n" \
+		"uniform int u_isInstanced; \n" \
 		"out VS_OUT{ \n" \
 			"vec4 FragPos; \n" \
 			"vec3 Normal; \n" \
@@ -243,7 +243,7 @@ int initializeADSShader(void)
 					"shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; \n" \
 				"} \n" \
 			"} \n" \
-			"shadow /= 9.0; \n" \
+			"shadow /= 12.0; \n" \
 
 			"if (projCoords.z > 1.0) \n" \
 			"shadow = 0.0; \n" \

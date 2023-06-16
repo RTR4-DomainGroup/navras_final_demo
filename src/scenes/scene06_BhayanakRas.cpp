@@ -35,6 +35,8 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
+static struct TextureVariables terrainTextureVariables_06;
+
 extern GLfloat whiteSphere[]; // = {1.0f, 1.0f, 1.0f};
 extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
@@ -92,13 +94,13 @@ static float displacementmap_depth;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-static STATIC_MODEL rockModel;
+//static STATIC_MODEL rockModel;
 static STATIC_MODEL roomModel;
 static STATIC_MODEL roomModel2;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel_06;
+static DYNAMIC_MODEL skeletonModel_06;
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_GAUSSIAN_BLUR
@@ -169,7 +171,7 @@ int initializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//load models
-	loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
+	//loadStaticModel("res/models/scene06_bhayanak/boy/tempBhayanakKid2.obj", &rockModel);
 	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoom.obj", &roomModel);
 	loadStaticModel("res/models/scene06_bhayanak/room/bhayanakRoomWithoutFloor.obj", &roomModel2);
 
@@ -178,9 +180,8 @@ int initializeScene06_BhayanakRas(void)
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel_06);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel_06);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel_06);
+	loadDynamicModel("res/models/scene06_bhayanak/boy/bhayanakBoyAnim01.fbx", &skeletonModel_06);
 #endif // ENABLE_DYNAMIC_MODEL
-
 
 	return 0;
 }
@@ -189,7 +190,9 @@ void setCameraScene06_BhyanakRas(void)
 {
 	if (isInitialDisplayScene06_BhayanakRas == true)
 	{
-		setCamera(0.15f, 0.75f, 4.75f, 0.15f, 0.75f, -1.25f, 0.00f, 1.00f, 0.00f);
+		//setCamera(0.15f, 0.75f, 4.75f, 0.15f, 0.75f, -1.25f, 0.00f, 1.00f, 0.00f);
+		//lookAt(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f)
+		setCamera(2.05f, 0.50f, 2.30f, -247.60f, 0.50f, -261.33f, 0.00f, 1.00f, 0.00f);
 		isInitialDisplayScene06_BhayanakRas = false;
 	}
 }
@@ -226,7 +229,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	{
 	
 		finalViewMatrix = mat4::identity();
-		finalViewMatrix = lookat(vec3(lightPosition_bhayanak[0], lightPosition_bhayanak[1], lightPosition_bhayanak[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		finalViewMatrix = lookat(vec3(1.75f, 0.50f, 1.75f), vec3(0.0f, 0.25f, -5.48f), vec3(0.0f, 1.0f, 0.0f));
 		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
@@ -302,7 +305,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ BOy Model ------
-	translationMatrix = mat4::identity();
+	/*translationMatrix = mat4::identity();
 	scaleMatrix = mat4::identity();
 	translationMatrix = vmath::translate(0.0f, 0.0f, 0.0f);
 	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
@@ -328,7 +331,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(rockModel);
+	drawStaticModel(rockModel);*/
 
 	// ------ Room Model ------
 	translationMatrix = mat4::identity();
@@ -436,7 +439,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	// ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.008f, 0.008f, 0.008f));
 	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -464,7 +467,17 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
+	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.1f);
+
+	static bool replay_animation = true;
+	if (replay_animation) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
+		replay_animation = false;
+	}
+	else
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
 
 	glUseProgram(0);
 
@@ -531,13 +544,28 @@ void updateScene06_BhayanakRas(void)
 {
 	// Code
 
-	cameraAngle += 1.5f;
-	if(cameraAngle >= 1170.0f)
-		cameraAngle =1170.0f;
+	//cameraAngle += 1.5f;
+	//if(cameraAngle >= 1170.0f)
+	//	cameraAngle =1170.0f;
 
-	cameraRadius -= 0.01f;
-	if (cameraRadius <= 3.75f)
-		cameraRadius = 3.75f;
+	//cameraRadius -= 0.01f;
+	//if (cameraRadius <= 3.75f)
+	//	cameraRadius = 3.75f;
+
+#ifdef ENABLE_CAMERA_ANIMATION
+	// lookAt(1.10f, 0.50f, 1.35f, -248.55f, 0.50f, -262.28f, 0.00f, 1.00f, 0.00f)
+	// lookAt(1.05f, 0.40f, 1.25f, -248.60f, 0.40f, -262.38f, 0.00f, 1.00f, 0.00f)
+	// lookAt(0.70f, 0.25f, 0.95f, -248.95f, 0.25f, -262.68f, 0.00f, 1.00f, 0.00f)
+	cameraEyeX = preciselerp(cameraEyeX, 0.70f, 0.002f);
+	cameraEyeY = preciselerp(cameraEyeY, 0.25f, 0.002f);
+	cameraEyeZ = preciselerp(cameraEyeZ, 0.95f, 0.002f);
+
+	cameraCenterX = preciselerp(cameraCenterX, -248.95f, 0.002f);
+	cameraCenterY = preciselerp(cameraCenterY, 0.25f, 0.002f);
+	cameraCenterZ = preciselerp(cameraCenterZ, -262.68f, 0.002f);
+
+#endif // ENABLE_CAMERA_ANIMATION
+
 
 #ifdef ENABLE_WATER
 
@@ -561,7 +589,7 @@ void uninitializeScene06_BhayanakRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&rockModel);
+	//unloadStaticModel(&rockModel);
 
 #endif // ENABLE_STATIC_MODELS
 

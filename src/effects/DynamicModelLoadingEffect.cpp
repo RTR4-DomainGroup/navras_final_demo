@@ -289,6 +289,12 @@ void Animator::PlayAnimation(Animation* pAnimation)
     m_CurrentTime = 0.0f;
 }
 
+float Animator::GetCurrentFrame()
+{
+    return m_CurrentTime;
+}
+
+
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 {
     std::string nodeName = node->name;
@@ -866,6 +872,7 @@ void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamic
     m_lastFrame = currentFrame;
 
     dynamicModel.pAnimator->UpdateAnimation(m_deltaTime/1000.0f);
+    //dynamicModel.pAnimator->UpdateAnimation(deltaTime);
 
     std::vector<glm::mat4> transforms = dynamicModel.pAnimator->GetFinalBoneMatrices();
     for (int i = 0; i < transforms.size(); i++)
@@ -875,6 +882,27 @@ void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamic
 
     dynamicModel.pModel->Draw();
 }
+
+void reDrawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime) {
+        float currentFrame = 0.0f;
+#ifdef _WIN32
+    currentFrame = GetTickCount();
+#endif // _WIN32
+
+    m_deltaTime = deltaTime;
+    m_lastFrame = currentFrame;
+
+    dynamicModel.pAnimator->PlayAnimation(dynamicModel.pAnimation);
+
+    std::vector<glm::mat4> transforms = dynamicModel.pAnimator->GetFinalBoneMatrices();
+    for (int i = 0; i < transforms.size(); i++)
+    {
+        glUniformMatrix4fv(adsDynamicUniform.finalBonesMatricesUniform[i], 1, GL_FALSE, glm::value_ptr(transforms[i]));
+    }
+
+    dynamicModel.pModel->Draw();
+}
+
 
 void unloadDynamicModel(DYNAMIC_MODEL* dynamicModel)
 {

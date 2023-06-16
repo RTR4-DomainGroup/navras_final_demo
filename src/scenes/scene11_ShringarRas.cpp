@@ -174,14 +174,14 @@ extern struct SkyboxUniform sceneSkyBoxUniform;
 
 #ifdef ENABLE_STATIC_MODELS
 //Model variables
-STATIC_MODEL treemodel_11;
+//STATIC_MODEL treemodel_11;
 STATIC_MODEL manModel_11;
 STATIC_MODEL womanModel_11;
 
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel_11;
+static DYNAMIC_MODEL skeletonModel_11;
 
 #endif // ENABLE_STATIC_MODELS
 
@@ -277,7 +277,7 @@ int initializeScene11_ShringarRas(void)
 #ifdef ENABLE_STATIC_MODELS
 	//load models
 	//loadStaticModel("res/models/tree_shringar/Shelf.obj", &rockModel_11);
-	loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
+	//loadStaticModel("res/models/tree_shringar/palmTree.obj", &treemodel_11);
 	loadStaticModel("res/models/scene11_shringar/man/tempShringrMan.obj", &manModel_11);
 	loadStaticModel("res/models/scene11_shringar/woman/tempShringarWoman.obj", &womanModel_11);
 #endif // ENABLE_STATIC_MODELS
@@ -408,7 +408,7 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	} else if(actualDepthQuadScene == 1) {
 
 		finalViewMatrix = mat4::identity();
-		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		finalViewMatrix = lookat(vec3(0.00f, 0.20f, -14.62f), vec3(0.00f, 0.13f, -20.62f), vec3(0.0f, 1.0f, 0.0f));
 		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
@@ -696,42 +696,42 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 	//glUniform1i(sceneOutdoorADSStaticUniform.)
 	// ------ TREE Model ------
 
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
+	//translationMatrix = mat4::identity();
+	//rotationMatrix = mat4::identity();
+	//modelMatrix = mat4::identity();
+	//scaleMatrix = mat4::identity();
+	//rotationMatrix_x = mat4::identity();
+	//rotationMatrix_y = mat4::identity();
+	//rotationMatrix_z = mat4::identity();
 
-	translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
-	scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
+	//translationMatrix = vmath::translate(0.25f, 0.35f, -17.0f);
+	//scaleMatrix = vmath::scale(0.01f, 0.01f, 0.01f);
 
-	//update_transformations(&translationMatrix, &scaleMatrix, NULL);
+	////update_transformations(&translationMatrix, &scaleMatrix, NULL);
 
-	modelMatrix = translationMatrix * scaleMatrix;
+	//modelMatrix = translationMatrix * scaleMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	if (actualDepthQuadScene == 1) {
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+	//if (actualDepthQuadScene == 1) {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+	//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
-	} else {
+	//} else {
 
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+	//	glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	//	glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
-	}
+	//}
 
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	//glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawStaticModel(treemodel_11);
+	//drawStaticModel(treemodel_11);
 
 	// Man
 	translationMatrix = mat4::identity();
@@ -844,67 +844,75 @@ void displayScene11_ShringarRas(int godRays = 1, bool recordWaterReflectionRefra
 
 #ifdef ENABLE_DYNAMIC_MODELS
 
-	glm::mat4 glm_modelMatrix;
-	glm::mat4 glm_translateMatrix;
-	glm::mat4 glm_rotateMatrix;
-	glm::mat4 glm_scaleMatrix;
+	// glm::mat4 glm_modelMatrix;
+	// glm::mat4 glm_translateMatrix;
+	// glm::mat4 glm_rotateMatrix;
+	// glm::mat4 glm_scaleMatrix;
 
-	glm_modelMatrix = glm::mat4(1.0f);
-	glm_translateMatrix = glm::mat4(1.0f);
-	glm_rotateMatrix = glm::mat4(1.0f);
-	glm_scaleMatrix = glm::mat4(1.0f);
+	// glm_modelMatrix = glm::mat4(1.0f);
+	// glm_translateMatrix = glm::mat4(1.0f);
+	// glm_rotateMatrix = glm::mat4(1.0f);
+	// glm_scaleMatrix = glm::mat4(1.0f);
 
-	sceneOutdoorADSDynamicUniform = useADSDynamicShader();
+	// sceneOutdoorADSDynamicUniform = useADSDynamicShader();
 
-	// Sending Light Related Uniforms
-	glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess);
+	// // Sending Light Related Uniforms
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.laUniform, 1, lightAmbient);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.ldUniform, 1, lightDiffuse);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.lsUniform, 1, lightSpecular);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.lightPositionUniform, 1, lightPosition);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.kaUniform, 1, materialAmbient);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.kdUniform, 1, materialDiffuse);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.ksUniform, 1, materialSpecular);
+	// glUniform1f(sceneOutdoorADSDynamicUniform.materialShininessUniform, materialShininess);
 
-	glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
-	glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
-	glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
-	glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
+	// glUniform1i(sceneOutdoorADSDynamicUniform.fogEnableUniform, 0);
+	// glUniform1f(sceneOutdoorADSDynamicUniform.densityUniform, density);
+	// glUniform1f(sceneOutdoorADSDynamicUniform.gradientUniform, gradient);
+	// glUniform4fv(sceneOutdoorADSDynamicUniform.skyFogColorUniform, 1, skyFogColor);
+	// glUniform1i(sceneOutdoorADSDynamicUniform.uniform_enable_godRays, godRays);
+	// glUniform1i(sceneOutdoorADSDynamicUniform.godrays_blackpass_sphere, 0);
 
-	// ------ Dancing Vampire Model ------
+	// // ------ Dancing Vampire Model ------
 
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.025f, -12.85f));
-	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.0008f, 0.0008f, 0.0008f));
-	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	// glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.025f, -15.00f));
+	// glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.001f, 0.001f, 0.001f));
+	// //glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
-	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
+	// glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix;
 
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
-	if (actualDepthQuadScene == 1) {
+	// glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
+	// if (actualDepthQuadScene == 1) {
 
-		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+	// 	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 0);
+	// 	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 1);
+	// 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
 
-	}
-	else {
+	// }
+	// else {
 
-		glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
+	// 	glUniform1i(sceneOutdoorADSDynamicUniform.actualSceneUniform, 1);
+	// 	glUniform1i(sceneOutdoorADSDynamicUniform.depthSceneUniform, 0);
 
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+	// 	glActiveTexture(GL_TEXTURE1);
+	// 	glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
 
-	}
+	// }
 
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+	// glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+	// glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_11, 1.0f);
+	// static bool replay_animation = true;
+	// if (replay_animation) // replay animation
+	// {
+	// 	LOG("Replaying model animation\n");
+	// 	reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	// 	replay_animation = false;
+	// }
+	// else
+	// 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_11, 1.0f);
 
-	glUseProgram(0);
+	// glUseProgram(0);
 
 #endif
 
@@ -1108,7 +1116,7 @@ void uninitializeScene11_ShringarRas(void)
 
 #ifdef ENABLE_STATIC_MODELS
 	//UNINIT models
-	unloadStaticModel(&treemodel_11);
+	//unloadStaticModel(&treemodel_11);
 #endif // ENABLE_STATIC_MODELS
 
 

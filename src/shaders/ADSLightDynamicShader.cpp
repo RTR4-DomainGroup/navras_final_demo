@@ -218,6 +218,8 @@ int initializeADSDynamicShader(void)
 		"uniform sampler2D shadowMap; \n" \
 		"uniform vec4 u_lightPosition; \n" \
 
+		"uniform float u_colorCorrection; \n" \
+
 		"out vec4 FragColor; \n" \
 		"out vec4 normal_depth; \n" \
 
@@ -240,7 +242,7 @@ int initializeADSDynamicShader(void)
 			"shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0; \n" \
 			"} \n" \
 			"} \n" \
-			"shadow /= 9.0; \n" \
+			"shadow /= 12.0; \n" \
 
 			"if (projCoords.z > 1.0) \n" \
 			"shadow = 0.0; \n" \
@@ -282,7 +284,7 @@ int initializeADSDynamicShader(void)
 			"float shadow = ShadowCalculation(fs_in.FragPosLightSpace); \n" \
 		"		phong_ads_light = ambient + (1.0 - shadow) * (diffuse + specular); \n" \
 		
-		"		FragColor = phong_ads_light; \n" \
+		"		FragColor = (texColor - vec4(u_colorCorrection)) + phong_ads_light; \n" \
 
 		"		if (u_fogEnable == 1) \n" \
 		"		{ \n" \
@@ -407,6 +409,8 @@ int initializeADSDynamicShader(void)
 	adsDynamicUniform.depthSceneUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_depthScene");
 	adsDynamicUniform.depthQuadSceneUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_depthQuadScene");
 	adsDynamicUniform.depthTextureSamplerUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "depthMap");
+	
+	adsDynamicUniform.colorCorrectionUniform = glGetUniformLocation(adsDynamicShaderProgramObject, "u_colorCorrection");
 
 	for (int i = 0; i < MAX_BONES; i++)
 	{
