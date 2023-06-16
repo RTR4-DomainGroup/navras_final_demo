@@ -398,7 +398,7 @@ void updateScene_PlaceHolderIndoor(void)
 		{
 			if (mix_intensity <= 1.0f)
 			{
-				mix_intensity += 0.115f;
+				mix_intensity += 0.12f;
 				timeFlag = true;
 			}
 			else

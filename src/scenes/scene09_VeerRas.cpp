@@ -124,7 +124,7 @@ static float displacementmap_depth;
 //#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel;
+static DYNAMIC_MODEL skeletonModel;
 GLfloat model_y = 4.5f;
 #endif // ENABLE_STATIC_MODELS
 

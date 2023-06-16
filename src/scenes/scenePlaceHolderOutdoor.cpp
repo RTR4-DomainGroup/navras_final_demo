@@ -75,6 +75,8 @@
 
 GLfloat whiteSphere[3] = {1.0f, 1.0f, 1.0f};
 GLuint texture_Marble;
+GLuint texture_Title;
+TEXTURE texture_grass;
 TEXTURE texture_flower;
 
 struct ADSUniform sceneOutdoorADSStaticUniform;
@@ -251,6 +253,18 @@ int initializeScene_PlaceHolderOutdoor(void)
 	}
 
 #endif // ENABLE_ADSLIGHT
+
+	// Texture
+		// if (LoadGLTexture(&texture_Marble, MAKEINTRESOURCE(IDBITMAP_MARBLE)) == GL_FALSE) {
+	if (LoadGLTexture_UsingSOIL(&texture_Title, TEXTURE_DIR"Title.png") == GL_FALSE) {
+		//uninitialize();
+		LOG("LoadGLTexture texture_Title FAILED!!!\n");
+		return(-1);
+	}
+	else
+	{
+		LOG("LoadGLTexture texture_Title Successfull = %u!!!\n", texture_Title);
+	}
 
 #ifdef ENABLE_SHADOW
 
@@ -578,7 +592,7 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFramebuffer.frameBuffer);
 	glViewport(0, 0, (GLsizei)shadowFramebuffer.textureWidth, (GLsizei)shadowFramebuffer.textureHeight);
 	glClear(GL_DEPTH_BUFFER_BIT);
-	perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.01f, 100.0f);
+	perspectiveProjectionMatrix = vmath::perspective(90.0f, (GLfloat)shadowFramebuffer.textureWidth / shadowFramebuffer.textureHeight, 0.1f, 5.0f);
 	displayPasses(1, true, true, false, 1);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -691,47 +705,6 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #endif // ENABLE_MASKS
-
-	// Font
-	glBindFramebuffer(GL_FRAMEBUFFER, fboFont.frameBuffer);
-		glViewport(0, 0, (GLsizei)fboFont.textureWidth, (GLsizei)fboFont.textureHeight);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		perspectiveProjectionMatrix = vmath::perspective(45.0f, (GLfloat)fboFont.textureWidth / fboFont.textureHeight, 0.1f, 100.0f);
-
-		if (mix_intensity >  0.0f)
-		{
-			glEnable(GL_CULL_FACE);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			vec4 textColor = vec4(1.0f, 1.0f, 1.0f, alpha);
-			// TRANFORM vector = {-0.5f, 0.23f, -3.0f};
-			// update_transformations(NULL, NULL, NULL, &vector);
-			// displayFont("Presenting", vec3(vector.x, vector.y, vector.z), 0.003f, textColor);
-			displayFont("Presenting", vec3(-0.3f, 0.23f, -3.0f), 0.003f, textColor);
-
-
-			textColor = vec4(1.0f, 1.0f, 1.0f, alpha);
-			displayFont("NAVRAS", vec3(-0.9f, -0.25f, -3.0f), 0.010f, textColor);
-			// TRANFORM vector = {-1.25f, -0.25f, -3.0f};
-			// update_transformations(NULL, NULL, NULL, &vector);
-			// displayFont("NAVRAS", vec3(vector.x, vector.y, vector.z), 0.010f, textColor);
-
-
-			glDisable(GL_CULL_FACE);
-			glDisable(GL_BLEND);
-
-			// update
-			alpha = alpha + 0.001;
-			if (alpha >= 1.0)
-			{
-				alpha = 1.0f;
-			}
-		}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 
 	//
 	if(!isGaussianBlurRequired && !isGodRequired) 
@@ -1041,6 +1014,13 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		fsGaussBlurQuadUniform = useFSQuadShader();
+
+		if (getCurrentScene() == SCENE02_EARTH_AND_SPACE) {
+			
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		}
 		glUniform1i(fsGaussBlurQuadUniform.singleTexture, 3);
 		glUniform1f(fsGaussBlurQuadUniform.intensity, mix_intensity);
 		/*glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
@@ -1072,12 +1052,22 @@ void displayScene_PlaceHolderOutdoor(SET_CAMERA setCamera, DISPLAY_PASSES displa
 
 			glUniform1i(fsGaussBlurQuadUniform.singleTexture, 1);
 			glUniform1i(fsGaussBlurQuadUniform.maskOrFont, 1);
+			glUniform1f(fsGaussBlurQuadUniform.alphablend, alpha);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, fboFont.frameBufferTexture);
+			glBindTexture(GL_TEXTURE_2D, texture_Title);
 			glUniform1i(fsGaussBlurQuadUniform.textureSamplerUniform1, 0);
 
 			displayQuad();
 			glBindTexture(GL_TEXTURE_2D, 0);
+
+			glDisable(GL_BLEND);
+
+			// update
+			alpha = alpha + 0.001;
+			if (alpha >= 1.0)
+			{
+				alpha = 1.0f;
+			}
 
 		}
 
@@ -1240,12 +1230,13 @@ if(isBlur){
 	}
 
 	now = time(NULL);
-	if (now >= (then+1))
+	if (now >= (then + 1))
 	{
 		if(mix_intensity <= 1.0f)
 		{
-			// LOG("mix_in = %f\n", mix_intensity);
-			mix_intensity += 0.115f;
+
+			LOG("mix_in = %f\n", mix_intensity);
+			mix_intensity += 0.12f;
 			timeFlag = true;
 		}
 		else{

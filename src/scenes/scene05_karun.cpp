@@ -58,7 +58,7 @@ STATIC_MODEL roomModel;
 STATIC_MODEL woodenToy;
 STATIC_MODEL cryanosModel;
 STATIC_MODEL colorPencilModel;
-DYNAMIC_MODEL boyModel;
+static DYNAMIC_MODEL boyModel;
 STATIC_MODEL football;
 
 GLuint textures_kidroom[4];

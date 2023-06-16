@@ -35,6 +35,8 @@
 #define FBO_WIDTH WIN_WIDTH
 #define FBO_HEIGHT WIN_HEIGHT
 
+static struct TextureVariables terrainTextureVariables_06;
+
 extern GLfloat whiteSphere[]; // = {1.0f, 1.0f, 1.0f};
 extern GLuint texture_Marble;
 extern TEXTURE texture_grass;
@@ -98,7 +100,7 @@ static STATIC_MODEL roomModel2;
 #endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel_06;
+static DYNAMIC_MODEL skeletonModel_06;
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_GAUSSIAN_BLUR
@@ -181,7 +183,6 @@ int initializeScene06_BhayanakRas(void)
 	loadDynamicModel("res/models/scene06_bhayanak/boy/bhayanakBoyAnim01.fbx", &skeletonModel_06);
 #endif // ENABLE_DYNAMIC_MODEL
 
-
 	return 0;
 }
 
@@ -228,7 +229,7 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	{
 	
 		finalViewMatrix = mat4::identity();
-		finalViewMatrix = lookat(vec3(lightPosition_bhayanak[0], lightPosition_bhayanak[1], lightPosition_bhayanak[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		finalViewMatrix = lookat(vec3(1.75f, 0.50f, 1.75f), vec3(0.0f, 0.25f, -5.48f), vec3(0.0f, 1.0f, 0.0f));
 		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
