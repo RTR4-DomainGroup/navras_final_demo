@@ -434,7 +434,17 @@ void displayScene5_karun(void)
 	glUniformMatrix4fv(karynDynamicADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(karynDynamicADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(karynDynamicADSUniform, boyModel, 1.0f);
+	static bool restart_animation = true;
+
+	static bool replay_animation = true;
+	if (replay_animation) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(karynDynamicADSUniform, boyModel, 1.3f);
+		replay_animation = false;
+	}
+	else
+		drawDynamicModel(karynDynamicADSUniform, boyModel, 1.3f);
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
 #endif 

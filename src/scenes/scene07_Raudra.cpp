@@ -582,7 +582,15 @@ void displayScene07_Raudra()
 	glUniformMatrix4fv(raudraDynamicADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
 	glUniformMatrix4fv(raudraDynamicADSUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	drawDynamicModel(raudraDynamicADSUniform, boyModelRaudra, 0.8f);
+	static bool replay_animation = true;
+	if (replay_animation) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(raudraDynamicADSUniform, boyModelRaudra, 1.0f);
+		replay_animation = false;
+	}
+	else
+		drawDynamicModel(raudraDynamicADSUniform, boyModelRaudra, 0.8f);
 	glUseProgram(0);
 	//glDisable(GL_TEXTURE_2D);
 #endif 

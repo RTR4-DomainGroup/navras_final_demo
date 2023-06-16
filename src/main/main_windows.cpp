@@ -350,12 +350,11 @@ int initialize(void)
 		uninitialize();
 	}
 
-	//ToggleFullscreen();
 
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
 
-	// ToggleFullscreen();
+	ToggleFullscreen();
 
 	//set fps to system
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60

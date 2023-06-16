@@ -72,6 +72,8 @@ bool timeFlag = true;
 time_t now;
 time_t then;
 
+static bool isParticleFulllscreen = true;
+
 #ifdef SHORTS
 int time_scene0 = 5;
 int time_scene1 = 11;
@@ -373,6 +375,7 @@ int initializeNavras(void) {
 	// Variable Declarations
 
 	// Code
+	
 
 	// Here starts OpenGL code
     
@@ -665,6 +668,7 @@ void resizeNavras(int width, int height) {
 
 }
 
+extern void ToggleFullscreen(void);
 void displayNavras(void)
 {
 	// Function Declarations 
@@ -834,6 +838,14 @@ void displayNavras(void)
 	}
 	else if (currentScene == SCENE14_PARTICLE)
 	{
+		static int fulllscreenCallCount = 0;
+		if (fulllscreenCallCount < 2)
+		{
+			ToggleFullscreen();
+			fulllscreenCallCount ++;
+			LOG("fulllscreenCallCount: %d\n", fulllscreenCallCount);
+		}
+
 		audio(SCENE14_PARTICLE);
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		displayParticle();

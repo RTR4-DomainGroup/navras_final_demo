@@ -919,11 +919,12 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
-	if (scene10_state == 1) // replay animation
+	static bool replay_animation = true;
+	if (replay_animation) // replay animation
 	{
 		LOG("Replaying model animation\n");
 		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
-		scene10_state = 2;
+		replay_animation = false;
 	}
 	else
 		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
@@ -1123,45 +1124,45 @@ void updateScene10_AdbhutRas(void)
 	// 	}
 	// }
 
-	if (scene10_state == 2) // straight to front to bridge
+	if (scene10_state == 1) // straight to front to bridge
 	{
 		preciselerp_lookat(-0.71f, -0.76f, -45.00f, -362.13f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeZ < (-35.99f - 0.2f))
+		{
+			scene10_state = 2;
+			LOG("Switching to state %d\n", scene10_state);
+		}
+	}
+
+	if (scene10_state == 2) // top of the bridge
+	{
+		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
+		if (cameraEyeX < (-4.21f - 0.2f))
 		{
 			scene10_state = 3;
 			LOG("Switching to state %d\n", scene10_state);
 		}
 	}
 
-	if (scene10_state == 3) // top of the bridge
-	{
-		preciselerp_lookat(-20.21f, 1.75f, -37.50f, -365.63f, -0.76f, 21.77f, 0.00f, 1.00f, 0.00f, 0.002f);
-		if (cameraEyeX < (-4.21f - 0.2f))
-		{
-			scene10_state = 4;
-			LOG("Switching to state %d\n", scene10_state);
-		}
-	}
-
-	if (scene10_state == 4) // down to bridge
+	if (scene10_state == 3) // down to bridge
 	{
 		preciselerp_lookat(-30.35f, -2.11f, -33.00f, -377.14f, -1.11f, 25.08f, 0.00f, 1.00f, 0.00f, 0.002f);
 		if (cameraEyeX < (-16.28f - 0.2f))
 		{
-			scene10_state = 5;
+			scene10_state = 4;
 		}
 	}
 
 #endif
 
-	if(scene10_state == 5 && skeletonModel.pAnimator->GetCurrentFrame() >= 1315.0) 
+	if(scene10_state == 4 && skeletonModel.pAnimator->GetCurrentFrame() >= 1315.0) 
 	{
 		leaf_translate -= 0.015f;
 		leaf_rotate += 9.52f;	
 		if(leaf_translate < -1.83f) {
 			leaf_translate = -1.83f;
 			leaf_rotate = 247.20f;	
-			scene10_state = 6;
+			scene10_state = 5;
 		}
 		if(leaf_rotate > 360.0f) {
 			leaf_rotate = 0.0f;
