@@ -114,7 +114,7 @@ static const char *szAudios[] = {
 #define ENABLE_MASKS
 // #define ENABLE_CAMERA_LOGS
 
- //#define ENABLE_SINGLE_SCENE
+ #define ENABLE_SINGLE_SCENE
 
 #ifdef ENABLE_SINGLE_SCENE
 //#define CURRENT_SCENE SCENE00_AMC_BANNER          // Loading AMC banner 
@@ -122,8 +122,8 @@ static const char *szAudios[] = {
 //#define CURRENT_SCENE SCENE02_EARTH_AND_SPACE     // Earth and Space
 //#define CURRENT_SCENE SCENE03_LUCY                // Lucy
 //#define CURRENT_SCENE SCENE04_INTRO               // Intro 
-#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
-//#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
+//#define CURRENT_SCENE SCENE05_KARUN_RAS           // Karun Ras 
+#define CURRENT_SCENE SCENE06_BHAYANK_RAS         // Bhayanak Ras
 //#define CURRENT_SCENE SCENE07_RAUDRA_RAS          // Raudra Ras
 //#define CURRENT_SCENE SCENE08_BIBHATSA_RAS        // Bibhatsa Ras
 //#define CURRENT_SCENE SCENE09_VEER_RAS            // Veer Ras 
