@@ -637,6 +637,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
+	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.0f);
+
 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
 
 	glUseProgram(0);

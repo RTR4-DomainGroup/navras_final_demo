@@ -896,6 +896,8 @@ void displayScene10_Passes(int godRays, bool recordWaterReflectionRefraction, bo
 
 	}
 
+	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.0f);
+
 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.6f);
 
 	glUseProgram(0);
