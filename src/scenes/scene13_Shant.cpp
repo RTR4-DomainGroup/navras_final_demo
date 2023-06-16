@@ -475,6 +475,7 @@ void displayScene13_Shant(void)
 
 	glUniform1f(sceneIndoorADSUniform.blackOrWhiteRoomMixDeltaUniform, 0.0f);
 	glUniform1f(sceneIndoorADSUniform.ssaoIntensityDeltaUniform, 0.7f);
+	glUniform1f(sceneIndoorADSUniform.colorCorrectionUniform, 0.4f);
 
 	drawStaticModel(shantaManModel);
 

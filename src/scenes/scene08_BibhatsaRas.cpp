@@ -594,7 +594,7 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniform4fv(bibhatsaRasObject.ksUniform, 1, materialSpecular_bibhatsa);
 		glUniform1f(bibhatsaRasObject.materialShininessUniform, materialShininess_bibhatsa);		
 
-		glUniform1f(bibhatsaRasObject.colorCorrectionUniform, 0.7f);
+		glUniform1f(bibhatsaRasObject.colorCorrectionUniform, 0.9f);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture_road);

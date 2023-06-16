@@ -576,6 +576,7 @@ void displayScene07_Raudra()
 	glUniform1i(raudraDynamicADSUniform.depthSceneUniform, 0);
 	glUniform1i(raudraDynamicADSUniform.depthQuadSceneUniform, 0);
 
+	glUniform1f(raudraDynamicADSUniform.colorCorrectionUniform, 0.1f);
 
 	glUniformMatrix4fv(raudraDynamicADSUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
 	glUniformMatrix4fv(raudraDynamicADSUniform.viewMatrixUniform, 1, GL_FALSE, viewMatrix);
