@@ -1361,7 +1361,15 @@ void displayScene08_Passes(int godRays = 1, bool recordWaterReflectionRefraction
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 		glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-		drawDynamicModel(sceneOutdoorADSDynamicUniform, beebhatsaManModel, 0.7f);
+		static bool replay_animation = true;
+		if (replay_animation) // replay animation
+		{
+			LOG("Replaying model animation\n");
+			reDrawDynamicModel(sceneOutdoorADSDynamicUniform, beebhatsaManModel, 1.0f);
+			replay_animation = false;
+		}
+		else
+			drawDynamicModel(sceneOutdoorADSDynamicUniform, beebhatsaManModel, 0.7f);
 
 		glUseProgram(0);
 

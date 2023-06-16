@@ -467,7 +467,16 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	//glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
 
-	//drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 0.0f);
+	//
+	// static bool replay_animation = true;
+	// if (replay_animation) // replay animation
+	// {
+	// 	LOG("Replaying model animation\n");
+	// 	reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
+	// 	replay_animation = false;
+	// }
+	// else
+	// 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 0.0f);
 
 	//glUseProgram(0);
 
