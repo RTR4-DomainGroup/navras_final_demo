@@ -256,6 +256,7 @@ typedef struct _DYNAMIC_MODEL
 
 
 void drawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime);
+void reDrawDynamicModel(ADSDynamicUniform adsDynamicUniform, DYNAMIC_MODEL dynamicModel, float deltaTime);
 void loadDynamicModel(const char* path, DYNAMIC_MODEL* dynamicModel);
 void unloadDynamicModel(DYNAMIC_MODEL* dynamicModel);
 
