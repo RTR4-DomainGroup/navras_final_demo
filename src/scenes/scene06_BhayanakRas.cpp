@@ -469,7 +469,15 @@ void displayScene06_BhayanakRas(int godRays = 1, bool recordWaterReflectionRefra
 
 	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.1f);
 
-	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
+	static bool replay_animation = true;
+	if (replay_animation) // replay animation
+	{
+		LOG("Replaying model animation\n");
+		reDrawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
+		replay_animation = false;
+	}
+	else
+		drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel_06, 1.0f);
 
 	glUseProgram(0);
 
