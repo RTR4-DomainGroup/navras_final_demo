@@ -224,7 +224,7 @@ int initializeScene10_AdbhutRas(void)
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_adbhutMask, TEXTURE_DIR"Masks\\AdbhutMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_adbhutMask, TEXTURE_DIR"Masks/AdbhutMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_adbhutMask FAILED!!!\n");

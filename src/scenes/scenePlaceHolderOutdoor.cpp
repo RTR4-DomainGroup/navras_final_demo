@@ -379,7 +379,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 #endif // ENABLE_WATER
 
 #ifdef ENABLE_SKYBOX
-	if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox\\") != 0)
+	if (initializeSkybox(&texture_skybox, TEXTURE_DIR"Skybox/") != 0)
 	{
 
 		LOG("initializeSkybox() FAILED!!!\n");

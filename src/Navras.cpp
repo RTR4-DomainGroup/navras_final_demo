@@ -485,6 +485,9 @@ int initializeNavras(void) {
 				return (-8);
 			}
 			break;	
+		case SCENE15_END_CREDITS:
+			
+			break;	
 		default:
 			LOG("invalid scene %d !!!\n", CURRENT_SCENE);
 			return (-8);

@@ -146,7 +146,7 @@ int initializeScene08_BibhatsaRas(void)
 
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
-	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaMask, TEXTURE_DIR"Masks\\BibhatsaMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bibhatsaMask, TEXTURE_DIR"Masks/BibhatsaMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_bibhatsaMask FAILED!!!\n");

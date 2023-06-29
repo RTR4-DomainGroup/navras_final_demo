@@ -18,7 +18,7 @@ GLboolean LoadGLTexture(GLuint* a, TCHAR b[])
 #elif _WIN32
 
 
-// #pragma comment(lib, "SOIL\\lib\\SOIL.lib")
+// #pragma comment(lib, "SOIL/lib/SOIL.lib")
 
 // windows code goes here
 

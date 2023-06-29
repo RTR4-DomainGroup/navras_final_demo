@@ -157,7 +157,7 @@ int initializeScene09_VeerRas(void)
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_veerMask, TEXTURE_DIR"Masks\\VeerMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_veerMask, TEXTURE_DIR"Masks/VeerMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture for texture_veerMask FAILED!!!\n");

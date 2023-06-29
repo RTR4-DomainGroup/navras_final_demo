@@ -156,7 +156,7 @@ int initializeScene06_BhayanakRas(void)
 #ifdef ENABLE_MASKSQUADS
 	initializeQuad();
 
-	if (LoadGLTexture_UsingSOIL(&texture_bhayanakMask, TEXTURE_DIR"Masks\\BhayanakMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_bhayanakMask, TEXTURE_DIR"Masks/BhayanakMask.jpg") == FALSE)
 	{
 		//uninitialize();
 		LOG("LoadGLTexture FAILED in Mask Bhayanak Ras!!!\n");

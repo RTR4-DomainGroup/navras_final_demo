@@ -76,7 +76,7 @@ bool isInitialDisplayScene07_RaudraRas = true;
 int initializeScene07_Raudra(void)
 {
 //#ifdef ENABLE_MASKSQUADS
-	if (LoadGLTexture_UsingSOIL(&texture_raudraMask, TEXTURE_DIR"Masks\\RaudraMask.jpg") == FALSE)
+	if (LoadGLTexture_UsingSOIL(&texture_raudraMask, TEXTURE_DIR"Masks/RaudraMask.jpg") == FALSE)
 	{
 		uninitializeScene07_Raudra();
 		LOG("LoadGLTexture FAILED in Raudra for Raudra Mask !!!\n");

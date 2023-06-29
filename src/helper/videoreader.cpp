@@ -16,7 +16,7 @@ bool video_reader_open(VideoReaderState* state, const char* fileName)
     
     if(avformat_open_input(&state->avFormatContext, fileName, NULL, NULL) != 0)
     {
-        LOG("Unable to open input Video file %s. \n", fileName);
+        LOG("Unable to open input Video file %s\n", fileName);
         return false;
     }
 
