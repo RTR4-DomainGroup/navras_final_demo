@@ -380,7 +380,7 @@ int initializeNavras(void) {
 	// Here starts OpenGL code
     
 	// Print OpenGLInfo
-	//printGLInfo();
+	printGLInfo();
 
     // Calling Shaders
     if(initAllShaders())
@@ -668,7 +668,7 @@ void resizeNavras(int width, int height) {
 
 }
 
-extern void ToggleFullscreen(void);
+extern void toggleFullscreen(void);
 void displayNavras(void)
 {
 	// Function Declarations 
@@ -700,7 +700,7 @@ void displayNavras(void)
 			if (initializeVideoEffect("res/videos/DomainLogoAnim60.mp4") != 0)
 			{
 				LOG("Unable to open End Credits Video. \n");
-				PostQuitMessage(-1);
+				QuitApplication();
 			}
 			isDomainLogoIntialized = true;
 		}
@@ -841,7 +841,7 @@ void displayNavras(void)
 		static int fulllscreenCallCount = 0;
 		if (fulllscreenCallCount < 2)
 		{
-			ToggleFullscreen();
+			toggleFullscreen();
 			fulllscreenCallCount ++;
 			LOG("fulllscreenCallCount: %d\n", fulllscreenCallCount);
 		}
@@ -858,7 +858,7 @@ void displayNavras(void)
 			if(initializeVideoEffect("res/videos/EndCredits.mp4") != 0)
 			{
 				LOG("Unable to open End Credits Video. \n");
-				PostQuitMessage(-1);
+				QuitApplication();
 			}
 			isEndCreditsIntialized = true;
 		}

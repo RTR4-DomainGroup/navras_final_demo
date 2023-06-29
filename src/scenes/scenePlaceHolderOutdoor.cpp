@@ -414,7 +414,7 @@ int initializeScene_PlaceHolderOutdoor(void)
 
 	createFBO(&fboEarthAndSpace);
 
-	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield\\Star.png") != 0)
+	if (initializeStarfield(&texture_star, TEXTURE_DIR"Starfield/Star.png") != 0)
 	{
 		LOG("initializeStarfield() FAILED!!!\n");
 		return(-1);
@@ -491,11 +491,13 @@ int initializeScene_PlaceHolderOutdoor(void)
 		return (-8);
 	}
 
+#ifdef ENABLE_FONT_RENDERING
 	if (initializeFont() != 0)
 	{
 		LOG("initializeFont() FAILED in initializeScene02_EarthAndSpace in scene02_EarthAndSpace.cpp !!!\n");
 		return (-8);
 	}
+#endif // ENABLE_FONT_RENDERING
 
 	return 0;
 }

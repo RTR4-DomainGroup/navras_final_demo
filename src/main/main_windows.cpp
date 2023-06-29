@@ -207,7 +207,7 @@ void QuitApplication(void)
 LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 
 	// Function Declarations
-	void ToggleFullscreen(void);
+	void toggleFullscreen(void);
 	void resize(int, int);
 	void uninitialize(void);
 
@@ -244,7 +244,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
 		switch(wParam) {
 		case 'F':
 		case 'f':
-			ToggleFullscreen();
+			toggleFullscreen();
 			break;
 		default:
 			eventHandlerNavras(iMsg, wParam);
@@ -286,7 +286,7 @@ int initialize(void)
 	// function declarations
 	void uninitialize(void);
 	void resize(int, int);
-	void ToggleFullscreen(void);
+	void toggleFullscreen(void);
 
 	// variable declarations
 	int initializeReturnValue;
@@ -354,7 +354,7 @@ int initialize(void)
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
 
-	ToggleFullscreen();
+	toggleFullscreen();
 
 	//set fps to system
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
@@ -363,7 +363,7 @@ int initialize(void)
 }
 
 
-void ToggleFullscreen(void) {
+void toggleFullscreen(void) {
 
 	// Variable Declarations
 	static DWORD dwStyle;
@@ -440,12 +440,12 @@ void update(void)
 void uninitialize(void)
 {
 	// function declarations
-	void ToggleFullscreen(void);
+	void toggleFullscreen(void);
 
 	// code
 	if(gbFullscreen)
 	{
-		ToggleFullscreen();
+		toggleFullscreen();
 	}
 
 	//LOG("Enter\n");

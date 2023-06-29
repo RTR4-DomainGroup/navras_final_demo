@@ -532,6 +532,12 @@ int initialize(void)
         glxContext
     );
 
+	// glew initalization
+    if (glewInit() != GLEW_OK)
+    {
+        return (-5);
+    }
+    
     // here starts OpenGL code
     int retVal = initializeNavras();
     if(retVal < 0)
