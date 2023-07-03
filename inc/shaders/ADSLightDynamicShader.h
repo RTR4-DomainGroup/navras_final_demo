@@ -46,6 +46,8 @@ struct ADSDynamicUniform
     GLuint depthQuadSceneUniform;
     GLuint depthTextureSamplerUniform;
 
+    GLuint colorCorrectionUniform;
+
 };
 
 int initializeADSDynamicShader(void);

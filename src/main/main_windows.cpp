@@ -151,18 +151,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
 	// Show Window
 	ShowWindow(hwnd, iCmdShow);
-#ifdef ENABLE_MULTI_THREADING
 	// initialize()
-	iRetVal = initializeForVideo();
-	if(iRetVal < 0)
-	{
-		LOG("initializeForVideo FAILED!!!\n");
-		uninitialize();
-		return(-1);
-	}
-	LOG("initializeForVideo() Success starting Background Load !!!\n");
-	std::thread first (initialize);
-#else
+	//iRetVal = initializeForVideo();
+	
 	iRetVal = initialize();
 	if(iRetVal < 0)
 	{
@@ -171,7 +162,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		uninitialize();
 		return(-1);
 	}
-#endif
 	
 	// Foregrounding And Focusing the Window
 	SetForegroundWindow(hwnd);
@@ -203,9 +193,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 		}
 	}
 	
-	#ifdef ENABLE_MULTI_THREADING
-	first.join();
-	#endif
 	
 	uninitialize();
 	return((int)msg.wParam);
@@ -303,7 +290,6 @@ int initialize(void)
 
 	// variable declarations
 	int initializeReturnValue;
-#ifndef ENABLE_MULTI_THREADING
 	// variable declarations
 	PIXELFORMATDESCRIPTOR pfd;
 	int iPixelFormatIndex;
@@ -338,8 +324,7 @@ int initialize(void)
 	{
 		return(-2);
 	}
-			
-#endif
+
 	// create OpenGL rendering context
 	ghrc = wglCreateContext(ghdc);
 	if(ghrc == NULL)
@@ -352,13 +337,11 @@ int initialize(void)
 	{
 		return(-4);
 	}
-#ifndef ENABLE_MULTI_THREADING
 	// glew initalization
     if (glewInit() != GLEW_OK)
     {
         return (-5);
     }
-#endif
 	// here starts OpenGL code
 	initializeReturnValue = initializeNavras();
 	if(initializeReturnValue < 0)
@@ -367,98 +350,18 @@ int initialize(void)
 		uninitialize();
 	}
 
+
 	// warm-up resize()
 	resize(WIN_WIDTH, WIN_HEIGHT);
 
-	// ToggleFullscreen();
-
-	//set fps to system
-	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
-#ifdef ENABLE_MULTI_THREADING
-	LOG("Setting Task finished to True \n");
-	gTaskFinished = true;
-#endif
-
-	return(0);
-}
-
-int initializeForVideo(void)
-{
-	// function declarations
-	void uninitialize(void);
-	void resizeAMCBaneer(int width, int height);
-	void ToggleFullscreen(void);
-
-	// variable declarations
-	PIXELFORMATDESCRIPTOR pfd;
-	int iPixelFormatIndex;
-	int initializeReturnValue;
-
-	// code
-	ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
-
-	// initialization of PIXELFORMATDESCRIPTOR structure
-	pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
-	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cColorBits = 32;
-	pfd.cRedBits = 8;
-	pfd.cGreenBits = 8;
-	pfd.cBlueBits = 8;
-	pfd.cAlphaBits = 8;
-	pfd.cDepthBits = 32;
-
-	// GetDC
-	ghdc = GetDC(ghwnd);
-
-	// choose pixel format
-	iPixelFormatIndex = ChoosePixelFormat(ghdc, &pfd);
-	if(iPixelFormatIndex == 0)
-	{
-		return(-1);
-	}
-
-	// set the chosen pixel format
-	if(SetPixelFormat(ghdc, iPixelFormatIndex, &pfd) == FALSE)
-	{
-		return(-2);
-	}
-
-	// create OpenGL rendering context
-	ghrc_AMC_Video = wglCreateContext(ghdc);
-	if(ghrc_AMC_Video == NULL)
-	{
-		return(-3);
-	}
-
-	// make the rendering context as the current context
-	if(wglMakeCurrent(ghdc, ghrc_AMC_Video) == FALSE) // make video as current context
-	{
-		return(-4);
-	}
-
-	// glew initalization
-    if (glewInit() != GLEW_OK)
-    {
-        return (-5);
-    }
-	LOG("Reading VIdeo File.  \n");
-	// here starts OpenGL code
-	initializeVideoEffect("res\\videos\\AMCBanner_60fps.mp4");
-	
-	// warm-up resize()
-	resizeAMCBaneer(WIN_WIDTH, WIN_HEIGHT);
-
-	// ToggleFullscreen();
+	ToggleFullscreen();
 
 	//set fps to system
 	wglSwapIntervalEXT(1);   //0 --> will extend beyond 60
 
-	perspectiveProjectionMatrix_AMCBanner = mat4::identity();
-
 	return(0);
 }
+
 
 void ToggleFullscreen(void) {
 
@@ -514,52 +417,13 @@ void resize(int width, int height)
 	resizeNavras(width, height);
 }
 
-void resizeAMCBaneer(int width, int height) {
-
-	// Code
-	if (height == 0)			// To Avoid Divided by 0(in Future)
-		height = 1;
-
-	windowWidth = width;
-	windowHeight = height;
-	// 
-	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
-
-	perspectiveProjectionMatrix_AMCBanner = vmath::perspective(45.0f, (GLfloat)width / height, 0.1f, 1000.0f);
-
-}
 
 void display(void)
 {
 	// function declarations
 
 	// code
-#ifdef ENABLE_MULTI_THREADING
-	if (!gTaskFinished.load()) // Navras init not complete yet
-    {
-		videoUniform = useFSVQuadShader();
-		displayVideoEffect(&videoUniform); // show video
-		glUseProgram(0);
-	}
-	else
-	{
-		if (ghrc_AMC_Video)
-		{
-			wglDeleteContext(ghrc_AMC_Video);
-			ghrc_AMC_Video = NULL;
-			if (ghrc)
-        	{
-				glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-				// make the rendering context as the current context
-				wglMakeCurrent(ghdc, ghrc); 
-			}		
-			uninitializeVideoEffect();			
-		}
-		displayNavras();
-	}
-#else
 	displayNavras();
-#endif
 	SwapBuffers(ghdc);
 }
 
@@ -568,21 +432,8 @@ void update(void)
 	// function declarations
 
 	// code
-#ifdef ENABLE_MULTI_THREADING
-	if (gTaskFinished.load())
-	{
-		updateNavras();
-	}
-	else
-	{
-		updateVideoEffect();
-	}
-#else
-	updateNavras();
-#endif // ENABLE_MULTI_THREADING
 
-	
-	
+	updateNavras();
 	
 }
 

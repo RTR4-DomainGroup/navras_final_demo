@@ -29,11 +29,11 @@ int initializeParticleShader(void)
         "	vec4 pos = imageLoad(position_buffer, int(gl_GlobalInvocationID.x));\n" \
         "	int i;\n" \
         "	pos.xyz += vel.xyz * dt;\n" \
-        "	pos.w -= 0.0001 * dt;\n" \
+        "	pos.w -= 0.001 * dt;\n" \
         "	for (i = 0; i < 64; i++)\n" \
         "	{\n" \
         "		vec3 dist = (attractor[i].xyz - pos.xyz);\n" \
-        "		vel.xyz += dt * dt * attractor[i].w * normalize(dist) / (dot(dist, dist) + 10.0);\n" \
+        "		vel.xyz += dt * dt * dt * attractor[i].w * normalize(dist) / (dot(dist, dist) + 10.0);\n" \
         "	}\n" \
         "	if (pos.w <= 0.0)\n" \
         "	{\n" \
@@ -163,7 +163,7 @@ int initializeParticleShader(void)
         "out vec4 FragColor; \n" \
         "void main(void) \n" \
         "{ \n" \
-        "FragColor = mix(vec4(0.0f, 0.2f, 1.0f, 1.0f), vec4(0.4f, 0.1f, 0.0f, 1.0f), intensity); \n"
+        "FragColor = mix(vec4(0.0f, 0.2f, 1.0f, 1.0f), vec4(0.2f, 0.05f, 0.0f, 1.0f), intensity); \n"
         "} \n";
     
      // Create the Fragment Shader object.

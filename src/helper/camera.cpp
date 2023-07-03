@@ -14,11 +14,21 @@ GLfloat cameraUpX;
 GLfloat cameraUpY;
 GLfloat cameraUpZ;
 
+
+// initial camera
+static Camera iCamera;
+
+
 // camera related variables for movement in scene during debugging
 float cameraCounterSideWays = 3.2f;
 float cameraCounterUpDownWays = 3.2f;
 
 Camera camera;
+
+
+// extern
+void print_lookat(void);
+
 
 void initializeCamera(Camera* camera)
 {
@@ -38,6 +48,8 @@ void setCamera(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloa
 	cameraUpX = upX;
 	cameraUpY = upY;
 	cameraUpZ = upZ;
+
+	iCamera = {{ cameraEyeX, cameraEyeY, cameraEyeZ }, { cameraCenterX, cameraCenterY, cameraCenterZ }, { cameraUpX, cameraUpY, cameraUpZ }};
 }
 
 void displayCamera(void)
@@ -50,17 +62,17 @@ void displayCamera(void)
 
 void resetCamera(void)
 {
-	cameraEyeX = 0.0f;
-	cameraEyeY = 0.0f;
-	cameraEyeZ = 6.0f;
+	cameraEyeX = iCamera.eye[0];
+	cameraEyeY = iCamera.eye[1];
+	cameraEyeZ = iCamera.eye[2];
 
-	cameraCenterX = 0.0f;
-	cameraCenterY = 0.0f;
-	cameraCenterZ = 0.0f;
+	cameraCenterX = iCamera.center[0];
+	cameraCenterY = iCamera.center[1];
+	cameraCenterZ = iCamera.center[2];
 
-	cameraUpX = 0.0f;
-	cameraUpY = 1.0f;
-	cameraUpZ = 0.0f;
+	cameraUpX = iCamera.up[0];
+	cameraUpY = iCamera.up[1];
+	cameraUpZ = iCamera.up[2];
 
 	cameraCounterSideWays = 3.2f;
 	cameraCounterUpDownWays = 3.2f;
@@ -81,6 +93,36 @@ GLfloat impreciselerp(GLfloat v0, GLfloat v1, GLfloat t)
 GLfloat preciselerp(GLfloat v0, GLfloat v1, GLfloat t)
 {
 	return (1 - t) * v0 + t * v1;
+}
+
+bool preciselerp_lookat(GLfloat eyeX, GLfloat eyeY, GLfloat eyeZ, GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat speed)
+{
+	cameraEyeX = preciselerp(cameraEyeX, eyeX, speed);
+	cameraEyeY = preciselerp(cameraEyeY, eyeY, speed);
+	cameraEyeZ = preciselerp(cameraEyeZ, eyeZ, speed);
+
+	cameraCenterX = preciselerp(cameraCenterX, centerX, speed);
+	cameraCenterY = preciselerp(cameraCenterY, centerY, speed);
+	cameraCenterZ = preciselerp(cameraCenterZ, centerZ, speed);
+
+	cameraUpX = upX;
+	cameraUpY = upY;
+	cameraUpZ = upZ;
+
+#ifdef ENABLE_CAMERA_LOGS
+	print_lookat();
+#endif // ENABLE_CAMERA_LOGS
+
+	if (
+		fabsf(cameraEyeX - eyeX) < 0.002f &&
+		fabsf(cameraEyeY - eyeY) < 0.002f &&
+		fabsf(cameraEyeZ - eyeZ) < 0.002f &&
+		fabsf(cameraCenterX - centerX) < 0.002f &&
+		fabsf(cameraCenterY - centerY) < 0.002f &&
+		fabsf(cameraCenterZ - centerZ) < 0.002f)
+		return true;
+	else
+		return false;
 }
 
 void rotateCamera(GLfloat centerX, GLfloat centerY, GLfloat centerZ, GLfloat radius, GLfloat angle, bool centerYConfigured)

@@ -6,6 +6,7 @@
 #include "../../inc/helper/geometry.h"
 #include "../../inc/shaders/ADSLightShader.h"
 #include "../../inc/shaders/FSQuadShader.h"
+#include "../../inc/scenes/scene08_BibhatsaRas.h"
 
 #ifdef ENABLE_SHADOW
 #include "../../inc/helper/shadowframebuffer.h"
@@ -24,9 +25,9 @@
 #include "../../inc/effects/CloudEffect.h"
 #endif // ENABLE_CLOUD_NOISE
 
-#ifdef ENABLE_STATIC_MODELS
-#include "../../inc/effects/StaticModelLoadingEffect.h"
-#endif // ENABLE_STATIC_MODELS
+//#ifdef ENABLE_STATIC_MODELS
+//#include "../../inc/effects/StaticModelLoadingEffect.h"
+//#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 #include "../../inc/effects/DynamicModelLoadingEffect.h"
@@ -115,15 +116,16 @@ extern mat4 perspectiveProjectionMatrix;
 
 static float displacementmap_depth;
 
-#ifdef ENABLE_STATIC_MODELS
-//Model variables
-STATIC_MODEL rockModel;
-STATIC_MODEL streetLightModel;
-
-#endif // ENABLE_STATIC_MODELS
+//#ifdef ENABLE_STATIC_MODELS
+////Model variables
+//STATIC_MODEL rockModel;
+//STATIC_MODEL streetLightModel;
+//
+//#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
-DYNAMIC_MODEL skeletonModel;
+static DYNAMIC_MODEL skeletonModel;
+GLfloat model_y = 4.5f;
 #endif // ENABLE_STATIC_MODELS
 
 extern GLfloat density; // = 0.15;
@@ -167,16 +169,17 @@ int initializeScene09_VeerRas(void)
 	}
 #endif // ENABLE_MASKSQUADS
 
-#ifdef ENABLE_STATIC_MODELS
-	//load models
-	loadStaticModel("res/models/scene09_veer/man/tempVeerMan.obj", &rockModel);
-	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
-#endif // ENABLE_STATIC_MODELS
+//#ifdef ENABLE_STATIC_MODELS
+//	//load models
+//	loadStaticModel("res/models/scene09_veer/man/tempVeerMan.obj", &rockModel);
+//	loadStaticModel("res/models/streetLight/StreetLight.obj", &streetLightModel);
+//#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 	//loadDynamicModel("res/models/skeleton/sadWalk.fbx", &skeletonModel);
 	//loadDynamicModel("res/models/exo/Walking.dae", &skeletonModel);
-	loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	//loadDynamicModel("res/models/man/man.fbx", &skeletonModel);
+	loadDynamicModel("res/models/scene09_veer/man/veerManAnim.fbx", &skeletonModel);
 #endif // ENABLE_DYNAMIC_MODELS
 
 #ifdef ENABLE_TERRIAN
@@ -222,10 +225,10 @@ void setCameraScene09_VeerRas(void)
 {
 	if (isInitialDisplayScene09_VeerRas == true)
 	{
-		//setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 0.5f, 0.5f); // Initial postion for camera animation
-		//setCamera(17.50f, 3.35f, -4.70f, -90.24f, 61.70f, -353.02f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
+		//setCamera(0.0f, 0.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f); // Reset camera position for debugging
 		setCamera(17.50f, 3.35f, -4.70f, 15.40f, 5.00f, -19.70f, 0.0f, 1.0f, 0.0f); // Initial postion for camera animation
 		//setCamera(15.75f, 5.10f, -17.20f, -21.01f, -3.03f, -359.39f, 0.0f, 1.0f, 0.0f); // static camera position
+		uninitializeScene08_BibhatsaRas();
 		isInitialDisplayScene09_VeerRas = false;
 	}
 }
@@ -244,6 +247,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	mat4 rotationMatrix_z = mat4::identity();
 
 	mat4 rotateX = mat4::identity();
+
+	//displayCamera();
 
 	if (isCameraRotation == false || stopCameraRotation == true)
 		displayCamera();
@@ -266,7 +271,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	else if (actualDepthQuadScene == 1)
 	{
 		finalViewMatrix = mat4::identity();
-		finalViewMatrix = lookat(vec3(lightPosition[0], lightPosition[1], lightPosition[2]), vec3(0.0f, -5.0f, -20.0f), vec3(0.0f, 1.0f, 0.0f));
+		finalViewMatrix = lookat(vec3(15.34f, 5.25f, -19.79f), vec3(-89.07f, -220.27f, 348.81f), vec3(0.0f, 1.0f, 0.0f));
+		//finalViewMatrix = viewMatrix;
 
 #ifdef ENABLE_SHADOW
 		lightSpaceMatrix = mat4::identity();
@@ -459,81 +465,83 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 #endif // ENABLE_TERRIAN
 
 
-#ifdef ENABLE_STATIC_MODELS
-	//MODELS
-	sceneOutdoorADSStaticUniform = useADSShader();
-
-	// Sending Light Related Uniforms
-	glUniform1i(sceneOutdoorADSStaticUniform.lightingEnableUniform, 1);
-	glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
-	glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
-	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
-	glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
-	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
-	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
-
-	//normal mapping
-	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
-
-	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
-	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
-	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
-	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
-	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
-	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
-
-	//glUniform1i(sceneOutdoorADSStaticUniform.)
-	// ------ Rock Model ------
-	//translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
-	translationMatrix = vmath::translate(15.40f, 5.00f, -19.70f);
-	scaleMatrix = vmath::scale(0.0045f, 0.0045f, 0.0045f);
-	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-
-	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
-
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	if (actualDepthQuadScene == 1)
-	{
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
-		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
-
-	}
-	else
-	{
-		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
-		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
-	}
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	drawStaticModel(rockModel);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	translationMatrix = mat4::identity();
-	rotationMatrix = mat4::identity();
-	modelMatrix = mat4::identity();
-	scaleMatrix = mat4::identity();
-	rotationMatrix_x = mat4::identity();
-	rotationMatrix_y = mat4::identity();
-	rotationMatrix_z = mat4::identity();
-
-	// ------ Streetlight Model ------
-	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
-	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
-
-	modelMatrix = translationMatrix * scaleMatrix;
-
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
-	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
-
-	drawStaticModel(streetLightModel);
-
+//#ifdef ENABLE_STATIC_MODELS
+//	//MODELS
+//	sceneOutdoorADSStaticUniform = useADSShader();
+//
+//	// Sending Light Related Uniforms
+//	glUniform1i(sceneOutdoorADSStaticUniform.lightingEnableUniform, 1);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.laUniform, 1, lightAmbient);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.ldUniform, 1, lightDiffuse);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.lsUniform, 1, lightSpecular);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.lightPositionUniform, 1, lightPosition);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.kaUniform, 1, materialAmbient);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.kdUniform, 1, materialDiffuse);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.ksUniform, 1, materialSpecular);
+//	glUniform1f(sceneOutdoorADSStaticUniform.materialShininessUniform, materialShininess);
+//
+//	glUniform1f(sceneOutdoorADSStaticUniform.colorCorrectionUniform, 0.7f);
+//
+//	//normal mapping
+//	glUniform4fv(sceneOutdoorADSStaticUniform.viewpositionUniform, 1, camera.eye);
+//
+//	glUniform1i(sceneOutdoorADSStaticUniform.fogEnableUniform, 0);
+//	glUniform1f(sceneOutdoorADSStaticUniform.densityUniform, density);
+//	glUniform1f(sceneOutdoorADSStaticUniform.gradientUniform, gradient);
+//	glUniform4fv(sceneOutdoorADSStaticUniform.skyFogColorUniform, 1, skyFogColor);
+//	glUniform1i(sceneOutdoorADSStaticUniform.uniform_enable_godRays, godRays);
+//	glUniform1i(sceneOutdoorADSStaticUniform.godrays_blackpass_sphere, 0);
+//
+//	//glUniform1i(sceneOutdoorADSStaticUniform.)
+//	// ------ Rock Model ------
+//	//translationMatrix = vmath::translate(2.0f, 2.0f, -6.0f);
+//	translationMatrix = vmath::translate(15.40f, 5.00f, -19.70f);
+//	scaleMatrix = vmath::scale(0.0045f, 0.0045f, 0.0045f);
+//	rotationMatrix = vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+//
+//	modelMatrix = translationMatrix * scaleMatrix * rotationMatrix;
+//
+//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+//	if (actualDepthQuadScene == 1)
+//	{
+//		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 0);
+//		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 1);
+//		glUniformMatrix4fv(sceneOutdoorADSStaticUniform.lightSpaceMatrixUniform, 1, GL_FALSE, lightSpaceMatrix);
+//
+//	}
+//	else
+//	{
+//		glUniform1i(sceneOutdoorADSStaticUniform.actualSceneUniform, 1);
+//		glUniform1i(sceneOutdoorADSStaticUniform.depthSceneUniform, 0);
+//		glActiveTexture(GL_TEXTURE1);
+//		glBindTexture(GL_TEXTURE_2D, shadowFramebuffer.frameBufferDepthTexture);
+//	}
+//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+//
+//	drawStaticModel(rockModel);
+//	glBindTexture(GL_TEXTURE_2D, 0);
+//
+//	translationMatrix = mat4::identity();
+//	rotationMatrix = mat4::identity();
+//	modelMatrix = mat4::identity();
+//	scaleMatrix = mat4::identity();
+//	rotationMatrix_x = mat4::identity();
+//	rotationMatrix_y = mat4::identity();
+//	rotationMatrix_z = mat4::identity();
+//
+//	// ------ Streetlight Model ------
+//	translationMatrix = vmath::translate(4.0f, 0.0f, -6.0f);
+//	scaleMatrix = vmath::scale(0.75f, 0.75f, 0.75f);
+//
+//	modelMatrix = translationMatrix * scaleMatrix;
+//
+//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.modelMatrixUniform, 1, GL_FALSE, modelMatrix);
+//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
+//	glUniformMatrix4fv(sceneOutdoorADSStaticUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+//
+//	drawStaticModel(streetLightModel);
+//
 #ifdef ENABLE_MASKSQUADS
 	// Transformations - Quad For Mask
 	translationMatrix = mat4::identity();
@@ -555,16 +563,16 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	glUniform1i(sceneOutdoorADSStaticUniform.textureSamplerUniform_diffuse, 0);
 		displayQuad();
 #endif // ENABLE_MASKSQUADS
-
-
-	if (actualDepthQuadScene == 0)
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	// Un-use ShaderProgramObject
-	glUseProgram(0);
-#endif // ENABLE_STATIC_MODELS
+//
+//
+//	if (actualDepthQuadScene == 0)
+//	{
+//		glBindTexture(GL_TEXTURE_2D, 0);
+//	}
+//
+//	// Un-use ShaderProgramObject
+//	glUseProgram(0);
+//#endif // ENABLE_STATIC_MODELS
 
 #ifdef ENABLE_DYNAMIC_MODELS
 
@@ -600,11 +608,14 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 	// ------ Dancing Vampire Model ------
 	// 15.50, 5.35, -19.70
 	//glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.50f, 4.76f, -19.20f));
-	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.40f, 4.99f, -19.70f));
+	glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.30f, model_y, -18.75f));
+	// new location for dynamic model
+	//glm_translateMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(15.35f, 4.80f, -18.85f));
 	glm_scaleMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.001f, 0.001f, 0.001f));
-	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	//glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm_rotateMatrix = glm::rotate(glm::mat4(1.0f), 3.14159f, glm::vec3(0.0f, 1.0f, 0.0f));
 	// update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
-
+	//update_transformations_glm(&glm_translateMatrix, &glm_scaleMatrix, &glm_rotateMatrix);
 	glm_modelMatrix = glm_translateMatrix * glm_scaleMatrix * glm_rotateMatrix;
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.modelMatrixUniform, 1, GL_FALSE, glm::value_ptr(glm_modelMatrix));
@@ -625,6 +636,8 @@ void displayScene09_VeerRas(int godRays = 1, bool recordWaterReflectionRefractio
 
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.viewMatrixUniform, 1, GL_FALSE, finalViewMatrix);
 	glUniformMatrix4fv(sceneOutdoorADSDynamicUniform.projectionMatrixUniform, 1, GL_FALSE, perspectiveProjectionMatrix);
+
+	glUniform1f(sceneOutdoorADSDynamicUniform.colorCorrectionUniform, 0.0f);
 
 	drawDynamicModel(sceneOutdoorADSDynamicUniform, skeletonModel, 1.0f);
 
@@ -650,6 +663,9 @@ void updateScene09_VeerRas(void)
 	cameraCenterZ = preciselerp(cameraCenterZ, -359.39f, 0.01f);*/
 
 	/*[15.75, 6.85, -17.20], [-21.01, -75.48, -359.39]*/
+	model_y += 0.001f;
+	if (model_y >= 5.03f)
+		model_y = 5.03f;
 
 #ifdef ENABLE_CAMERA_ANIMATION
 	if (isCameraRotation == false)
@@ -701,7 +717,7 @@ void updateScene09_VeerRas(void)
 	}
 	else if (isCameraRotation == true && continueCameraRotation == true)
 	{
-		cameraRadius -= 0.0005f;
+		cameraRadius -= 0.005f;
 		if (cameraRadius <= 2.0f)
 			cameraRadius = 2.0f;
 
@@ -744,11 +760,11 @@ void uninitializeScene09_VeerRas(void)
 	}
 #endif
 
-#ifdef ENABLE_STATIC_MODELS
-	//UNINIT models
-	unloadStaticModel(&rockModel);
-	unloadStaticModel(&streetLightModel);
-#endif // ENABLE_STATIC_MODELS
+//#ifdef ENABLE_STATIC_MODELS
+//	//UNINIT models
+//	unloadStaticModel(&rockModel);
+//	unloadStaticModel(&streetLightModel);
+//#endif // ENABLE_STATIC_MODELS
 
 
 #ifdef ENABLE_DYNAMIC_MODELS

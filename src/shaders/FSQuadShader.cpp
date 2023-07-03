@@ -69,12 +69,19 @@ int initializeFSQuadShader(void)
         "\n" \
         "in vec2 a_texcoord_out;" \
         "\n" \
+        "uniform float u_blurMixDelta;"
+        "\n" \
         "uniform int u_singleTexture = 0; \n" \
+        "uniform float alphablend; \n" \
         "uniform sampler2D u_textureSampler0;" \
         "\n" \
         "uniform sampler2D u_textureSampler1;" \
         "\n" \
         "uniform sampler2D u_textureSampler2;" \
+        "\n" \
+        "uniform sampler2D u_textureSampler3;" \
+        "\n" \
+        "uniform int maskOrFont = 0;" \
         "\n" \
         "out vec4 FragColor;" \
         "\n" \
@@ -89,12 +96,23 @@ int initializeFSQuadShader(void)
         "{" \
             "if(u_singleTexture == 1)\n" \
             "{\n" \
-                "FragColor = texture(u_textureSampler0, a_texcoord_out);\n" \
-                "if(FragColor.rgb == vec3(0.0f, 1.0f, 0.0f)) discard;\n" \
+                "vec4 tex = texture(u_textureSampler0, a_texcoord_out);\n" \
+                "FragColor = tex;\n" \
+                    "if(maskOrFont == 1){\n" \
+                        "FragColor = vec4(tex.rgb, alphablend);\n" \
+                    "} \n" \
+                    "else{ \n" \
+                        "if(FragColor.rgb == vec3(0.0, 0.0, 1.0)) discard; \n" \
+                    "} \n" \
              "}\n" \
             "else if(u_singleTexture == 2)\n" \
             "{\n" \
                 "FragColor = ((texture(u_textureSampler0, a_texcoord_out) + texture(u_textureSampler1, a_texcoord_out)) + texture(u_textureSampler2, a_texcoord_out));" \
+            "\n" \
+            "}\n" \
+            "else if(u_singleTexture == 3)\n" \
+            "{\n" \
+                "FragColor = mix(texture(u_textureSampler0, a_texcoord_out), texture(u_textureSampler1, a_texcoord_out), u_blurMixDelta);" \
             "\n" \
             "}\n" \
             "else\n" \
@@ -156,6 +174,7 @@ int initializeFSQuadShader(void)
     // Pre-linked binding of Shader program object
     glBindAttribLocation(fsQuadShaderProgramObject, DOMAIN_ATTRIBUTE_POSITION, "a_position");
     glBindAttribLocation(fsQuadShaderProgramObject, DOMAIN_ATTRIBUTE_TEXTURE0, "a_texcoord");
+    
 
     // Link the program
     glLinkProgram(fsQuadShaderProgramObject);
@@ -189,12 +208,18 @@ int initializeFSQuadShader(void)
 
     fsQuadUniform.singleTexture = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_singleTexture");
+    fsQuadUniform.alphablend = glGetUniformLocation(
+        fsQuadShaderProgramObject, "alphablend");
     fsQuadUniform.textureSamplerUniform1 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler0");
     fsQuadUniform.textureSamplerUniform2 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler1");
     fsQuadUniform.textureSamplerUniform3 = glGetUniformLocation(
         fsQuadShaderProgramObject, "u_textureSampler2");
+    fsQuadUniform.textureSamplerUniform4 = glGetUniformLocation(
+        fsQuadShaderProgramObject, "u_textureSampler3");
+    fsQuadUniform.intensity  = glGetUniformLocation(fsQuadShaderProgramObject, "u_blurMixDelta");
+    fsQuadUniform.maskOrFont = glGetUniformLocation(fsQuadShaderProgramObject, "maskOrFont");
 
     return 0;
 }
