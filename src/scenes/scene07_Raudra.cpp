@@ -294,7 +294,7 @@ void displayScene07_Raudra()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	
-    #ifdef ENABLE_STATIC_MODELS
+#ifdef ENABLE_STATIC_MODELS
 	//MODELS
 	sceneIndoorADSUniform = useADSShader();
 
