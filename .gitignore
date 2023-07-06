@@ -1,5 +1,7 @@
 res/**/*.*
 src/*.exe
 src/*.obj
-src/Log.txt
+*Log.txt
+*.lib
+*.pdb
 
